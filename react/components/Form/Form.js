@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { View, TextInput, Text, Image, TouchableOpacity } from "react-native";
-import { INVALID_RED, LIGHT_GRAY, VALID_GREEN } from "../../consts/colors";
+import {
+  INVALID_RED,
+  LIGHT_GRAY,
+  VALID_GREEN,
+  DARK_GRAY,
+} from "../../consts/colors";
 import { eye_visible, eye_invisible } from "../../assets";
 
 const ValidIcon = ({ validity }) => {
@@ -40,6 +45,35 @@ const VisibilityButton = ({ visiblity, onPress }) => {
         source={visiblity ? eye_invisible : eye_visible}
         style={{ height: 16, width: 16 }}
       />
+    </TouchableOpacity>
+  );
+};
+
+const ClearButton = ({ onPress }) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        height: 14,
+        width: 14,
+        borderRadius: 8,
+        alignSelf: "center",
+        marginLeft: 7,
+        backgroundColor: LIGHT_GRAY,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 8,
+          alignSelf: "center",
+          textAlignVertical: "center",
+          lineHeight: 14,
+          color: "white",
+          fontWeight: "700",
+        }}
+      >
+        ✕
+      </Text>
     </TouchableOpacity>
   );
 };
