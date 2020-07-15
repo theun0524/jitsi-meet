@@ -44,7 +44,15 @@ const VisibilityButton = ({ visiblity, onPress }) => {
   );
 };
 
-const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
+const Form = ({
+  placeholder,
+  valid,
+  errorMessage,
+  value,
+  onChange,
+  type,
+  onPressClearButton,
+}) => {
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const onPressVisibilityButton = () => {
     setPasswordVisibility(!passwordVisibility);
@@ -75,6 +83,9 @@ const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
         ) : null}
         {valid !== null && valid !== undefined ? (
           <ValidIcon validity={valid} />
+        ) : null}
+        {onPressClearButton !== undefined ? (
+          <ClearButton onPress={onPressClearButton} />
         ) : null}
       </View>
       <Text style={{ ...styles.errorMessage }}>
