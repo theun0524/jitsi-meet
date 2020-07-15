@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { View, TextInput, Text, Image, TouchableOpacity } from "react-native";
-import { INVALID_RED, LIGHT_GRAY, VALID_GREEN } from "../../consts/colors";
+import {
+  INVALID_RED,
+  LIGHT_GRAY,
+  VALID_GREEN,
+  DARK_GRAY,
+} from "../../consts/colors";
 import { eye_visible, eye_invisible } from "../../assets";
 
 const ValidIcon = ({ validity }) => {
@@ -44,7 +49,44 @@ const VisibilityButton = ({ visiblity, onPress }) => {
   );
 };
 
-const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
+const ClearButton = ({ onPress }) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        height: 14,
+        width: 14,
+        borderRadius: 8,
+        alignSelf: "center",
+        marginLeft: 7,
+        backgroundColor: LIGHT_GRAY,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 8,
+          alignSelf: "center",
+          textAlignVertical: "center",
+          lineHeight: 14,
+          color: "white",
+          fontWeight: "700",
+        }}
+      >
+        ✕
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const Form = ({
+  placeholder,
+  valid,
+  errorMessage,
+  value,
+  onChange,
+  type,
+  onPressClearButton,
+}) => {
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const onPressVisibilityButton = () => {
     setPasswordVisibility(!passwordVisibility);
@@ -75,6 +117,9 @@ const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
         ) : null}
         {valid !== null && valid !== undefined ? (
           <ValidIcon validity={valid} />
+        ) : null}
+        {onPressClearButton !== undefined ? (
+          <ClearButton onPress={onPressClearButton} />
         ) : null}
       </View>
       <Text style={{ ...styles.errorMessage }}>

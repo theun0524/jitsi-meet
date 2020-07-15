@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Image, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Image, Text, KeyboardAvoidingView } from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
@@ -14,17 +14,19 @@ import { useSetRecoilState } from "recoil";
 import * as validators from "../../utils/validator";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
+import { useTranslation } from "react-i18next";
+import { translate } from "../../features/base/i18n";
 
-const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
+const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
   const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
     setScreen(to);
   };
-
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -50,10 +52,10 @@ const LoginScreen = () => {
         const reason = err.response.headers["www-authenticate"];
         if (reason === "user_not_found") {
           setUsernameValid(false);
-          setUsernameErrorMsg("error.usernameInvalid");
+          setUsernameErrorMsg(t("error.usernameInvalid"));
         } else if (reason === "password_not_match") {
           setPasswordValid(false);
-          setPasswordErrorMsg("error.passwordNotMatch");
+          setPasswordErrorMsg(t("error.passwordNotMatch"));
         }
         setLoading(false);
       });
@@ -62,13 +64,13 @@ const LoginScreen = () => {
   const checkVaildUsername = (value) => {
     const error = validators.username(value);
     if (error) {
-      setUsernameErrorMsg(error);
+      setUsernameErrorMsg(t(error));
       return false;
     } else if (value === "") {
-      setUsernameErrorMsg("error.usernameRequired");
+      setUsernameErrorMsg(t("error.usernameRequired"));
       return false;
     } else if (value && value.length < 5) {
-      setUsernameErrorMsg("error.usernameTooShort");
+      setUsernameErrorMsg(t("error.usernameTooShort"));
       return false;
     }
     return true;
@@ -78,10 +80,10 @@ const LoginScreen = () => {
     if (value.length >= 8) {
       return true;
     } else if (value === "") {
-      setPasswordErrorMsg("error.passwordRequired");
+      setPasswordErrorMsg(t("error.passwordRequired"));
       return false;
     }
-    setPasswordErrorMsg("error.passwordTooShort");
+    setPasswordErrorMsg(t("error.passwordTooShort"));
     return false;
   };
 
@@ -102,21 +104,26 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={{ ...styles.container }}>
+    <KeyboardAvoidingView
+      behavior="padding"
+      enabled
+      style={{ ...styles.container }}
+    >
       <Image
         source={postech_logo}
         style={{ width: 200, alignSelf: "center", paddingBottom: 160 }}
         resizeMode="contain"
       />
       <View>
-        <InputLabel name={"Username"} necessary={true} />
+        <InputLabel name={t("register.username")} necessary={true} />
         <Form
+          placeholder={t("register.usernameExample")}
           value={username}
           onChange={onChangeUsername}
           valid={usernameValid}
           errorMessage={usernameErrorMsg}
         />
-        <InputLabel name={"Password"} necessary={true} />
+        <InputLabel name={t("register.password")} necessary={true} />
         <Form
           type="password"
           value={password}
@@ -137,13 +144,18 @@ const LoginScreen = () => {
               checked={remember}
               onChange={onChangeRememberCheckBox}
             />
-            <Text>Remember me</Text>
+            <Text>{t("login.remember")}</Text>
           </View>
-          <Text style={{ color: MAIN_BLUE }}>Forgot password</Text>
+          <Text
+            style={{ color: MAIN_BLUE }}
+            onPress={() => navigate("PasswordReset")}
+          >
+            {t("login.forgotPassword")}
+          </Text>
         </View>
         <SubmitButton
           invalid={!(passwordValid && usernameValid)}
-          name={"Login"}
+          name={t("login.title")}
           onPress={onPressLoginSubmitButton}
           loading={loading}
         />
@@ -157,12 +169,12 @@ const LoginScreen = () => {
             navigate("Register");
           }}
         >
-          Are you not a registered user? - Register
+          {t("login.registerRequired")}
         </Text>
         <TextDivider text="or login with" />
         <PostechLoginButton onPress={onPressPostechLoginButton} />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -175,4 +187,4 @@ const styles = {
   },
 };
 
-export default LoginScreen;
+export default translate(LoginScreen);
