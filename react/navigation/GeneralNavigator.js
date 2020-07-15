@@ -3,6 +3,7 @@ import { screenState } from "../modules/navigator";
 import { App } from "../features/app/components";
 import LoginScreen from "../screens/LoginScreen/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen/RegisterScreen";
+import PasswordResetScreen from "../screens/PasswordResetScreen/PasswordResetScreen";
 import { useRecoilValue } from "recoil";
 import AsyncStorage from "@react-native-community/async-storage";
 import { JWT_TOKEN } from "../config";
@@ -34,6 +35,8 @@ const GeneralNavigator = ({ appProps }) => {
     <RegisterScreen />
   ) : currScreen === "Login" ? (
     <LoginScreen />
+  ) : currScreen === "PasswordReset" ? (
+    <PasswordResetScreen />
   ) : (
     <LoginScreen />
   );
