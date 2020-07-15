@@ -1,7 +1,6 @@
 import axios from "axios";
-import { API_URL } from "../config";
 
-const apiRoot = API_URL;
+const apiRoot = process.env.VMEETING_API_BASE;
 
 export function fetchCurrentUser() {
   return axios.get(`${apiRoot}/current-user`, { withCredentials: true });
