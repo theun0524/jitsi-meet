@@ -13,7 +13,7 @@ const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height libra
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const PasswordResetScreen = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
   const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
     setScreen(to);

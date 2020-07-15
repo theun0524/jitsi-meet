@@ -15,20 +15,18 @@ import * as validators from "../../utils/validator";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
+import { translate } from "../../features/base/i18n";
 
 const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
   const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
     setScreen(to);
   };
-  useEffect(() => {
-    console.log(i18n);
-  });
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -189,4 +187,4 @@ const styles = {
   },
 };
 
-export default LoginScreen;
+export default translate(LoginScreen);

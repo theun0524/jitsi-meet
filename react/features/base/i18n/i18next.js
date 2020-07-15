@@ -8,6 +8,7 @@ import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 
 import languageDetector from './languageDetector';
+import { initReactI18next } from 'react-i18next';
 
 /**
  * The available/supported languages.
@@ -44,7 +45,7 @@ const options = {
         escapeValue: false // not needed for react as it escapes by default
     },
     load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries' ],
+    ns: [ 'main', 'languages', 'countries', 'vmeeting' ],
     react: {
         useSuspense: false
     },
@@ -59,9 +60,10 @@ const options = {
 i18next
     .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
     .use(languageDetector)
+    .use(initReactI18next)
     .init(options);
 
-// Add default language which is preloaded from the source code.
+    // Add default language which is preloaded from the source code.
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'countries',
@@ -80,6 +82,12 @@ i18next.addResourceBundle(
     MAIN_RESOURCES,
     /* deep */ true,
     /* overwrite */ true);
+i18next.addResourceBundle(
+    DEFAULT_LANGUAGE,
+    'vmeeting',
+    require('../../../../lang/vmeeting'),
+    true,
+    true);
 
 // Add builtin languages.
 // XXX: Note we are using require here, because we want the side-effects of the

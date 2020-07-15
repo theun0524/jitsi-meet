@@ -19,7 +19,7 @@ const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height libra
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
   const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
     setScreen(to);
@@ -228,6 +228,11 @@ const styles = {
     backgroundColor: "#ffffff",
     paddingTop: STATUS_BAR_HEIGHT,
     paddingHorizontal: 24,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "600",
+    paddingBottom: 24,
   },
   navigateText: {
     alignSelf: "center",

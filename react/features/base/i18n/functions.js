@@ -10,7 +10,7 @@ import { withTranslation } from 'react-i18next';
  */
 export function translate(component) {
     // Use the default list of namespaces.
-    return withTranslation([ 'main', 'languages', 'countries' ])(component);
+    return withTranslation([ 'main', 'languages', 'countries', 'vmeeting'])(component);
 }
 
 /**
