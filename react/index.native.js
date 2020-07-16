@@ -6,8 +6,7 @@ import './features/mobile/polyfills';
 
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
-import AppContainer from './components/AppContainer/AppContainer';
-
+import { App } from './features/app/components';
 // It's crucial that the native loggers are created ASAP, not to lose any data.
 import { _initLogging } from './features/base/logging/functions';
 import { IncomingCallApp } from './features/mobile/incoming-call';
@@ -41,8 +40,7 @@ class Root extends PureComponent<Props> {
      */
     render() {
         return (
-            <AppContainer
-                { ...this.props } />
+            <App { ...this.props } />
         );
     }
 }

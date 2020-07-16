@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import { useSetRecoilState } from "recoil";
-import { screenState } from "../../modules/navigator";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import Form from "../../components/Form/Form";
@@ -14,9 +12,8 @@ const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height libra
 
 const PasswordResetScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
-    setScreen(to);
+    console.log(to);
   };
   const [email, setEmail] = useState("");
   const onChangeEmail = ({ nativeEvent: { text } }) => {

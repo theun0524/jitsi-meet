@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import { useSetRecoilState } from "recoil";
-import { screenState } from "../../modules/navigator";
 import * as validators from "../../utils/validator";
 import TextDivider from "../../components/TextDivider/TextDivider";
 import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
@@ -18,9 +16,8 @@ const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height libra
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
-  const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
-    setScreen(to);
+    console.log(to);
   };
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");

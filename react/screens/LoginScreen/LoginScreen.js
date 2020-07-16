@@ -8,9 +8,7 @@ import TextDivider from "../../components/TextDivider/TextDivider";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
-import { screenState } from "../../modules/navigator";
 import AsyncStorage from "@react-native-community/async-storage";
-import { useSetRecoilState } from "recoil";
 import * as validators from "../../utils/validator";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
@@ -23,9 +21,9 @@ const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height libra
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const setScreen = useSetRecoilState(screenState);
   const navigate = (to) => {
-    setScreen(to);
+    // setScreen(to);
+    console.log(to);
   };
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
