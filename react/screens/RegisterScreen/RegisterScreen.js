@@ -10,9 +10,9 @@ import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import Form from "../../components/Form/Form";
 import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
+import { JWT_TOKEN } from "../../config";
 import AsyncStorage from "@react-native-community/async-storage";
 
-const JWT_APP_ID = process.env.JWT_APP_ID
 const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
 // const iosStatusBarHeight = getStatusBarHeight();
@@ -52,7 +52,7 @@ const RegisterScreen = () => {
       .signup(form)
       .then(async (resp) => {
         const token = resp.data;
-        await AsyncStorage.setItem(JWT_APP_ID, token);
+        await AsyncStorage.setItem(JWT_TOKEN, token);
         setLoading(false);
         navigate("Home");
       })

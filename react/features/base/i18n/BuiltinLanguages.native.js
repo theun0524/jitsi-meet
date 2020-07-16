@@ -221,3 +221,16 @@ for (const name in _LANGUAGES) { // eslint-disable-line guard-for-in
         /* deep */ true,
         /* overwrite */ true);
 }
+
+i18next.addResourceBundle(
+  'en',
+  'vmeeting',
+  require('../../../../lang/vmeeting'),
+  true,
+  true);
+i18next.addResourceBundle(
+  'ko',
+  'vmeeting',
+  require('../../../../lang/vmeeting-ko'),
+  true,
+  true);

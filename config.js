@@ -576,6 +576,7 @@ var config = {
      startBitrate
      */
 
+    thirdPartyAuthEnabled: false,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
