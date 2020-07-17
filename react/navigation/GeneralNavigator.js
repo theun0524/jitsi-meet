@@ -5,10 +5,11 @@ import PasswordResetScreen from "../screens/PasswordResetScreen/PasswordResetScr
 import AsyncStorage from "@react-native-community/async-storage";
 import { JWT_TOKEN } from "../config";
 import JwtDecode from "jwt-decode";
+import { useSelector } from "react-redux";
 
 const GeneralNavigator = ({ appProps }) => {
+  const currScreen = useSelector((store) => store.screen.currScreen);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const currScreen = "Login";
   const checkAuthorizedUser = async () => {
     const token = await AsyncStorage.getItem(JWT_TOKEN);
     if (token) {

@@ -14,6 +14,8 @@ import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
+import { setScreen } from "../../redux/screen/screen";
+import { useDispatch } from "react-redux";
 
 const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
@@ -21,10 +23,12 @@ const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height libra
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
+
+  const dispatch = useDispatch();
   const navigate = (to) => {
-    // setScreen(to);
-    console.log(to);
+    dispatch(setScreen(to));
   };
+
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");

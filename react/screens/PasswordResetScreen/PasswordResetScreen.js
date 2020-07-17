@@ -5,6 +5,8 @@ import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import Form from "../../components/Form/Form";
 import { DARK_GRAY, LIGHT_GRAY } from "../../consts/colors";
 import { useTranslation } from "react-i18next";
+import { setScreen } from "../../redux/screen/screen";
+import { useDispatch } from "react-redux";
 
 const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
@@ -12,9 +14,11 @@ const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height libra
 
 const PasswordResetScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
+  const dispatch = useDispatch();
   const navigate = (to) => {
-    console.log(to);
+    dispatch(setScreen(to));
   };
+
   const [email, setEmail] = useState("");
   const onChangeEmail = ({ nativeEvent: { text } }) => {
     setEmail(text);

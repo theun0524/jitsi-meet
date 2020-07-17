@@ -10,14 +10,17 @@ import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import AsyncStorage from "@react-native-community/async-storage";
+import { setScreen } from "../../redux/screen/screen";
+import { useDispatch } from "react-redux";
 
 const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
+  const dispatch = useDispatch();
   const navigate = (to) => {
-    console.log(to);
+    dispatch(setScreen(to));
   };
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
