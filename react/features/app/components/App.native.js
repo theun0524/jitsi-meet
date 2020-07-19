@@ -18,6 +18,10 @@ import GeneralNavigator from '../../../navigation/GeneralNavigator';
 import '../middlewares';
 import '../reducers';
 
+import AsyncStorage from "@react-native-community/async-storage";
+import { JWT_TOKEN } from "../../../config";
+import JwtDecode from "jwt-decode";
+
 declare var __DEV__;
 
 /**
@@ -62,7 +66,10 @@ export class App extends AbstractApp {
      */
     constructor(props: Props) {
         super(props);
-
+        this.state = {
+          ...this.state,
+          isAuthenticated:false
+        }
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
         // This will effectively kill the app. In accord with the Web, do not
@@ -82,6 +89,16 @@ export class App extends AbstractApp {
      */
     componentDidMount() {
         super.componentDidMount();
+        const checkAuthorizedUser = async() => {
+          const token = await AsyncStorage.getItem(JWT_TOKEN);
+          if (token) {
+            const { context } = JwtDecode(token);
+            this.setState({
+              isAuthenticated: context.user
+            })
+          }
+        }
+        checkAuthorizedUser();
 
         this._init.then(() => {
             // We set these early enough so then we avoid any unnecessary re-renders.
@@ -124,8 +141,10 @@ export class App extends AbstractApp {
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
-                {/* { super._createMainElement(component, props) } */}
-                <GeneralNavigator/>
+                {this.state.isAuthenticated ? 
+                  super._createMainElement(component, props)
+                  : <GeneralNavigator/>
+                }
             </DimensionsDetector>
         );
     }
