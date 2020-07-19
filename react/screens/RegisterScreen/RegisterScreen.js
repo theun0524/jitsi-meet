@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import { useSetRecoilState } from "recoil";
-import { screenState } from "../../modules/navigator";
 import * as validators from "../../utils/validator";
 import TextDivider from "../../components/TextDivider/TextDivider";
 import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
@@ -12,15 +10,17 @@ import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import AsyncStorage from "@react-native-community/async-storage";
+import { setScreen } from "../../redux/screen/screen";
+import { useDispatch } from "react-redux";
 
 const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
-  const setScreen = useSetRecoilState(screenState);
+  const dispatch = useDispatch();
   const navigate = (to) => {
-    setScreen(to);
+    dispatch(setScreen(to));
   };
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
