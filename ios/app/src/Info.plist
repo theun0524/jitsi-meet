@@ -101,5 +101,16 @@
 	<false/>
 	<key>firebase_crashlytics_collection_enabled</key>
 	<string>false</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>passni-sample-objc</string>
+      </array>
+    </dict>
+  </array>
 </dict>
 </plist>

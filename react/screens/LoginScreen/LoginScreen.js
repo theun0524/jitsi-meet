@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, Text, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  KeyboardAvoidingView,
+  NativeModules,
+} from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
@@ -28,6 +34,8 @@ const LoginScreen = () => {
   const navigate = (to) => {
     dispatch(setScreen(to));
   };
+  const PassNiSSO = NativeModules.PassNiSSO;
+  console.log(PassNiSSO);
 
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
