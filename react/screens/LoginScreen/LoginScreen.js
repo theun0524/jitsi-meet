@@ -17,9 +17,8 @@ import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
 
-const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
-// import {getStatusBarHeight} from 'react-native-status-bar-height';
-// const iosStatusBarHeight = getStatusBarHeight();
+import { getStatusBarHeight } from "react-native-status-bar-height";
+const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
@@ -184,7 +183,7 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: STATUS_BAR_HEIGHT,
+    paddingTop: iosStatusBarHeight + 40,
     paddingHorizontal: 24,
   },
 };

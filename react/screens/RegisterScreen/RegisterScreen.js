@@ -12,10 +12,10 @@ import { JWT_TOKEN } from "../../config";
 import AsyncStorage from "@react-native-community/async-storage";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
+import { getStatusBarHeight } from "react-native-status-bar-height";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
-const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
-// import {getStatusBarHeight} from 'react-native-status-bar-height';
-// const iosStatusBarHeight = getStatusBarHeight();
+const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
   const dispatch = useDispatch();
@@ -60,13 +60,13 @@ const RegisterScreen = () => {
         const errCode = error.response.headers["www-authenticate"];
         if (errCode === "username_in_use") {
           setUsernameVaild(false);
-          setUsernameErrorMsg("error.usernameInUse");
+          setUsernameErrorMsg(t("error.usernameInUse"));
         } else if (errCode === "email_in_use") {
           setEmailVaild(false);
-          setEmailErrorMsg("error.emailInUse");
+          setEmailErrorMsg(t("error.emailInUse"));
         } else {
           setEmailValid(false);
-          setEmailErrorMsg("register.fail");
+          setEmailErrorMsg(t("register.fail"));
         }
         setLoading(false);
       });
@@ -78,17 +78,17 @@ const RegisterScreen = () => {
       setEmailErrorMsg(error);
       return false;
     } else if (value === "") {
-      setEmailErrorMsg("error.emailRequired");
+      setEmailErrorMsg(t("error.emailRequired"));
       return false;
     }
     return true;
   };
   const checkVaildFullname = (value) => {
     if (value === "") {
-      setFullnameErrorMsg("error.fullnameRequired");
+      setFullnameErrorMsg(t("error.fullnameRequired"));
       return false;
     } else if (value && value.length < 2) {
-      setFullnameErrorMsg("error.fullnameTooShort");
+      setFullnameErrorMsg(t("error.fullnameTooShort"));
       return false;
     }
     return true;
@@ -96,13 +96,13 @@ const RegisterScreen = () => {
   const checkVaildUsername = (value) => {
     const error = validators.username(value);
     if (error) {
-      setUsernameErrorMsg(error);
+      setUsernameErrorMsg(t(error));
       return false;
     } else if (value === "") {
-      setUsernameErrorMsg("error.usernameRequired");
+      setUsernameErrorMsg(t("error.usernameRequired"));
       return false;
     } else if (value && value.length < 5) {
-      setUsernameErrorMsg("error.usernameTooShort");
+      setUsernameErrorMsg(t("error.usernameTooShort"));
       return false;
     }
     return true;
@@ -111,17 +111,17 @@ const RegisterScreen = () => {
     if (value.length >= 8) {
       return true;
     } else if (value === "") {
-      setPasswordErrorMsg("error.passwordRequired");
+      setPasswordErrorMsg(t("error.passwordRequired"));
       return false;
     }
-    setPasswordErrorMsg("error.passwordTooShort");
+    setPasswordErrorMsg(t("error.passwordTooShort"));
     return false;
   };
   const checkVaildConfirmPassword = (value) => {
     if (value === password) {
       return true;
     }
-    setConfirmPasswordErrorMsg("error.passwordNotMatch");
+    setConfirmPasswordErrorMsg(t("error.passwordNotMatch"));
     return false;
   };
 
@@ -152,15 +152,23 @@ const RegisterScreen = () => {
   };
 
   return (
-    <View style={{ ...styles.container }}>
-      <Text style={{ fontSize: 20, fontWeight: "600", paddingBottom: 24 }}>
+    <KeyboardAwareScrollView style={{ ...styles.container }}>
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "600",
+          paddingBottom: 24,
+          paddingTop: iosStatusBarHeight + 40,
+        }}
+      >
         Vmeeting Register
       </Text>
       <TextDivider text={"Create an account using"} />
       <PostechLoginButton />
       <TextDivider text={"or create new account"} style={{ paddingTop: 20 }} />
-      <InputLabel name="E-mail" necessary={true} />
+      <InputLabel name={t("register.email")} necessary={true} />
       <Form
+        placeholder={t("register.emailExample")}
         value={email}
         onChange={onChangeEmail}
         valid={emailValid}
@@ -168,6 +176,7 @@ const RegisterScreen = () => {
       />
       <InputLabel name="Full Name" necessary={true} />
       <Form
+        placeholder={t("register.fullNameExample")}
         value={fullname}
         onChange={onChangeFullname}
         valid={fullnameValid}
@@ -175,12 +184,13 @@ const RegisterScreen = () => {
       />
       <InputLabel name="Username" necessary={true} />
       <Form
+        placeholder={t("register.usernameExample")}
         value={username}
         onChange={onChangeUsername}
         valid={usernameValid}
         errorMessage={usernameErrorMsg}
       />
-      <InputLabel name="Password" necessary={true} />
+      <InputLabel name={t("register.password")} necessary={true} />
       <Form
         type={"password"}
         value={password}
@@ -188,7 +198,7 @@ const RegisterScreen = () => {
         valid={passwordValid}
         errorMessage={passwordErrorMsg}
       />
-      <InputLabel name="Confirm Password" necessary={true} />
+      <InputLabel name={t("register.passwordConfirm")} necessary={true} />
       <Form
         type={"password"}
         value={confirmPassword}
@@ -197,7 +207,7 @@ const RegisterScreen = () => {
         errorMessage={confirmPasswordErrorMsg}
       />
       <SubmitButton
-        name="Register"
+        name={t("register.title")}
         invalid={
           !(
             emailValid &&
@@ -214,16 +224,15 @@ const RegisterScreen = () => {
         onPress={() => navigate("Login")}
         style={{ ...styles.navigateText }}
       >
-        Already Registered? - Login
+        {t("register.alreadyRegister")}
       </Text>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 const styles = {
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: STATUS_BAR_HEIGHT,
     paddingHorizontal: 24,
   },
   navigateText: {
