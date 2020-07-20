@@ -12,10 +12,9 @@ import { JWT_TOKEN } from "../../config";
 import AsyncStorage from "@react-native-community/async-storage";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 
-const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
-// import {getStatusBarHeight} from 'react-native-status-bar-height';
-// const iosStatusBarHeight = getStatusBarHeight();
+const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
   const dispatch = useDispatch();
@@ -223,7 +222,7 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: STATUS_BAR_HEIGHT,
+    paddingTop: iosStatusBarHeight + 40,
     paddingHorizontal: 24,
   },
   navigateText: {
