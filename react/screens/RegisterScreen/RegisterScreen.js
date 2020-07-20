@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -151,8 +152,15 @@ const RegisterScreen = () => {
   };
 
   return (
-    <View style={{ ...styles.container }}>
-      <Text style={{ fontSize: 20, fontWeight: "600", paddingBottom: 24 }}>
+    <KeyboardAwareScrollView style={{ ...styles.container }}>
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "600",
+          paddingBottom: 24,
+          paddingTop: iosStatusBarHeight + 40,
+        }}
+      >
         Vmeeting Register
       </Text>
       <TextDivider text={"Create an account using"} />
@@ -215,14 +223,13 @@ const RegisterScreen = () => {
       >
         Already Registered? - Login
       </Text>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 const styles = {
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: iosStatusBarHeight + 40,
     paddingHorizontal: 24,
   },
   navigateText: {

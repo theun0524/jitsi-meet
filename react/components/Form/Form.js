@@ -106,7 +106,13 @@ const Form = ({
           autoCapitalize={"none"}
           value={value}
           onChange={onChange}
-          style={{ lineHeight: 20, flex: 1 }}
+          style={{
+            lineHeight: 20,
+            flex: 1,
+            fontSize: 16,
+            paddingTop: 0,
+            paddingBottom: 0,
+          }}
           placeholder={placeholder}
         />
         {type === "password" ? (
