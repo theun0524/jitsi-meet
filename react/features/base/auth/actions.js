@@ -7,7 +7,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../jwt';
 
 // const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
-const AUTH_JWT_TOKEN = process.env.REACT_APP_JWT_TOKEN;
+const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 
 /**
  * Load current logged in user.
