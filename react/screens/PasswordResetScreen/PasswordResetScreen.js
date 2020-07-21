@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import { useSetRecoilState } from "recoil";
-import { screenState } from "../../modules/navigator";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import Form from "../../components/Form/Form";
 import { DARK_GRAY, LIGHT_GRAY } from "../../consts/colors";
 import { useTranslation } from "react-i18next";
+import { setScreen } from "../../redux/screen/screen";
+import { useDispatch } from "react-redux";
 
-const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
-// import {getStatusBarHeight} from 'react-native-status-bar-height';
-// const iosStatusBarHeight = getStatusBarHeight();
+import { getStatusBarHeight } from "react-native-status-bar-height";
+const iosStatusBarHeight = getStatusBarHeight();
 
 const PasswordResetScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const setScreen = useSetRecoilState(screenState);
+  const dispatch = useDispatch();
   const navigate = (to) => {
-    setScreen(to);
+    dispatch(setScreen(to));
   };
+
   const [email, setEmail] = useState("");
   const onChangeEmail = ({ nativeEvent: { text } }) => {
     setEmail(text);
@@ -92,7 +92,7 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: STATUS_BAR_HEIGHT,
+    paddingTop: iosStatusBarHeight + 40,
     paddingHorizontal: 24,
   },
   title: {

@@ -21,6 +21,10 @@ import { setSideBarVisible } from '../actions';
 
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
+import api from '../../../api';
+import AsyncStorage from '@react-native-community/async-storage';
+import { JWT_TOKEN } from '../../../config';
+import { setScreen } from '../../../redux/screen/screen';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -71,6 +75,7 @@ class WelcomePageSideBar extends Component<Props> {
         this._onHideSideBar = this._onHideSideBar.bind(this);
         this._onOpenHelpPage = this._onOpenHelpPage.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
+        this._onLogout = this._onLogout.bind(this);
     }
 
     /**
@@ -102,13 +107,17 @@ class WelcomePageSideBar extends Component<Props> {
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
                         <SideBarItem
+                            icon = { IconSettings }
+                            label = 'Log Out'
+                            onPress = { this._onLogout } />
+                        {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
-                            url = { TERMS_URL } />
-                        <SideBarItem
+                            url = { TERMS_URL } /> */}
+                        {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.privacy'
-                            url = { PRIVACY_URL } />
+                            url = { PRIVACY_URL } /> */}
                         <SideBarItem
                             icon = { IconHelp }
                             label = 'welcomepage.getHelp'
@@ -158,6 +167,16 @@ class WelcomePageSideBar extends Component<Props> {
 
         dispatch(setSideBarVisible(false));
         dispatch(setActiveModalId(SETTINGS_VIEW_ID));
+    }
+
+    _onLogout: () => void;
+
+    _onLogout() {
+        const { dispatch } = this.props;
+        api.logout().then(async() => {
+            await AsyncStorage.removeItem(JWT_TOKEN);
+            dispatch(setScreen("Login"));
+        })
     }
 }
 

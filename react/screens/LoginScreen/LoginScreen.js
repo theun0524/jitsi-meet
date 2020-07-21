@@ -8,25 +8,26 @@ import TextDivider from "../../components/TextDivider/TextDivider";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
-import { screenState } from "../../modules/navigator";
 import AsyncStorage from "@react-native-community/async-storage";
-import { useSetRecoilState } from "recoil";
 import * as validators from "../../utils/validator";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
+import { setScreen } from "../../redux/screen/screen";
+import { useDispatch } from "react-redux";
 
-const STATUS_BAR_HEIGHT = 40; // TODO : add react-native-status-bar-height library
-// import {getStatusBarHeight} from 'react-native-status-bar-height';
-// const iosStatusBarHeight = getStatusBarHeight();
+import { getStatusBarHeight } from "react-native-status-bar-height";
+const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const setScreen = useSetRecoilState(screenState);
+
+  const dispatch = useDispatch();
   const navigate = (to) => {
-    setScreen(to);
+    dispatch(setScreen(to));
   };
+
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -182,7 +183,7 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: STATUS_BAR_HEIGHT,
+    paddingTop: iosStatusBarHeight + 40,
     paddingHorizontal: 24,
   },
 };

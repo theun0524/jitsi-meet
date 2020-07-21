@@ -12,6 +12,7 @@ import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
 import type { Props as AbstractAppProps } from './AbstractApp';
+import GeneralNavigator from '../../../navigation/GeneralNavigator';
 
 // Register middlewares and reducers.
 import '../middlewares';
@@ -61,7 +62,6 @@ export class App extends AbstractApp {
      */
     constructor(props: Props) {
         super(props);
-
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
         // This will effectively kill the app. In accord with the Web, do not
@@ -120,10 +120,11 @@ export class App extends AbstractApp {
      * @override
      */
     _createMainElement(component, props) {
+        const Home = super._createMainElement(component, props);
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
-                { super._createMainElement(component, props) }
+                    <GeneralNavigator Home={Home}/>
             </DimensionsDetector>
         );
     }
