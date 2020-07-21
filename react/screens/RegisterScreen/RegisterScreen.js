@@ -14,10 +14,13 @@ import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { useTranslation } from "react-i18next";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
+
   const dispatch = useDispatch();
   const navigate = (to) => {
     dispatch(setScreen(to));
