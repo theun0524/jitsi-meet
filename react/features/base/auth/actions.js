@@ -1,6 +1,7 @@
 /* global process */
 // import axios from 'axios';
 
+import jwtDecode from 'jwt-decode';
 // import logger from './logger';
 import { SET_CURRENT_USER } from './actionTypes';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
@@ -23,10 +24,19 @@ export function loadCurrentUser() {
         //     logger.warn('Failed to load current user.', err);
         //     dispatch(setCurrentUser());
         // }
-        const token = jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
-
-        if (token) {
-            dispatch(setJWT(token));
+        try {
+            const token = jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+            if (token) {
+                const { exp } = jwtDecode(token);
+                // check expire of jwt token
+                if (Date.now() < exp * 1000) {
+                    dispatch(setJWT(token));
+                } else {
+                    jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                }
+            }
+        } catch(e) {
+            console.error('loadCurrentUser is failed:', e.message);
         }
     };
 }

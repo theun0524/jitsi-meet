@@ -49,9 +49,7 @@ const config = {
     devServer: {
         https: true,
         inline: true,
-        watchContentBase: true,
-        disableHostCheck: true,
-        public: 'localhost',
+        host: '0.0.0.0',
         sockPath: '/sockjs-web',
         proxy: {
             '/': {
@@ -61,7 +59,7 @@ const config = {
                 headers: {
                     'Host': new URL(devServerProxyTarget).host
                 }
-            }
+            },
         }
     },
     devtool: 'source-map',
