@@ -19,6 +19,7 @@
 #import "FIRUtilities.h"
 #import "Types.h"
 #import "ViewController.h"
+#import "PassNiOAuthService.h"
 
 @import Crashlytics;
 @import Fabric;
@@ -26,6 +27,14 @@
 @import JitsiMeet;
 
 @implementation AppDelegate
+
+static NSString *const kRedirectURI = @"passni-sample-objc://oauth2redirect";
+static NSString *const kRpRedirectURI = @"passni-rpclient-objc://oauth2redirect";
+static NSString *const kURISchemeHost = @"oauth2redirect";
+static NSString *const kClientID = @"postech-vmeeting-app";
+static NSString *const kClientSecret = @"04DE137C0C5688E1C9E269E91C8E0C8B";
+static NSString *const kOAuthBaseUrl = @"https://devsso.postech.ac.kr/sso";
+static BOOL kIsRpClient = NO;
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -40,6 +49,9 @@
         builder.serverURL = [NSURL URLWithString:@"https://devmeet.postech.ac.kr"];
         builder.welcomePageEnabled = YES;
 
+    PassNiOAuthService *passniOAuth = [PassNiOAuthService sharedInstance]; [passniOAuth setConfiguration:kClientID
+    clientSecret:kClientSecret oAuthBaseUrl:kOAuthBaseUrl redirectURI:kRedirectURI
+    rpRedirectURI:kRpRedirectURI isRpClient:kIsRpClient];
         // Apple rejected our app because they claim requiring a
         // Dropbox account for recording is not acceptable.
 #if DEBUG
@@ -109,6 +121,11 @@
     if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
         return NO;
     }
+  
+    if ( [[url host] isEqualToString:kURISchemeHost] ) {
+        if ([[PassNiOAuthService sharedInstance] resumeRequestFlowWithURLScheme:url]) {
+          return YES; }
+    }
 
     NSURL *openUrl = url;
 
@@ -125,5 +142,18 @@
                                            openURL:openUrl
                                            options:options];
 }
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
+    NSURL *url = connectionOptions.URLContexts.allObjects.firstObject.URL;
+    if ( [[url host] isEqualToString:kURISchemeHost] ) {
+        [[PassNiOAuthService sharedInstance] resumeRequestFlowWithURLScheme:url];
+    }
+  }
+
+- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts API_AVAILABLE(ios(13.0)){
+    NSURL *url = URLContexts.allObjects.firstObject.URL;
+    if ( [[url host] isEqualToString:kURISchemeHost] ) {
+        [[PassNiOAuthService sharedInstance] resumeRequestFlowWithURLScheme:url]; }
+  }
 
 @end

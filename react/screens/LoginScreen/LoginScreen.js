@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Image,
@@ -33,8 +33,8 @@ const LoginScreen = () => {
   const navigate = (to) => {
     dispatch(setScreen(to));
   };
-  const PassNiSSO = NativeModules.PassNiSSO;
-  console.log(PassNiSSO);
+  // NativeModules.RNPassNiSSO.addEvent("a", "b");
+  console.log(NativeModules);
 
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
