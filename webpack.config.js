@@ -21,7 +21,8 @@ const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
-const env = dotenv.config().parsed;
+const env = Object.assign({}, dotenv.config().parsed, process.env);
+console.log(env);
 
 // reduce it to a nice object, the same as before
 const envKeys = Object.keys(env).reduce((prev, next) => {
@@ -48,6 +49,8 @@ const config = {
     devServer: {
         https: true,
         inline: true,
+        host: '0.0.0.0',
+        sockPath: '/sockjs-web',
         proxy: {
             '/': {
                 bypass: devServerProxyBypass,
@@ -56,7 +59,7 @@ const config = {
                 headers: {
                     'Host': new URL(devServerProxyTarget).host
                 }
-            }
+            },
         }
     },
     devtool: 'source-map',

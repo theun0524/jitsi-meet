@@ -32,9 +32,9 @@ import { setJWT } from '../../base/jwt';
  */
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
-const AUTH_PAGE_BASE = process.env.REACT_APP_AUTH_PAGE_BASE;
-const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
-const AUTH_JWT_TOKEN = process.env.REACT_APP_JWT_TOKEN;
+const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
+const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.

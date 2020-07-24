@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import LoginScreen from "../screens/LoginScreen/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen/RegisterScreen";
 import PasswordResetScreen from "../screens/PasswordResetScreen/PasswordResetScreen";
@@ -8,7 +8,7 @@ import { JWT_TOKEN } from "../config";
 import JwtDecode from "jwt-decode";
 import { setScreen } from "../redux/screen/screen";
 
-const GeneralNavigator = ({ appProps, Home }) => {
+const GeneralNavigator = ({ Home }) => {
   const dispatch = useDispatch();
   const currScreen = useSelector((store) => store.screen.currScreen);
   useEffect(() => {
