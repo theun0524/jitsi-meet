@@ -78,7 +78,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation files('libs/passni_sso_android_sdk_4.0.aar')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
 
     if (!rootProject.ext.libreBuild) {

@@ -80,8 +80,9 @@ dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
+    implementation files('libs/passni_sso_android_sdk_4.0.aar')
 
-    testImplementation 'junit:junit:4.12'
+  testImplementation 'junit:junit:4.12'
 }
 
 

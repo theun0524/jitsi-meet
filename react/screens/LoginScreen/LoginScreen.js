@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -33,8 +33,17 @@ const LoginScreen = () => {
   const navigate = (to) => {
     dispatch(setScreen(to));
   };
-  // NativeModules.RNPassNiSSO.addEvent("a", "b");
-  console.log(NativeModules);
+
+  const getSSOAuthenticated = () => {
+    NativeModules.SSOModule.getIsAuthenticated(
+      (res) => console.log("response", res),
+      (err) => console.log("error", err)
+    );
+  };
+
+  useEffect(() => {
+    getSSOAuthenticated();
+  });
 
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
