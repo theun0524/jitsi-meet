@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, Text } from 'react-native';
+import { SafeAreaView, ScrollView, Text, NativeModules, Platform } from 'react-native';
 
 import { Avatar } from '../../base/avatar';
 import { IconInfo, IconSettings, IconHelp } from '../../base/icons';
@@ -173,6 +173,9 @@ class WelcomePageSideBar extends Component<Props> {
 
     _onLogout() {
         const { dispatch } = this.props;
+        if (Platform.OS === 'android') {
+          NativeModules.SSOModule.logout();
+        }
         api.logout().then(async() => {
             await AsyncStorage.removeItem(JWT_TOKEN);
             dispatch(setScreen("Login"));

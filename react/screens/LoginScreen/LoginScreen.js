@@ -5,6 +5,8 @@ import {
   Text,
   KeyboardAvoidingView,
   NativeModules,
+  Platform,
+  Linking,
 } from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
@@ -34,17 +36,6 @@ const LoginScreen = () => {
     dispatch(setScreen(to));
   };
 
-  const getSSOAuthenticated = () => {
-    NativeModules.SSOModule.getIsAuthenticated(
-      (res) => console.log("response", res),
-      (err) => console.log("error", err)
-    );
-  };
-
-  useEffect(() => {
-    getSSOAuthenticated();
-  });
-
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -54,7 +45,23 @@ const LoginScreen = () => {
   const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
 
-  const onPressPostechLoginButton = () => {};
+  const onPressPostechLoginButton = () => {
+    if (Platform.OS === "android") {
+      NativeModules.SSOModule.login(
+        (res) => {
+          // 정보 저장
+          navigate("Home");
+        },
+        async (err) => {
+          if (err === "no_install_sso_app") {
+            // 앱 다운로드 링크로 연결
+          }
+          console.log("Error:", err);
+        }
+      );
+    }
+  };
+
   const onPressLoginSubmitButton = () => {
     setLoading(true);
     const form = { username, password, remember };

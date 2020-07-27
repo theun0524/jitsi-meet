@@ -1,6 +1,8 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
@@ -20,7 +22,7 @@ public class SSOModule extends ReactContextBaseJavaModule {
   private String SERVER_BASIC_URL = "https://devsso.postech.ac.kr/sso";
   private String CLIENT_ID = "postech-vmeeting-app";
   private String CLIENT_SECRET = "04DE137C0C5688E1C9E269E91C8E0C8B";
-  private boolean SSO_APP_LOGIN_FLAG = false;
+  private boolean SSO_APP_LOGIN_FLAG = true;
 
   SSOModule(ReactApplicationContext context) {
     super(context);
@@ -37,14 +39,34 @@ public class SSOModule extends ReactContextBaseJavaModule {
   public void getIsAuthenticated(Callback successCallback, Callback errorCallback) {
     try {
       String state = mLoginManager.getState(mContext);
-      successCallback.invoke(FieldDefine.STATE_LOGIN.equals(state));
+      if(FieldDefine.STATE_LOGIN.equals(state)) {
+        String userInfo = mLoginManager.requestUserInfo(mContext);
+        successCallback.invoke("success", userInfo);
+      } else if (FieldDefine.STATE_NO_INSTALL.equals(state)) {
+        successCallback.invoke("no_install", "");
+      }
     } catch (Exception e) {
-      errorCallback.invoke(e.getMessage());
+      String errorCode = mLoginManager.getErrorCode(mContext);
+      errorCallback.invoke(errorCode);
     }
   }
 
   @ReactMethod
-  public void login() {
+  public void login(final Callback successCallback, final Callback errorCallback) {
+    LoginHandler mLoginHandler = new LoginHandler() {
+      @Override
+      public void run(boolean success) {
+        if (success) {
+          String userInfo = mLoginManager.requestUserInfo(mContext);
+          successCallback.invoke("success", userInfo);
+        } else {
+          String errorCode = mLoginManager.getErrorCode(mContext);
+          errorCallback.invoke(errorCode);
+        }
+      }
+    };
+
+    mLoginManager.startLoginActivity(getCurrentActivity(), mLoginHandler);
   }
 
   @ReactMethod
