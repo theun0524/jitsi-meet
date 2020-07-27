@@ -13,7 +13,7 @@ import { getCurrentUser } from '../../../react/features/base/auth/functions';
 import LoginDialog from './LoginDialog';
 
 const logger = Logger.getLogger(__filename);
-const AUTH_PAGE_BASE = process.env.REACT_APP_AUTH_PAGE_BASE;
+const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 
 let externalAuthWindow;
 let authRequiredDialog;
