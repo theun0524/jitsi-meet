@@ -16,17 +16,15 @@ import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
-
 import { getStatusBarHeight } from "react-native-status-bar-height";
+import JwtDecode from "jwt-decode";
+import { setUserInfo } from "../../redux/user/user";
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
 
   const dispatch = useDispatch();
-  const navigate = (to) => {
-    dispatch(setScreen(to));
-  };
 
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
@@ -46,8 +44,12 @@ const LoginScreen = () => {
       .then(async (resp) => {
         const token = resp.data;
         await AsyncStorage.setItem(JWT_TOKEN, token);
+
+        const { context } = JwtDecode(token);
+        dispatch(setUserInfo(context.user));
+
         setLoading(false);
-        navigate("Home");
+        dispatch(setScreen("Home"));
       })
       .catch((err) => {
         const reason = err.response.headers["www-authenticate"];
@@ -149,7 +151,7 @@ const LoginScreen = () => {
           </View>
           <Text
             style={{ color: MAIN_BLUE }}
-            onPress={() => navigate("PasswordReset")}
+            onPress={() => dispatch(setScreen("PasswordReset"))}
           >
             {t("login.forgotPassword")}
           </Text>
@@ -167,7 +169,7 @@ const LoginScreen = () => {
             color: DARK_GRAY,
           }}
           onPress={() => {
-            navigate("Register");
+            dispatch(setScreen("Register"));
           }}
         >
           {t("login.registerRequired")}
