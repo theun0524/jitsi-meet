@@ -1,94 +1,84 @@
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  Text,
-  TextInput,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setScreen } from "../../redux/screen/screen";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { LIGHT_GRAY, DARK_GRAY } from "../../consts/colors";
 import BackButton from "../../features/base/react/components/native/BackButton";
+import AccountSettingForm from "../../components/AccountSettingForm/AccountSettingForm";
+import api from "../../api";
+import * as validators from "../../utils/validator";
+import AsyncStorage from "@react-native-community/async-storage";
+import { JWT_TOKEN } from "../../config";
+import JwtDecode from "jwt-decode";
+import { setUserInfo } from "../../redux/user/user";
 
 const iosStatusBarHeight = getStatusBarHeight();
-
-const AccountSettingForm = ({
-  label,
-  editable,
-  value,
-  description,
-  saving,
-}) => {
-  return (
-    <View>
-      <Text
-        style={{
-          fontSize: 18,
-          paddingTop: 15,
-          paddingBottom: 8,
-          fontWeight: "300",
-        }}
-      >
-        {label}
-      </Text>
-      {editable === false ? (
-        <Text style={{ fontSize: 22, color: DARK_GRAY }}>{value}</Text>
-      ) : (
-        <TextInput
-          editable={editable}
-          value={value}
-          style={{
-            borderColor: LIGHT_GRAY,
-            borderWidth: 1,
-            height: 32,
-            paddingHorizontal: 10,
-          }}
-        ></TextInput>
-      )}
-      {saving ? (
-        <View
-          style={{
-            paddingTop: 8,
-            paddingBottom: 20,
-            fontSize: 14,
-            flexDirection: "row",
-          }}
-        >
-          <ActivityIndicator />
-          <Text style={{ marginLeft: 4, color: DARK_GRAY }}>Saving...</Text>
-        </View>
-      ) : (
-        <Text
-          style={{
-            color: DARK_GRAY,
-            paddingTop: 8,
-            paddingBottom: 15,
-            fontSize: 14,
-          }}
-        >
-          {description}
-        </Text>
-      )}
-    </View>
-  );
-};
-
-const Line = () => {
-  return (
-    <View
-      style={{ width: "100%", height: 1, backgroundColor: LIGHT_GRAY }}
-    ></View>
-  );
-};
 
 const AccountSettingScreen = () => {
   const dispatch = useDispatch();
   const userInfo = useSelector((store) => store.user.userInfo);
-  console.log(userInfo);
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [emailStatus, setEmailStatus] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
+  const [fullNameStatus, setFullNameStatus] = useState("");
+
+  const onBlurFullName = ({ nativeEvent: { text } }) => {
+    setFullNameError(undefined);
+    if (text !== userInfo.fullname) {
+      if (!text || text.length < 2) {
+        setFullNameError("name_too_short");
+      } else {
+        setFullNameStatus("saving");
+        const form = { ...userInfo, fullname: text };
+        api.updateAccount(form).then(async (resp) => {
+          const { error } = resp.data;
+          if (error) {
+            setFullNameError("문제가 발생했습니다");
+            // 이 부분 에러에 따라서 에러 메세지 구문 나누기
+          } else {
+            const token = resp.data;
+            await AsyncStorage.setItem(JWT_TOKEN, token);
+            const { context } = JwtDecode(token);
+
+            dispatch(setUserInfo(context.user));
+            setFullNameError("");
+            setFullNameStatus("saved");
+            setTimeout(() => setFullNameStatus(""), 6000);
+          }
+        });
+      }
+    }
+  };
+
+  const onBlurEmail = ({ nativeEvent: { text } }) => {
+    setEmailError(undefined);
+    if (text !== userInfo.email) {
+      if (!text || validators.email(text)) {
+        setEmailError("invalid_params");
+      } else {
+        setEmailStatus("saving");
+        const form = { ...userInfo, email: text };
+        api.updateAccount(form).then(async (resp) => {
+          const { error } = resp.data;
+          if (error) {
+            setEmailError("문제가 발생했습니다");
+            // 이 부분 에러에 따라서 에러 메세지 구문 나누기
+          } else {
+            const token = resp.data;
+            await AsyncStorage.setItem(JWT_TOKEN, token);
+            const { context } = JwtDecode(token);
+
+            dispatch(setUserInfo(context.user));
+            setEmailError("");
+            setEmailStatus("saved");
+            setTimeout(() => setEmailStatus(""), 6000);
+          }
+        });
+      }
+    }
+  };
 
   const onResetPassword = () => {
     setLoading(true);
@@ -106,19 +96,7 @@ const AccountSettingScreen = () => {
 
   return (
     <>
-      <View
-        style={{
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: "#4C9AFF",
-          color: "white",
-          height: iosStatusBarHeight + 55,
-          width: "100%",
-          paddingHorizontal: 10,
-          paddingTop: iosStatusBarHeight,
-        }}
-      >
+      <View style={{ ...styles.header }}>
         <BackButton
           style={{ color: "white" }}
           onPress={() => {
@@ -136,11 +114,15 @@ const AccountSettingScreen = () => {
           description={"The name that identifies you on this site."}
         />
         <AccountSettingForm
+          onBlur={onBlurFullName}
+          status={fullNameStatus}
           label={"Full Name"}
           value={userInfo.fullname}
-          description={"The full name that is used for ID verificatoin."}
+          description={"The full name that is used for ID verification."}
         />
         <AccountSettingForm
+          onBlur={onBlurEmail}
+          status={emailStatus}
           label={"E-mail"}
           value={userInfo.email}
           description={"You receive messages from this site at this address."}
@@ -168,15 +150,19 @@ const AccountSettingScreen = () => {
               justifyContent: "center",
             }}
           >
-            <Text
-              style={{
-                color: DARK_GRAY,
-                fontWeight: "300",
-                fontSize: 16,
-              }}
-            >
-              Password Reset
-            </Text>
+            {loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text
+                style={{
+                  color: DARK_GRAY,
+                  fontWeight: "300",
+                  fontSize: 16,
+                }}
+              >
+                Password Reset
+              </Text>
+            )}
           </TouchableOpacity>
           <Text
             style={{
@@ -200,6 +186,17 @@ const styles = {
     backgroundColor: "#ffffff",
     paddingTop: 10,
     paddingHorizontal: 24,
+  },
+  header: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4C9AFF",
+    color: "white",
+    height: iosStatusBarHeight + 55,
+    width: "100%",
+    paddingHorizontal: 10,
+    paddingTop: iosStatusBarHeight,
   },
 };
 
