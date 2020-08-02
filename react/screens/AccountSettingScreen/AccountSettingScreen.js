@@ -12,11 +12,13 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { JWT_TOKEN } from "../../config";
 import JwtDecode from "jwt-decode";
 import { setUserInfo } from "../../redux/user/user";
+import { useTranslation } from "react-i18next";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const AccountSettingScreen = () => {
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
   const userInfo = useSelector((store) => store.user.userInfo);
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
@@ -28,15 +30,18 @@ const AccountSettingScreen = () => {
     setFullNameError(undefined);
     if (text !== userInfo.name) {
       if (!text || text.length < 2) {
-        setFullNameError("name_too_short");
+        setFullNameError(t("error.fullnameTooShort"));
       } else {
         setFullNameStatus("saving");
         const form = { name: text };
         api.updateAccount(form).then(async (resp) => {
           const { error } = resp.data;
           if (error) {
-            setFullNameError("문제가 발생했습니다");
-            // 이 부분 에러에 따라서 에러 메세지 구문 나누기
+            setFullNameError(
+              error.name === "name_too_short"
+                ? t("error.fullnameTooShort")
+                : t("error.invalidValue")
+            );
           } else {
             const token = resp.data;
             await AsyncStorage.setItem(JWT_TOKEN, token);
@@ -62,8 +67,11 @@ const AccountSettingScreen = () => {
         api.updateAccount(form).then(async (resp) => {
           const { error } = resp.data;
           if (error) {
-            setEmailError("문제가 발생했습니다");
-            // 이 부분 에러에 따라서 에러 메세지 구문 나누기
+            setEmailError(
+              error.email === "email_in_use"
+                ? t("error.emailInUse")
+                : t("error.invalidValue")
+            );
           } else {
             const token = resp.data;
             await AsyncStorage.setItem(JWT_TOKEN, token);
@@ -102,31 +110,33 @@ const AccountSettingScreen = () => {
             dispatch(setScreen("Home"));
           }}
         />
-        <Text style={{ color: "white", fontSize: 18 }}>Account Settings</Text>
+        <Text style={{ color: "white", fontSize: 18 }}>
+          {t("account.title")}
+        </Text>
         <View style={{ height: 32, width: 32, marginLeft: 12 }} />
       </View>
       <View style={{ ...styles.container }}>
         <AccountSettingForm
           editable={false}
-          label={"Username"}
+          label={t("register.username")}
           value={userInfo.username}
-          description={"The name that identifies you on this site."}
+          description={t("info.username")}
         />
         <AccountSettingForm
           onBlur={onBlurFullName}
           status={fullNameStatus}
-          label={"Full Name"}
+          label={t("register.fullName")}
           defaultValue={userInfo.name}
           error={fullNameError}
-          description={"The full name that is used for ID verification."}
+          description={t("info.fullName")}
         />
         <AccountSettingForm
           onBlur={onBlurEmail}
           status={emailStatus}
-          label={"E-mail"}
+          label={t("register.email")}
           defaultValue={userInfo.email}
           error={emailError}
-          description={"You receive messages from this site at this address."}
+          description={t("info.email")}
         />
         <View>
           <Text
@@ -137,7 +147,7 @@ const AccountSettingScreen = () => {
               fontWeight: "300",
             }}
           >
-            Password
+            {t("register.password")}
           </Text>
           <TouchableOpacity
             onPress={onResetPassword}
@@ -161,7 +171,7 @@ const AccountSettingScreen = () => {
                   fontSize: 16,
                 }}
               >
-                Password Reset
+                {t("login.passwordReset")}
               </Text>
             )}
           </TouchableOpacity>
@@ -173,7 +183,7 @@ const AccountSettingScreen = () => {
               fontSize: 14,
             }}
           >
-            Check your email account for instructions to reset your password.
+            {t("info.passwordReset")}{" "}
           </Text>
         </View>
       </View>

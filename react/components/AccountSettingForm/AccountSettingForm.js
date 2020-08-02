@@ -40,14 +40,18 @@ const AccountSettingForm = ({
               style={{ ...styles.savingText, paddingTop: 8, paddingBottom: 20 }}
             >
               <ActivityIndicator />
-              <Text style={{ marginLeft: 4, color: DARK_GRAY }}>Saving...</Text>
+              <Text style={{ marginLeft: 4, color: DARK_GRAY }}>
+                {t("info.saving")}
+              </Text>
             </View>
           )}
           {status === "saved" && (
             <View
               style={{ ...styles.savingText, paddingTop: 8, paddingBottom: 20 }}
             >
-              <Text style={{ marginLeft: 4, color: DARK_GRAY }}>✓ Saved</Text>
+              <Text style={{ marginLeft: 4, color: DARK_GRAY }}>
+                ✓ {t("info.changeSaved")}
+              </Text>
             </View>
           )}
           {!status && (
