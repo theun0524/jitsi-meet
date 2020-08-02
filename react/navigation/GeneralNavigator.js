@@ -7,6 +7,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { JWT_TOKEN } from "../config";
 import JwtDecode from "jwt-decode";
 import { setScreen } from "../redux/screen/screen";
+import { setUserInfo } from "../redux/user/user";
+import AccountSettingScreen from "../screens/AccountSettingScreen/AccountSettingScreen";
 
 const GeneralNavigator = ({ Home }) => {
   const dispatch = useDispatch();
@@ -20,6 +22,7 @@ const GeneralNavigator = ({ Home }) => {
     if (token) {
       const { context } = JwtDecode(token);
       if (context.user) {
+        dispatch(setUserInfo(context.user));
         dispatch(setScreen("Home"));
       } else {
         dispatch(setScreen("Login"));
@@ -40,6 +43,8 @@ const GeneralNavigator = ({ Home }) => {
     <LoginScreen />
   ) : currScreen === "PasswordReset" ? (
     <PasswordResetScreen />
+  ) : currScreen === "AccountSetting" ? (
+    <AccountSettingScreen />
   ) : (
     <LoginScreen />
   );
