@@ -1,14 +1,16 @@
 import React from "react";
 import { ActivityIndicator, View, Text, TextInput } from "react-native";
-import { DARK_GRAY, LIGHT_GRAY } from "../../consts/colors";
+import { DARK_GRAY, LIGHT_GRAY, INVALID_RED } from "../../consts/colors";
 
 const AccountSettingForm = ({
   label,
   editable,
   value,
+  defaultValue,
   description,
   status,
   onBlur,
+  error,
 }) => {
   return (
     <View>
@@ -22,33 +24,44 @@ const AccountSettingForm = ({
           autoCorrect={false}
           autoCapitalize={false}
           editable={editable}
-          value={value}
+          defaultValue={defaultValue}
           style={{ ...styles.textInput }}
           onBlur={onBlur}
         ></TextInput>
       )}
-      {status === "saving" && (
-        <View
-          style={{ ...styles.savingText, paddingTop: 8, paddingBottom: 20 }}
-        >
-          <ActivityIndicator />
-          <Text style={{ marginLeft: 4, color: DARK_GRAY }}>Saving...</Text>
-        </View>
-      )}
-      {status === "saved" && (
-        <View
-          style={{ ...styles.savingText, paddingTop: 8, paddingBottom: 20 }}
-        >
-          <ActivityIndicator />
-          <Text style={{ marginLeft: 4, color: DARK_GRAY }}>Saved</Text>
-        </View>
-      )}
-      {!status && (
-        <Text
-          style={{ ...styles.description, paddingTop: 8, paddingBottom: 15 }}
-        >
-          {description}
+      {error ? (
+        <Text style={{ ...styles.error, paddingTop: 8, paddingBottom: 15 }}>
+          {error}
         </Text>
+      ) : (
+        <>
+          {status === "saving" && (
+            <View
+              style={{ ...styles.savingText, paddingTop: 8, paddingBottom: 20 }}
+            >
+              <ActivityIndicator />
+              <Text style={{ marginLeft: 4, color: DARK_GRAY }}>Saving...</Text>
+            </View>
+          )}
+          {status === "saved" && (
+            <View
+              style={{ ...styles.savingText, paddingTop: 8, paddingBottom: 20 }}
+            >
+              <Text style={{ marginLeft: 4, color: DARK_GRAY }}>✓ Saved</Text>
+            </View>
+          )}
+          {!status && (
+            <Text
+              style={{
+                ...styles.description,
+                paddingTop: 8,
+                paddingBottom: 15,
+              }}
+            >
+              {description}
+            </Text>
+          )}
+        </>
       )}
     </View>
   );
@@ -71,6 +84,10 @@ const styles = {
   },
   description: {
     color: DARK_GRAY,
+    fontSize: 14,
+  },
+  error: {
+    color: INVALID_RED,
     fontSize: 14,
   },
 };

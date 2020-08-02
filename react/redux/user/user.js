@@ -4,13 +4,13 @@ const STORE_NAME = "user";
 const SET_USER = "set_user";
 
 // action
-export const setUserInfo = ({ email, username, fullname }) => {
+export const setUserInfo = ({ email, username, name }) => {
   return {
     type: SET_USER,
     userInfo: {
       email,
       username,
-      fullname,
+      name,
     },
   };
 };

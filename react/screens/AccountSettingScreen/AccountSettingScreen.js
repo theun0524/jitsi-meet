@@ -26,12 +26,12 @@ const AccountSettingScreen = () => {
 
   const onBlurFullName = ({ nativeEvent: { text } }) => {
     setFullNameError(undefined);
-    if (text !== userInfo.fullname) {
+    if (text !== userInfo.name) {
       if (!text || text.length < 2) {
         setFullNameError("name_too_short");
       } else {
         setFullNameStatus("saving");
-        const form = { ...userInfo, fullname: text };
+        const form = { name: text };
         api.updateAccount(form).then(async (resp) => {
           const { error } = resp.data;
           if (error) {
@@ -41,7 +41,6 @@ const AccountSettingScreen = () => {
             const token = resp.data;
             await AsyncStorage.setItem(JWT_TOKEN, token);
             const { context } = JwtDecode(token);
-
             dispatch(setUserInfo(context.user));
             setFullNameError("");
             setFullNameStatus("saved");
@@ -59,7 +58,7 @@ const AccountSettingScreen = () => {
         setEmailError("invalid_params");
       } else {
         setEmailStatus("saving");
-        const form = { ...userInfo, email: text };
+        const form = { email: text };
         api.updateAccount(form).then(async (resp) => {
           const { error } = resp.data;
           if (error) {
@@ -117,14 +116,16 @@ const AccountSettingScreen = () => {
           onBlur={onBlurFullName}
           status={fullNameStatus}
           label={"Full Name"}
-          value={userInfo.fullname}
+          defaultValue={userInfo.name}
+          error={fullNameError}
           description={"The full name that is used for ID verification."}
         />
         <AccountSettingForm
           onBlur={onBlurEmail}
           status={emailStatus}
           label={"E-mail"}
-          value={userInfo.email}
+          defaultValue={userInfo.email}
+          error={emailError}
           description={"You receive messages from this site at this address."}
         />
         <View>
@@ -191,7 +192,7 @@ const styles = {
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#4C9AFF",
+    backgroundColor: "#44A5FF",
     color: "white",
     height: iosStatusBarHeight + 55,
     width: "100%",
