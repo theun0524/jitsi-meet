@@ -75,6 +75,7 @@ class WelcomePageSideBar extends Component<Props> {
         this._onHideSideBar = this._onHideSideBar.bind(this);
         this._onOpenHelpPage = this._onOpenHelpPage.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
+        this._onOpenAccountSettings = this._onOpenAccountSettings.bind(this);
         this._onLogout = this._onLogout.bind(this);
     }
 
@@ -107,10 +108,11 @@ class WelcomePageSideBar extends Component<Props> {
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
                         <SideBarItem
-                            icon = { IconSettings }
-                            label = 'Log Out'
-                            onPress = { this._onLogout } />
-                        {/* <SideBarItem
+                            icon = {IconSettings}
+                            label = 'Account'
+                            onPress = {this._onOpenAccountSettings}
+                        />
+                       {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } /> */}
@@ -122,7 +124,11 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconHelp }
                             label = 'welcomepage.getHelp'
                             onPress = { this._onOpenHelpPage } />
-                    </ScrollView>
+                        <SideBarItem
+                            icon = { IconSettings }
+                            label = 'Log Out'
+                            onPress = { this._onLogout } />
+                     </ScrollView>
                 </SafeAreaView>
             </SlidingView>
         );
@@ -167,6 +173,13 @@ class WelcomePageSideBar extends Component<Props> {
 
         dispatch(setSideBarVisible(false));
         dispatch(setActiveModalId(SETTINGS_VIEW_ID));
+    }
+
+    _onOpenAccountSettings: () => void;
+
+    _onOpenAccountSettings() {
+        const {dispatch} = this.props;
+        dispatch(setScreen("AccountSetting"));
     }
 
     _onLogout: () => void;
