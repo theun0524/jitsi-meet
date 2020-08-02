@@ -1,21 +1,18 @@
 import React, { useEffect } from "react";
-import LoginScreen from "../screens/LoginScreen/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen/RegisterScreen";
-import PasswordResetScreen from "../screens/PasswordResetScreen/PasswordResetScreen";
+import { NativeModules, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-community/async-storage";
 import { JWT_TOKEN } from "../config";
 import JwtDecode from "jwt-decode";
 import { setScreen } from "../redux/screen/screen";
-<<<<<<< HEAD
-import { NativeModules, Platform } from "react-native";
+import { setUserInfo } from "../redux/user/user";
+import AccountSettingScreen from "../screens/AccountSettingScreen/AccountSettingScreen";
+import LoginScreen from "../screens/LoginScreen/LoginScreen";
+import PasswordResetScreen from "../screens/PasswordResetScreen/PasswordResetScreen";
+import RegisterScreen from "../screens/RegisterScreen/RegisterScreen";
 
 const SUCCESS_CODE = "success";
 const NO_INSTALL_CODE = "no_install";
-=======
-import { setUserInfo } from "../redux/user/user";
-import AccountSettingScreen from "../screens/AccountSettingScreen/AccountSettingScreen";
->>>>>>> master
 
 const GeneralNavigator = ({ Home }) => {
   const dispatch = useDispatch();
