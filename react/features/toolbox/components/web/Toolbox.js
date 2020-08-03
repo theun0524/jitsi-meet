@@ -58,6 +58,7 @@ import { SpeakerStats } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import { PollButton } from '../../../polls';
 import {
     TileViewButton,
     toggleTileView
@@ -994,6 +995,10 @@ class Toolbox extends Component<Props, State> {
                 key = 'record'
                 showLabel = { true }
                 visible = { !_isLiveStreaming } />,
+            this._shouldShowButton('polls')
+                && <PollButton
+                    key = 'poll'
+                    showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }

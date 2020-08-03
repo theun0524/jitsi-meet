@@ -1,0 +1,48 @@
+.pollChoiceContainer {
+    align-items: center;
+    display: flex;
+    margin: 10px;
+}
+.pollChoicesList {
+    list-style-type: none;
+}
+.pollChoiceDisabledText {
+    font-size: 14px;
+}
+.pollChoiceEnabledText {
+    font-size: 14px;
+    cursor: pointer;
+}
+.pollChoiceRemoveButton {
+    background-color: #FF6347;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    line-height: 10px;
+    padding: 3px;
+}
+.pollChoiceTextContainer {
+    width: 200px;
+    position: relative;
+}
+.pollChoiceVotesContainer {
+    margin-left: 5px;
+    font-size: 16px;
+}
+.pollCreateFormContainer, .voteFormContainer, .pollResultsFormContainer {
+    text-align: center;
+    margin: 10px auto;
+}
+.pollVoteButton {
+    cursor: pointer;
+    height: 20px;
+    margin-right: 5px;
+}
+#pollQuestion {
+    min-width: 100px;
+    width: 300px;
+    font-size: 16px;
+}

@@ -245,6 +245,7 @@
         "passwordNotSupportedTitle": "",
         "passwordRequired": "$t(lockRoomPasswordUppercase)가 필요합니다",
         "passwordValid": "올바른 비밀번호!",
+        "polls": "투표",
         "popupError": "브라우저가이 사이트의 팝업 창을 차단하고 있습니다. 브라우저의 보안 설정에서 팝업을 활성화하고 다시 시도하십시오.",
         "popupErrorTitle": "팝업 차단됨",
         "recording": "레코딩",
@@ -833,6 +834,24 @@
     },
     "helpView": {
         "header": "도움말 센터"
+    },
+    "polls":{
+        "polls": "투표",
+        "startPoll": "시작",
+        "endPoll": "종료",
+        "choicesPlaceholder": "선택하세요",
+        "create": "투표 만들기", 
+        "endNotificationBody": "현재 투표는 종료되었습니다",
+        "endNotificationTitle": "투표 종료!",
+        "errorEmptyQuestion": "질문 없이 투표를 생성할 수 없습니다",
+        "errorEmptyQuestionTitle": "투표를 생성할 수 없습니다",
+        "errorNotEnoughChoices": "투표를 생성하기 위해 최소 2개의 선택지가 필요합니다",
+        "errorNotEnoughChoicesTitle": "투표를 생성할 수 없습니다",
+        "results": "투표 결과",
+        "startNotificationBody": "투표가 생성되었습니다",
+        "startNotificationTitle": "투표 시작!",
+        "vote": "투표",
+        "questionPlaceholder": "질문을 입력하세요!"
     },
     "lobby": {
         "knockingParticipantList" : "참가자 목록 요청",
