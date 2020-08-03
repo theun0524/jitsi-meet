@@ -84,7 +84,6 @@ class PollChoice extends Component<Props, *> {
                             { text }
                         </span>
                     </div>
-
                     <div
                         className = 'pollChoiceVotesContainer' >
                         { votes }

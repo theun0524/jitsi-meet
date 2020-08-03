@@ -80,9 +80,9 @@ class VoteForm extends Component<Props, *> {
                 </text>
 
                 <div
-                    className = 'pollChoicesListContainer' >
+                    className = 'voteFormContainer' >
                     <ul
-                        className = 'pollChoicesList' >
+                        className = 'pollChoicesListInline' >
                         { renderedChoices }
                     </ul>
                 </div>

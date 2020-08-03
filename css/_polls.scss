@@ -6,6 +6,10 @@
 .pollChoicesList {
     list-style-type: none;
 }
+.pollChoicesListInline {
+    list-style-type: none;
+    padding-inline-start: 0px;
+}
 .pollChoiceDisabledText {
     font-size: 14px;
 }
@@ -36,9 +40,8 @@
     text-align: center;
     margin: 10px auto;
 }
-.pollVoteButton {
+.pollVoteButtonContainer {
     cursor: pointer;
-    height: 20px;
     margin-right: 5px;
 }
 #pollQuestion {

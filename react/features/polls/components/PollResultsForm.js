@@ -87,11 +87,10 @@ class PollResultsForm extends Component<Props, *> {
                     id = 'pollQuestion'>
                     { question.text }
                 </text>
-
                 <div
-                    className = 'pollChoicesListContainer' >
+                    className = 'pollResultsFormContainer' >
                     <ul
-                        className = 'pollChoicesList' >
+                        className = 'pollChoicesListInline' >
                         { renderedChoices }
                     </ul>
                 </div>

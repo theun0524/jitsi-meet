@@ -82,6 +82,7 @@ class PollDialog extends Component<Props, State> {
         this._endPoll = this._endPoll.bind(this);
         this._getUniquePollChoices = this._getUniquePollChoices.bind(this);
         this._onChoiceTextSubmit = this._onChoiceTextSubmit.bind(this);
+        this._onChoiceTextButton = this._onChoiceTextButton.bind(this);
         this._onQuestionTextChange = this._onQuestionTextChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._removeChoice = this._removeChoice.bind(this);
@@ -313,6 +314,19 @@ class PollDialog extends Component<Props, State> {
         }
     }
 
+    _onChoiceTextButton: (Object) => void;
+
+    /**
+     * Function to handle when add button
+     * to add a new choice to the list.
+     *
+     * @returns {void}
+     */
+    _onChoiceTextButton() {
+        this._addChoice();
+    }
+
+
     _onQuestionTextChange: (Object) => void;
 
     /**
@@ -395,9 +409,10 @@ class PollDialog extends Component<Props, State> {
             submit: null
         } ] : [ {
             component: PollCreateForm,
-            label: 'polls.create',
+            label: 'polls.results',
             props: {
                 choices: this.state.choices,
+                onAddButton: this._onChoiceTextButton,
                 onKeyDown: this._onChoiceTextSubmit,
                 onChoiceTextChange: this._choiceTextChange,
                 onRemoveChoice: this._removeChoice,
@@ -408,7 +423,7 @@ class PollDialog extends Component<Props, State> {
             },
             styles: 'pollCreateFormContainer',
             submit: null
-        } ];
+        }];
 
         tabs.push({
             component: PollResultsForm,

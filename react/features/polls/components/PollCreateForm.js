@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { FieldTextStateless } from '@atlaskit/field-text';
+import Button from '@atlaskit/button';
 
 import { translate } from '../../base/i18n';
 import { Container } from '../../base/react';
@@ -34,6 +35,11 @@ type Props = {
      * Function handler to remove poll choice.
      */
     onRemoveChoice: Function,
+
+    /**
+     * Function handler when add button is clicked.
+     */
+    onAddButton: Function,
 
     /**
      * Function handler when question text change.
@@ -73,7 +79,7 @@ class PollCreateForm extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const { onQuestionTextChange, t } = this.props;
+        const { onAddButton, onQuestionTextChange, t } = this.props;
         const choices = Object.keys(this.props.choices)
             .map(this._renderPollChoice);
 
@@ -88,11 +94,18 @@ class PollCreateForm extends Component<Props, *> {
                     type = 'text' />
 
                 <div
-                    className = 'pollChoicesListContainer' >
+                    className = 'pollCreateFormContainer' >
                     <ul
                         className = 'pollChoicesList' >
                         { choices }
                     </ul>
+                </div>
+                <div
+                    className = 'pollChoiceAddButton'>
+                    <Button
+                        appearance = 'subtle'
+                        id = 'poll-add-button'
+                        onClick = { onAddButton }> + </Button>
                 </div>
             </Container>
         );
