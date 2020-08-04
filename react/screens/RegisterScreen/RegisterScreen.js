@@ -166,9 +166,9 @@ const RegisterScreen = () => {
       >
         Vmeeting Register
       </Text>
-      <TextDivider text={"Create an account using"} />
-      <PostechLoginButton />
-      <TextDivider text={"or create new account"} style={{ paddingTop: 20 }} />
+      {/* <TextDivider text={"Create an account using"} /> */}
+      {/* <PostechLoginButton /> */}
+      {/* <TextDivider text={"or create new account"} style={{ paddingTop: 20 }} /> */}
       <InputLabel name={t("register.email")} necessary={true} />
       <Form
         placeholder={t("register.emailExample")}
