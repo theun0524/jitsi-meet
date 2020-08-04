@@ -174,8 +174,8 @@ const LoginScreen = () => {
         >
           {t("login.registerRequired")}
         </Text>
-        <TextDivider text="or login with" />
-        <PostechLoginButton onPress={onPressPostechLoginButton} />
+        {/* <TextDivider text="or login with" /> */}
+        {/* <PostechLoginButton onPress={onPressPostechLoginButton} /> */}
       </View>
     </KeyboardAvoidingView>
   );
