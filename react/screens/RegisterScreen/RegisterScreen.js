@@ -65,7 +65,7 @@ const RegisterScreen = () => {
           setUsernameVaild(false);
           setUsernameErrorMsg(t("error.usernameInUse"));
         } else if (errCode === "email_in_use") {
-          setEmailVaild(false);
+          setEmailValid(false);
           setEmailErrorMsg(t("error.emailInUse"));
         } else {
           setEmailValid(false);
