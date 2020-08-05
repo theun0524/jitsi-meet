@@ -113,11 +113,20 @@ form {
 }
 
 .leftwatermark {
-    left: 32px;
-    top: 32px;
+    left: 10px;
+    top: 4px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;
+    max-width: 80px;
+    max-height: 40px;
+
+    @include media-breakpoint-up(md) {
+      left: 32px;
+      top: 32px;
+      max-width: 140px;
+      max-height: 70px;
+    }
 }
 
 .rightwatermark {
