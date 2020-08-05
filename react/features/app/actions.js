@@ -32,6 +32,11 @@ import {
     getName
 } from './functions';
 import logger from './logger';
+import AsyncStorage from '@react-native-community/async-storage';
+import { setScreen } from '../../redux/screen/screen';
+import { setUserInfo } from '../../redux/user/user';
+import JwtDecode from 'jwt-decode';
+import { JWT_TOKEN } from '../../config';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -136,7 +141,21 @@ export function appNavigate(uri: ?string) {
         dispatch(setConfig(config));
 
         // Load current logged in user
-        dispatch(loadCurrentUser());
+        // dispatch(loadCurrentUser());
+        if(!getState()['user'].userInfo) {
+          const token = await AsyncStorage.getItem(JWT_TOKEN);
+          if (token) {
+            const { context } = JwtDecode(token);
+            if (context.user) {
+              dispatch(setUserInfo(context.user));
+              dispatch(setScreen("Home"));
+            } else {
+              dispatch(setScreen("Login"));
+            }
+          } else {
+            dispatch(setScreen("Login"));
+          }          
+        }
         dispatch(setRoom(room));
 
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.

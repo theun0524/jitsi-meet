@@ -297,6 +297,20 @@ class LoginDialog extends Component<Props, State> {
 
     _onLogin: () => void;
 
+    checkAuthorizedUser = async () => {
+      const token = await AsyncStorage.getItem(JWT_TOKEN);
+      if (token) {
+        const { context } = JwtDecode(token);
+        if (context.user) {
+          dispatch(setUserInfo(context.user));
+          dispatch(setScreen("Home"));
+        } else {
+          dispatch(setScreen("Login"));
+        }
+      } else {
+        dispatch(setScreen("Login"));
+      }
+    };
     /**
      * Notifies this LoginDialog that the login button (OK) has been pressed by
      * the user.
@@ -313,7 +327,10 @@ class LoginDialog extends Component<Props, State> {
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
         if (conference) {
-            r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
+            // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
+            if(!getState()['user'].userInfo) {
+              this.checkAuthorizedUser();      
+            }
         } else {
             r = dispatch(connect(jid, password));
         }
