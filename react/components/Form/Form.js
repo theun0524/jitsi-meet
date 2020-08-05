@@ -107,6 +107,7 @@ const Form = ({
           value={value}
           onChange={onChange}
           style={{
+            color: DARK_GRAY,
             lineHeight: 20,
             flex: 1,
             fontSize: 16,

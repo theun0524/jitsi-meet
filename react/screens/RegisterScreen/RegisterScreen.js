@@ -65,7 +65,7 @@ const RegisterScreen = () => {
           setUsernameVaild(false);
           setUsernameErrorMsg(t("error.usernameInUse"));
         } else if (errCode === "email_in_use") {
-          setEmailVaild(false);
+          setEmailValid(false);
           setEmailErrorMsg(t("error.emailInUse"));
         } else {
           setEmailValid(false);
@@ -78,7 +78,7 @@ const RegisterScreen = () => {
   const checkVaildEmail = (value) => {
     const error = validators.email(value);
     if (error) {
-      setEmailErrorMsg(error);
+      setEmailErrorMsg(t(error));
       return false;
     } else if (value === "") {
       setEmailErrorMsg(t("error.emailRequired"));
@@ -164,7 +164,7 @@ const RegisterScreen = () => {
           paddingTop: iosStatusBarHeight + 40,
         }}
       >
-        Vmeeting Register
+        {`Vmeeting ${t("header.register")}`}
       </Text>
       {/* <TextDivider text={"Create an account using"} /> */}
       {/* <PostechLoginButton /> */}
@@ -177,7 +177,7 @@ const RegisterScreen = () => {
         valid={emailValid}
         errorMessage={emailErrorMsg}
       />
-      <InputLabel name="Full Name" necessary={true} />
+      <InputLabel name={t("register.fullName")} necessary={true} />
       <Form
         placeholder={t("register.fullNameExample")}
         value={fullname}
@@ -185,7 +185,7 @@ const RegisterScreen = () => {
         valid={fullnameValid}
         errorMessage={fullnameErrorMsg}
       />
-      <InputLabel name="Username" necessary={true} />
+      <InputLabel name={t("register.username")} necessary={true} />
       <Form
         placeholder={t("register.usernameExample")}
         value={username}
