@@ -409,7 +409,7 @@ class PollDialog extends Component<Props, State> {
             submit: null
         } ] : [ {
             component: PollCreateForm,
-            label: 'polls.results',
+            label: 'polls.create',
             props: {
                 choices: this.state.choices,
                 onAddButton: this._onChoiceTextButton,

@@ -57,7 +57,7 @@ function on_occupant_joined(event)
         log("info", "Informed occupant %s about poll %s", tostring(occupant.jid), room.poll);
 
         local body_json = {};
-        body_json.type = "polls";
+        body_json.type = 'polls';
         body_json.poll = room.poll;
 
         local stanza = st.message({

@@ -1,6 +1,6 @@
 // @flow
 
-import { connect } from '../../base/redux';
+import { connect } from 'react-redux';
 
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
