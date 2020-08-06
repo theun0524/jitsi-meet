@@ -169,7 +169,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto://vmeeting-info@postech.ac.kr',
+    SUPPORT_URL: 'mailto:vmeeting-info@postech.ac.kr',
 
     THIRD_PARTY_AUTH_ENABLED: false,
 
