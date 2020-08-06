@@ -23,6 +23,10 @@ $flagsImagePath: "../images/";
 @import "../node_modules/bc-css-flags/dist/css/bc-css-flags.scss";
 /* Flags END */
 
+@import '../node_modules/bootstrap/scss/mixins';
+@import '../node_modules/bootstrap/scss/functions';
+@import '../node_modules/bootstrap/scss/variables';
+
 /* Modules BEGIN */
 
 @import 'aui_reset';

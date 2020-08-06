@@ -215,9 +215,14 @@ body.welcome-page {
 
     .header-toolbars {
         position: absolute;
-        top: 32px;
-        right: 32px;
+        top: 10px;
+        right: 10px;
         z-index: $zindex2;
+
+        @include media-breakpoint-up(md) {
+          top: 32px;
+          right: 32px;
+        }
 
         .welcome-page-settings {
             color: $welcomePageDescriptionColor;

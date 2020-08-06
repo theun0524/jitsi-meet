@@ -274,6 +274,11 @@ class WelcomePage extends AbstractWelcomePage {
                 <div className = 'header'>
                     <div className = 'header-toolbars'>
                         <ButtonGroup>
+                            <Button
+                                appearance = 'subtle'
+                                href = { `${AUTH_PAGE_BASE}/features` }>
+                                {t('toolbar.features')}
+                            </Button>
                             { buttons }
                             <Button
                                 appearance = 'subtle'
