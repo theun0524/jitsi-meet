@@ -361,6 +361,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = 'nav'>
                         <a href={`${AUTH_PAGE_BASE}/tos`}>{t('footer.tos')}</a>
                         <a href={`${AUTH_PAGE_BASE}/privacy`}>{t('footer.privacy')}</a>
+                        <a href={interfaceConfig.SUPPORT_URL} alt={t('footer.contactUs')}>{t('footer.contactUs')}</a>
                     </div>
                 </div>
             </div>
