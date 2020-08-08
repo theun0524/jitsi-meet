@@ -22,6 +22,8 @@ import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 
 // Register styles.
 import './styles';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { JWT_TOKEN } from '../../../config';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -298,7 +300,7 @@ class LoginDialog extends Component<Props, State> {
     _onLogin: () => void;
 
     checkAuthorizedUser = async () => {
-      const token = await AsyncStorage.getItem(JWT_TOKEN);
+      const token = await jitsiLocalStorage.getItem(JWT_TOKEN);
       if (token) {
         const { context } = JwtDecode(token);
         if (context.user) {

@@ -8,7 +8,6 @@ import TextDivider from "../../components/TextDivider/TextDivider";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
-import AsyncStorage from "@react-native-community/async-storage";
 import * as validators from "../../utils/validator";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
@@ -19,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import JwtDecode from "jwt-decode";
 import { setUserInfo } from "../../redux/user/user";
+import { jitsiLocalStorage } from "@jitsi/js-utils";
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
@@ -43,8 +43,7 @@ const LoginScreen = () => {
       .login(form)
       .then(async (resp) => {
         const token = resp.data;
-        await AsyncStorage.setItem(JWT_TOKEN, token);
-
+        await jitsiLocalStorage.setItem(JWT_TOKEN, token);
         const { context } = JwtDecode(token);
         dispatch(setUserInfo(context.user));
 

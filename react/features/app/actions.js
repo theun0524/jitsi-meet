@@ -25,18 +25,15 @@ import {
 } from '../base/util';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
-import { loadCurrentUser } from '../base/auth';
-
 import {
     getDefaultURL,
     getName
 } from './functions';
 import logger from './logger';
-import AsyncStorage from '@react-native-community/async-storage';
-import { setScreen } from '../../redux/screen/screen';
-import { setUserInfo } from '../../redux/user/user';
-import JwtDecode from 'jwt-decode';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { JWT_TOKEN } from '../../config';
+import JwtDecode from 'jwt-decode';
+import { setScreen } from '../../redux/screen/screen';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -141,23 +138,22 @@ export function appNavigate(uri: ?string) {
         dispatch(setConfig(config));
 
         // Load current logged in user
-        // dispatch(loadCurrentUser());
         if(!getState()['user'].userInfo) {
-          const token = await AsyncStorage.getItem(JWT_TOKEN);
-          if (token) {
-            const { context } = JwtDecode(token);
-            if (context.user) {
-              dispatch(setUserInfo(context.user));
+          const token = await jitsiLocalStorage.getItem(JWT_TOKEN);
+          if(token) {
+            const {context} = JwtDecode(token);
+            if(context.user) {
+              dispatch(serUserInfo(context.user));
               dispatch(setScreen("Home"));
             } else {
               dispatch(setScreen("Login"));
             }
           } else {
             dispatch(setScreen("Login"));
-          }          
+          }
         }
         dispatch(setRoom(room));
-
+        
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());

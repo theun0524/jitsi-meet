@@ -22,9 +22,9 @@ import { setSideBarVisible } from '../actions';
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 import api from '../../../api';
-import AsyncStorage from '@react-native-community/async-storage';
 import { JWT_TOKEN } from '../../../config';
 import { setScreen } from '../../../redux/screen/screen';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -187,7 +187,7 @@ class WelcomePageSideBar extends Component<Props> {
     _onLogout() {
         const { dispatch } = this.props;
         api.logout().then(async() => {
-            await AsyncStorage.removeItem(JWT_TOKEN);
+            await jitsiLocalStorage.removeItem(JWT_TOKEN);
             dispatch(setScreen("Login"));
         })
     }
