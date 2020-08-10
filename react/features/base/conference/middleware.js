@@ -46,6 +46,7 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
+import { getCurrentUser } from '../auth';
 
 declare var APP: Object;
 
@@ -234,11 +235,11 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     };
     window.addEventListener('beforeunload', beforeUnloadHandler);
 
-    if (requireDisplayName
-        && !getLocalParticipant(getState)?.name
-        && !conference.isHidden()) {
-        dispatch(openDisplayNamePrompt(undefined));
-    }
+    // if (requireDisplayName
+    //     && !getLocalParticipant(getState)?.name
+    //     && !conference.isHidden()) {
+    //     dispatch(openDisplayNamePrompt(undefined));
+    // }
 
     return result;
 }

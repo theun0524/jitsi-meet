@@ -194,6 +194,7 @@ class WelcomePageSideBar extends Component<Props> {
             await jitsiLocalStorage.removeItem(JWT_TOKEN);
             dispatch(setJWT());
             dispatch(setCurrentUser());
+            dispatch(setSideBarVisible(false));
             dispatch(setScreen("Login"));
           });
     }

@@ -322,7 +322,7 @@ class LoginDialog extends Component<Props, State> {
         // but authentication is required in order to join the room.
         if (conference) {
             // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
-            api
+            r = api
               .login({username, password, remember: true})
               .then(async (resp) => {
                 console.log(resp);
@@ -330,7 +330,6 @@ class LoginDialog extends Component<Props, State> {
                 const {context} = JwtDecode(token);
                 await jitsiLocalStorage.setItem(JWT_TOKEN, token);
                 dispatch(setCurrentUser(context.user));
-                console.log(token)
                 dispatch(setJWT(token));
                 dispatch(setScreen("Home"));
               })
@@ -340,7 +339,6 @@ class LoginDialog extends Component<Props, State> {
                   error: err
                 });
               });
-              appNavigate(undefined);
         } else {
             r = dispatch(connect(jid, password));
         }

@@ -53,9 +53,9 @@ MiddlewareRegistry.register(store => next => action => {
             if (_isWaitingForOwner(store)) {
                 // Instead of hiding show the new one.
                 const result = next(action);
-
-                dispatch(_openWaitForOwnerDialog());
-
+              
+                // dispatch(_openWaitForOwnerDialog());
+                dispatch(setScreen("Login"))
                 return result;
             }
 
@@ -133,8 +133,9 @@ MiddlewareRegistry.register(store => next => action => {
 
         // The WAIT_FOR_OWNER action is cyclic and we don't want to hide the
         // login dialog every few seconds.
-        isDialogOpen(store, LoginDialog)
-            || store.dispatch(_openWaitForOwnerDialog());
+        // isDialogOpen(store, LoginDialog)
+        //     || store.dispatch(_openWaitForOwnerDialog());
+        store.dispatch(setScreen("Login"));
         break;
     }
     }
