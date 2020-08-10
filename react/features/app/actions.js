@@ -30,10 +30,7 @@ import {
     getName
 } from './functions';
 import logger from './logger';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import { JWT_TOKEN } from '../../config';
-import JwtDecode from 'jwt-decode';
-import { setScreen } from '../../redux/screen/screen';
+import { loadCurrentUser } from '../base/auth';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -138,20 +135,7 @@ export function appNavigate(uri: ?string) {
         dispatch(setConfig(config));
 
         // Load current logged in user
-        if(!getState()['user'].userInfo) {
-          const token = await jitsiLocalStorage.getItem(JWT_TOKEN);
-          if(token) {
-            const {context} = JwtDecode(token);
-            if(context.user) {
-              dispatch(serUserInfo(context.user));
-              dispatch(setScreen("Home"));
-            } else {
-              dispatch(setScreen("Login"));
-            }
-          } else {
-            dispatch(setScreen("Login"));
-          }
-        }
+        dispatch(loadCurrentUser());
         dispatch(setRoom(room));
         
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.

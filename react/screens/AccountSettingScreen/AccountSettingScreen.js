@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setScreen } from "../../redux/screen/screen";
@@ -10,16 +10,18 @@ import api from "../../api";
 import * as validators from "../../utils/validator";
 import { JWT_TOKEN } from "../../config";
 import JwtDecode from "jwt-decode";
-import { setUserInfo } from "../../redux/user/user";
 import { useTranslation } from "react-i18next";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
+import { setJWT } from "../../features/base/jwt";
+import { setCurrentUser } from "../../features/base/auth";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const AccountSettingScreen = () => {
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const userInfo = useSelector((store) => store.user.userInfo);
+
+  const userInfo = useSelector((store) => store)["features/base/jwt"].user;
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
@@ -46,7 +48,8 @@ const AccountSettingScreen = () => {
             const token = resp.data;
             await jitsiLocalStorage.setItem(JWT_TOKEN, token);
             const { context } = JwtDecode(token);
-            dispatch(setUserInfo(context.user));
+            dispatch(setJWT(token));
+            dispatch(setCurrentUser(context.user));
             setFullNameError("");
             setFullNameStatus("saved");
             setTimeout(() => setFullNameStatus(""), 6000);
@@ -76,8 +79,7 @@ const AccountSettingScreen = () => {
             const token = resp.data;
             await jitsiLocalStorage.setItem(JWT_TOKEN, token);
             const { context } = JwtDecode(token);
-
-            dispatch(setUserInfo(context.user));
+            dispatch(setJWT(token));
             setEmailError("");
             setEmailStatus("saved");
             setTimeout(() => setEmailStatus(""), 6000);

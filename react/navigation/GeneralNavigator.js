@@ -6,9 +6,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { JWT_TOKEN } from "../config";
 import JwtDecode from "jwt-decode";
 import { setScreen } from "../redux/screen/screen";
-import { setUserInfo } from "../redux/user/user";
 import AccountSettingScreen from "../screens/AccountSettingScreen/AccountSettingScreen";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
+import { setJWT } from "../features/base/jwt";
+import { setCurrentUser } from "../features/base/auth";
 
 const GeneralNavigator = ({ Home }) => {
   const dispatch = useDispatch();
@@ -22,7 +23,8 @@ const GeneralNavigator = ({ Home }) => {
     if (token) {
       const { context } = JwtDecode(token);
       if (context.user) {
-        dispatch(setUserInfo(context.user));
+        dispatch(setJWT(token));
+        dispatch(setCurrentUser(context.user));
         dispatch(setScreen("Home"));
       } else {
         dispatch(setScreen("Login"));

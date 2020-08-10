@@ -15,6 +15,8 @@ import { getStatusBarHeight } from "react-native-status-bar-height";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { useTranslation } from "react-i18next";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
+import { setJWT } from "../../features/base/jwt";
+import JwtDecode from "jwt-decode";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -56,6 +58,9 @@ const RegisterScreen = () => {
       .then(async (resp) => {
         const token = resp.data;
         await jitsiLocalStorage.setItem(JWT_TOKEN, token);
+        const { context } = JwtDecode(token);
+        dispatch(setJWT(token));
+        dispatch(setCurrentUser(context.user));
         setLoading(false);
         navigate("Home");
       })

@@ -17,8 +17,9 @@ import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import JwtDecode from "jwt-decode";
-import { setUserInfo } from "../../redux/user/user";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
+import { setJWT } from "../../features/base/jwt";
+import { setCurrentUser } from "../../features/base/auth";
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
@@ -45,8 +46,8 @@ const LoginScreen = () => {
         const token = resp.data;
         await jitsiLocalStorage.setItem(JWT_TOKEN, token);
         const { context } = JwtDecode(token);
-        dispatch(setUserInfo(context.user));
-
+        dispatch(setCurrentUser(context.user));
+        dispatch(setJWT(token));
         setLoading(false);
         dispatch(setScreen("Home"));
       })
