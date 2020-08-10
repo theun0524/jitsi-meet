@@ -6,7 +6,12 @@ import type { Dispatch } from 'redux';
 import { ConfirmDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
-import { cancelWaitForOwner, _openLoginDialog } from '../actions';
+import { cancelWaitForOwner, _openLoginDialog, stopWaitForOwner } from '../actions';
+import { setScreen } from '../../../redux/screen/screen';
+import { appNavigate } from '../../app/actions';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import JwtDecode from 'jwt-decode';
+import { JWT_TOKEN } from '../../../config';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -97,7 +102,26 @@ class WaitForOwnerDialog extends Component<Props> {
      * @returns {void}
      */
     _onLogin() {
-        this.props.dispatch(_openLoginDialog());
+        const checkAuthorizedUser = async () => {
+          const token = await jitsiLocalStorage.getItem(JWT_TOKEN);
+          if (token) {
+            const { context } = JwtDecode(token);
+            if (context.user) {
+              this.props.dispatch(setUserInfo(context.user));
+              this.props.dispatch(setScreen("Home"));
+            } else {
+              this.props.dispatch(setScreen("Login"));
+              this.props.dispatch(stopWaitForOwner());
+              this.props.dispatch(appNavigate(undefined));
+            }
+          } else {
+            this.props.dispatch(setScreen("Login"));
+            this.props.dispatch(stopWaitForOwner());
+            this.props.dispatch(appNavigate(undefined));
+          }
+        };
+        checkAuthorizedUser();
+        // this.props.dispatch(_openLoginDialog());
     }
 }
 
