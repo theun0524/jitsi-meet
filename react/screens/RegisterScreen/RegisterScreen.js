@@ -9,12 +9,14 @@ import Form from "../../components/Form/Form";
 import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
-import AsyncStorage from "@react-native-community/async-storage";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { useTranslation } from "react-i18next";
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import { setJWT } from "../../features/base/jwt";
+import JwtDecode from "jwt-decode";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -55,7 +57,10 @@ const RegisterScreen = () => {
       .signup(form)
       .then(async (resp) => {
         const token = resp.data;
-        await AsyncStorage.setItem(JWT_TOKEN, token);
+        await jitsiLocalStorage.setItem(JWT_TOKEN, token);
+        const { context } = JwtDecode(token);
+        dispatch(setJWT(token));
+        dispatch(setCurrentUser(context.user));
         setLoading(false);
         navigate("Home");
       })

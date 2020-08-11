@@ -8,24 +8,35 @@ import TextDivider from "../../components/TextDivider/TextDivider";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
-import AsyncStorage from "@react-native-community/async-storage";
 import * as validators from "../../utils/validator";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import JwtDecode from "jwt-decode";
-import { setUserInfo } from "../../redux/user/user";
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import { setJWT } from "../../features/base/jwt";
+import { setCurrentUser } from "../../features/base/auth";
+import { appNavigate, reloadNow } from "../../features/app/actions";
+import {
+  getCurrentConference,
+  createConference,
+} from "../../features/base/conference";
+import { initDeeplink } from "../../redux/deeplink/deeplink";
+import { connect } from "../../features/base/redux";
+import { authenticateAndUpgradeRole } from "../../features/authentication/actions";
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
 
   const dispatch = useDispatch();
-
+  const isCameWithDeeplink = useSelector(
+    (store) => store.deeplink.tryAfterLogin
+  );
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -43,12 +54,15 @@ const LoginScreen = () => {
       .login(form)
       .then(async (resp) => {
         const token = resp.data;
-        await AsyncStorage.setItem(JWT_TOKEN, token);
-
+        await jitsiLocalStorage.setItem(JWT_TOKEN, token);
         const { context } = JwtDecode(token);
-        dispatch(setUserInfo(context.user));
-
-        setLoading(false);
+        dispatch(setCurrentUser(context.user));
+        dispatch(setJWT(token));
+        if (isCameWithDeeplink) {
+          dispatch(reloadNow());
+          dispatch(initDeeplink());
+          setLoading(false);
+        }
         dispatch(setScreen("Home"));
       })
       .catch((err) => {

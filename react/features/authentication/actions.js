@@ -126,7 +126,8 @@ export function cancelWaitForOwner() {
  * @returns {Action}
  */
 export function _openLoginDialog() {
-    return openDialog(LoginDialog);
+    // return openDialog(LoginDialog);
+    return openDialog();
 }
 
 /**
@@ -136,7 +137,8 @@ export function _openLoginDialog() {
  * @returns {Action}
  */
 export function _openWaitForOwnerDialog() {
-    return openDialog(WaitForOwnerDialog);
+    // return openDialog(WaitForOwnerDialog);
+    return openDialog();
 }
 
 /**

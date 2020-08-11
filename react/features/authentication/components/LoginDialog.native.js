@@ -22,6 +22,14 @@ import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 
 // Register styles.
 import './styles';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { JWT_TOKEN } from '../../../config';
+import api from '../../../api';
+import JwtDecode from 'jwt-decode';
+import { setScreen } from '../../../redux/screen/screen';
+import { setJWT } from '../../base/jwt';
+import { appNavigate } from '../../app/actions';
+import { setCurrentUser } from '../../base/auth';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -297,20 +305,6 @@ class LoginDialog extends Component<Props, State> {
 
     _onLogin: () => void;
 
-    checkAuthorizedUser = async () => {
-      const token = await AsyncStorage.getItem(JWT_TOKEN);
-      if (token) {
-        const { context } = JwtDecode(token);
-        if (context.user) {
-          dispatch(setUserInfo(context.user));
-          dispatch(setScreen("Home"));
-        } else {
-          dispatch(setScreen("Login"));
-        }
-      } else {
-        dispatch(setScreen("Login"));
-      }
-    };
     /**
      * Notifies this LoginDialog that the login button (OK) has been pressed by
      * the user.
@@ -328,9 +322,23 @@ class LoginDialog extends Component<Props, State> {
         // but authentication is required in order to join the room.
         if (conference) {
             // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
-            if(!getState()['user'].userInfo) {
-              this.checkAuthorizedUser();      
-            }
+            r = api
+              .login({username, password, remember: true})
+              .then(async (resp) => {
+                console.log(resp);
+                const token = resp.data;
+                const {context} = JwtDecode(token);
+                await jitsiLocalStorage.setItem(JWT_TOKEN, token);
+                dispatch(setCurrentUser(context.user));
+                dispatch(setJWT(token));
+                dispatch(setScreen("Home"));
+              })
+              .catch((err) => {
+                console.log(err);
+                this.setState({
+                  error: err
+                });
+              });
         } else {
             r = dispatch(connect(jid, password));
         }
