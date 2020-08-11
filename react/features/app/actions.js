@@ -205,7 +205,7 @@ export function reloadNow() {
         const { locationURL } = state['features/base/connection'];
 
         // Preserve the local tracks muted state after the reload.
-        const newURL = addTrackStateToURL(locationURL, state);
+        const newURL = addTrackStateToURL(locationURL._url ? locationURL._url : locationURL, state);
 
         logger.info(`Reloading the conference using URL: ${locationURL}`);
 

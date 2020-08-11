@@ -46,7 +46,7 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
-import { getCurrentUser } from '../auth';
+import { tryAfterLogin } from '../../../redux/deeplink/deeplink';
 
 declare var APP: Object;
 
@@ -62,6 +62,7 @@ let beforeUnloadHandler;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+  // console.log(action.type, 'conference middleware')
     switch (action.type) {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);
@@ -235,11 +236,11 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     };
     window.addEventListener('beforeunload', beforeUnloadHandler);
 
-    // if (requireDisplayName
-    //     && !getLocalParticipant(getState)?.name
-    //     && !conference.isHidden()) {
-    //     dispatch(openDisplayNamePrompt(undefined));
-    // }
+    if (requireDisplayName
+        && !getLocalParticipant(getState)?.name
+        && !conference.isHidden()) {
+        dispatch(openDisplayNamePrompt(undefined));
+    }
 
     return result;
 }
@@ -258,12 +259,17 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished({ dispatch }, next, action) {
-    const result = next(action);
+function _connectionEstablished({ dispatch, getState }, next, action) {
 
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js.
-    typeof APP === 'undefined' && dispatch(createConference());
+    const jwt = getState()['features/base/jwt'];
+    if (jwt.user) {
+      const result = next(action);
+      typeof APP === 'undefined' && dispatch(createConference());
+    } else {
+      dispatch(tryAfterLogin());
+    }
 
     return result;
 }
