@@ -189,7 +189,7 @@ class WelcomePageSideBar extends Component<Props> {
         const { dispatch } = this.props;
         api
           .logout()
-          .then(async (resp) => {
+          .then((resp) => {
             jitsiLocalStorage.removeItem(JWT_TOKEN);
             dispatch(setJWT());
             dispatch(setSideBarVisible(false));

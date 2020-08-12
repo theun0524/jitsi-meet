@@ -53,9 +53,8 @@ MiddlewareRegistry.register(store => next => action => {
             if (_isWaitingForOwner(store)) {
                 // Instead of hiding show the new one.
                 const result = next(action);
-
+                
                 dispatch(_openWaitForOwnerDialog());
-
                 return result;
             }
 

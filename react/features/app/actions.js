@@ -25,13 +25,12 @@ import {
 } from '../base/util';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
-import { loadCurrentUser } from '../base/auth';
-
 import {
     getDefaultURL,
     getName
 } from './functions';
 import logger from './logger';
+import { loadCurrentUser } from '../base/auth';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -138,7 +137,7 @@ export function appNavigate(uri: ?string) {
         // Load current logged in user
         dispatch(loadCurrentUser());
         dispatch(setRoom(room));
-
+        
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());
