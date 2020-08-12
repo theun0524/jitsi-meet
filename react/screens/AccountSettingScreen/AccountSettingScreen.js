@@ -9,11 +9,9 @@ import AccountSettingForm from "../../components/AccountSettingForm/AccountSetti
 import api from "../../api";
 import * as validators from "../../utils/validator";
 import { JWT_TOKEN } from "../../config";
-import JwtDecode from "jwt-decode";
 import { useTranslation } from "react-i18next";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
-import { setCurrentUser } from "../../features/base/auth";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -36,7 +34,7 @@ const AccountSettingScreen = () => {
       } else {
         setFullNameStatus("saving");
         const form = { name: text };
-        api.updateAccount(form).then(async (resp) => {
+        api.updateAccount(form).then((resp) => {
           const { error } = resp.data;
           if (error) {
             setFullNameError(
@@ -46,10 +44,8 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            await jitsiLocalStorage.setItem(JWT_TOKEN, token);
-            const { context } = JwtDecode(token);
+            jitsiLocalStorage.setItem(JWT_TOKEN, token);
             dispatch(setJWT(token));
-            dispatch(setCurrentUser(context.user));
             setFullNameError("");
             setFullNameStatus("saved");
             setTimeout(() => setFullNameStatus(""), 6000);
@@ -67,7 +63,7 @@ const AccountSettingScreen = () => {
       } else {
         setEmailStatus("saving");
         const form = { email: text };
-        api.updateAccount(form).then(async (resp) => {
+        api.updateAccount(form).then((resp) => {
           const { error } = resp.data;
           if (error) {
             setEmailError(
@@ -77,8 +73,7 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            await jitsiLocalStorage.setItem(JWT_TOKEN, token);
-            const { context } = JwtDecode(token);
+            jitsiLocalStorage.setItem(JWT_TOKEN, token);
             dispatch(setJWT(token));
             setEmailError("");
             setEmailStatus("saved");

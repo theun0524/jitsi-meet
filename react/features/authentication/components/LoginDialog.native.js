@@ -25,11 +25,8 @@ import './styles';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { JWT_TOKEN } from '../../../config';
 import api from '../../../api';
-import JwtDecode from 'jwt-decode';
 import { setScreen } from '../../../redux/screen/screen';
 import { setJWT } from '../../base/jwt';
-import { appNavigate } from '../../app/actions';
-import { setCurrentUser } from '../../base/auth';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -324,17 +321,13 @@ class LoginDialog extends Component<Props, State> {
             // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
             r = api
               .login({username, password, remember: true})
-              .then(async (resp) => {
-                console.log(resp);
+              .then((resp) => {
                 const token = resp.data;
-                const {context} = JwtDecode(token);
-                await jitsiLocalStorage.setItem(JWT_TOKEN, token);
-                dispatch(setCurrentUser(context.user));
+                jitsiLocalStorage.setItem(JWT_TOKEN, token);
                 dispatch(setJWT(token));
                 dispatch(setScreen("Home"));
               })
               .catch((err) => {
-                console.log(err);
                 this.setState({
                   error: err
                 });

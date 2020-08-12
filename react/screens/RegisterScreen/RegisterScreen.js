@@ -57,10 +57,8 @@ const RegisterScreen = () => {
       .signup(form)
       .then(async (resp) => {
         const token = resp.data;
-        await jitsiLocalStorage.setItem(JWT_TOKEN, token);
-        const { context } = JwtDecode(token);
+        jitsiLocalStorage.setItem(JWT_TOKEN, token);
         dispatch(setJWT(token));
-        dispatch(setCurrentUser(context.user));
         setLoading(false);
         navigate("Home");
       })

@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Image, Text, KeyboardAvoidingView } from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
-import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
-import TextDivider from "../../components/TextDivider/TextDivider";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
@@ -16,18 +14,11 @@ import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch, useSelector } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import JwtDecode from "jwt-decode";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
-import { setCurrentUser } from "../../features/base/auth";
-import { appNavigate, reloadNow } from "../../features/app/actions";
-import {
-  getCurrentConference,
-  createConference,
-} from "../../features/base/conference";
+import { reloadNow } from "../../features/app/actions";
 import { initDeeplink } from "../../redux/deeplink/deeplink";
-import { connect } from "../../features/base/redux";
-import { authenticateAndUpgradeRole } from "../../features/authentication/actions";
+
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
@@ -54,9 +45,7 @@ const LoginScreen = () => {
       .login(form)
       .then(async (resp) => {
         const token = resp.data;
-        await jitsiLocalStorage.setItem(JWT_TOKEN, token);
-        const { context } = JwtDecode(token);
-        dispatch(setCurrentUser(context.user));
+        jitsiLocalStorage.setItem(JWT_TOKEN, token);
         dispatch(setJWT(token));
         if (isCameWithDeeplink) {
           dispatch(reloadNow());
