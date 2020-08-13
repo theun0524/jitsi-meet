@@ -26,7 +26,6 @@ import { JWT_TOKEN } from '../../../config';
 import { setScreen } from '../../../redux/screen/screen';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../../base/jwt';
-import { setCurrentUser } from '../../base/auth';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -190,10 +189,9 @@ class WelcomePageSideBar extends Component<Props> {
         const { dispatch } = this.props;
         api
           .logout()
-          .then(async (resp) => {
-            await jitsiLocalStorage.removeItem(JWT_TOKEN);
+          .then((resp) => {
+            jitsiLocalStorage.removeItem(JWT_TOKEN);
             dispatch(setJWT());
-            dispatch(setCurrentUser());
             dispatch(setSideBarVisible(false));
             dispatch(setScreen("Login"));
           });

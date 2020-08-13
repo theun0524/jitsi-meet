@@ -259,12 +259,12 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionEstablished({ dispatch, getState }, next, action) {
+    const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js.
     const jwt = getState()['features/base/jwt'];
     if (jwt.user) {
-      const result = next(action);
       typeof APP === 'undefined' && dispatch(createConference());
     } else {
       dispatch(tryAfterLogin());
