@@ -62,7 +62,6 @@ let beforeUnloadHandler;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-  // console.log(action.type, 'conference middleware')
     switch (action.type) {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);
