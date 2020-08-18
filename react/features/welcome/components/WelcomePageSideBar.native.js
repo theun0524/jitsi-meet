@@ -139,9 +139,9 @@ class WelcomePageSideBar extends Component<Props> {
                             onPress = { this._onOpenHelpPage } />
                         {this.props._user && <SideBarItem
                             icon = { IconSettings }
-                            label = 'Log Out'
+                            label = 'toolbar.logout'
                             onPress = { this._onLogout } />}
-                     </ScrollView>
+                    </ScrollView>
                 </SafeAreaView>
             </SlidingView>
         );

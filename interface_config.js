@@ -1,3 +1,4 @@
+/* eslint-disable sort-keys */
 /* eslint-disable no-unused-vars, no-var, max-len */
 /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
 
@@ -233,7 +234,7 @@ var interfaceConfig = {
     /**
      * Specify custom URL for downloading android mobile app.
      */
-    // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.postech.vmeeting',
 
     /**
      * Specify URL for downloading ios mobile app.
@@ -259,7 +260,7 @@ var interfaceConfig = {
     /**
      * Specify the Android app package name.
      */
-    // ANDROID_APP_PACKAGE: 'org.jitsi.meet'
+    ANDROID_APP_PACKAGE: 'org.postech.vmeeting',
 
     /**
      * Override the behavior of some notifications to remain displayed until
