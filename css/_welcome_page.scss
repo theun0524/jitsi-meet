@@ -46,13 +46,17 @@ body.welcome-page {
         }
 
         .header-text-description {
-            display: $welcomePageHeaderTextDescriptionDisplay;
+            display: none;
             color: $welcomePageDescriptionColor;
             font-size: $welcomePageHeaderTextDescriptionFontSize;
             font-weight: $welcomePageHeaderTextDescriptionFontWeight;
             line-height: $welcomePageHeaderTextDescriptionLineHeight;
             margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
             align-self: $welcomePageHeaderTextDescriptionAlignSelf;
+
+            @include media-breakpoint-up(sm) {
+                display: $welcomePageHeaderTextDescriptionDisplay;
+            }
         }
 
         #enter_room {

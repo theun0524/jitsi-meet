@@ -109,11 +109,10 @@ class WelcomePageSideBar extends Component<Props> {
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
                         <SideBarItem
-                            icon = {IconSettings}
-                            label = 'Account'
-                            onPress = {this._onOpenAccountSettings}
-                        />
-                       {/* <SideBarItem
+                            icon = { IconSettings }
+                            label = 'welcomepage.account'
+                            onPress = { this._onOpenAccountSettings } />
+                        {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } /> */}
@@ -127,9 +126,9 @@ class WelcomePageSideBar extends Component<Props> {
                             onPress = { this._onOpenHelpPage } />
                         <SideBarItem
                             icon = { IconSettings }
-                            label = 'Log Out'
+                            label = 'toolbar.logout'
                             onPress = { this._onLogout } />
-                     </ScrollView>
+                    </ScrollView>
                 </SafeAreaView>
             </SlidingView>
         );
