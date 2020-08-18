@@ -46,7 +46,6 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
-import { tryAfterLogin } from '../../../redux/deeplink/deeplink';
 
 declare var APP: Object;
 
@@ -264,12 +263,7 @@ function _connectionEstablished({ dispatch, getState }, next, action) {
 
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js.
-    const jwt = getState()['features/base/jwt'];
-    if (jwt.user) {
-      typeof APP === 'undefined' && dispatch(createConference());
-    } else {
-      dispatch(tryAfterLogin());
-    }
+    typeof APP === 'undefined' && dispatch(createConference());
 
     return result;
 }

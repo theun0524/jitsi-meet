@@ -4,7 +4,6 @@ import RegisterScreen from "../screens/RegisterScreen/RegisterScreen";
 import PasswordResetScreen from "../screens/PasswordResetScreen/PasswordResetScreen";
 import { useSelector, useDispatch } from "react-redux";
 import { JWT_TOKEN } from "../config";
-import { setScreen } from "../redux/screen/screen";
 import AccountSettingScreen from "../screens/AccountSettingScreen/AccountSettingScreen";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../features/base/jwt";
@@ -16,17 +15,14 @@ const GeneralNavigator = ({ Home }) => {
     console.log(currScreen);
   }, [currScreen]);
 
-  const checkAuthorizedUser = () => {
+  const checkTokenForAutoLogin = () => {
     const token = jitsiLocalStorage.getItem(JWT_TOKEN);
     if (token) {
       dispatch(setJWT(token));
-      dispatch(setScreen("Home"));
-    } else {
-      dispatch(setScreen("Login"));
     }
   };
   useEffect(() => {
-    checkAuthorizedUser();
+    checkTokenForAutoLogin();
   }, []);
 
   return currScreen === "Home" ? (

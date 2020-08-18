@@ -25,8 +25,8 @@ import './styles';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { JWT_TOKEN } from '../../../config';
 import api from '../../../api';
-import { setScreen } from '../../../redux/screen/screen';
 import { setJWT } from '../../base/jwt';
+import { reloadNow } from '../../app/actions';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -325,7 +325,7 @@ class LoginDialog extends Component<Props, State> {
                 const token = resp.data;
                 jitsiLocalStorage.setItem(JWT_TOKEN, token);
                 dispatch(setJWT(token));
-                dispatch(setScreen("Home"));
+                dispatch(reloadNow());
               })
               .catch((err) => {
                 this.setState({

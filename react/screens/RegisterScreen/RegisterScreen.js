@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, BackHandler } from "react-native";
 import * as validators from "../../utils/validator";
 import TextDivider from "../../components/TextDivider/TextDivider";
 import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
@@ -16,7 +16,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview"
 import { useTranslation } from "react-i18next";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
-import JwtDecode from "jwt-decode";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -43,6 +42,18 @@ const RegisterScreen = () => {
   const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState("");
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", onPressBackButton);
+    return function cleanup() {
+      BackHandler.removeEventListener("hardwareBackPress", onPressBackButton);
+    };
+  }, []);
+
+  const onPressBackButton = () => {
+    dispatch(setScreen("Home"));
+    return true;
+  };
 
   const onPressRegisterSubmitButton = () => {
     setLoading(true);

@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { View, Image, Text, KeyboardAvoidingView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Image,
+  Text,
+  KeyboardAvoidingView,
+  BackHandler,
+} from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
@@ -12,12 +18,11 @@ import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
 import { reloadNow } from "../../features/app/actions";
-import { initDeeplink } from "../../redux/deeplink/deeplink";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -25,9 +30,6 @@ const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
 
   const dispatch = useDispatch();
-  const isCameWithDeeplink = useSelector(
-    (store) => store.deeplink.tryAfterLogin
-  );
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -36,6 +38,18 @@ const LoginScreen = () => {
   const [passwordValid, setPasswordValid] = useState(null);
   const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", onPressBackButton);
+    return function cleanup() {
+      BackHandler.removeEventListener("hardwareBackPress", onPressBackButton);
+    };
+  }, []);
+
+  const onPressBackButton = () => {
+    dispatch(setScreen("Home"));
+    return true;
+  };
 
   const onPressPostechLoginButton = () => {};
   const onPressLoginSubmitButton = () => {
@@ -47,11 +61,8 @@ const LoginScreen = () => {
         const token = resp.data;
         jitsiLocalStorage.setItem(JWT_TOKEN, token);
         dispatch(setJWT(token));
-        if (isCameWithDeeplink) {
-          dispatch(reloadNow());
-          dispatch(initDeeplink());
-          setLoading(false);
-        }
+        dispatch(reloadNow());
+        setLoading(false);
         dispatch(setScreen("Home"));
       })
       .catch((err) => {
