@@ -411,7 +411,11 @@ function disconnect() {
         return Promise.resolve();
     };
 
-    return connection && connection.disconnect().then(onDisconnected, onDisconnected);
+    if (!connection) {
+        return onDisconnected();
+    }
+
+    return connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
 /**
