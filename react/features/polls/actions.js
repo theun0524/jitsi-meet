@@ -9,6 +9,8 @@ import {
     START_POLL,
     VOTE_POLL
 } from './actionTypes';
+import { openDialog } from '../base/dialog';
+import PollDialog from './components/PollDialog';
 
 /**
  * Called by local user to end current poll.
@@ -58,6 +60,15 @@ export function showPollStartNotification() {
         titleKey: 'polls.startNotificationTitle',
         descriptionKey: 'polls.startNotificationBody'
     });
+}
+
+/**
+ * Open Poll UI notification when the poll started.
+ *
+ * @returns {{}}
+ */
+export function autoPollOpen(){
+    return openDialog(PollDialog);
 }
 
 /**

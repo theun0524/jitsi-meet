@@ -88,6 +88,7 @@ function _addPollMsgListener(conference, store) {
                 question
             }));
             store.dispatch(showPollStartNotification());
+            store.dispatch(autoPollOpen());
         }
     );
 
