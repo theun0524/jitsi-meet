@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Image,
-  Text,
-  KeyboardAvoidingView,
-  BackHandler,
-} from "react-native";
+import { View, Image, Text, BackHandler } from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
@@ -24,6 +18,7 @@ import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
 import { reloadNow } from "../../features/app/actions";
 import { setAuthenticatedServerUrl } from "../../redux/auth/auth";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -123,11 +118,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      enabled
-      style={{ ...styles.container }}
-    >
+    <KeyboardAwareScrollView style={{ ...styles.container }}>
       <Image
         source={postech_logo}
         style={{ width: 200, alignSelf: "center", paddingBottom: 160 }}
@@ -193,7 +184,7 @@ const LoginScreen = () => {
         {/* <TextDivider text="or login with" /> */}
         {/* <PostechLoginButton onPress={onPressPostechLoginButton} /> */}
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 
