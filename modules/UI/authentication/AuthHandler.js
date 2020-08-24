@@ -209,7 +209,7 @@ function doXmppAuth(room) {
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function authenticate(room, lockPassword) {
-    if (isTokenAuthEnabled || room.isExternalAuthEnabled()) {
+    if (isTokenAuthEnabled) {
         doExternalAuth(room, lockPassword);
     } else {
         doXmppAuth(room, lockPassword);
