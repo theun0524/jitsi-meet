@@ -18,17 +18,18 @@ import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
 import { reloadNow } from "../../features/app/actions";
+import { setAuthenticatedServerUrl } from "../../redux/auth/auth";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-
+  const store = useStore();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
@@ -56,11 +57,12 @@ const LoginScreen = () => {
     setLoading(true);
     const form = { username, password, remember };
     api
-      .login(form)
+      .login(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
         jitsiLocalStorage.setItem(JWT_TOKEN, token);
         dispatch(setJWT(token));
+        setAuthenticatedServerUrl(dispatch, store.getState);
         dispatch(reloadNow());
         setLoading(false);
         dispatch(setScreen("Home"));

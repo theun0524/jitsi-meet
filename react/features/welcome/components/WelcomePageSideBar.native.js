@@ -60,6 +60,8 @@ type Props = {
     _visible: boolean,
 
     _user: Object,
+
+    _logout: Function,
 };
 
 /**
@@ -198,9 +200,8 @@ class WelcomePageSideBar extends Component<Props> {
     _onLogout: () => void;
 
     _onLogout() {
-        const { dispatch } = this.props;
-        api
-          .logout()
+        const { dispatch, _logout } = this.props;
+        _logout()
           .then((resp) => {
             jitsiLocalStorage.removeItem(JWT_TOKEN);
             dispatch(setJWT());
@@ -240,6 +241,7 @@ function _mapStateToProps(state: Object) {
         _localParticipantId,
         _visible: state['features/welcome'].sideBarVisible,
         _user: state['features/base/jwt'].user,
+        _logout: () => {return api.logout(state)},
     };
 }
 

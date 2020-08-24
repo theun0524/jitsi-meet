@@ -10,7 +10,7 @@ import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
 import { JWT_TOKEN } from "../../config";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,7 @@ const RegisterScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
 
   const dispatch = useDispatch();
+  const store = useStore();
   const navigate = (to) => {
     dispatch(setScreen(to));
   };
@@ -65,7 +66,7 @@ const RegisterScreen = () => {
       confirm: confirmPassword,
     };
     api
-      .signup(form)
+      .signup(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
         jitsiLocalStorage.setItem(JWT_TOKEN, token);
