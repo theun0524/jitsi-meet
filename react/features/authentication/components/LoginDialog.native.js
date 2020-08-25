@@ -22,11 +22,10 @@ import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 
 // Register styles.
 import './styles';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import { JWT_TOKEN } from '../../../config';
 import api from '../../../api';
 import { setJWT } from '../../base/jwt';
 import { reloadNow } from '../../app/actions';
+import { tokenLocalStorage } from '../../../api/AuthApi';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -78,7 +77,9 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    _login: Function
 };
 
 /**
@@ -310,7 +311,7 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onLogin() {
-        const { _conference: conference, dispatch } = this.props;
+        const { _conference: conference, _login, dispatch } = this.props;
         const { password, username } = this.state;
         const jid = toJid(username, this.props._configHosts);
         let r;
@@ -319,12 +320,12 @@ class LoginDialog extends Component<Props, State> {
         // but authentication is required in order to join the room.
         if (conference) {
             // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
-            r = api
-              .login({username, password, remember: true})
+            r = _login({username, password, remember: true})
               .then((resp) => {
                 const token = resp.data;
-                jitsiLocalStorage.setItem(JWT_TOKEN, token);
+                tokenLocalStorage.setItem(token, store.getState());
                 dispatch(setJWT(token));
+                setAuthenticatedServerUrl(dispatch, store.getState);
                 dispatch(reloadNow());
               })
               .catch((err) => {
@@ -368,7 +369,8 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,
         _progress: progress,
-        _styles: ColorSchemeRegistry.get(state, 'LoginDialog')
+        _styles: ColorSchemeRegistry.get(state, 'LoginDialog'),
+        _login: (params) => {return api.login(params, state)},
     };
 }
 

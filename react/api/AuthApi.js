@@ -1,6 +1,28 @@
 import axios from "axios";
-import { API_URL, AUTH_API } from "../config";
+import { API_URL, AUTH_API, BASE_TOKEN_URL } from "../config";
 import { toState } from "../features/base/redux";
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+
+function getServerURL(stateful) {
+  const state = toState(stateful);
+
+  const connection = state["features/base/connection"];
+  if (connection && "locationURL" in connection) {
+    const locationURL = connection.locationURL;
+    if (
+      locationURL &&
+      locationURL._url &&
+      locationURL._url.split("/").length > 2
+    ) {
+      const serverURL = locationURL._url.split("/");
+      return serverURL[2];
+    } else {
+      return BASE_TOKEN_URL;
+    }
+  } else {
+    return BASE_TOKEN_URL;
+  }
+}
 
 function getServerAPIURL(stateful) {
   const state = toState(stateful);
@@ -13,7 +35,29 @@ function getServerAPIURL(stateful) {
   }
 }
 
+class TokenLocalStorage {
+  constructor() {}
+
+  getItem(stateful) {
+    const url = getServerURL(stateful);
+    return jitsiLocalStorage.getItem(`token/${getServerURL(url)}`);
+  }
+
+  setItem(token, stateful) {
+    const url = getServerURL(stateful);
+    jitsiLocalStorage.setItem(`token/${getServerURL(url)}`, token);
+  }
+
+  removeItem(stateful) {
+    const url = getServerURL(stateful);
+    jitsiLocalStorage.removeItem(`token/${getServerURL(url)}`);
+  }
+}
+
+export const tokenLocalStorage = new TokenLocalStorage();
+
 export function login(form, stateful) {
+  console.log(`${getServerAPIURL(stateful)}/login`, form, "login");
   return axios.post(`${getServerAPIURL(stateful)}/login`, form);
 }
 

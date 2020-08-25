@@ -8,17 +8,16 @@ import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
 import * as validators from "../../utils/validator";
 import api from "../../api";
-import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
 import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
 import { reloadNow } from "../../features/app/actions";
 import { setAuthenticatedServerUrl } from "../../redux/auth/auth";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -55,7 +54,7 @@ const LoginScreen = () => {
       .login(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
-        jitsiLocalStorage.setItem(JWT_TOKEN, token);
+        tokenLocalStorage.setItem(token, store.getState());
         dispatch(setJWT(token));
         setAuthenticatedServerUrl(dispatch, store.getState);
         dispatch(reloadNow());

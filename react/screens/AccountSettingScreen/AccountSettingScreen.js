@@ -8,10 +8,9 @@ import BackButton from "../../features/base/react/components/native/BackButton";
 import AccountSettingForm from "../../components/AccountSettingForm/AccountSettingForm";
 import api from "../../api";
 import * as validators from "../../utils/validator";
-import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
-import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -45,7 +44,7 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            jitsiLocalStorage.setItem(JWT_TOKEN, token);
+            tokenLocalStorage.setItem(token, store.getState());
             dispatch(setJWT(token));
             setFullNameError("");
             setFullNameStatus("saved");
@@ -74,7 +73,7 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            jitsiLocalStorage.setItem(JWT_TOKEN, token);
+            tokenLocalStorage.setItem(token, store.getState());
             dispatch(setJWT(token));
             setEmailError("");
             setEmailStatus("saved");
