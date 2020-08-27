@@ -47,17 +47,6 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
             }));
         this.props.dispatch(toggleDocument());
     }
-
-    /**
-     * Indicates whether this button is in toggled state or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    _isToggled() {
-        return this.props._editing;
-    }
 }
 
 /**
