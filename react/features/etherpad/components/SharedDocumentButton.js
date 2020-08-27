@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconEdit } from '../../base/icons';
-import { isLocalParticipantModerator } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
 import { toggleDocument } from '../actions';
@@ -70,12 +69,7 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state: Object, ownProps: Object) {
     const { documentUrl, editing } = state['features/etherpad'];
-    let { visible } = ownProps;
-    const isModerator = isLocalParticipantModerator(state);
-
-    if (typeof visible === 'undefined') {
-        visible = isModerator && Boolean(documentUrl);
-    }
+    const { visible = Boolean(documentUrl) } = ownProps;
 
     return {
         _editing: editing,
