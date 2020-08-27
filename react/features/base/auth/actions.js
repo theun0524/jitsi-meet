@@ -40,6 +40,7 @@ export function loadCurrentUser() {
                 }
             }
         } catch (e) {
+            jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
             console.error('loadCurrentUser is failed:', e.message);
         }
     };
