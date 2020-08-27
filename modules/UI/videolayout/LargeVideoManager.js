@@ -20,6 +20,7 @@ import { PresenceLabel } from '../../../react/features/presence-status';
 import UIEvents from '../../../service/UI/UIEvents';
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
+import { ETHERPAD_CONTAINER_TYPE } from '../etherpad/Etherpad';
 import UIUtil from '../util/UIUtil';
 
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -557,7 +558,9 @@ export default class LargeVideoManager {
             this.showWatermark(false);
             this.showRemoteConnectionMessage(false);
         }
-        oldContainer.hide();
+        if (type !== ETHERPAD_CONTAINER_TYPE) {
+            oldContainer.hide();
+        }
 
         this.state = type;
         const container = this.getContainer(type);
