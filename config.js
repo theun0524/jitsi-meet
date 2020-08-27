@@ -133,6 +133,9 @@ var config = {
                 ideal: 480,
                 max: 720,
                 min: 240
+            },
+            frameRate: {
+                max: 15
             }
         }
     },
