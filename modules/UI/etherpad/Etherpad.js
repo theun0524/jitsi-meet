@@ -50,7 +50,7 @@ const DEFAULT_WIDTH = 640;
  */
 const DEFAULT_HEIGHT = 480;
 
-const ETHERPAD_CONTAINER_TYPE = 'etherpad';
+export const ETHERPAD_CONTAINER_TYPE = 'etherpad';
 
 /**
  * Container for Etherpad iframe.
