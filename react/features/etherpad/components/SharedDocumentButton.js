@@ -4,7 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { IconShareDoc } from '../../base/icons';
+import { IconEdit } from '../../base/icons';
 import { isLocalParticipantModerator } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
@@ -29,7 +29,7 @@ type Props = AbstractButtonProps & {
  */
 class SharedDocumentButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.toggleWhiteboard';
-    icon = IconShareDoc;
+    icon = IconEdit;
     label = 'toolbar.whiteboardOpen';
     toggledLabel = 'toolbar.whiteboardClose';
 
@@ -46,6 +46,17 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
                 enable: !this.props._editing
             }));
         this.props.dispatch(toggleDocument());
+    }
+
+    /**
+     * Indicates whether this button is in toggled state or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isToggled() {
+        return this.props._editing;
     }
 }
 
