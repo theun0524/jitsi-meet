@@ -22,10 +22,9 @@ import { setSideBarVisible } from '../actions';
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 import api from '../../../api';
-import { JWT_TOKEN } from '../../../config';
 import { setScreen } from '../../../redux/screen/screen';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../../base/jwt';
+import { tokenLocalStorage } from '../../../api/AuthApi';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -62,6 +61,8 @@ type Props = {
     _user: Object,
 
     _logout: Function,
+
+    _removeToken: Function,
 };
 
 /**
@@ -200,10 +201,10 @@ class WelcomePageSideBar extends Component<Props> {
     _onLogout: () => void;
 
     _onLogout() {
-        const { dispatch, _logout } = this.props;
+        const { dispatch, _logout, _removeToken } = this.props;
         _logout()
           .then((resp) => {
-            jitsiLocalStorage.removeItem(JWT_TOKEN);
+            _removeToken();
             dispatch(setJWT());
             dispatch(setSideBarVisible(false));
           });
@@ -242,6 +243,7 @@ function _mapStateToProps(state: Object) {
         _visible: state['features/welcome'].sideBarVisible,
         _user: state['features/base/jwt'].user,
         _logout: () => {return api.logout(state)},
+        _removeToken: () => tokenLocalStorage.removeItem(state),
     };
 }
 

@@ -6,6 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { SET_CURRENT_USER } from './actionTypes';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../jwt';
+import { tokenLocalStorage } from '../../../api/AuthApi';
 
 // const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
@@ -16,7 +17,7 @@ const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
  * @returns {Function}
  */
 export function loadCurrentUser() {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         // try {
         //     const resp = await axios.get(`${AUTH_API_BASE}/current-user`, { withCredentials: true });
         //     dispatch(setCurrentUser(resp.data));
@@ -25,20 +26,24 @@ export function loadCurrentUser() {
         //     dispatch(setCurrentUser());
         // }
         try {
-            const token = jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+            const token = navigator.product === 'ReactNative' 
+              ? tokenLocalStorage.getItem(getState())
+              : jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
             if (token) {
                 const { exp } = jwtDecode(token);
                 // check expire of jwt token
                 if (Date.now() < exp * 1000) {
                     dispatch(setJWT(token));
                 } else {
-                    jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                  navigator.product === 'ReactNative' 
+                    ? tokenLocalStorage.removeItem(getState())
+                    : jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
                 }
             }
         } catch(e) {
             console.error('loadCurrentUser is failed:', e.message);
         }
-    };
+      };
 }
 
 /**

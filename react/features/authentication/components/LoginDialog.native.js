@@ -26,6 +26,7 @@ import api from '../../../api';
 import { setJWT } from '../../base/jwt';
 import { reloadNow } from '../../app/actions';
 import { tokenLocalStorage } from '../../../api/AuthApi';
+import { setAuthenticatedServerUrl } from '../../../redux/auth/auth';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -79,7 +80,9 @@ type Props = {
      */
     t: Function,
 
-    _login: Function
+    _login: Function,
+
+    _setToken: Function,
 };
 
 /**
@@ -311,11 +314,10 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onLogin() {
-        const { _conference: conference, _login, dispatch } = this.props;
+        const { _conference: conference, _login, dispatch, _setToken } = this.props;
         const { password, username } = this.state;
         const jid = toJid(username, this.props._configHosts);
         let r;
-
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
         if (conference) {
@@ -323,9 +325,9 @@ class LoginDialog extends Component<Props, State> {
             r = _login({username, password, remember: true})
               .then((resp) => {
                 const token = resp.data;
-                tokenLocalStorage.setItem(token, store.getState());
+                _setToken(token);
                 dispatch(setJWT(token));
-                setAuthenticatedServerUrl(dispatch, store.getState);
+                dispatch(setAuthenticatedServerUrl());
                 dispatch(reloadNow());
               })
               .catch((err) => {
@@ -371,6 +373,7 @@ function _mapStateToProps(state) {
         _progress: progress,
         _styles: ColorSchemeRegistry.get(state, 'LoginDialog'),
         _login: (params) => {return api.login(params, state)},
+        _setToken: (token) => tokenLocalStorage.setItem(token, state)
     };
 }
 

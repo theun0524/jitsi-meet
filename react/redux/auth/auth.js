@@ -1,4 +1,5 @@
 import { ReducerRegistry } from "../../features/base/redux";
+import { getAuthServerURL } from "../../api/AuthApi";
 
 const SAVE_AUTHENTICATED_SERVER_URL = "SAVE_AUTHENTICATED_SERVER_URL";
 const STORE_NAME = "serverURL";
@@ -6,15 +7,14 @@ const STORE_NAME = "serverURL";
 // action
 export const setAuthenticatedServerUrl = () => {
   return (dispatch, getState) => {
-    const { locationURL } = getState()["features/base/connection"];
     dispatch({
       type: SAVE_AUTHENTICATED_SERVER_URL,
-      authenticatedServerURL: locationURL,
+      authenticatedServerURL: getAuthServerURL(getState()),
     });
   };
 };
 
-export const eraseAuthenticatedServerUrl = () => {
+export const removeAuthenticatedServerUrl = () => {
   return {
     type: SAVE_AUTHENTICATED_SERVER_URL,
     authenticatedServerURL: "",
