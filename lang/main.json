@@ -728,6 +728,7 @@
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
+            "toggleWhiteboard": "Toggle whiteboard",
             "videomute": "Toggle mute video",
             "videoblur": "Toggle video blur"
         },
@@ -791,7 +792,9 @@
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
         "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur"
+        "stopvideoblur": "Disable background blur",
+        "whiteboardClose": "Close whiteboard",
+        "whiteboardOpen": "Open whiteboard"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

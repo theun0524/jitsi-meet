@@ -728,6 +728,7 @@
             "tileView": "타일뷰 토글",
             "toggleCamera": "카메라 토글",
             "toggleFilmstrip": "필름 스트립 전환",
+            "toggleWhiteboard": "판서 토글",
             "videomute": "비디오 뮤트 토글",
             "videoblur": "비디오 흐림 효과 토글"
         },
@@ -791,7 +792,9 @@
         "toggleCamera": "카메라 토글",
         "videomute": "카메라 켜기/끄기",
         "startvideoblur": "배경 흐리게",
-        "stopvideoblur": "배경 흐리게 취소"
+        "stopvideoblur": "배경 흐리게 취소",
+        "whiteboardClose": "판서 열기",
+        "whiteboardOpen": "판서 닫기"
     },
     "transcribing": {
         "ccButtonTooltip": "자막 시작 / 중지",
