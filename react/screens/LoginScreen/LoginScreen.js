@@ -15,7 +15,6 @@ import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { setJWT } from "../../features/base/jwt";
 import { reloadNow } from "../../features/app/actions";
-import { setAuthenticatedServerUrl } from "../../redux/auth/auth";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { tokenLocalStorage } from "../../api/AuthApi";
 
@@ -56,7 +55,7 @@ const LoginScreen = () => {
         const token = resp.data;
         tokenLocalStorage.setItem(token, store.getState());
         dispatch(setJWT(token));
-        setAuthenticatedServerUrl(dispatch, store.getState);
+        // setAuthenticatedServerUrl(dispatch, store.getState);
         dispatch(reloadNow());
         setLoading(false);
         dispatch(setScreen("Home"));

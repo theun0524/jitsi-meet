@@ -6,13 +6,14 @@ import { getServerURL } from "../features/base/settings";
 
 export function getAuthServerURL(stateful) {
   const state = toState(stateful);
+  const serverUrl = getServerURL(state);
+  return serverUrl;
+}
+
+export function getLocationURL(stateful) {
+  const state = toState(stateful);
   const locationURL = state["features/base/connection"].locationURL;
-  if (locationURL) {
-    return `https://${locationURL._host}`;
-  } else {
-    const serverUrl = getServerURL(state);
-    return serverUrl;
-  }
+  return `https://${locationURL._host}`;
 }
 
 function getAuthAPIURL(stateful) {
@@ -29,21 +30,46 @@ class TokenLocalStorage {
     return jitsiLocalStorage.getItem(`token/${url}`);
   }
 
+  getItemByURL(url) {
+    if (url[url.length - 1] === "/") {
+      url = url.substring(0, url.length - 1);
+    }
+    return jitsiLocalStorage.getItem(`token/${url}`);
+  }
+
   setItem(token, stateful) {
     const url = getAuthServerURL(stateful);
     jitsiLocalStorage.setItem(`token/${url}`, token);
+  }
+
+  setItemByURL(url, token) {
+    if (url[url.length - 1] === "/") {
+      url = url.substring(0, url.length - 1);
+    }
+    return jitsiLocalStorage.setItem(`token/${url}`, token);
   }
 
   removeItem(stateful) {
     const url = getAuthServerURL(stateful);
     jitsiLocalStorage.removeItem(`token/${url}`);
   }
+
+  removeItemByURL(url) {
+    if (url[url.length - 1] === "/") {
+      url = url.substring(0, url.length - 1);
+    }
+    return jitsiLocalStorage.removeItem(`token/${url}`);
+  }
 }
 
 export const tokenLocalStorage = new TokenLocalStorage();
 
+export function loginWithLocationURL(form, stateful) {
+  const url = getLocationURL(stateful);
+  return axios.post(`${url}/${AUTH_API}/login`, form, "login");
+}
+
 export function login(form, stateful) {
-  console.log(`${getAuthAPIURL(stateful)}/login`, form, "login");
   return axios.post(`${getAuthAPIURL(stateful)}/login`, form);
 }
 

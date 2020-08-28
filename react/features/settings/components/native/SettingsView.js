@@ -16,6 +16,10 @@ import {
 
 import FormRow from './FormRow';
 import FormSectionHeader from './FormSectionHeader';
+import JwtDecode from 'jwt-decode';
+import { tokenLocalStorage } from '../../../../api/AuthApi';
+import { setJWT } from '../../../base/jwt';
+import { reloadNow } from '../../../app/actions';
 
 /**
  * Application information module.
@@ -262,10 +266,23 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {void}
      */
     _onChangeServerURL(serverURL) {
+        const { _removeToken, dispatch } = this.props;
         super._onChangeServerURL(serverURL);
         this.setState({
             serverURL
         });
+        const token = tokenLocalStorage.getItemByURL(serverURL);
+        if (token) {
+          const { exp } = JwtDecode(token);
+          if (Date.now() < exp * 1000) {
+            dispatch(setJWT(token));
+            dispatch(reloadNow());
+            return;
+          }
+          else {
+            _removeToken();
+          }
+        }
     }
 
     _onDisableCallIntegration: (boolean) => void;
@@ -530,7 +547,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state),
+        _removeToken: () => tokenLocalStorage.removeItem(state),
     };
 }
 
