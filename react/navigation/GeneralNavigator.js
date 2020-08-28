@@ -28,7 +28,8 @@ const GeneralNavigator = ({ Home }) => {
   return currScreen === "Home" ? (
     Home
   ) : currScreen === "Register" ? (
-    <RegisterScreen />
+    // <RegisterScreen />
+    <></>
   ) : currScreen === "Login" ? (
     <LoginScreen />
   ) : currScreen === "PasswordReset" ? (

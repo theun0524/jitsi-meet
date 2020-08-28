@@ -84,7 +84,7 @@ class WelcomePageSideBar extends Component<Props> {
         this._onOpenAccountSettings = this._onOpenAccountSettings.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onLogin = this._onLogin.bind(this);
-        this._onRegister = this._onRegister.bind(this);
+        // this._onRegister = this._onRegister.bind(this);
     }
 
     /**
@@ -132,10 +132,10 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconSettings }
                             label = 'Login'
                             onPress = { this._onLogin } />}
-                        {!this.props._user && <SideBarItem
+                        {/* {!this.props._user && <SideBarItem
                             icon = { IconSettings }
                             label = 'Register'
-                            onPress = { this._onRegister } />}
+                            onPress = { this._onRegister } />} */}
                         <SideBarItem
                             icon = { IconHelp }
                             label = 'welcomepage.getHelp'
@@ -217,12 +217,12 @@ class WelcomePageSideBar extends Component<Props> {
       dispatch(setScreen("Login"));
     }
 
-    _onRegister: () => void;
+    // _onRegister: () => void;
 
-    _onRegister() {
-      const { dispatch } = this.props;
-      dispatch(setScreen("Register"));
-    }
+    // _onRegister() {
+    //   const { dispatch } = this.props;
+    //   dispatch(setScreen("Register"));
+    // }
 }
 
 /**
