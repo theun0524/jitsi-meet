@@ -13,6 +13,9 @@
     "loginFailed": "로그인 실패",
     "passwordReset": "비밀번호 재설정"
   },
+  "loginDialog": {
+    "registerRequired": "아직 회원이 아니신가요?"
+  },
   "passwordReset": {
     "success": "비밀번호 재설정 성공",
     "fail": "비밀번호 재설정 실패",

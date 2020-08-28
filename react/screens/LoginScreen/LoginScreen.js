@@ -167,7 +167,7 @@ const LoginScreen = () => {
           onPress={onPressLoginSubmitButton}
           loading={loading}
         />
-        <Text
+        {/* <Text
           style={{
             alignSelf: "center",
             paddingVertical: 20,
@@ -178,7 +178,7 @@ const LoginScreen = () => {
           }}
         >
           {t("login.registerRequired")}
-        </Text>
+        </Text> */}
         {/* <TextDivider text="or login with" /> */}
         {/* <PostechLoginButton onPress={onPressPostechLoginButton} /> */}
       </View>
