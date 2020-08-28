@@ -115,11 +115,11 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconSettings }
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
-                        {this.props._user && <SideBarItem
+                        {/* {this.props._user && <SideBarItem
                             icon = {IconSettings}
                             label = 'Account'
                             onPress = {this._onOpenAccountSettings}
-                        />}
+                        />} */}
                        {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
@@ -128,10 +128,10 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconInfo }
                             label = 'welcomepage.privacy'
                             url = { PRIVACY_URL } /> */}
-                        {!this.props._user && <SideBarItem
+                        {/* {!this.props._user && <SideBarItem
                             icon = { IconSettings }
                             label = 'Login'
-                            onPress = { this._onLogin } />}
+                            onPress = { this._onLogin } />} */}
                         {/* {!this.props._user && <SideBarItem
                             icon = { IconSettings }
                             label = 'Register'
@@ -140,10 +140,10 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconHelp }
                             label = 'welcomepage.getHelp'
                             onPress = { this._onOpenHelpPage } />
-                        {this.props._user && <SideBarItem
+                        {/* {this.props._user && <SideBarItem
                             icon = { IconSettings }
                             label = 'toolbar.logout'
-                            onPress = { this._onLogout } />}
+                            onPress = { this._onLogout } />} */}
                     </ScrollView>
                 </SafeAreaView>
             </SlidingView>

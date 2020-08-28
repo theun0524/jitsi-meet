@@ -203,7 +203,7 @@ class LoginDialog extends Component<Props, State> {
                         autoCapitalize = { 'none' }
                         autoCorrect = { false }
                         onChangeText = { this._onUsernameChange }
-                        placeholder = { 'user@domain.com' }
+                        placeholder = { t('dialog.usernameExample') }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
                         style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }

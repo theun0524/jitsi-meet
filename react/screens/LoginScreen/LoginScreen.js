@@ -55,7 +55,6 @@ const LoginScreen = () => {
         const token = resp.data;
         tokenLocalStorage.setItem(token, store.getState());
         dispatch(setJWT(token));
-        // setAuthenticatedServerUrl(dispatch, store.getState);
         dispatch(reloadNow());
         setLoading(false);
         dispatch(setScreen("Home"));

@@ -300,6 +300,7 @@
         "usernameErrInUse": "아이디가 이미 사용중입니다.",
         "usernameErrInvalid": "잘못된 아이디입니다.",
         "usernameErrTooShort": "아이디 길이는 5자 이상이어야 합니다.",
+        "usernameExample": "예: hong.gildong",
         "usernameMsg": "영문자, 숫자, 점 기호를 조합해서 사용해야 합니다.",
         "userPassword": "사용자 비밀번호",
         "WaitForHostMsg": "미팅 <b>{{room}}</b> 이 아직 시작되지 않았습니다. 호스트가 도착할 때까지 대기하거나 로그인해서 호스트가 되세요.",
