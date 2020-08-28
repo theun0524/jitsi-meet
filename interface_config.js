@@ -255,7 +255,7 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // APP_SCHEME: 'org.jitsi.meet',
+    APP_SCHEME: 'org.postech.vmeeting',
 
     /**
      * Specify the Android app package name.
