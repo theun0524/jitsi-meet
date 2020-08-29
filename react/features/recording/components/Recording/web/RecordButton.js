@@ -28,7 +28,7 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     let { visible } = ownProps;
 
     if (!interfaceConfig.TOOLBAR_BUTTONS.includes('recording')) {
-      visible = false;
+        visible = false;
     }
 
     if (typeof visible === 'undefined') {

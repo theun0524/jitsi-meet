@@ -4,7 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { IconShareDoc } from '../../base/icons';
+import { IconEdit } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
 import { toggleDocument } from '../actions';
@@ -27,10 +27,10 @@ type Props = AbstractButtonProps & {
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class SharedDocumentButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.document';
-    icon = IconShareDoc;
-    label = 'toolbar.documentOpen';
-    toggledLabel = 'toolbar.documentClose';
+    accessibilityLabel = 'toolbar.accessibilityLabel.toggleWhiteboard';
+    icon = IconEdit;
+    label = 'toolbar.whiteboardClose';
+    toggledLabel = 'toolbar.whiteboardOpen';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.

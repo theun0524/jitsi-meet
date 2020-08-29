@@ -140,7 +140,7 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Jitsi',
+    PROVIDER_NAME: 'Vmeeting',
 
     /**
      * If true, will display recent list
@@ -255,7 +255,7 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // APP_SCHEME: 'org.jitsi.meet',
+    APP_SCHEME: 'org.postech.vmeeting',
 
     /**
      * Specify the Android app package name.
