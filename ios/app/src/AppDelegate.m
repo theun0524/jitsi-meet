@@ -33,11 +33,11 @@
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
     jitsiMeet.customUrlScheme = @"org.postech.vmeeting";
-    jitsiMeet.universalLinkDomains = @[@"vmeeting.postech.ac.kr", @"devmeet.postech.ac.kr"];
+    jitsiMeet.universalLinkDomains = @[@"vmeeting.io", @"devmeet.postech.ac.kr"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         [builder setFeatureFlag:@"resolution" withValue:@(360)];
-        builder.serverURL = [NSURL URLWithString:@"https://vmeeting.postech.ac.kr"];
+        builder.serverURL = [NSURL URLWithString:@"https://vmeeting.io"];
 #if DEBUG
         builder.serverURL = [NSURL URLWithString:@"https://devmeet.postech.ac.kr"];
 #endif
