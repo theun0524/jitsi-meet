@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, BackHandler } from "react-native";
 import * as validators from "../../utils/validator";
 import TextDivider from "../../components/TextDivider/TextDivider";
 import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
@@ -8,15 +8,13 @@ import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import Form from "../../components/Form/Form";
 import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
-import { JWT_TOKEN } from "../../config";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { useTranslation } from "react-i18next";
-import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
-import JwtDecode from "jwt-decode";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -24,6 +22,7 @@ const RegisterScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
 
   const dispatch = useDispatch();
+  const store = useStore();
   const navigate = (to) => {
     dispatch(setScreen(to));
   };
@@ -44,6 +43,18 @@ const RegisterScreen = () => {
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState("");
 
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", onPressBackButton);
+    return function cleanup() {
+      BackHandler.removeEventListener("hardwareBackPress", onPressBackButton);
+    };
+  }, []);
+
+  const onPressBackButton = () => {
+    dispatch(setScreen("Home"));
+    return true;
+  };
+
   const onPressRegisterSubmitButton = () => {
     setLoading(true);
     const form = {
@@ -54,10 +65,10 @@ const RegisterScreen = () => {
       confirm: confirmPassword,
     };
     api
-      .signup(form)
+      .signup(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
-        jitsiLocalStorage.setItem(JWT_TOKEN, token);
+        tokenLocalStorage.setItem(token, store.getState());
         dispatch(setJWT(token));
         setLoading(false);
         navigate("Home");

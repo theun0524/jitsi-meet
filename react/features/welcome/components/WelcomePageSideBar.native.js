@@ -22,10 +22,9 @@ import { setSideBarVisible } from '../actions';
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 import api from '../../../api';
-import { JWT_TOKEN } from '../../../config';
 import { setScreen } from '../../../redux/screen/screen';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../../base/jwt';
+import { tokenLocalStorage } from '../../../api/AuthApi';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -57,7 +56,13 @@ type Props = {
     /**
      * Sets the side bar visible or hidden.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    _user: Object,
+
+    _logout: Function,
+
+    _removeToken: Function,
 };
 
 /**
@@ -78,6 +83,8 @@ class WelcomePageSideBar extends Component<Props> {
         this._onOpenSettings = this._onOpenSettings.bind(this);
         this._onOpenAccountSettings = this._onOpenAccountSettings.bind(this);
         this._onLogout = this._onLogout.bind(this);
+        this._onLogin = this._onLogin.bind(this);
+        // this._onRegister = this._onRegister.bind(this);
     }
 
     /**
@@ -108,11 +115,12 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconSettings }
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
-                        <SideBarItem
-                            icon = { IconSettings }
-                            label = 'welcomepage.account'
-                            onPress = { this._onOpenAccountSettings } />
-                        {/* <SideBarItem
+                        {/* {this.props._user && <SideBarItem
+                            icon = {IconSettings}
+                            label = 'Account'
+                            onPress = {this._onOpenAccountSettings}
+                        />} */}
+                       {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } /> */}
@@ -120,14 +128,22 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconInfo }
                             label = 'welcomepage.privacy'
                             url = { PRIVACY_URL } /> */}
+                        {/* {!this.props._user && <SideBarItem
+                            icon = { IconSettings }
+                            label = 'Login'
+                            onPress = { this._onLogin } />} */}
+                        {/* {!this.props._user && <SideBarItem
+                            icon = { IconSettings }
+                            label = 'Register'
+                            onPress = { this._onRegister } />} */}
                         <SideBarItem
                             icon = { IconHelp }
                             label = 'welcomepage.getHelp'
                             onPress = { this._onOpenHelpPage } />
-                        <SideBarItem
+                        {/* {this.props._user && <SideBarItem
                             icon = { IconSettings }
                             label = 'toolbar.logout'
-                            onPress = { this._onLogout } />
+                            onPress = { this._onLogout } />} */}
                     </ScrollView>
                 </SafeAreaView>
             </SlidingView>
@@ -178,23 +194,35 @@ class WelcomePageSideBar extends Component<Props> {
     _onOpenAccountSettings: () => void;
 
     _onOpenAccountSettings() {
-        const {dispatch} = this.props;
+        const { dispatch } = this.props;
         dispatch(setScreen("AccountSetting"));
     }
 
     _onLogout: () => void;
 
     _onLogout() {
-        const { dispatch } = this.props;
-        api
-          .logout()
+        const { dispatch, _logout, _removeToken } = this.props;
+        _logout()
           .then((resp) => {
-            jitsiLocalStorage.removeItem(JWT_TOKEN);
+            _removeToken();
             dispatch(setJWT());
             dispatch(setSideBarVisible(false));
-            dispatch(setScreen("Login"));
           });
     }
+
+    _onLogin: () => void;
+
+    _onLogin() {
+      const { dispatch } = this.props;
+      dispatch(setScreen("Login"));
+    }
+
+    // _onRegister: () => void;
+
+    // _onRegister() {
+    //   const { dispatch } = this.props;
+    //   dispatch(setScreen("Register"));
+    // }
 }
 
 /**
@@ -212,7 +240,10 @@ function _mapStateToProps(state: Object) {
     return {
         _displayName,
         _localParticipantId,
-        _visible: state['features/welcome'].sideBarVisible
+        _visible: state['features/welcome'].sideBarVisible,
+        _user: state['features/base/jwt'].user,
+        _logout: () => {return api.logout(state)},
+        _removeToken: () => tokenLocalStorage.removeItem(state),
     };
 }
 

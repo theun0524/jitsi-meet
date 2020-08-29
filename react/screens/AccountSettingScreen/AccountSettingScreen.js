@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { setScreen } from "../../redux/screen/screen";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { LIGHT_GRAY, DARK_GRAY } from "../../consts/colors";
@@ -8,16 +8,16 @@ import BackButton from "../../features/base/react/components/native/BackButton";
 import AccountSettingForm from "../../components/AccountSettingForm/AccountSettingForm";
 import api from "../../api";
 import * as validators from "../../utils/validator";
-import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
-import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const AccountSettingScreen = () => {
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation("vmeeting", { i18n });
+  const store = useStore();
 
   const userInfo = useSelector((store) => store)["features/base/jwt"].user;
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const AccountSettingScreen = () => {
       } else {
         setFullNameStatus("saving");
         const form = { name: text };
-        api.updateAccount(form).then((resp) => {
+        api.updateAccount(form, store.getState()).then((resp) => {
           const { error } = resp.data;
           if (error) {
             setFullNameError(
@@ -44,7 +44,7 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            jitsiLocalStorage.setItem(JWT_TOKEN, token);
+            tokenLocalStorage.setItem(token, store.getState());
             dispatch(setJWT(token));
             setFullNameError("");
             setFullNameStatus("saved");
@@ -63,7 +63,7 @@ const AccountSettingScreen = () => {
       } else {
         setEmailStatus("saving");
         const form = { email: text };
-        api.updateAccount(form).then((resp) => {
+        api.updateAccount(form, store.getState()).then((resp) => {
           const { error } = resp.data;
           if (error) {
             setEmailError(
@@ -73,7 +73,7 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            jitsiLocalStorage.setItem(JWT_TOKEN, token);
+            tokenLocalStorage.setItem(token, store.getState());
             dispatch(setJWT(token));
             setEmailError("");
             setEmailStatus("saved");
@@ -87,7 +87,7 @@ const AccountSettingScreen = () => {
   const onResetPassword = () => {
     setLoading(true);
     api
-      .passwordReset()
+      .passwordReset({}, store.getState())
       .then(() => {
         console.log("reset password is sent.");
         setLoading(false);

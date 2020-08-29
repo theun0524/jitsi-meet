@@ -1,7 +1,7 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import React, { Component, useCallback } from 'react';
+import { Text, TextInput, View, Linking } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
@@ -22,11 +22,13 @@ import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 
 // Register styles.
 import './styles';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import { JWT_TOKEN } from '../../../config';
 import api from '../../../api';
-import { setScreen } from '../../../redux/screen/screen';
 import { setJWT } from '../../base/jwt';
+import { reloadNow } from '../../app/actions';
+import { tokenLocalStorage, getLocationURL } from '../../../api/AuthApi';
+import { DARK_GRAY } from '../../../consts/colors';
+import { useTranslation } from 'react-i18next';
+import { WEB_REGISTER_PATH } from '../../../config';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -78,7 +80,13 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    _login: Function,
+
+    _setToken: Function,
+
+    _locationURL: String,
 };
 
 /**
@@ -95,6 +103,31 @@ type State = {
      * The user entered local participant name.
      */
     username: string
+};
+
+const RegisterLinkButton = ({ url }) => {
+  const { t, i18n } = useTranslation("vmeeting", { i18n });
+  const handlePress = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      console.log('ERROR: Cannot open url')
+    }
+  }, [url]);
+
+  return <Text
+      style={{
+        alignSelf: "center",
+        color: DARK_GRAY,
+        paddingTop: 20,
+      }}
+      onPress={handlePress}
+    >
+      {t("loginDialog.registerRequired")}
+    </Text>;
 };
 
 /**
@@ -170,7 +203,7 @@ class LoginDialog extends Component<Props, State> {
                         autoCapitalize = { 'none' }
                         autoCorrect = { false }
                         onChangeText = { this._onUsernameChange }
-                        placeholder = { 'user@domain.com' }
+                        placeholder = { t('dialog.usernameExample') }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
                         style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }
@@ -188,6 +221,7 @@ class LoginDialog extends Component<Props, State> {
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.password } />
                     { this._renderMessage() }
+                    <RegisterLinkButton url = { `${this.props._locationURL}/${WEB_REGISTER_PATH}` }/>
                 </View>
             </CustomSubmitDialog>
         );
@@ -310,22 +344,20 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onLogin() {
-        const { _conference: conference, dispatch } = this.props;
-        const { password, username } = this.state;
+      const { _conference: conference, _login, dispatch, _setToken } = this.props;
+      const { password, username } = this.state;
         const jid = toJid(username, this.props._configHosts);
         let r;
-
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
         if (conference) {
-            // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
-            r = api
-              .login({username, password, remember: true})
+            // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));  
+            r = _login({username, password, remember: true})
               .then((resp) => {
                 const token = resp.data;
-                jitsiLocalStorage.setItem(JWT_TOKEN, token);
+                _setToken(token);
                 dispatch(setJWT(token));
-                dispatch(setScreen("Home"));
+                dispatch(reloadNow());
               })
               .catch((err) => {
                 this.setState({
@@ -368,7 +400,10 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,
         _progress: progress,
-        _styles: ColorSchemeRegistry.get(state, 'LoginDialog')
+        _styles: ColorSchemeRegistry.get(state, 'LoginDialog'),
+        _login: (params) => {return api.loginWithLocationURL(params, state)},
+        _setToken: (token) => tokenLocalStorage.setItemByURL(getLocationURL(state), token),
+        _locationURL: getLocationURL(state),
     };
 }
 

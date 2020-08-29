@@ -13,6 +13,9 @@
     "loginFailed": "Login Failed",
     "passwordReset": "Password Reset"
   },
+  "loginDialog": {
+    "registerRequired": "Are you not a registered user?"
+  },
   "passwordReset": {
     "success": "Password reset successful",
     "fail": "Password reset failed",

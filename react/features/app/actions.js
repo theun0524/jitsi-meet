@@ -31,6 +31,9 @@ import {
 } from './functions';
 import logger from './logger';
 import { loadCurrentUser } from '../base/auth';
+import { setJWT } from '../base/jwt';
+import { getLocationURL, tokenLocalStorage } from '../../api/AuthApi';
+import JwtDecode from 'jwt-decode';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -134,10 +137,30 @@ export function appNavigate(uri: ?string) {
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
 
-        // Load current logged in user
-        dispatch(loadCurrentUser());
-        dispatch(setRoom(room));
+        if (!room && navigator.product === 'ReactNative') {
+          dispatch(setJWT());
+        }
+        if (locationURL && navigator.product === 'ReactNative') {
+          dispatch(setJWT());
+          const willAuthenticateURL = getLocationURL(getState());
+          const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
+          console.log(savedToken, willAuthenticateURL, 'appnavigate');
+          if (savedToken) {
+            const { exp } = JwtDecode(savedToken);
+            if (Date.now() < exp * 1000) {
+              dispatch(setJWT(savedToken));
+            }
+            else {
+              tokenLocalStorage.removeItemByURL(willAuthenticateURL);
+            }
+          }
+        } else {
+          // Load current logged in user
+          dispatch(loadCurrentUser());
+        }
         
+        dispatch(setRoom(room));
+
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());

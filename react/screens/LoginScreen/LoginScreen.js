@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Image, Text, KeyboardAvoidingView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Image, Text, BackHandler } from "react-native";
 import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
@@ -8,26 +8,22 @@ import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
 import * as validators from "../../utils/validator";
 import api from "../../api";
-import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import { jitsiLocalStorage } from "@jitsi/js-utils";
 import { setJWT } from "../../features/base/jwt";
 import { reloadNow } from "../../features/app/actions";
-import { initDeeplink } from "../../redux/deeplink/deeplink";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-
+  const store = useStore();
   const dispatch = useDispatch();
-  const isCameWithDeeplink = useSelector(
-    (store) => store.deeplink.tryAfterLogin
-  );
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -37,21 +33,30 @@ const LoginScreen = () => {
   const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
 
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", onPressBackButton);
+    return function cleanup() {
+      BackHandler.removeEventListener("hardwareBackPress", onPressBackButton);
+    };
+  }, []);
+
+  const onPressBackButton = () => {
+    dispatch(setScreen("Home"));
+    return true;
+  };
+
   const onPressPostechLoginButton = () => {};
   const onPressLoginSubmitButton = () => {
     setLoading(true);
     const form = { username, password, remember };
     api
-      .login(form)
+      .login(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
-        jitsiLocalStorage.setItem(JWT_TOKEN, token);
+        tokenLocalStorage.setItem(token, store.getState());
         dispatch(setJWT(token));
-        if (isCameWithDeeplink) {
-          dispatch(reloadNow());
-          dispatch(initDeeplink());
-          setLoading(false);
-        }
+        dispatch(reloadNow());
+        setLoading(false);
         dispatch(setScreen("Home"));
       })
       .catch((err) => {
@@ -110,11 +115,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      enabled
-      style={{ ...styles.container }}
-    >
+    <KeyboardAwareScrollView style={{ ...styles.container }}>
       <Image
         source={postech_logo}
         style={{ width: 200, alignSelf: "center", paddingBottom: 160 }}
@@ -165,7 +166,7 @@ const LoginScreen = () => {
           onPress={onPressLoginSubmitButton}
           loading={loading}
         />
-        <Text
+        {/* <Text
           style={{
             alignSelf: "center",
             paddingVertical: 20,
@@ -176,11 +177,11 @@ const LoginScreen = () => {
           }}
         >
           {t("login.registerRequired")}
-        </Text>
+        </Text> */}
         {/* <TextDivider text="or login with" /> */}
         {/* <PostechLoginButton onPress={onPressPostechLoginButton} /> */}
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 

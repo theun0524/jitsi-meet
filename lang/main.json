@@ -320,6 +320,7 @@
         "usernameErrInUse": "This user name is already in use, try another one.",
         "usernameErrInvalid": "This user name is not found.",
         "usernameErrTooShort": "Username needs to be more than 5 characters.",
+        "usernameExample": "Example: jane.doe",
         "usernameMsg": "You can use letters, numbers & periods.",
         "userPassword": "user password",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
