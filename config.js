@@ -131,7 +131,7 @@ var config = {
         video: {
             height: {
                 ideal: 480,
-                max: 720,
+                max: 480,
                 min: 240
             },
             frameRate: {
