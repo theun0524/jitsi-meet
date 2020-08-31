@@ -145,10 +145,10 @@ public class MainActivity extends JitsiMeetActivity {
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setWelcomePageEnabled(true)
-            .setServerURL(buildURL(defaultURL))
+            .setServerURL(buildURL("https://vmeeting.io/"))
             .setFeatureFlag("call-integration.enabled", false)
             .setFeatureFlag("resolution", 360)
-            .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
+            // .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }
