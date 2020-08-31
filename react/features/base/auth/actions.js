@@ -5,8 +5,8 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import jwtDecode from 'jwt-decode';
 
 // import logger from './logger';
+import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { setJWT } from '../jwt';
-import { tokenLocalStorage } from '../../../api/AuthApi';
 
 import { SET_CURRENT_USER } from './actionTypes';
 
@@ -28,9 +28,10 @@ export function loadCurrentUser() {
         //     dispatch(setCurrentUser());
         // }
         try {
-            const token = navigator.product === 'ReactNative' 
-              ? tokenLocalStorage.getItem(getState())
-              : jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+            const token = navigator.product === 'ReactNative'
+                ? tokenLocalStorage.getItem(getState())
+                : jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+
             if (token) {
                 const { exp } = jwtDecode(token);
 
@@ -38,16 +39,16 @@ export function loadCurrentUser() {
                 if (Date.now() < exp * 1000) {
                     dispatch(setJWT(token));
                 } else {
-                  navigator.product === 'ReactNative' 
-                    ? tokenLocalStorage.removeItem(getState())
-                    : jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                    navigator.product === 'ReactNative'
+                        ? tokenLocalStorage.removeItem(getState())
+                        : jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
                 }
             }
         } catch (e) {
             jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
             console.error('loadCurrentUser is failed:', e.message);
         }
-      };
+    };
 }
 
 /**

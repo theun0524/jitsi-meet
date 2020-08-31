@@ -1,10 +1,15 @@
+/* eslint-disable require-jsdoc */
 // @flow
 
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
 
+import api from '../../../api';
+import tokenLocalStorage from '../../../api/tokenLocalStorage';
+import { setScreen } from '../../../redux/screen/screen';
 import { Avatar } from '../../base/avatar';
-import { IconInfo, IconSettings, IconHelp } from '../../base/icons';
+import { IconSettings, IconHelp } from '../../base/icons';
+import { setJWT } from '../../base/jwt';
 import { setActiveModalId } from '../../base/modal';
 import {
     getLocalParticipant,
@@ -21,20 +26,16 @@ import { setSideBarVisible } from '../actions';
 
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
-import api from '../../../api';
-import { setScreen } from '../../../redux/screen/screen';
-import { setJWT } from '../../base/jwt';
-import { tokenLocalStorage } from '../../../api/AuthApi';
 
 /**
  * The URL at which the privacy policy is available to the user.
  */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+// const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
 
 /**
  * The URL at which the terms (of service/use) are available to the user.
  */
-const TERMS_URL = 'https://jitsi.org/meet/terms';
+// const TERMS_URL = 'https://jitsi.org/meet/terms';
 
 type Props = {
 
@@ -84,6 +85,7 @@ class WelcomePageSideBar extends Component<Props> {
         this._onOpenAccountSettings = this._onOpenAccountSettings.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onLogin = this._onLogin.bind(this);
+
         // this._onRegister = this._onRegister.bind(this);
     }
 
@@ -120,7 +122,7 @@ class WelcomePageSideBar extends Component<Props> {
                             label = 'Account'
                             onPress = {this._onOpenAccountSettings}
                         />} */}
-                       {/* <SideBarItem
+                        {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } /> */}
@@ -195,26 +197,28 @@ class WelcomePageSideBar extends Component<Props> {
 
     _onOpenAccountSettings() {
         const { dispatch } = this.props;
-        dispatch(setScreen("AccountSetting"));
+
+        dispatch(setScreen('AccountSetting'));
     }
 
     _onLogout: () => void;
 
     _onLogout() {
         const { dispatch, _logout, _removeToken } = this.props;
-        _logout()
-          .then((resp) => {
+
+        _logout().then(() => {
             _removeToken();
             dispatch(setJWT());
             dispatch(setSideBarVisible(false));
-          });
+        });
     }
 
     _onLogin: () => void;
 
     _onLogin() {
-      const { dispatch } = this.props;
-      dispatch(setScreen("Login"));
+        const { dispatch } = this.props;
+
+        dispatch(setScreen('Login'));
     }
 
     // _onRegister: () => void;
@@ -242,8 +246,8 @@ function _mapStateToProps(state: Object) {
         _localParticipantId,
         _visible: state['features/welcome'].sideBarVisible,
         _user: state['features/base/jwt'].user,
-        _logout: () => {return api.logout(state)},
-        _removeToken: () => tokenLocalStorage.removeItem(state),
+        _logout: () => api.logout(state),
+        _removeToken: () => tokenLocalStorage.removeItem(state)
     };
 }
 

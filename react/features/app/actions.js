@@ -1,7 +1,11 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
 import type { Dispatch } from 'redux';
 
+import tokenLocalStorage from '../../api/tokenLocalStorage';
+import { getLocationURL } from '../../api/url';
+import { loadCurrentUser } from '../base/auth';
 import { setRoom } from '../base/conference';
 import {
     configWillLoad,
@@ -12,6 +16,7 @@ import {
     storeConfig
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
+import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
@@ -25,15 +30,12 @@ import {
 } from '../base/util';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
+
 import {
     getDefaultURL,
     getName
 } from './functions';
 import logger from './logger';
-import { loadCurrentUser } from '../base/auth';
-import { setJWT } from '../base/jwt';
-import { getLocationURL, tokenLocalStorage } from '../../api/AuthApi';
-import JwtDecode from 'jwt-decode';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -138,27 +140,28 @@ export function appNavigate(uri: ?string) {
         dispatch(setConfig(config));
 
         if (!room && navigator.product === 'ReactNative') {
-          dispatch(setJWT());
+            dispatch(setJWT());
         }
         if (locationURL && navigator.product === 'ReactNative') {
-          dispatch(setJWT());
-          const willAuthenticateURL = getLocationURL(getState());
-          const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
-          console.log(savedToken, willAuthenticateURL, 'appnavigate');
-          if (savedToken) {
-            const { exp } = JwtDecode(savedToken);
-            if (Date.now() < exp * 1000) {
-              dispatch(setJWT(savedToken));
+            dispatch(setJWT());
+            const willAuthenticateURL = getLocationURL(getState());
+            const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
+
+            console.log(savedToken, willAuthenticateURL, 'appnavigate');
+            if (savedToken) {
+                const { exp } = jwtDecode(savedToken);
+
+                if (Date.now() < exp * 1000) {
+                    dispatch(setJWT(savedToken));
+                } else {
+                    tokenLocalStorage.removeItemByURL(willAuthenticateURL);
+                }
             }
-            else {
-              tokenLocalStorage.removeItemByURL(willAuthenticateURL);
-            }
-          }
         } else {
-          // Load current logged in user
-          dispatch(loadCurrentUser());
+            // Load current logged in user
+            dispatch(loadCurrentUser());
         }
-        
+
         dispatch(setRoom(room));
 
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.

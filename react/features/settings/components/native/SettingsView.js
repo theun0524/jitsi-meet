@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode';
 import React from 'react';
 import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react-native';
 
-import { tokenLocalStorage } from '../../../../api/AuthApi';
+import tokenLocalStorage from '../../../../api/tokenLocalStorage';
 import { reloadNow } from '../../../app/actions';
 import { translate } from '../../../base/i18n';
 import { setJWT } from '../../../base/jwt';

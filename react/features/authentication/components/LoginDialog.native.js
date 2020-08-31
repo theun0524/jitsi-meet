@@ -1,10 +1,20 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/no-multi-comp */
+/* eslint-disable react-native/no-inline-styles */
 /* @flow */
 
 import React, { Component, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, TextInput, View, Linking } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
+import api from '../../../api';
+import tokenLocalStorage from '../../../api.tokenLocalStorage';
+import { getLocationURL } from '../../../api/url';
+import { WEB_REGISTER_PATH } from '../../../config';
+import { DARK_GRAY } from '../../../consts/colors';
+import { reloadNow } from '../../app/actions';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { toJid } from '../../base/connection';
 import { connect } from '../../base/connection/actions.native';
@@ -16,19 +26,13 @@ import {
     inputDialog as inputDialogStyle
 } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+import { setJWT } from '../../base/jwt';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
 import type { StyleType } from '../../base/styles';
-import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
+import { cancelLogin } from '../actions';
 
 // Register styles.
 import './styles';
-import api from '../../../api';
-import { setJWT } from '../../base/jwt';
-import { reloadNow } from '../../app/actions';
-import { tokenLocalStorage, getLocationURL } from '../../../api/AuthApi';
-import { DARK_GRAY } from '../../../consts/colors';
-import { useTranslation } from 'react-i18next';
-import { WEB_REGISTER_PATH } from '../../../config';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -105,29 +109,31 @@ type State = {
     username: string
 };
 
+// eslint-disable-next-line react/prop-types
 const RegisterLinkButton = ({ url }) => {
-  const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const handlePress = useCallback(async () => {
+    const { t, i18n } = useTranslation('vmeeting', { i18n });
+    const handlePress = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
-    const supported = await Linking.canOpenURL(url);
+        const supported = await Linking.canOpenURL(url);
 
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      console.log('ERROR: Cannot open url')
-    }
-  }, [url]);
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            console.log('ERROR: Cannot open url');
+        }
+    }, [ url ]);
 
-  return <Text
-      style={{
-        alignSelf: "center",
-        color: DARK_GRAY,
-        paddingTop: 20,
-      }}
-      onPress={handlePress}
-    >
-      {t("loginDialog.registerRequired")}
-    </Text>;
+    return (
+        <Text
+            onPress = { handlePress }
+            style = {{
+                alignSelf: 'center',
+                color: DARK_GRAY,
+                paddingTop: 20
+            }}>
+            {t('loginDialog.registerRequired')}
+        </Text>
+    );
 };
 
 /**
@@ -221,7 +227,7 @@ class LoginDialog extends Component<Props, State> {
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.password } />
                     { this._renderMessage() }
-                    <RegisterLinkButton url = { `${this.props._locationURL}/${WEB_REGISTER_PATH}` }/>
+                    <RegisterLinkButton url = { `${this.props._locationURL}/${WEB_REGISTER_PATH}` } />
                 </View>
             </CustomSubmitDialog>
         );
@@ -344,26 +350,30 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onLogin() {
-      const { _conference: conference, _login, dispatch, _setToken } = this.props;
-      const { password, username } = this.state;
+        const { _conference: conference, _login, dispatch, _setToken } = this.props;
+        const { password, username } = this.state;
         const jid = toJid(username, this.props._configHosts);
         let r;
+
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
         if (conference) {
-            // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));  
-            r = _login({username, password, remember: true})
-              .then((resp) => {
+            // r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
+            r = _login({
+                username,
+                password,
+                remember: true
+            })
+            .then(resp => {
                 const token = resp.data;
+
                 _setToken(token);
                 dispatch(setJWT(token));
                 dispatch(reloadNow());
-              })
-              .catch((err) => {
-                this.setState({
-                  error: err
-                });
-              });
+            })
+            .catch(err => {
+                this.setState({ error: err });
+            });
         } else {
             r = dispatch(connect(jid, password));
         }
@@ -401,9 +411,9 @@ function _mapStateToProps(state) {
         _error: connectionError || authenticateAndUpgradeRoleError,
         _progress: progress,
         _styles: ColorSchemeRegistry.get(state, 'LoginDialog'),
-        _login: (params) => {return api.loginWithLocationURL(params, state)},
-        _setToken: (token) => tokenLocalStorage.setItemByURL(getLocationURL(state), token),
-        _locationURL: getLocationURL(state),
+        _login: params => api.loginWithLocationURL(params, state),
+        _setToken: token => tokenLocalStorage.setItemByURL(getLocationURL(state), token),
+        _locationURL: getLocationURL(state)
     };
 }
 
