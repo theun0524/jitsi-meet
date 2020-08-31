@@ -234,8 +234,12 @@ class WelcomePage extends AbstractWelcomePage {
                     isLoading = { submitting }
                     trigger = {
                         <div className = 'user-container'>
-                            {/* <Avatar
-                                size = 'small' /> */}
+                            { _user.avatarURL && (
+                                <img
+                                    alt = 'avatar'
+                                    className = 'avatar'
+                                    src = { _user.avatarURL } />
+                            )}
                             { _user.name }
                         </div>
                     }

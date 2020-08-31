@@ -3,12 +3,12 @@
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';
+import { initReactI18next } from 'react-i18next';
 
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 
 import languageDetector from './languageDetector';
-import { initReactI18next } from 'react-i18next';
 
 /**
  * The available/supported languages.
@@ -63,7 +63,7 @@ i18next
     .use(initReactI18next)
     .init(options);
 
-    // Add default language which is preloaded from the source code.
+// Add default language which is preloaded from the source code.
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'countries',
