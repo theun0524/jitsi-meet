@@ -10,7 +10,7 @@ import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import api from '../../../api';
-import tokenLocalStorage from '../../../api.tokenLocalStorage';
+import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { getLocationURL } from '../../../api/url';
 import { WEB_REGISTER_PATH } from '../../../config';
 import { DARK_GRAY } from '../../../consts/colors';
