@@ -594,7 +594,17 @@ var config = {
      startBitrate
      */
 
-    thirdPartyAuthEnabled: false,
+    // thirdPartyAuth: {
+    //     // vmeeting.kr
+    //     postech: {
+    //         url: 'https://login.postech.ac.kr/SSOService.do?targetAppId=postech-vmeetingKr-web',
+    //     }
+
+    //     // vmeeting.postech.ac.kr
+    //     postech: {
+    //         url: 'https://login.postech.ac.kr/SSOService.do?targetAppId=postech-vmeeting-web',
+    //     }
+    // },
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
