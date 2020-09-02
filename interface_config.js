@@ -273,6 +273,8 @@ var interfaceConfig = {
     /**
      INDICATOR_FONT_SIZES
      PHONE_NUMBER_REGEX
+     REGISTRATION_WHITELIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 가능하도록
+     REGISTRATION_BLACKLIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 불가능하도록
     */
 
     // Allow all above example options to include a trailing comma and

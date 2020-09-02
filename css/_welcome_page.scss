@@ -25,6 +25,7 @@ body.welcome-page {
         overflow: hidden;
         position: relative;
         text-align: center;
+        word-break: keep-all;
 
         .header-text {
             display: flex;
