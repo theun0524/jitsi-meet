@@ -586,6 +586,10 @@ const VideoLayout = {
             }
         }
 
+        if(currentContainer.stayOnStage()){
+            return;
+        }
+
         if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
 

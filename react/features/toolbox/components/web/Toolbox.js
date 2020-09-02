@@ -23,6 +23,7 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
@@ -46,7 +47,6 @@ import {
     RecordButton,
     getActiveSession
 } from '../../../recording';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { SecurityDialogButton } from '../../../security';
 import {
     SETTINGS_TABS,
@@ -989,11 +989,11 @@ class Toolbox extends Component<Props, State> {
             <LiveStreamButton
                 key = 'livestreaming'
                 showLabel = { true }
-                visible = { !_isRecording } />,
+                visible = { _isRecording ? false : undefined } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true }
-                visible = { !_isLiveStreaming } />,
+                visible = { _isLiveStreaming ? false : undefined } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }

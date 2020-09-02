@@ -23,7 +23,6 @@ import android.content.IntentFilter;
 import android.content.RestrictionEntry;
 import android.content.RestrictionsManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -96,7 +95,7 @@ public class MainActivity extends JitsiMeetActivity {
         // In Debug builds React needs permission to write over other apps in
         // order to display the warning and error overlays.
         if (BuildConfig.DEBUG) {
-            if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            if (!Settings.canDrawOverlays(this)) {
                 Intent intent
                     = new Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -145,10 +144,10 @@ public class MainActivity extends JitsiMeetActivity {
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setWelcomePageEnabled(true)
-            .setServerURL(buildURL(defaultURL))
+            .setServerURL(buildURL("https://vmeeting.io/"))
             .setFeatureFlag("call-integration.enabled", false)
             .setFeatureFlag("resolution", 360)
-            .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
+            // .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }
@@ -159,22 +158,20 @@ public class MainActivity extends JitsiMeetActivity {
         Bundle restrictions = manager.getApplicationRestrictions();
         Collection<RestrictionEntry> entries = manager.getManifestRestrictions(
             getApplicationContext().getPackageName());
-        if(entries != null) {
-          for (RestrictionEntry restrictionEntry : entries) {
-              String key = restrictionEntry.getKey();
-              if (RESTRICTION_SERVER_URL.equals(key)) {
-                  // If restrictions are passed to the application.
-                  if (restrictions != null &&
-                      restrictions.containsKey(RESTRICTION_SERVER_URL)) {
-                      defaultURL = restrictions.getString(RESTRICTION_SERVER_URL);
-                      configurationByRestrictions = true;
-                  // Otherwise use default URL from app-restrictions.xml.
-                  } else {
-                      defaultURL = restrictionEntry.getSelectedString();
-                      configurationByRestrictions = false;
-                  }
-              }
-          }
+        for (RestrictionEntry restrictionEntry : entries) {
+            String key = restrictionEntry.getKey();
+            if (RESTRICTION_SERVER_URL.equals(key)) {
+                // If restrictions are passed to the application.
+                if (restrictions != null &&
+                    restrictions.containsKey(RESTRICTION_SERVER_URL)) {
+                    defaultURL = restrictions.getString(RESTRICTION_SERVER_URL);
+                    configurationByRestrictions = true;
+                // Otherwise use default URL from app-restrictions.xml.
+                } else {
+                    defaultURL = restrictionEntry.getSelectedString();
+                    configurationByRestrictions = false;
+                }
+            }
         }
     }
 
@@ -188,8 +185,7 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
-                && canRequestOverlayPermission()) {
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
             if (Settings.canDrawOverlays(this)) {
                 initialize();
                 return;
@@ -212,6 +208,18 @@ public class MainActivity extends JitsiMeetActivity {
         return super.onKeyUp(keyCode, event);
     }
 
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+
+        Log.d(TAG, "Is in picture-in-picture mode: " + isInPictureInPictureMode);
+
+        if (!isInPictureInPictureMode) {
+            this.startActivity(new Intent(this, getClass())
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+        }
+    }
+
     // Helper methods
     //
 
@@ -221,11 +229,5 @@ public class MainActivity extends JitsiMeetActivity {
         } catch (MalformedURLException e) {
             return null;
         }
-    }
-
-    private boolean canRequestOverlayPermission() {
-        return
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
     }
 }

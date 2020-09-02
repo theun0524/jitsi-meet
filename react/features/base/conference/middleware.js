@@ -257,7 +257,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished({ dispatch }, next, action) {
+function _connectionEstablished({ dispatch, getState }, next, action) {
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the

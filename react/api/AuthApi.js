@@ -1,34 +1,49 @@
-import axios from "axios";
-import { API_URL } from "../config";
+/* eslint-disable no-param-reassign */
+/* eslint-disable require-jsdoc */
+import axios from 'axios';
 
-export function fetchCurrentUser() {
-  return axios.get(`${API_URL}/current-user`, { withCredentials: true });
+import { AUTH_API } from '../config';
+import { toState } from '../features/base/redux';
+
+import { getAuthServerURL, getLocationURL } from './url';
+
+function getAuthAPIURL(stateful) {
+    const state = toState(stateful);
+    const serverUrl = getAuthServerURL(state);
+
+    return `${serverUrl}/${AUTH_API}`;
 }
 
-export function login(form) {
-  return axios.post(`${API_URL}/login`, form);
+export function loginWithLocationURL(form, stateful) {
+    const url = getLocationURL(stateful);
+
+    return axios.post(`${url}/${AUTH_API}/login`, form, 'login');
 }
 
-export function logout() {
-  return axios.get(`${API_URL}/logout`);
+export function login(form, stateful) {
+    return axios.post(`${getAuthAPIURL(stateful)}/login`, form);
 }
 
-export function signup(form) {
-  return axios.post(`${API_URL}/signup`, form);
+export function logout(stateful) {
+    return axios.get(`${getAuthAPIURL(stateful)}/logout`);
 }
 
-export function passwordReset(form) {
-  return axios.post(`${API_URL}/password-reset`, form);
+export function signup(form, stateful) {
+    return axios.post(`${getAuthAPIURL(stateful)}/signup`, form);
 }
 
-export function updateAccount(form) {
-  return axios.patch(`${API_URL}/account`, form);
+export function passwordReset(form, stateful) {
+    return axios.post(`${getAuthAPIURL(stateful)}/password-reset`, form);
 }
 
-export function passwordResetConfirm(form) {
-  return axios.post(`${API_URL}/password-reset-confirm`, form);
+export function updateAccount(form, stateful) {
+    return axios.patch(`${getAuthAPIURL(stateful)}/account`, form);
 }
 
-export function updatePassword(form) {
-  return axios.patch(`${API_URL}/password-reset-confirm`, form);
+export function passwordResetConfirm(form, stateful) {
+    return axios.post(`${getAuthAPIURL(stateful)}/password-reset-confirm`, form);
+}
+
+export function updatePassword(form, stateful) {
+    return axios.patch(`${getAuthAPIURL(stateful)}/password-reset-confirm`, form);
 }

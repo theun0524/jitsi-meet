@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { setScreen } from "../../redux/screen/screen";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { LIGHT_GRAY, DARK_GRAY } from "../../consts/colors";
@@ -8,18 +8,18 @@ import BackButton from "../../features/base/react/components/native/BackButton";
 import AccountSettingForm from "../../components/AccountSettingForm/AccountSettingForm";
 import api from "../../api";
 import * as validators from "../../utils/validator";
-import AsyncStorage from "@react-native-community/async-storage";
-import { JWT_TOKEN } from "../../config";
-import JwtDecode from "jwt-decode";
-import { setUserInfo } from "../../redux/user/user";
 import { useTranslation } from "react-i18next";
+import { setJWT } from "../../features/base/jwt";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
 const AccountSettingScreen = () => {
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-  const userInfo = useSelector((store) => store.user.userInfo);
+  const store = useStore();
+
+  const userInfo = useSelector((store) => store)["features/base/jwt"].user;
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
@@ -34,7 +34,7 @@ const AccountSettingScreen = () => {
       } else {
         setFullNameStatus("saving");
         const form = { name: text };
-        api.updateAccount(form).then(async (resp) => {
+        api.updateAccount(form, store.getState()).then((resp) => {
           const { error } = resp.data;
           if (error) {
             setFullNameError(
@@ -44,9 +44,8 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            await AsyncStorage.setItem(JWT_TOKEN, token);
-            const { context } = JwtDecode(token);
-            dispatch(setUserInfo(context.user));
+            tokenLocalStorage.setItem(token, store.getState());
+            dispatch(setJWT(token));
             setFullNameError("");
             setFullNameStatus("saved");
             setTimeout(() => setFullNameStatus(""), 6000);
@@ -64,7 +63,7 @@ const AccountSettingScreen = () => {
       } else {
         setEmailStatus("saving");
         const form = { email: text };
-        api.updateAccount(form).then(async (resp) => {
+        api.updateAccount(form, store.getState()).then((resp) => {
           const { error } = resp.data;
           if (error) {
             setEmailError(
@@ -74,10 +73,8 @@ const AccountSettingScreen = () => {
             );
           } else {
             const token = resp.data;
-            await AsyncStorage.setItem(JWT_TOKEN, token);
-            const { context } = JwtDecode(token);
-
-            dispatch(setUserInfo(context.user));
+            tokenLocalStorage.setItem(token, store.getState());
+            dispatch(setJWT(token));
             setEmailError("");
             setEmailStatus("saved");
             setTimeout(() => setEmailStatus(""), 6000);
@@ -90,7 +87,7 @@ const AccountSettingScreen = () => {
   const onResetPassword = () => {
     setLoading(true);
     api
-      .passwordReset()
+      .passwordReset({}, store.getState())
       .then(() => {
         console.log("reset password is sent.");
         setLoading(false);

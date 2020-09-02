@@ -3,37 +3,34 @@ import {
   View,
   Image,
   Text,
-  KeyboardAvoidingView,
   NativeModules,
   Platform,
-  Linking,
+  BackHandler,
 } from "react-native";
-import { DARK_GRAY, MAIN_BLUE } from "../../consts/colors";
+import { MAIN_BLUE } from "../../consts/colors";
 import AutoLoginCheckBox from "../../components/AutoLoginCheckBox/AutoLoginCheckBox";
 import Form from "../../components/Form/Form";
-import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
-import TextDivider from "../../components/TextDivider/TextDivider";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
-import AsyncStorage from "@react-native-community/async-storage";
 import * as validators from "../../utils/validator";
 import api from "../../api";
-import { JWT_TOKEN } from "../../config";
 import { useTranslation } from "react-i18next";
 import { translate } from "../../features/base/i18n";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import JwtDecode from "jwt-decode";
-import { setUserInfo } from "../../redux/user/user";
+import { setJWT } from "../../features/base/jwt";
+import { reloadNow } from "../../features/app/actions";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { tokenLocalStorage } from "../../api/AuthApi";
+
 const iosStatusBarHeight = getStatusBarHeight();
 
 const LoginScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
-
+  const store = useStore();
   const dispatch = useDispatch();
-
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
@@ -42,6 +39,18 @@ const LoginScreen = () => {
   const [passwordValid, setPasswordValid] = useState(null);
   const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", onPressBackButton);
+    return function cleanup() {
+      BackHandler.removeEventListener("hardwareBackPress", onPressBackButton);
+    };
+  }, []);
+
+  const onPressBackButton = () => {
+    dispatch(setScreen("Home"));
+    return true;
+  };
 
   const onPressPostechLoginButton = () => {
     if (Platform.OS === "android") {
@@ -64,14 +73,12 @@ const LoginScreen = () => {
     setLoading(true);
     const form = { username, password, remember };
     api
-      .login(form)
+      .login(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
-        await AsyncStorage.setItem(JWT_TOKEN, token);
-
-        const { context } = JwtDecode(token);
-        dispatch(setUserInfo(context.user));
-
+        tokenLocalStorage.setItem(token, store.getState());
+        dispatch(setJWT(token));
+        dispatch(reloadNow());
         setLoading(false);
         dispatch(setScreen("Home"));
       })
@@ -131,11 +138,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      enabled
-      style={{ ...styles.container }}
-    >
+    <KeyboardAwareScrollView style={{ ...styles.container }}>
       <Image
         source={postech_logo}
         style={{ width: 200, alignSelf: "center", paddingBottom: 160 }}
@@ -186,7 +189,7 @@ const LoginScreen = () => {
           onPress={onPressLoginSubmitButton}
           loading={loading}
         />
-        <Text
+        {/* <Text
           style={{
             alignSelf: "center",
             paddingVertical: 20,
@@ -197,11 +200,11 @@ const LoginScreen = () => {
           }}
         >
           {t("login.registerRequired")}
-        </Text>
-        <TextDivider text="or login with" />
-        <PostechLoginButton onPress={onPressPostechLoginButton} />
+        </Text> */}
+        {/* <TextDivider text="or login with" /> */}
+        {/* <PostechLoginButton onPress={onPressPostechLoginButton} /> */}
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 

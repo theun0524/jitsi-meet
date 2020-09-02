@@ -1,11 +1,14 @@
 /* global process */
 // import axios from 'axios';
 
-import jwtDecode from 'jwt-decode';
-// import logger from './logger';
-import { SET_CURRENT_USER } from './actionTypes';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
+import jwtDecode from 'jwt-decode';
+
+// import logger from './logger';
+import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { setJWT } from '../jwt';
+
+import { SET_CURRENT_USER } from './actionTypes';
 
 // const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
@@ -16,7 +19,7 @@ const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
  * @returns {Function}
  */
 export function loadCurrentUser() {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         // try {
         //     const resp = await axios.get(`${AUTH_API_BASE}/current-user`, { withCredentials: true });
         //     dispatch(setCurrentUser(resp.data));
@@ -25,17 +28,24 @@ export function loadCurrentUser() {
         //     dispatch(setCurrentUser());
         // }
         try {
-            const token = jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+            const token = navigator.product === 'ReactNative'
+                ? tokenLocalStorage.getItem(getState())
+                : jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+
             if (token) {
                 const { exp } = jwtDecode(token);
+
                 // check expire of jwt token
                 if (Date.now() < exp * 1000) {
                     dispatch(setJWT(token));
                 } else {
-                    jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                    navigator.product === 'ReactNative'
+                        ? tokenLocalStorage.removeItem(getState())
+                        : jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
                 }
             }
-        } catch(e) {
+        } catch (e) {
+            jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
             console.error('loadCurrentUser is failed:', e.message);
         }
     };

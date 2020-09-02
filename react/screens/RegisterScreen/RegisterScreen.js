@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, BackHandler } from "react-native";
 import * as validators from "../../utils/validator";
 import TextDivider from "../../components/TextDivider/TextDivider";
 import PostechLoginButton from "../../components/PostechLoginButton/PostechLoginButton";
@@ -8,13 +8,13 @@ import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import Form from "../../components/Form/Form";
 import { DARK_GRAY } from "../../consts/colors";
 import api from "../../api";
-import { JWT_TOKEN } from "../../config";
-import AsyncStorage from "@react-native-community/async-storage";
 import { setScreen } from "../../redux/screen/screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { useTranslation } from "react-i18next";
+import { setJWT } from "../../features/base/jwt";
+import { tokenLocalStorage } from "../../api/AuthApi";
 
 const iosStatusBarHeight = getStatusBarHeight();
 
@@ -22,6 +22,7 @@ const RegisterScreen = () => {
   const { t, i18n } = useTranslation("vmeeting", { i18n });
 
   const dispatch = useDispatch();
+  const store = useStore();
   const navigate = (to) => {
     dispatch(setScreen(to));
   };
@@ -42,6 +43,18 @@ const RegisterScreen = () => {
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState("");
 
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", onPressBackButton);
+    return function cleanup() {
+      BackHandler.removeEventListener("hardwareBackPress", onPressBackButton);
+    };
+  }, []);
+
+  const onPressBackButton = () => {
+    dispatch(setScreen("Home"));
+    return true;
+  };
+
   const onPressRegisterSubmitButton = () => {
     setLoading(true);
     const form = {
@@ -52,10 +65,11 @@ const RegisterScreen = () => {
       confirm: confirmPassword,
     };
     api
-      .signup(form)
+      .signup(form, store.getState())
       .then(async (resp) => {
         const token = resp.data;
-        await AsyncStorage.setItem(JWT_TOKEN, token);
+        tokenLocalStorage.setItem(token, store.getState());
+        dispatch(setJWT(token));
         setLoading(false);
         navigate("Home");
       })
@@ -65,7 +79,7 @@ const RegisterScreen = () => {
           setUsernameVaild(false);
           setUsernameErrorMsg(t("error.usernameInUse"));
         } else if (errCode === "email_in_use") {
-          setEmailVaild(false);
+          setEmailValid(false);
           setEmailErrorMsg(t("error.emailInUse"));
         } else {
           setEmailValid(false);
@@ -78,7 +92,7 @@ const RegisterScreen = () => {
   const checkVaildEmail = (value) => {
     const error = validators.email(value);
     if (error) {
-      setEmailErrorMsg(error);
+      setEmailErrorMsg(t(error));
       return false;
     } else if (value === "") {
       setEmailErrorMsg(t("error.emailRequired"));
@@ -164,11 +178,11 @@ const RegisterScreen = () => {
           paddingTop: iosStatusBarHeight + 40,
         }}
       >
-        Vmeeting Register
+        {`Vmeeting ${t("header.register")}`}
       </Text>
-      <TextDivider text={"Create an account using"} />
-      <PostechLoginButton />
-      <TextDivider text={"or create new account"} style={{ paddingTop: 20 }} />
+      {/* <TextDivider text={"Create an account using"} /> */}
+      {/* <PostechLoginButton /> */}
+      {/* <TextDivider text={"or create new account"} style={{ paddingTop: 20 }} /> */}
       <InputLabel name={t("register.email")} necessary={true} />
       <Form
         placeholder={t("register.emailExample")}
@@ -177,7 +191,7 @@ const RegisterScreen = () => {
         valid={emailValid}
         errorMessage={emailErrorMsg}
       />
-      <InputLabel name="Full Name" necessary={true} />
+      <InputLabel name={t("register.fullName")} necessary={true} />
       <Form
         placeholder={t("register.fullNameExample")}
         value={fullname}
@@ -185,7 +199,7 @@ const RegisterScreen = () => {
         valid={fullnameValid}
         errorMessage={fullnameErrorMsg}
       />
-      <InputLabel name="Username" necessary={true} />
+      <InputLabel name={t("register.username")} necessary={true} />
       <Form
         placeholder={t("register.usernameExample")}
         value={username}

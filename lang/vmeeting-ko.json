@@ -13,6 +13,9 @@
     "loginFailed": "로그인 실패",
     "passwordReset": "비밀번호 재설정"
   },
+  "loginDialog": {
+    "registerRequired": "아직 회원이 아니신가요?"
+  },
   "passwordReset": {
     "success": "비밀번호 재설정 성공",
     "fail": "비밀번호 재설정 실패",
@@ -20,7 +23,8 @@
     "message": "입력한 이메일 주소로 비밀번호를 설정하기 위한 안내를 이메일로 보냈습니다. 곧 이메일을 받을 수 있을 것입니다.",
     "errorNotFound": "입력한 이메일 주소가 등록되지 않았습니다.",
     "errorNotSent": "입력한 이메일 주소로 전송이 실패했습니다.",
-    "emailHelp": "계정을 만들때 입력한 이메일입니다."
+    "emailHelp": "계정을 만들때 입력한 이메일입니다.",
+    "backToLogin": "로그인 화면으로 돌아가기"
   },
   "passwordResetConfirm": {
     "title": "비밀번호 재설정",

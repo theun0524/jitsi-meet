@@ -1,9 +1,13 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
 import React from 'react';
 import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react-native';
 
+import tokenLocalStorage from '../../../../api/tokenLocalStorage';
+import { reloadNow } from '../../../app/actions';
 import { translate } from '../../../base/i18n';
+import { setJWT } from '../../../base/jwt';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import { SETTINGS_VIEW_ID } from '../../constants';
@@ -262,10 +266,26 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {void}
      */
     _onChangeServerURL(serverURL) {
+        const { _removeToken, dispatch } = this.props;
+
         super._onChangeServerURL(serverURL);
         this.setState({
             serverURL
         });
+
+        const token = tokenLocalStorage.getItemByURL(serverURL);
+
+        if (token) {
+            const { exp } = jwtDecode(token);
+
+            if (Date.now() < exp * 1000) {
+                dispatch(setJWT(token));
+                dispatch(reloadNow());
+
+                return;
+            }
+            _removeToken();
+        }
     }
 
     _onDisableCallIntegration: (boolean) => void;
@@ -530,7 +550,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state),
+        _removeToken: () => tokenLocalStorage.removeItem(state)
     };
 }
 

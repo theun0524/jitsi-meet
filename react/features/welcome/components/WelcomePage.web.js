@@ -234,8 +234,12 @@ class WelcomePage extends AbstractWelcomePage {
                     isLoading = { submitting }
                     trigger = {
                         <div className = 'user-container'>
-                            {/* <Avatar
-                                size = 'small' /> */}
+                            { _user.avatarURL && (
+                                <img
+                                    alt = 'avatar'
+                                    className = 'avatar'
+                                    src = { _user.avatarURL } />
+                            )}
                             { _user.name }
                         </div>
                     }
@@ -274,6 +278,11 @@ class WelcomePage extends AbstractWelcomePage {
                 <div className = 'header'>
                     <div className = 'header-toolbars'>
                         <ButtonGroup>
+                            <Button
+                                appearance = 'subtle'
+                                href = { `${AUTH_PAGE_BASE}/features` }>
+                                {t('toolbar.features')}
+                            </Button>
                             { buttons }
                             <Button
                                 appearance = 'subtle'
@@ -356,6 +365,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = 'nav'>
                         <a href={`${AUTH_PAGE_BASE}/tos`}>{t('footer.tos')}</a>
                         <a href={`${AUTH_PAGE_BASE}/privacy`}>{t('footer.privacy')}</a>
+                        <a href={interfaceConfig.SUPPORT_URL} alt={t('footer.contactUs')}>{t('footer.contactUs')}</a>
                     </div>
                 </div>
             </div>

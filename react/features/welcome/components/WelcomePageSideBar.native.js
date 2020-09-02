@@ -1,10 +1,15 @@
+/* eslint-disable require-jsdoc */
 // @flow
 
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text, NativeModules, Platform } from 'react-native';
 
+import api from '../../../api';
+import tokenLocalStorage from '../../../api/tokenLocalStorage';
+import { setScreen } from '../../../redux/screen/screen';
 import { Avatar } from '../../base/avatar';
-import { IconInfo, IconSettings, IconHelp } from '../../base/icons';
+import { IconSettings, IconHelp } from '../../base/icons';
+import { setJWT } from '../../base/jwt';
 import { setActiveModalId } from '../../base/modal';
 import {
     getLocalParticipant,
@@ -21,20 +26,16 @@ import { setSideBarVisible } from '../actions';
 
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
-import api from '../../../api';
-import AsyncStorage from '@react-native-community/async-storage';
-import { JWT_TOKEN } from '../../../config';
-import { setScreen } from '../../../redux/screen/screen';
 
 /**
  * The URL at which the privacy policy is available to the user.
  */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+// const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
 
 /**
  * The URL at which the terms (of service/use) are available to the user.
  */
-const TERMS_URL = 'https://jitsi.org/meet/terms';
+// const TERMS_URL = 'https://jitsi.org/meet/terms';
 
 type Props = {
 
@@ -56,7 +57,13 @@ type Props = {
     /**
      * Sets the side bar visible or hidden.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    _user: Object,
+
+    _logout: Function,
+
+    _removeToken: Function,
 };
 
 /**
@@ -77,6 +84,9 @@ class WelcomePageSideBar extends Component<Props> {
         this._onOpenSettings = this._onOpenSettings.bind(this);
         this._onOpenAccountSettings = this._onOpenAccountSettings.bind(this);
         this._onLogout = this._onLogout.bind(this);
+        this._onLogin = this._onLogin.bind(this);
+
+        // this._onRegister = this._onRegister.bind(this);
     }
 
     /**
@@ -107,12 +117,12 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconSettings }
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
-                        <SideBarItem
+                        {/* {this.props._user && <SideBarItem
                             icon = {IconSettings}
                             label = 'Account'
                             onPress = {this._onOpenAccountSettings}
-                        />
-                       {/* <SideBarItem
+                        />} */}
+                        {/* <SideBarItem
                             icon = { IconInfo }
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } /> */}
@@ -120,15 +130,23 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = { IconInfo }
                             label = 'welcomepage.privacy'
                             url = { PRIVACY_URL } /> */}
+                        {/* {!this.props._user && <SideBarItem
+                            icon = { IconSettings }
+                            label = 'Login'
+                            onPress = { this._onLogin } />} */}
+                        {/* {!this.props._user && <SideBarItem
+                            icon = { IconSettings }
+                            label = 'Register'
+                            onPress = { this._onRegister } />} */}
                         <SideBarItem
                             icon = { IconHelp }
                             label = 'welcomepage.getHelp'
                             onPress = { this._onOpenHelpPage } />
-                        <SideBarItem
+                        {/* {this.props._user && <SideBarItem
                             icon = { IconSettings }
-                            label = 'Log Out'
-                            onPress = { this._onLogout } />
-                     </ScrollView>
+                            label = 'toolbar.logout'
+                            onPress = { this._onLogout } />} */}
+                    </ScrollView>
                 </SafeAreaView>
             </SlidingView>
         );
@@ -178,13 +196,26 @@ class WelcomePageSideBar extends Component<Props> {
     _onOpenAccountSettings: () => void;
 
     _onOpenAccountSettings() {
-        const {dispatch} = this.props;
-        dispatch(setScreen("AccountSetting"));
+        const { dispatch } = this.props;
+
+        dispatch(setScreen('AccountSetting'));
     }
 
     _onLogout: () => void;
 
     _onLogout() {
+        const { dispatch, _logout, _removeToken } = this.props;
+
+        _logout().then(() => {
+            _removeToken();
+            dispatch(setJWT());
+            dispatch(setSideBarVisible(false));
+        });
+    }
+
+    _onLogin: () => void;
+
+    _onLogin() {
         const { dispatch } = this.props;
         if (Platform.OS === 'android') {
           NativeModules.SSOModule.logout();
@@ -194,6 +225,13 @@ class WelcomePageSideBar extends Component<Props> {
             dispatch(setScreen("Login"));
         })
     }
+
+    // _onRegister: () => void;
+
+    // _onRegister() {
+    //   const { dispatch } = this.props;
+    //   dispatch(setScreen("Register"));
+    // }
 }
 
 /**
@@ -211,7 +249,10 @@ function _mapStateToProps(state: Object) {
     return {
         _displayName,
         _localParticipantId,
-        _visible: state['features/welcome'].sideBarVisible
+        _visible: state['features/welcome'].sideBarVisible,
+        _user: state['features/base/jwt'].user,
+        _logout: () => api.logout(state),
+        _removeToken: () => tokenLocalStorage.removeItem(state)
     };
 }
 

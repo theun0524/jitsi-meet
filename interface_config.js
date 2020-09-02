@@ -1,8 +1,9 @@
+/* eslint-disable sort-keys */
 /* eslint-disable no-unused-vars, no-var, max-len */
 /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
 
 var interfaceConfig = {
-    APP_NAME: 'POSTECH Vmeeting',
+    APP_NAME: 'Vmeeting',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -130,7 +131,7 @@ var interfaceConfig = {
      */
     MOBILE_APP_PROMO: true,
 
-    NATIVE_APP_NAME: 'POSTECH Vmeeting',
+    NATIVE_APP_NAME: 'Vmeeting',
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
@@ -139,7 +140,7 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Jitsi',
+    PROVIDER_NAME: 'Vmeeting',
 
     /**
      * If true, will display recent list
@@ -169,7 +170,9 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto://vmeeting-info@postech.ac.kr',
+    SUPPORT_URL: 'mailto:vmeeting-info@postech.ac.kr',
+
+    THIRD_PARTY_AUTH_ENABLED: false,
 
     TOOLBAR_ALWAYS_VISIBLE: false,
 
@@ -231,7 +234,7 @@ var interfaceConfig = {
     /**
      * Specify custom URL for downloading android mobile app.
      */
-    // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.postech.vmeeting',
 
     /**
      * Specify URL for downloading ios mobile app.
@@ -252,12 +255,12 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // APP_SCHEME: 'org.jitsi.meet',
+    APP_SCHEME: 'org.postech.vmeeting',
 
     /**
      * Specify the Android app package name.
      */
-    // ANDROID_APP_PACKAGE: 'org.jitsi.meet'
+    ANDROID_APP_PACKAGE: 'org.postech.vmeeting',
 
     /**
      * Override the behavior of some notifications to remain displayed until

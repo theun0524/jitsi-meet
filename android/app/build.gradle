@@ -36,6 +36,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('signingconfig.properties').newDataInputStream())
+            storeFile file('vmeeting-release-key.keystore')
+            storePassword properties.getProperty('MYAPP_UPLOAD_STORE_PASSWORD')
+            keyAlias properties.getProperty('MYAPP_UPLOAD_KEY_ALIAS')
+            keyPassword properties.getProperty('MYAPP_UPLOAD_KEY_PASSWORD')
+        }
     }
 
     buildTypes {
@@ -50,6 +59,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            signingConfig signingConfigs.release
         }
     }
 
