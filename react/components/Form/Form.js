@@ -84,6 +84,7 @@ const Form = ({
   errorMessage,
   value,
   onChange,
+  onChangeText,
   type,
   onPressClearButton,
 }) => {
@@ -106,6 +107,7 @@ const Form = ({
           autoCapitalize={"none"}
           value={value}
           onChange={onChange}
+          onChangeText={onChangeText}
           style={{
             color: DARK_GRAY,
             lineHeight: 20,

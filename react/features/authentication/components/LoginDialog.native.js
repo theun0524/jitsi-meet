@@ -5,13 +5,16 @@
 
 import React, { Component, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TextInput, View, Linking } from 'react-native';
+import { Text, TextInput, View, Linking, Platform, NativeModules } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import api from '../../../api';
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { getLocationURL } from '../../../api/url';
+import Form from '../../../components/Form/Form';
+import PostechLoginButton from '../../../components/PostechLoginButton/PostechLoginButton';
+import TextDivider from '../../../components/TextDivider/TextDivider';
 import { WEB_REGISTER_PATH } from '../../../config';
 import { DARK_GRAY } from '../../../consts/colors';
 import { reloadNow } from '../../app/actions';
@@ -183,6 +186,7 @@ class LoginDialog extends Component<Props, State> {
         this._onLogin = this._onLogin.bind(this);
         this._onPasswordChange = this._onPasswordChange.bind(this);
         this._onUsernameChange = this._onUsernameChange.bind(this);
+        this._onSSOLogin = this._onSSOLogin.bind(this);
     }
 
     /**
@@ -194,8 +198,6 @@ class LoginDialog extends Component<Props, State> {
     render() {
         const {
             _connecting: connecting,
-            _dialogStyles,
-            _styles: styles,
             t
         } = this.props;
 
@@ -204,28 +206,18 @@ class LoginDialog extends Component<Props, State> {
                 okDisabled = { connecting }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin }>
-                <View style = { styles.loginDialog }>
-                    <TextInput
-                        autoCapitalize = { 'none' }
-                        autoCorrect = { false }
+                <PostechLoginButton onPress = { this._onSSOLogin } />
+                <TextDivider
+                    style = {{ paddingTop: 20 }}
+                    text = 'or login with' />
+                <View>
+                    <Form
                         onChangeText = { this._onUsernameChange }
                         placeholder = { t('dialog.usernameExample') }
-                        placeholderTextColor = { PLACEHOLDER_COLOR }
-                        style = { _dialogStyles.field }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
-                    <TextInput
-                        autoCapitalize = { 'none' }
+                    <Form
                         onChangeText = { this._onPasswordChange }
-                        placeholder = { t('dialog.userPassword') }
-                        placeholderTextColor = { PLACEHOLDER_COLOR }
-                        secureTextEntry = { true }
-                        style = { [
-                            _dialogStyles.field,
-                            inputDialogStyle.bottomField
-                        ] }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
-                        value = { this.state.password } />
+                        type = 'password' />
                     { this._renderMessage() }
                     <RegisterLinkButton url = { `${this.props._locationURL}/${WEB_REGISTER_PATH}` } />
                 </View>
@@ -379,6 +371,37 @@ class LoginDialog extends Component<Props, State> {
         }
 
         return r;
+    }
+
+    _onSSOLogin: () => void;
+
+    /**
+     * Do SSO login with native modules.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onSSOLogin() {
+        if (Platform.OS === 'android') {
+            NativeModules.SSOModule.login(
+                res => {
+                    console.log(res);
+                },
+                async err => {
+                    console.log(err);
+                    if (err === 'no_install_sso_app') {
+                        const url = 'market://details?id=com.ubintis.passnisso';
+                        const supported = await Linking.canOpenURL(url);
+
+                        if (supported) {
+                            await Linking.openURL(url);
+                        } else {
+                            console.log('ERROR: Cannot open url');
+                        }
+                    }
+                }
+            );
+        }
     }
 }
 
