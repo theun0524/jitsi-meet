@@ -455,11 +455,11 @@ export default class SmallVideo {
             return input.isVideoPlayable && !input.isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
         } else if (input.isVideoPlayable && input.hasVideo && !input.isAudioOnly) {
             // check hovering and change state to video with name
-            return input.isHovered ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
+            return DISPLAY_VIDEO_WITH_NAME;
         }
 
         // check hovering and change state to avatar with name
-        return input.isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+        return DISPLAY_AVATAR_WITH_NAME;
     }
 
     /**
