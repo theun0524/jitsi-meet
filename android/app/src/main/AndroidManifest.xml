@@ -23,7 +23,7 @@
         android:launchMode="singleTask"
         android:name=".MainActivity"
         android:resizeableActivity="true"
-        android:supportsPictureInPicture="true"
+        android:supportsPictureInPicture="false"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
       <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />

@@ -40,6 +40,19 @@ import logger from './logger';
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
+// eslint-disable-next-line require-jsdoc
+function getParams(uri: string) {
+    const regex = /[?&]([^=#]+)=([^&#]*)/g;
+    const params = {};
+    let match;
+
+    // eslint-disable-next-line no-cond-assign
+    while (match = regex.exec(uri)) {
+        params[match[1]] = match[2];
+    }
+
+    return params;
+}
 
 /**
  * Triggers an in-app navigation to a specific route. Allows navigation to be
@@ -53,7 +66,9 @@ declare var interfaceConfig: Object;
 export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
         let location = parseURIString(uri);
+        const params = getParams(uri);
 
+        console.log(uri, params, 'appNavigate');
         // If the specified location (URI) does not identify a host, use the app's
         // default.
         if (!location || !location.host) {
@@ -142,12 +157,13 @@ export function appNavigate(uri: ?string) {
         if (!room && navigator.product === 'ReactNative') {
             dispatch(setJWT());
         }
+        const willAuthenticateURL = getLocationURL(getState());
+
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
-            const willAuthenticateURL = getLocationURL(getState());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
 
-            console.log(savedToken, willAuthenticateURL, 'appnavigate');
+            // console.log(savedToken, willAuthenticateURL, 'appnavigate');
             if (savedToken) {
                 const { exp } = jwtDecode(savedToken);
 
@@ -155,6 +171,14 @@ export function appNavigate(uri: ?string) {
                     dispatch(setJWT(savedToken));
                 } else {
                     tokenLocalStorage.removeItemByURL(willAuthenticateURL);
+                }
+            } else if (params.token) {
+                const { token } = params;
+                const { exp } = jwtDecode(token);
+
+                if (Date.now() < exp * 1000) {
+                    tokenLocalStorage.setItemByURL(willAuthenticateURL, token);
+                    dispatch(setJWT(token));
                 }
             }
         } else {

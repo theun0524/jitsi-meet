@@ -28,6 +28,8 @@ import {
     waitForOwner
 } from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
+import { Linking } from 'react-native';
+import { getLocationURL } from '../../api/url';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
@@ -113,7 +115,18 @@ MiddlewareRegistry.register(store => next => action => {
                 && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
                 && typeof error.recoverable === 'undefined') {
             error.recoverable = true;
-            store.dispatch(_openLoginDialog());
+
+            // store.dispatch(_openLoginDialog());
+
+            const url = `${getLocationURL(store.getState())}/auth/page/login`;
+    
+            Linking.canOpenURL(url).then(supported => {
+                if (supported) {
+                    Linking.openURL(url);
+                } else {
+                    console.log('ERROR: Cannot open url');
+                }
+            });
         }
         break;
     }
