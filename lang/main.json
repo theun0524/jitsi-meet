@@ -676,7 +676,9 @@
         "name": "Name",
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
-        "speakerTime": "Speaker Time"
+        "speakerTime": "Speaker Time",
+        "joinTime": "Join Time",
+        "leaveTime": "Leave Time"
     },
     "startupoverlay": {
         "policyText": " ",

@@ -129,6 +129,8 @@ class SpeakerStats extends Component<Props, State> {
         const isDominantSpeaker = statsModel.isDominantSpeaker();
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
+        const startTime = statsModel.getStartTime();
+        const leaveTime = statsModel.getLeaveTime();
 
         let displayName;
 
@@ -151,6 +153,8 @@ class SpeakerStats extends Component<Props, State> {
                 dominantSpeakerTime = { dominantSpeakerTime }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
+                startTime = { startTime }
+                leaveTime = { leaveTime }
                 key = { userId } />
         );
     }

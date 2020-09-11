@@ -27,7 +27,9 @@
 
     .speaker-stats-item__status,
     .speaker-stats-item__name,
-    .speaker-stats-item__time {
+    .speaker-stats-item__time,
+    .speaker-stats-item__s_time,
+    .speaker-stats-item__l_time {
         display: inline-block;
         margin: 5px 0;
         vertical-align: middle;
@@ -36,14 +38,22 @@
         width: 5%;
     }
     .speaker-stats-item__name {
-        width: 40%;
+        width: 25%;
     }
     .speaker-stats-item__time {
-        width: 55%;
+        width: 30%;
+    }
+    .speaker-stats-item__s_time {
+        width: 20%;
+    }
+    .speaker-stats-item__l_time {
+        width: 20%;
     }
 
     .speaker-stats-item__name,
-    .speaker-stats-item__time {
+    .speaker-stats-item__time,
+    .speaker-stats-item__s_time,
+    .speaker-stats-item__l_time {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

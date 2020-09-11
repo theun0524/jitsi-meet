@@ -676,7 +676,9 @@
         "name": "이름",
         "seconds": "{{count}}s",
         "speakerStats": "접속자 통계",
-        "speakerTime": "접속자 오디오 사용 시간"
+        "speakerTime": "오디오 시간", 
+        "joinTime": "접속 시간",
+        "leaveTime": "종료 시간"
     },
     "startupoverlay": {
         "policyText": " ",
