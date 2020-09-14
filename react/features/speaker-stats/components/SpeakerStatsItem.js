@@ -28,16 +28,6 @@ type Props = {
      * True if the participant is currently the dominant speaker.
      */
     isDominantSpeaker: boolean,
-
-    /**
-     * Date object that saves join time of the user
-     */
-    startTime: Object,
-
-    /**
-     * Date object that saves leave time of the user (null if not leave)
-     */
-    leaveTime: Object
 };
 
 /**
@@ -60,17 +50,6 @@ class SpeakerStatsItem extends Component<Props> {
             ? 'status-active' : 'status-inactive';
         const speakerStatusClass = `speaker-stats-item__status-dot ${dotClass}`;
 
-        Date.prototype.hhmmss = function() {
-            var hh = this.getHours();
-            var mm = this.getMinutes();
-            var ss = this.getSeconds();
-          
-            return [(hh>9 ? '' : '0') + hh, ':',
-                    (mm>9 ? '' : '0') + mm, ':',
-                    (ss>9 ? '' : '0') + ss,
-                   ].join('');
-        };
-
         return (
             <div className = { rowDisplayClass }>
                 <div className = 'speaker-stats-item__status'>
@@ -82,12 +61,6 @@ class SpeakerStatsItem extends Component<Props> {
                 <div className = 'speaker-stats-item__time'>
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
-                </div>
-                <div className = 'speaker-stats-item__s_time'>
-                    { this.props.startTime.hhmmss() }
-                </div>
-                <div className = 'speaker-stats-item__l_time'>
-                    { this.props.leaveTime? this.props.leaveTime.hhmmss() : '' }
                 </div>
             </div>
         );
