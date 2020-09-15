@@ -918,7 +918,7 @@
         "emailField": "이메일 주소를 입력하세요",
         "enableDialogPasswordField": "암호 설정 (선택사항)",
         "enableDialogSubmit": "활성화",
-        "enableDialogText": "로비 모드를 사용하면 방장이 공식적으로 승인 한 후에 만 ​​사람들이 입장 할 수 있도록하여 회의를 보호 할 수 있습니다.",
+        "enableDialogText": "로비 모드를 사용하면 방장이 공식적으로 승인한 ​​사람들만 입장할 수 있도록 하여 회의를 보호할 수 있습니다.",
         "enterPasswordButton": "회의 비밀번호 입력",
         "enterPasswordTitle": "회의에 참여하려면 비밀번호를 입력하세요",
         "invalidPassword": "잘못된 비밀번호",
