@@ -188,6 +188,7 @@ class Conference extends AbstractConference<Props, *> {
         } = interfaceConfig;
         const {
             _iAmRecorder,
+            _isChatOpen,
             _isLobbyScreenVisible,
             _layoutClassName,
             _showPrejoin
