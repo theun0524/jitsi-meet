@@ -12,6 +12,7 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
+    transition: left 0.5s;
 }
 
 #largeVideoBackgroundContainer,
@@ -707,4 +708,15 @@
     top: calc(50% + 30px);
     white-space: nowrap;
     width: 100%;
+}
+
+.chat-open {
+  .invite-more-container,
+  .subject,
+  .new-toolbox,
+  .filmstrip,
+  #videospace {
+    left: $sidebarWidth;
+    width: calc(100% - $sidebarWidth);
+  }
 }

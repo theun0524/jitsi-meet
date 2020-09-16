@@ -423,7 +423,15 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleChat() {
+        const {
+            innerHeight,
+            innerWidth
+        } = window;
         this.props.dispatch(toggleChat());
+        this.props.dispatch(clientResized(
+          innerWidth - (this.props._chatOpen ? SIDEBAR_WIDTH : 0),
+          innerHeight
+        ));
     }
 
     /**
@@ -1190,15 +1198,15 @@ class Toolbox extends Component<Props, State> {
             / 2 // divide by the number of groups(left and right group)
         );
 
+        if (this._shouldShowButton('chat')) {
+            buttonsLeft.push('chat');
+        }
         if (this._shouldShowButton('desktop')
                 && this._isDesktopSharingButtonVisible()) {
             buttonsLeft.push('desktop');
         }
         if (this._shouldShowButton('raisehand')) {
             buttonsLeft.push('raisehand');
-        }
-        if (this._shouldShowButton('chat')) {
-            buttonsLeft.push('chat');
         }
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
