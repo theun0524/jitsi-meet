@@ -47,6 +47,7 @@ import {
     RecordButton,
     getActiveSession
 } from '../../../recording';
+import { clientResized } from '../../../base/responsive-ui/actions';
 import { SecurityDialogButton } from '../../../security';
 import {
     SETTINGS_TABS,
