@@ -12,7 +12,6 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
-    transition: left 0.5s;
 }
 
 #largeVideoBackgroundContainer,
@@ -714,9 +713,13 @@
   .invite-more-container,
   .subject,
   .new-toolbox,
-  .filmstrip,
+  &.tile-view .filmstrip,
   #videospace {
-    left: $sidebarWidth;
-    width: calc(100% - $sidebarWidth);
+    left: $sidebarWidth !important;
+    width: calc(100% - #{$sidebarWidth}) !important;
+  }
+
+  &.tile-view #filmstripRemoteVideos {
+    width: calc(100vw - #{$sidebarWidth}) !important;
   }
 }

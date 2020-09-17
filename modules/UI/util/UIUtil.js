@@ -16,7 +16,7 @@ const UIUtil = {
      */
     getAvailableVideoWidth() {
         const state = APP.store.getState();
-        return window.innerWidth - state['features/chat'].isOpen ? SIDEBAR_WIDTH : 0;
+        return window.innerWidth - (state['features/chat'].isOpen ? SIDEBAR_WIDTH : 0);
     },
 
     /**
