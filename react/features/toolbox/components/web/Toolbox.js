@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { SIDEBAR_WIDTH } from '../../../../../modules/UI/util/UIUtil';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
