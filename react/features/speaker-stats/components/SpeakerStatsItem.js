@@ -30,14 +30,19 @@ type Props = {
     isDominantSpeaker: boolean,
 
     /**
+     * True if the participant is currently the dominant speaker.
+     */
+    participantLog: Object
+
+    /**
      * Date object that saves join time of the user
      */
-    startTime: Object,
+    //startTime: Object,
 
     /**
      * Date object that saves leave time of the user (null if not leave)
      */
-    leaveTime: Object
+    //leaveTime: Object
 };
 
 /**
@@ -60,17 +65,6 @@ class SpeakerStatsItem extends Component<Props> {
             ? 'status-active' : 'status-inactive';
         const speakerStatusClass = `speaker-stats-item__status-dot ${dotClass}`;
 
-        Date.prototype.hhmmss = function() {
-            var hh = this.getHours();
-            var mm = this.getMinutes();
-            var ss = this.getSeconds();
-          
-            return [(hh>9 ? '' : '0') + hh, ':',
-                    (mm>9 ? '' : '0') + mm, ':',
-                    (ss>9 ? '' : '0') + ss,
-                   ].join('');
-        };
-
         return (
             <div className = { rowDisplayClass }>
                 <div className = 'speaker-stats-item__status'>
@@ -84,13 +78,24 @@ class SpeakerStatsItem extends Component<Props> {
                         time = { this.props.dominantSpeakerTime } />
                 </div>
                 <div className = 'speaker-stats-item__s_time'>
-                    { this.props.startTime.hhmmss() }
+                    { this.props.participantLog && this.props.participantLog["joinTime"]? this.hhmmss(this.props.participantLog["joinTime"]) : '' }
                 </div>
                 <div className = 'speaker-stats-item__l_time'>
-                    { this.props.leaveTime? this.props.leaveTime.hhmmss() : '' }
+                    { this.props.participantLog && this.props.participantLog["leaveTime"]? this.hhmmss(this.props.participantLog["leaveTime"]) : '' } 
                 </div>
             </div>
         );
+    }
+
+    hhmmss(hms) {
+        var hh = hms["hour"];
+        var mm = hms["min"];
+        var ss = hms["sec"];
+
+        return [(hh>9 ? '' : '0') + hh, ':',
+                (mm>9 ? '' : '0') + mm, ':',
+                (ss>9 ? '' : '0') + ss,
+                ].join('');
     }
 }
 
