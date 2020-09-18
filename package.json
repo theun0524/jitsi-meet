@@ -76,6 +76,7 @@
     "react-native-callstats": "3.61.0",
     "react-native-collapsible": "1.5.1",
     "react-native-default-preference": "1.4.2",
+    "react-native-device-info": "^6.0.2",
     "react-native-immersive": "2.0.0",
     "react-native-keep-awake": "4.0.0",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
