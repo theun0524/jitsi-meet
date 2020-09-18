@@ -182,7 +182,6 @@ class Conference extends AbstractConference<Props, *> {
         } = interfaceConfig;
         const {
             _iAmRecorder,
-            _isChatOpen,
             _isLobbyScreenVisible,
             _layoutClassName,
             _showPrejoin
@@ -191,7 +190,7 @@ class Conference extends AbstractConference<Props, *> {
 
         return (
             <div
-                className = { `${_layoutClassName}${_isChatOpen ? ' chat-open' : ''}` }
+                className = { _layoutClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
 
@@ -275,7 +274,6 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
-        _isChatOpen: state['features/chat'].isOpen,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),

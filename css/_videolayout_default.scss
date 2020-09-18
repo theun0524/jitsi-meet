@@ -715,18 +715,3 @@
     white-space: nowrap;
     width: 100%;
 }
-
-.chat-open {
-  .invite-more-container,
-  .subject,
-  .new-toolbox,
-  &.tile-view .filmstrip,
-  #videospace {
-    left: $sidebarWidth !important;
-    width: calc(100% - #{$sidebarWidth}) !important;
-  }
-
-  &.tile-view #filmstripRemoteVideos {
-    width: calc(100vw - #{$sidebarWidth}) !important;
-  }
-}

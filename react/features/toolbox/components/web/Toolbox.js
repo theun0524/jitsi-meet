@@ -1,9 +1,7 @@
 // @flow
-/* global $ */
 
 import React, { Component } from 'react';
 
-import { SIDEBAR_WIDTH } from '../../../../../modules/UI/util/UIUtil';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
@@ -34,7 +32,6 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { clientResized } from '../../../base/responsive-ui/actions';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
@@ -445,17 +442,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleChat() {
-        const {
-            innerHeight,
-            innerWidth
-        } = window;
-
         this.props.dispatch(toggleChat());
-        this.props.dispatch(clientResized(
-          innerWidth - (this.props._chatOpen ? 0 : SIDEBAR_WIDTH),
-          innerHeight
-        ));
-        $(window).trigger('resize');
     }
 
     /**

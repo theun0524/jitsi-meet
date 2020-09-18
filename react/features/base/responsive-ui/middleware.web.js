@@ -4,7 +4,6 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import { clientResized } from './actions';
-import { SIDEBAR_WIDTH } from '../../../../modules/UI/util/UIUtil';
 
 /**
  * Dimensions change handler.
@@ -45,15 +44,9 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _appWillMount(store) {
     handler = () => {
-        const {
-            innerHeight,
-            innerWidth
-        } = window;
+        const { innerHeight, innerWidth } = window;
 
-        store.dispatch(clientResized(
-          innerWidth - (store.getState('features/chat').isOpen ? SIDEBAR_WIDTH : 0),
-          innerHeight
-        ));
+        store.dispatch(clientResized(innerWidth, innerHeight));
     };
 
     window.addEventListener('resize', handler);

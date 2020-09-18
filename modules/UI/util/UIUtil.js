@@ -1,10 +1,4 @@
-/* global $, APP */
-
-/**
- * The chat window width
- * defined in css/_variables.scss
- */
-export const SIDEBAR_WIDTH = 375;
+/* global $ */
 
 /**
  * Created by hristo on 12/22/14.
@@ -15,8 +9,7 @@ const UIUtil = {
      * Returns the available video width.
      */
     getAvailableVideoWidth() {
-        const state = APP.store.getState();
-        return window.innerWidth - (state['features/chat'].isOpen ? SIDEBAR_WIDTH : 0);
+        return window.innerWidth;
     },
 
     /**
