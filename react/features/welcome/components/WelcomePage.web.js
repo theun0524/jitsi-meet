@@ -1,30 +1,25 @@
 /* global interfaceConfig, process */
 
-import axios from 'axios';
 import Button, { ButtonGroup } from '@atlaskit/button';
-import DropdownMenu, {
-    DropdownItem,
-    DropdownItemGroup
-} from '@atlaskit/dropdown-menu';
+import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import axios from 'axios';
 import React from 'react';
 
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
+import { setJWT } from '../../base/jwt';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
+import { NotificationsContainer } from '../../notifications/components';
 import { RecentList } from '../../recent-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
-import { NotificationsContainer } from '../../notifications/components';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
-
-// import { setCurrentUser } from '../../base/auth';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import { setJWT } from '../../base/jwt';
 
 /**
  * The pattern used to validate room name.
@@ -213,7 +208,7 @@ class WelcomePage extends AbstractWelcomePage {
     render() {
         const { _moderatedRoomServiceUrl, _user, t } = this.props;
         const { submitting } = this.state;
-        const { APP_NAME } = interfaceConfig;
+        const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();
@@ -273,7 +268,7 @@ class WelcomePage extends AbstractWelcomePage {
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
-                    <Watermarks />
+                    <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
                 </div>
                 <div className = 'header'>
                     <div className = 'header-toolbars'>
@@ -363,9 +358,13 @@ class WelcomePage extends AbstractWelcomePage {
                         {t('footer.copyright')}
                     </div>
                     <div className = 'nav'>
-                        <a href={`${AUTH_PAGE_BASE}/tos`}>{t('footer.tos')}</a>
-                        <a href={`${AUTH_PAGE_BASE}/privacy`}>{t('footer.privacy')}</a>
-                        <a href={interfaceConfig.SUPPORT_URL} alt={t('footer.contactUs')}>{t('footer.contactUs')}</a>
+                        <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
+                        <a href = { `${AUTH_PAGE_BASE}/privacy` }>{t('footer.privacy')}</a>
+                        <a
+                            alt = { t('footer.contactUs') }
+                            href = { interfaceConfig.SUPPORT_URL }>
+                            {t('footer.contactUs')}
+                        </a>
                     </div>
                 </div>
             </div>
