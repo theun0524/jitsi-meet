@@ -93,7 +93,7 @@ export class App extends AbstractApp {
             dispatch(updateFlags(this.props.flags));
 
             // Check if serverURL is configured externally and not allowed to change.
-            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, false);
 
             if (!serverURLChangeEnabled) {
                 // As serverURL is provided externally, so we push it to settings.
