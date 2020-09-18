@@ -6,23 +6,23 @@ import { useSelector, useStore } from 'react-redux';
 
 import { getLocationURL } from '../../api/url';
 
-const LoginWebView = ({onReceiveToken}) => {
+const LoginWebView = ({ onReceiveToken }) => {
     const { authRequired } = useSelector(store => store)['features/base/conference'];
     const room = authRequired && authRequired.getName();
-    
+
     const store = useStore();
     const [ userAgent, setUserAgent ] = useState();
     const [ token, setToken ] = useState();
     const loginURL = `${getLocationURL(store.getState())}/auth/page/login?next=${room}`;
 
-    useEffect(()=> {
-      if(token) {
-        onReceiveToken(token);
-      }
-    }, [token]);
+    useEffect(() => {
+        if (token) {
+            onReceiveToken(token);
+        }
+    }, [ token ]);
 
     const onMessage = event => {
-      setToken(event.nativeEvent.data);
+        setToken(event.nativeEvent.data);
     };
 
     useEffect(() => {
@@ -42,8 +42,10 @@ const LoginWebView = ({onReceiveToken}) => {
             }}
             startInLoadingState = { true }
             style = {{ width: '100%' }}
+            useWebView = { userAgent && userAgent.match(/iP(ad|hone|od)/i) }
             userAgent = { userAgent } />
     )
+
 };
 
 export default LoginWebView;
