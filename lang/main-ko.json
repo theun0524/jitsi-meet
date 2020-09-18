@@ -102,6 +102,7 @@
         "bandwidth": "예상 대역폭:",
         "bitrate": "전송률:",
         "bridgeCount": "서버 개수:",
+        "codecs": "코덱 (A/V): ",
         "connectedTo": "연결:",
         "e2e_rtt": "E2E RTT:",
         "framerate": "프레임 속도:",
@@ -190,6 +191,7 @@
         "connectErrorWithMsg": "죄송합니다. 뭔가 잘못되어 회의에 연결할 수 없습니다: {{msg}}",
         "connecting": "연결 중",
         "contactSupport": "지원 연락처",
+        "copied": "복사됨",
         "copy": "복사",
         "dismiss": "닫기",
         "displayNameRequired": "안녕하세요! 이름이 어떻게 되세요?",
@@ -337,6 +339,9 @@
     },
     "e2ee": {
         "labelToolTip": "이 통화의 오디오 및 비디오 통신은 종단 간 암호화됩니다."
+    },
+    "embedMeeting": {
+        "title": "이 회의 삽입"
     },
     "feedback": {
         "average": "보통",
@@ -527,12 +532,33 @@
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "오디오 및 비디오 오류:",
+        "audioDeviceProblem": "오디오 장치에 문제가 있습니다",
         "audioOnlyError": "오디오 오류:",
         "audioTrackError": "오디오 트랙을 만들수 없습니다.",
+        "calling": "전화중",
         "callMe": "전화하세요",
         "callMeAtNumber": "이 번호로 전화하세요:",
         "configuringDevices": "장치 구성중...",
         "connectedWithAudioQ": "오디오가 연결되어 있습니까?",
+        "connection": {
+           "good": "인터넷 연결 상태가 좋습니다!",
+           "nonOptimal": "인터넷 연결 상태가 최적이 아닙니다",
+           "poor": "인터넷 연결 상태가 좋지 않습니다."
+        },
+        "connectionDetails": {
+          "audioClipping": "오디오가 잘릴 것으로 예상됩니다.",
+          "audioHighQuality": "오디오 품질이 좋을 것으로 예상됩니다.",
+          "audioLowNoVideo": "오디오 품질이 낮고 비디오가 없을 것으로 예상됩니다.",
+          "goodQuality": "대박! 미디어 품질이 좋아질 것입니다.",
+          "noMediaConnectivity": "이 테스트를 위해 미디어 연결을 설정하는 방법을 찾을 수 없습니다. 이는 일반적으로 방화벽 또는 NAT로 인해 발생합니다.",
+          "noVideo": "동영상 품질이 정말 좋지 않을 것으로 예상됩니다.",
+          "undetectable": "여전히 브라우저에서 통화가 안되는 경우, 스피커, 마이크 및 카메라가 제대로 설정되어 있는지, 마이크와 카메라에 대한 브라우저 권한을 설정했는지, 브라우저 버전이 최신 버전인지 확인하는 것이 좋습니다. -데이트. 여전히 통화에 문제가 있으면 웹 애플리케이션 개발자에게 문의해야합니다.",
+          "veryPoorConnection": "통화 품질이 정말 좋지 않을 것으로 예상됩니다.",
+          "videoFreezing": "동영상이 멈추고 검게 변하고 픽셀화 될 것으로 예상됩니다.",
+          "videoHighQuality": "동영상의 품질이 좋을 것으로 예상됩니다.",
+          "videoLowQuality": "프레임 속도 및 해상도 측면에서 비디오 품질이 낮을 것으로 예상됩니다.",
+          "videoTearing": "동영상이 픽셀화되거나 시각적 인공물이 있을 것으로 예상됩니다."
+        },
         "copyAndShare": "회의 링크 복사 및 공유",
         "dialInMeeting": "회의에 전화",
         "dialInPin": "회의에 전화를 걸어 PIN 코드를 입력하세요:",
@@ -542,6 +568,7 @@
         "errorDialOutDisconnected": "전화를 걸 수 없습니다. 연결 해제",
         "errorDialOutFailed": "전화를 걸 수 없습니다. 전화 실패",
         "errorDialOutStatus": "전화 걸기 상태를 얻는 중 오류",
+        "errorMissingName": "회의에 참여하려면 이름을 입력하세요.",
         "errorStatusCode": "전화 걸기 오류, 상태 코드: {{status}}",
         "errorValidation": "전화번호 검증 실패",
         "iWantToDialIn": "전화를 걸고 싶습니다",
@@ -552,7 +579,8 @@
         "linkCopied": "링크가 클립 보드에 복사되었습니다",
         "lookGood": "마이크가 제대로 작동하는 것 같습니다",
         "or": "또는",
-        "calling": "전화중",
+        "premeeting": "사전 회의",
+        "showScreen": "사전 회의 화면 활성화",
         "startWithPhone": "전화 오디오로 시작",
         "screenSharingError": "화면 공유 오류:",
         "videoOnlyError": "비디오 오류:",
@@ -676,7 +704,9 @@
         "name": "이름",
         "seconds": "{{count}}s",
         "speakerStats": "접속자 통계",
-        "speakerTime": "접속자 오디오 사용 시간"
+        "speakerTime": "오디오 시간", 
+        "joinTime": "접속 시간",
+        "leaveTime": "종료 시간"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -696,6 +726,7 @@
             "chat": "채팅방 토글하기",
             "document": "공유문서 토글하기",
             "download": "앱 다운로드",
+            "embedMeeting": "회의 삽입",
             "e2ee": "종단 간 암호화",
             "feedback": "피드백 남기기",
             "fullScreen": "전체화면 토글하기",
@@ -745,6 +776,7 @@
         "documentOpen": "공유문서 열기",
         "download": "앱 다운로드",
         "e2ee": "종단 간 암호화",
+        "embedMeeting": "회의 삽입",
         "enterFullScreen": "전체화면 보기",
         "enterTileView": "타일뷰 시작",
         "exitFullScreen": "전체화면 취소",
@@ -897,7 +929,7 @@
         "roomNameAllowedChars": "미팅 이름에는 다음 문자가 포함되지 않아야 합니다: ?, &, :, ', \", %, #.",
         "sendFeedback": "피드백 보내기",
         "terms": "이용약관",
-        "title": "Vmeeting: 안전하고 간편한 화상 회의"
+        "title": "브이미팅: 안전하고 간편한 화상 회의"
     },
     "lonelyMeetingExperience": {
         "button": "다른 사람 초대",
@@ -907,7 +939,7 @@
         "header": "도움말 센터"
     },
     "lobby": {
-        "knockingParticipantList" : "참가자 목록 요청",
+        "knockingParticipantList": "참가자 목록 요청",
         "allow": "허용",
         "backToKnockModeButton": "암호 없음, 대신 가입 요청",
         "dialogTitle": "로비 모드",
@@ -916,7 +948,7 @@
         "emailField": "이메일 주소를 입력하세요",
         "enableDialogPasswordField": "암호 설정 (선택사항)",
         "enableDialogSubmit": "활성화",
-        "enableDialogText": "로비 모드를 사용하면 방장이 공식적으로 승인 한 후에 만 ​​사람들이 입장 할 수 있도록하여 회의를 보호 할 수 있습니다.",
+        "enableDialogText": "로비 모드를 사용하면 방장이 공식적으로 승인한 ​​사람들만 입장할 수 있도록 하여 회의를 보호할 수 있습니다.",
         "enterPasswordButton": "회의 비밀번호 입력",
         "enterPasswordTitle": "회의에 참여하려면 비밀번호를 입력하세요",
         "invalidPassword": "잘못된 비밀번호",

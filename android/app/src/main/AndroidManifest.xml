@@ -1,6 +1,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.postech.vmeeting">
+    package="org.postech.vmeeting"
+    android:installLocation="auto">
   <application
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"

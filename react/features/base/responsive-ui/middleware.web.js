@@ -44,10 +44,7 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _appWillMount(store) {
     handler = () => {
-        const {
-            innerHeight,
-            innerWidth
-        } = window;
+        const { innerHeight, innerWidth } = window;
 
         store.dispatch(clientResized(innerWidth, innerHeight));
     };

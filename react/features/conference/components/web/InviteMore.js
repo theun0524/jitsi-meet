@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // @flow
 
 import React from 'react';
@@ -7,10 +8,8 @@ import { Icon, IconInviteMore } from '../../../base/icons';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
-import {
-    isButtonEnabled,
-    isToolboxVisible
-} from '../../../toolbox';
+import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
+import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 declare var interfaceConfig: Object;
 
@@ -26,6 +25,11 @@ type Props = {
      * instead of the subject.
      */
     _visible: boolean,
+
+    /**
+     * Whether to open chat window
+     */
+    _isChatOpen: boolean,
 
     /**
      * Handler to open the invite dialog.
@@ -46,6 +50,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function InviteMore({
+    _isChatOpen,
     _tileViewEnabled,
     _visible,
     onClick,
@@ -53,7 +58,7 @@ function InviteMore({
 }: Props) {
     return (
         _visible
-            ? <div className = { `invite-more-container${_tileViewEnabled ? ' elevated' : ''}` }>
+            ? <div className = { `invite-more-container${_tileViewEnabled ? ' elevated' : ''} ${_isChatOpen ? 'slideInExt' : ''}` }>
                 <div className = 'invite-more-header'>
                     {t('addPeople.inviteMoreHeader')}
                 </div>
@@ -83,7 +88,8 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        _isChatOpen: state['features/chat'].isOpen,
+        _tileViewEnabled: shouldDisplayTileView(state),
         _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
     };
 }

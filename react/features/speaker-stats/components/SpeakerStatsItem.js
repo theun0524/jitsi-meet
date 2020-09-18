@@ -27,7 +27,7 @@ type Props = {
     /**
      * True if the participant is currently the dominant speaker.
      */
-    isDominantSpeaker: boolean
+    isDominantSpeaker: boolean,
 };
 
 /**
