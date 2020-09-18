@@ -21,8 +21,6 @@ type Props = {
      */
     _room: string,
 
-    _loginURL: string,
-
     /**
      * Redux store dispatch function.
      */
@@ -105,14 +103,7 @@ class WaitForOwnerDialog extends Component<Props> {
         const { _room: room } = this.props;
         const url = `${this.props._loginURL}?next=%2F${room}`;
 
-        Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-                Linking.openURL(url);
-            } else {
-                console.log('ERROR: Cannot open url');
-            }
-        });
-        this.props.dispatch(appNavigate(undefined));
+        this.props.dispatch(_openLoginDialog());
     }
 }
 
@@ -131,8 +122,7 @@ function _mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];
 
     return {
-        _room: authRequired && authRequired.getName(),
-        _loginURL: `${getLocationURL(state)}/auth/page/login`
+        _room: authRequired && authRequired.getName()
     };
 }
 

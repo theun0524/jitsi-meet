@@ -29,6 +29,14 @@
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    NSString *deviceType = [UIDevice currentDevice].model;
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+    NSString *oldAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    NSString *newAgent = [oldAgent stringByAppendingString:@" MYAPPNAME - iOS - "];
+    newAgent = [newAgent stringByAppendingString:deviceType];
+    NSDictionary *dictionnary = [[NSDictionary alloc] initWithObjectsAndKeys:newAgent, @"UserAgent", nil];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:dictionnary];
+  
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;

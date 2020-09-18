@@ -197,6 +197,7 @@ class ReactInstanceManagerHolder {
                 new com.reactnativecommunity.webview.RNCWebViewPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),
+                new com.learnium.RNDeviceInfo.RNDeviceInfo(),
                 new ReactPackageAdapter() {
                     @Override
                     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {

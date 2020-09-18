@@ -355,6 +355,8 @@ PODS:
     - React
   - RNDefaultPreference (1.4.2):
     - React
+  - RNDeviceInfo (6.0.2):
+    - React
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
     - React
@@ -412,6 +414,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info/RNDeviceInfo.podspec`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -513,6 +516,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNDefaultPreference:
     :path: "../node_modules/react-native-default-preference"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info/RNDeviceInfo.podspec"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-community/google-signin"
   RNSound:
@@ -583,12 +588,13 @@ SPEC CHECKSUMS:
   ReactCommon: 675681aba4fecff5acbc0e440530cc422103c610
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
   RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
+  RNDeviceInfo: 273208fc409c58acecd7f5bd726eb5c7edd8265d
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: aac12785382e8fd4f28d072fe640612e34914631
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: c4c1021811ab623e87411c49f9702b01d93166a1
+PODFILE CHECKSUM: ab9f00afab36ba314bf6d67d72e4b5d76a0f4ace
 
 COCOAPODS: 1.9.1
