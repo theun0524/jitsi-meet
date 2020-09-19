@@ -3,9 +3,8 @@
 /* eslint-disable react-native/no-inline-styles */
 /* @flow */
 
-import React, { Component, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Text, TextInput, View, Linking } from 'react-native';
+import React, { Component } from 'react';
+import { Text } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
@@ -13,19 +12,11 @@ import api from '../../../api';
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { getLocationURL } from '../../../api/url';
 import LoginWebView from '../../../components/LoginWebView/LoginWebView';
-import { WEB_REGISTER_PATH } from '../../../config';
-import { DARK_GRAY } from '../../../consts/colors';
 import { reloadNow } from '../../app/actions';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { toJid } from '../../base/connection';
 import { connect } from '../../base/connection/actions.native';
-import {
-    CustomSubmitDialog,
-    FIELD_UNDERLINE,
-    PLACEHOLDER_COLOR,
-    _abstractMapStateToProps,
-    inputDialog as inputDialogStyle
-} from '../../base/dialog';
+import { _abstractMapStateToProps } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { setJWT } from '../../base/jwt';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
@@ -112,33 +103,6 @@ type State = {
     username: string
 };
 
-// eslint-disable-next-line react/prop-types
-const RegisterLinkButton = ({ url }) => {
-    const { t, i18n } = useTranslation('vmeeting', { i18n });
-    const handlePress = useCallback(async () => {
-    // Checking if the link is supported for links with custom URL scheme.
-        const supported = await Linking.canOpenURL(url);
-
-        if (supported) {
-            await Linking.openURL(url);
-        } else {
-            console.log('ERROR: Cannot open url');
-        }
-    }, [ url ]);
-
-    return (
-        <Text
-            onPress = { handlePress }
-            style = {{
-                alignSelf: 'center',
-                color: DARK_GRAY,
-                paddingTop: 20
-            }}>
-            {t('loginDialog.registerRequired')}
-        </Text>
-    );
-};
-
 /**
  * Dialog asks user for username and password.
  *
@@ -186,7 +150,7 @@ class LoginDialog extends Component<Props, State> {
         this._onLogin = this._onLogin.bind(this);
         this._onPasswordChange = this._onPasswordChange.bind(this);
         this._onUsernameChange = this._onUsernameChange.bind(this);
-        this._loginWithToken = this._loginWithToken.bind(this);
+        this._onLoginWithToken = this._onLoginWithToken.bind(this);
     }
 
     /**
@@ -196,46 +160,8 @@ class LoginDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _connecting: connecting,
-            _dialogStyles,
-            _styles: styles,
-            t
-        } = this.props;
-
         return (
-            <LoginWebView
-                onReceiveToken = { this._loginWithToken } />
-        // <CustomSubmitDialog
-        //     okDisabled = { connecting }
-        //     onCancel = { this._onCancel }
-        //     onSubmit = { this._onLogin }>
-        //     <View style = { styles.loginDialog }>
-        //         <TextInput
-        //             autoCapitalize = { 'none' }
-        //             autoCorrect = { false }
-        //             onChangeText = { this._onUsernameChange }
-        //             placeholder = { t('dialog.usernameExample') }
-        //             placeholderTextColor = { PLACEHOLDER_COLOR }
-        //             style = { _dialogStyles.field }
-        //             underlineColorAndroid = { FIELD_UNDERLINE }
-        //             value = { this.state.username } />
-        //         <TextInput
-        //             autoCapitalize = { 'none' }
-        //             onChangeText = { this._onPasswordChange }
-        //             placeholder = { t('dialog.userPassword') }
-        //             placeholderTextColor = { PLACEHOLDER_COLOR }
-        //             secureTextEntry = { true }
-        //             style = { [
-        //                 _dialogStyles.field,
-        //                 inputDialogStyle.bottomField
-        //             ] }
-        //             underlineColorAndroid = { FIELD_UNDERLINE }
-        //             value = { this.state.password } />
-        //         { this._renderMessage() }
-        //         <RegisterLinkButton url = { `${this.props._locationURL}/${WEB_REGISTER_PATH}` } />
-        //     </View>
-        // </CustomSubmitDialog>
+            <LoginWebView onReceiveToken = { this._onLoginWithToken } />
         );
     }
 
@@ -346,20 +272,25 @@ class LoginDialog extends Component<Props, State> {
         this.props.dispatch(cancelLogin());
     }
 
-    _loginWithToken: (string) => void;
+    _onLoginWithToken: (string) => void;
 
-    _loginWithToken(token) {
-        const { _conference: conference, dispatch, _setToken } = this.props;
-      
+    /**
+     * Notifies this LoginDialog that it has been received token.
+     *
+     * @private
+     * @param {string} token - Login token.
+     * @returns {void}
+     */
+    _onLoginWithToken(token) {
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
-        if (conference) {
-            _setToken(token);
-            dispatch(setJWT(token));
-            dispatch(reloadNow());
+        if (this.props._conference) {
+            this.props._setToken(token);
+            this.props.dispatch(setJWT(token));
+            this.props.dispatch(reloadNow());
         } else {
-            dispatch(setJWT());
-            dispatch(reloadNow());
+            this.props.dispatch(setJWT());
+            this.props.dispatch(reloadNow());
         }
     }
 
