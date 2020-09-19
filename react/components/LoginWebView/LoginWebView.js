@@ -14,15 +14,10 @@ const LoginWebView = ({ onReceiveToken }) => {
 
     const store = useStore();
     const [ userAgent, setUserAgent ] = useState();
-    const [ token, setToken ] = useState();
     const loginURL = `${getLocationURL(store.getState())}/auth/page/login?next=${room}`;
 
-    useEffect(() => {
-        onReceiveToken(token);
-    }, [ token ]);
-
     const onMessage = event => {
-        setToken(event.nativeEvent.data);
+        onReceiveToken(event.nativeEvent.data);
     };
 
     useEffect(() => {
@@ -33,7 +28,7 @@ const LoginWebView = ({ onReceiveToken }) => {
         .catch(err => console.log(err));
     });
 
-    return token ? <></> : (
+    return (
         <WebView
             onMessage = { onMessage }
             source = {{
