@@ -42,6 +42,7 @@ const LoginWebView = ({ onReceiveToken }) => {
             }}
             startInLoadingState = { true }
             style = {{ width: '100%' }}
+            useWebView = { userAgent && userAgent.match(/iP(ad|hone|od)/i) }
             userAgent = { userAgent } />
     );
 };
