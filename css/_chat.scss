@@ -4,6 +4,10 @@
     color: #FFF;
     display: flex;
     flex-direction: column;
+    /**
+     * Make the sidebar flush with the top of the toolbar. Take the size of
+     * the toolbar and subtract from 100%.
+     */
     height: 100%;
     left: -$sidebarWidth;
     overflow: hidden;

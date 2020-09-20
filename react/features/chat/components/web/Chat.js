@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import Transition from 'react-transition-group/Transition';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
@@ -83,9 +84,11 @@ class Chat extends AbstractChat<Props> {
      */
     render() {
         return (
-            <>
-                { this._renderPanelContent() }
-            </>
+            <Transition
+                in = { this.props._isOpen }
+                timeout = { 500 }>
+                { this._renderPanelContent }
+            </Transition>
         );
     }
 
@@ -142,25 +145,30 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
-    _renderPanelContent: () => React$Node | null;
+    _renderPanelContent: (string) => React$Node | null;
 
     /**
-     * Renders the contents of the chat panel.
+     * Renders the contents of the chat panel, depending on the current
+     * animation state provided by {@code Transition}.
      *
+     * @param {string} state - The current display transition state of the
+     * {@code Chat} component, as provided by {@code Transition}.
      * @private
      * @returns {ReactElement | null}
      */
-    _renderPanelContent() {
+    _renderPanelContent(state) {
+        this._isExited = state === 'exited';
+
         const { _isOpen, _showNamePrompt } = this.props;
-        const ComponentToRender = _isOpen
-            ? (
+        const ComponentToRender = !_isOpen && state === 'exited'
+            ? null
+            : (
                 <>
                     { this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
                 </>
-            )
-            : null;
+            );
         let className = '';
 
         if (_isOpen) {

@@ -3,8 +3,10 @@ import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_JOINED,
     KICKED_OUT,
+    VIDEO_QUALITY_LEVELS,
     conferenceLeft,
-    getCurrentConference
+    getCurrentConference,
+    setPreferredVideoQuality
 } from '../base/conference';
 import { hideDialog, isDialogOpen } from '../base/dialog';
 import { setActiveModalId } from '../base/modal';
@@ -29,6 +31,12 @@ MiddlewareRegistry.register(store => next => action => {
 
         dispatch(setToolboxEnabled(!reducedUI));
         dispatch(setFilmstripEnabled(!reducedUI));
+
+        dispatch(
+            setPreferredVideoQuality(
+                reducedUI
+                    ? VIDEO_QUALITY_LEVELS.LOW
+                    : VIDEO_QUALITY_LEVELS.HIGH));
 
         break;
     }

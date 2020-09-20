@@ -34,19 +34,7 @@ export const SET_FILMSTRIP_VISIBLE = 'SET_FILMSTRIP_VISIBLE';
  *
  * {
  *     type: SET_TILE_VIEW_DIMENSIONS,
- *     dimensions: {
- *         gridDimensions: {
- *             columns: number,
- *             height: number,
- *             visibleRows: number,
- *             width: number
- *         },
- *         thumbnailSize: {
- *             height: number,
- *             width: number
- *         },
- *         filmstripWidth: number
- *     }
+ *     dimensions: Object
  * }
  */
 export const SET_TILE_VIEW_DIMENSIONS = 'SET_TILE_VIEW_DIMENSIONS';

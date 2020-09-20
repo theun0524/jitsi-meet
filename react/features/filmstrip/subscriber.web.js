@@ -5,7 +5,7 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
+import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
 
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
@@ -19,19 +19,12 @@ StateListenerRegistry.register(
             const gridDimensions = getTileViewGridDimensions(state);
             const oldGridDimensions = state['features/filmstrip'].tileViewDimensions.gridDimensions;
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-            const { isOpen } = state['features/chat'];
 
             if (!equals(gridDimensions, oldGridDimensions)) {
-                store.dispatch(
-                    setTileViewDimensions(
-                        gridDimensions,
-                        {
-                            clientHeight,
-                            clientWidth
-                        },
-                        isOpen
-                    )
-                );
+                store.dispatch(setTileViewDimensions(gridDimensions, {
+                    clientHeight,
+                    clientWidth
+                }));
             }
         }
     });
@@ -47,18 +40,12 @@ StateListenerRegistry.register(
         switch (layout) {
         case LAYOUTS.TILE_VIEW: {
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-            const { isOpen } = state['features/chat'];
 
-            store.dispatch(
-                setTileViewDimensions(
-                    getTileViewGridDimensions(state),
-                    {
-                        clientHeight,
-                        clientWidth
-                    },
-                    isOpen
-                )
-            );
+            store.dispatch(setTileViewDimensions(
+                getTileViewGridDimensions(state), {
+                    clientHeight,
+                    clientWidth
+                }));
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
@@ -89,37 +76,3 @@ StateListenerRegistry.register(
         }
     }
 );
-
-
-/**
- * Listens for changes in the chat state to calculate the dimensions of the tile view grid and the tiles.
- */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/chat'].isOpen,
-    /* listener */ (isChatOpen, store) => {
-        const state = store.getState();
-
-        if (isChatOpen) {
-            // $FlowFixMe
-            document.body.classList.add('shift-right');
-        } else {
-            // $FlowFixMe
-            document.body.classList.remove('shift-right');
-        }
-
-        if (shouldDisplayTileView(state)) {
-            const gridDimensions = getTileViewGridDimensions(state);
-            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-
-            store.dispatch(
-                setTileViewDimensions(
-                    gridDimensions,
-                    {
-                        clientHeight,
-                        clientWidth
-                    },
-                    isChatOpen
-                )
-            );
-        }
-    });

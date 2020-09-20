@@ -181,13 +181,6 @@
         visibility: hidden;
         z-index: $zindex2;
     }
-
-    &.shift-right {
-        &#largeVideoContainer {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
-        }
-    }
 }
 
 #localVideoWrapper {
@@ -714,4 +707,19 @@
     top: calc(50% + 30px);
     white-space: nowrap;
     width: 100%;
+}
+
+.chat-open {
+  .invite-more-container,
+  .subject,
+  .new-toolbox,
+  &.tile-view .filmstrip,
+  #videospace {
+    left: $sidebarWidth !important;
+    width: calc(100% - #{$sidebarWidth}) !important;
+  }
+
+  &.tile-view #filmstripRemoteVideos {
+    width: calc(100vw - #{$sidebarWidth}) !important;
+  }
 }

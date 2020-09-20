@@ -1,7 +1,9 @@
 // @flow
+/* global $ */
 
 import React, { Component } from 'react';
 
+import { SIDEBAR_WIDTH } from '../../../../../modules/UI/util/UIUtil';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
@@ -33,7 +35,7 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { ChatCounter, toggleChat } from '../../../chat';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
@@ -47,6 +49,7 @@ import {
     RecordButton,
     getActiveSession
 } from '../../../recording';
+import { clientResized } from '../../../base/responsive-ui/actions';
 import { SecurityDialogButton } from '../../../security';
 import {
     SETTINGS_TABS,
@@ -334,10 +337,6 @@ class Toolbox extends Component<Props, State> {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
-
-        if (this.props._chatOpen !== prevProps._chatOpen) {
-            this._onResize();
-        }
     }
 
     /**
@@ -360,9 +359,9 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _chatOpen, _visible, _visibleButtons } = this.props;
+        const { _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+            _visibleButtons.size ? '' : 'no-buttons'}`;
 
         return (
             <div
@@ -427,7 +426,16 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleChat() {
+        const {
+            innerHeight,
+            innerWidth
+        } = window;
         this.props.dispatch(toggleChat());
+        this.props.dispatch(clientResized(
+          innerWidth - (this.props._chatOpen ? 0 : SIDEBAR_WIDTH),
+          innerHeight
+        ));
+        $(window).trigger('resize');
     }
 
     /**
@@ -550,15 +558,10 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onResize() {
-        let widthToUse = window.innerWidth;
+        const width = window.innerWidth;
 
-        // Take chat size into account when resizing toolbox.
-        if (this.props._chatOpen) {
-            widthToUse -= CHAT_SIZE;
-        }
-
-        if (this.state.windowWidth !== widthToUse) {
-            this.setState({ windowWidth: widthToUse });
+        if (this.state.windowWidth !== width) {
+            this.setState({ windowWidth: width });
         }
     }
 
