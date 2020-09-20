@@ -116,17 +116,7 @@ MiddlewareRegistry.register(store => next => action => {
                 && typeof error.recoverable === 'undefined') {
             error.recoverable = true;
 
-            // store.dispatch(_openLoginDialog());
-
-            const url = `${getLocationURL(store.getState())}/auth/page/login`;
-    
-            Linking.canOpenURL(url).then(supported => {
-                if (supported) {
-                    Linking.openURL(url);
-                } else {
-                    console.log('ERROR: Cannot open url');
-                }
-            });
+            store.dispatch(_openWaitForOwnerDialog());
         }
         break;
     }

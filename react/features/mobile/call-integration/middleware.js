@@ -349,9 +349,10 @@ function _handleConnectionServiceFailure(state: Object) {
  * {@code performEndCallAction}.
  * @returns {void}
  */
-function _onPerformEndCallAction({ callUUID }) {
+function _onPerformEndCallAction(event) {
     const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
     const conference = getCurrentConference(getState);
+    const { callUUID } = event || {};
 
     if (conference && conference.callUUID === callUUID) {
         // We arrive here when a call is ended by the system, for example, when
