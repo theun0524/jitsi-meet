@@ -22,14 +22,11 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
-    _openLoginDialog,
     _openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
 } from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
-import { Linking } from 'react-native';
-import { getLocationURL } from '../../api/url';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
@@ -55,8 +52,9 @@ MiddlewareRegistry.register(store => next => action => {
             if (_isWaitingForOwner(store)) {
                 // Instead of hiding show the new one.
                 const result = next(action);
-                
+
                 dispatch(_openWaitForOwnerDialog());
+
                 return result;
             }
 
