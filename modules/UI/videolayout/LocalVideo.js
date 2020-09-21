@@ -104,7 +104,7 @@ export default class LocalVideo extends SmallVideo {
 
         this._renderDisplayName({
             allowEditing: APP.store.getState()['features/base/jwt'].isGuest,
-            displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
+            displayNameSuffix: APP.translation.translateString(interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME),
             elementID: 'localDisplayName',
             participantID: this.id
         });
@@ -202,7 +202,7 @@ export default class LocalVideo extends SmallVideo {
             zIndex: 10000,
             items: {
                 flip: {
-                    name: 'Flip',
+                    name: APP.translation.translateString('videothumbnail.flip'),
                     callback: () => {
                         const { store } = APP;
                         const val = !store.getState()['features/base/settings']
