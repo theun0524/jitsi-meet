@@ -41,7 +41,9 @@ type State = {
     /**
      * The stats summary provided by the JitsiConference.
      */
-    stats: Object
+    stats: Object,
+
+    logs: Object
 };
 
 /**
@@ -62,7 +64,8 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: this.props.conference.getSpeakerStats()
+            stats: this.props.conference.getSpeakerStatsIdentity(),
+            logs: this.props.conference.getParticipantLogIdentity()
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -95,7 +98,7 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const userIds = Object.keys(this.state.stats);
+        const userIds = Object.keys(this.state.logs);
         const items = userIds.map(userId => this._createStatsItem(userId));
 
         return (
@@ -120,9 +123,21 @@ class SpeakerStats extends Component<Props, State> {
      * @private
      */
     _createStatsItem(userId) {
+        //console.log(this.state.stats);
         const statsModel = this.state.stats[userId];
+        const logModel = this.state.logs[userId];
 
-        if (!statsModel) {
+        if (!statsModel || !logModel) {
+            if (!statsModel && !logModel){
+                console.log('both model are null');
+            }
+            else if(!statsModel){
+                console.log(userId, 'statModel is null! logModel is ', logModel);
+            }
+            else if(!logModel){
+                console.log('logModel is null! statsModel is ', statsModel);
+            }
+
             return null;
         }
 
@@ -130,7 +145,7 @@ class SpeakerStats extends Component<Props, State> {
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
 
-        const participantLog = this.props.conference.getParticipantLog()[userId];
+        const participantLog = logModel;
 
         let displayName;
 
@@ -167,9 +182,10 @@ class SpeakerStats extends Component<Props, State> {
      * @private
      */
     _updateStats() {
-        const stats = this.props.conference.getSpeakerStats();
+        const stats = this.props.conference.getSpeakerStatsIdentity();
+        const logs = this.props.conference.getParticipantLogIdentity();
 
-        this.setState({ stats });
+        this.setState({ stats, logs });
     }
 }
 

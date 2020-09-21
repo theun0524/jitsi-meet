@@ -1050,6 +1050,14 @@ export default {
         return room.getSpeakerStats();
     },
 
+    getSpeakerStatsIdentity() {
+        return room.getSpeakerStatsIdentity();
+    },
+
+    getParticipantLogIdentity() {
+        return room.getParticipantLogIdentity();
+    },
+
     /**
      * Returns the connection times stored in the library.
      */
