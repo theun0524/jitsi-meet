@@ -29,10 +29,11 @@ function occupant_joined(event)
 
     local participant_count = it.count(room:each_occupant());
 
+
     if room.participant then
         local users_json = {};
 
-        room.participant[nick] = {joinTime = os.date("*t"), leaveTime = nil};
+        room.participant[nick] = {joinTime = os.date("*t"), leaveTime = nil, sessions = occupant.sessions[occupant.jid]};
 
         for k, v in pairs(room.participant) do
             users_json[k] = v;
@@ -70,7 +71,7 @@ function occupant_leaving(event)
     if logForOccupant then
         local users_json = {};
 
-        room.participant[nick] = {joinTime = room.participant[nick].joinTime, leaveTime = os.date("*t")};
+        room.participant[nick] = {joinTime = room.participant[nick].joinTime, leaveTime = os.date("*t"), sessions = room.participant[nick].sessions};
 
         for k, v in pairs(room.participant) do
             users_json[k] = v;
@@ -94,8 +95,6 @@ function occupant_leaving(event)
 end
 
 function room_created(event)
-    log("info", "room created");
-
     local room = event.room;
     room.participant = {};
 end

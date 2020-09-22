@@ -123,21 +123,11 @@ class SpeakerStats extends Component<Props, State> {
      * @private
      */
     _createStatsItem(userId) {
-        //console.log(this.state.stats);
+        console.log('Log is ', this.state.logs);
         const statsModel = this.state.stats[userId];
         const logModel = this.state.logs[userId];
 
         if (!statsModel || !logModel) {
-            if (!statsModel && !logModel){
-                console.log('both model are null');
-            }
-            else if(!statsModel){
-                console.log(userId, 'statModel is null! logModel is ', logModel);
-            }
-            else if(!logModel){
-                console.log('logModel is null! statsModel is ', statsModel);
-            }
-
             return null;
         }
 
