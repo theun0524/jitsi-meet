@@ -170,7 +170,7 @@ class Watermarks extends Component<Props, State> {
 
         if (_showJitsiWatermark) {
             const style = {
-                backgroundImage: `url(${_customLogoUrl || defaultJitsiLogoURL || interfaceConfig.DEFAULT_LOGO_URL})`
+                backgroundImage: `url(${_logoUrl})`
             };
 
             reactElement = (<div
