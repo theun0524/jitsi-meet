@@ -150,8 +150,9 @@ export default class AbstractStreamKeyForm<P: Props>
      */
     _validateStreamKey(streamKey = '') {
         const trimmedKey = streamKey.trim();
+        const rtmpProtocol = /rtmp:\/\//;
         const fourGroupsDashSeparated = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
-        const match = fourGroupsDashSeparated.exec(trimmedKey);
+        const match = rtmpProtocol.exec(trimmedKey) || fourGroupsDashSeparated.exec(trimmedKey);
 
         return Boolean(match);
     }
