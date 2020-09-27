@@ -121,8 +121,7 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    // change for 640x480 resolution.
-    resolution: 480,
+    resolution: 720,
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
     // Use -1 to disable.
@@ -136,9 +135,9 @@ var config = {
     constraints: {
         video: {
             height: {
-                ideal: 480,
-                max: 480,
-                min: 240
+                ideal: 720,
+                max: 720,
+                min: 180
             },
             frameRate: {
                 max: 15
@@ -321,7 +320,7 @@ var config = {
     // Values can be 'datachannel', 'websocket', true (treat it as
     // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
     // open any channel).
-    // openBridgeChannel: true,
+    openBridgeChannel: 'websocket',
 
 
     // UI
