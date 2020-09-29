@@ -11,10 +11,14 @@ function getAuthAPIURL(stateful) {
     const state = toState(stateful);
     const serverUrl = getAuthServerURL(state);
 
-    return `${serverUrl}/${AUTH_API}`;
+    return AUTH_API.startsWith('http') ? AUTH_API : `${serverUrl}/${AUTH_API}`;
 }
 
 export function loginWithLocationURL(form, stateful) {
+    if (AUTH_API.startsWith('http')) {
+        return axios.post(`${AUTH_API}/login`, form, 'login');
+    }
+
     const url = getLocationURL(stateful);
 
     return axios.post(`${url}/${AUTH_API}/login`, form, 'login');
