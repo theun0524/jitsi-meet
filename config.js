@@ -173,10 +173,10 @@ var config = {
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
-    // desktopSharingFrameRate: {
-    //     min: 5,
-    //     max: 5
-    // },
+    desktopSharingFrameRate: {
+        min: 5,
+        max: 15
+    },
 
     // Try to start calls with screen-sharing instead of camera video.
     // startScreenSharing: false,
@@ -526,16 +526,16 @@ var config = {
     // },
 
     // Options related to end-to-end (participant to participant) ping.
-    // e2eping: {
-    //   // The interval in milliseconds at which pings will be sent.
-    //   // Defaults to 10000, set to <= 0 to disable.
-    //   pingInterval: 10000,
-    //
-    //   // The interval in milliseconds at which analytics events
-    //   // with the measured RTT will be sent. Defaults to 60000, set
-    //   // to <= 0 to disable.
+    e2eping: {
+      // The interval in milliseconds at which pings will be sent.
+      // Defaults to 10000, set to <= 0 to disable.
+      pingInterval: -1,
+
+      // The interval in milliseconds at which analytics events
+      // with the measured RTT will be sent. Defaults to 60000, set
+      // to <= 0 to disable.
     //   analyticsInterval: 60000,
-    //   },
+      },
 
     // If set, will attempt to use the provided video input device label when
     // triggering a screenshare, instead of proceeding through the normal flow
