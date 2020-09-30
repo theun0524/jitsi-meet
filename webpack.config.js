@@ -1,10 +1,9 @@
 /* global __dirname */
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const dotenv = require('dotenv');
 const process = require('process');
 const webpack = require('webpack');
-const dotenv = require('dotenv');
-
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
@@ -22,6 +21,7 @@ const minimize
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
 const env = Object.assign({}, dotenv.config().parsed, process.env);
+
 console.log(env);
 
 // reduce it to a nice object, the same as before
@@ -47,6 +47,8 @@ function getPerformanceHints(size) {
 // jitsi-meet such as app.bundle.js and external_api.js.
 const config = {
     devServer: {
+        compress: true,
+        hot: true,
         https: true,
         inline: true,
         host: '0.0.0.0',
@@ -59,7 +61,7 @@ const config = {
                 headers: {
                     'Host': new URL(devServerProxyTarget).host
                 }
-            },
+            }
         }
     },
     devtool: 'source-map',
@@ -122,6 +124,7 @@ const config = {
             // Allow CSS to be imported into JavaScript.
 
             test: /\.css$/,
+            exclude: /node_modules/,
             use: [
                 'style-loader',
                 'css-loader'
@@ -142,6 +145,7 @@ const config = {
             }
         }, {
             test: /\.svg$/,
+            exclude: /node_modules/,
             use: [ {
                 loader: '@svgr/webpack',
                 options: {
@@ -149,6 +153,14 @@ const config = {
                     expandProps: 'start'
                 }
             } ]
+        }, {
+            test: /\.(scss)/,
+            exclude: /node_modules/,
+            use: [
+                'style-loader',
+                'css-loader',
+                'sass-loader'
+            ]
         } ]
     },
     node: {
