@@ -6,6 +6,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
 import React from 'react';
 
+import imgHeader from '../../../../images/header-image.png';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
@@ -352,7 +353,11 @@ class WelcomePage extends AbstractWelcomePage {
                                 ) }
                             </div>
                         </div>
-                        <div className = 'header-image' />
+                        <div className = 'header-image'>
+                            <img
+                                alt = 'Vmeeting'
+                                src = { imgHeader } />
+                        </div>
                         {/* { this._renderTabs() } */}
                         { showAdditionalContent
                             ? <div

@@ -29,7 +29,7 @@ body.welcome-page {
         display: flex;
         flex-direction: column;
         height: calc(100vh - #{$welcomePageHandlerHeight});
-        overflow: scroll;
+        overflow-y: auto;
 
         .content-wrapper {
             display: inline-flex;
@@ -43,6 +43,9 @@ body.welcome-page {
         .intro-wrapper {
           padding: 1em 3em;
           max-width: 35rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
 
         .header-image {
@@ -59,12 +62,8 @@ body.welcome-page {
         }
     }
 
-    .header-image {
-      background-image: url('../images/header-image.png');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      height: 100%;
+    .header-image img {
+      object-fit: contain;
     }
 
     .header-text {
