@@ -901,7 +901,7 @@
         },
         "account": "Account Settings",
         "adminConsole": "Admin Console",
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day — with no account needed.",
+        "appDescription": "Use {{app}} for secure video conferencing. Invite your friends and share your screen while you can use video conferencing anytime, anywhere with a seamless, clear screen.",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
@@ -929,7 +929,7 @@
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Vmeeting: Secure and easy video conferencing"
+        "title": "Secure and easy video conferencing"
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

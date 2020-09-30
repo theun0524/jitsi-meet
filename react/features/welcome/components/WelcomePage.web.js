@@ -295,79 +295,86 @@ class WelcomePage extends AbstractWelcomePage {
                         </div>
                     </div>
                 </div>
-                <div className = 'header-image' />
-                <div className = 'header-text'>
-                    <h1 className = 'header-text-title'>
-                        { t('welcomepage.title') }
-                    </h1>
-                    <p className = 'header-text-description'>
-                        { t('welcomepage.appDescription',
-                            { app: APP_NAME }) }
-                    </p>
-                </div>
-                <div id = 'enter_room'>
-                    <div className = 'enter-room-input-container'>
-                        <div className = 'enter-room-title-container'>
-                            <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
+                <div className = 'welcome-content'>
+                    <div className = 'content-wrapper'>
+                        <div className = 'intro-wrapper'>
+                            <div className = 'header-text'>
+                                <h1 className = 'header-text-title'>
+                                    { t('welcomepage.title') }
+                                </h1>
+                                <p className = 'header-text-description'>
+                                    { t('welcomepage.appDescription',
+                                        { app: APP_NAME }) }
+                                </p>
+                            </div>
+                            <div id = 'enter_room'>
+                                <div className = 'enter-room-input-container'>
+                                    <div className = 'enter-room-title-container'>
+                                        <div className = 'enter-room-title'>
+                                            { t('welcomepage.enterRoomTitle') }
+                                        </div>
+                                    </div>
+                                    <form onSubmit = { this._onFormSubmit }>
+                                        <input
+                                            autoFocus = { true }
+                                            className = 'enter-room-input'
+                                            id = 'enter_room_field'
+                                            onChange = { this._onRoomChange }
+                                            pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                            placeholder = { this.state.roomPlaceholder }
+                                            ref = { this._setRoomInputRef }
+                                            title = { t('welcomepage.roomNameAllowedChars') }
+                                            type = 'text'
+                                            value = { this.state.room } />
+                                        { this._renderInsecureRoomNameWarning() }
+                                    </form>
+                                </div>
+                                <div
+                                    className = 'welcome-page-button'
+                                    id = 'enter_room_button'
+                                    onClick = { this._onFormSubmit }>
+                                    {
+                                        showResponsiveText
+                                            ? t('welcomepage.goSmall')
+                                            : t('welcomepage.go')
+                                    }
+                                </div>
+                                { _moderatedRoomServiceUrl && (
+                                    <div id = 'moderated-meetings'>
+                                        <p>
+                                            {
+                                                translateToHTML(
+                                                    t, 'welcomepage.moderatedMessage',
+                                                    { url: _moderatedRoomServiceUrl })
+                                            }
+                                        </p>
+                                    </div>
+                                ) }
                             </div>
                         </div>
-                        <form onSubmit = { this._onFormSubmit }>
-                            <input
-                                autoFocus = { true }
-                                className = 'enter-room-input'
-                                id = 'enter_room_field'
-                                onChange = { this._onRoomChange }
-                                pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                placeholder = { this.state.roomPlaceholder }
-                                ref = { this._setRoomInputRef }
-                                title = { t('welcomepage.roomNameAllowedChars') }
-                                type = 'text'
-                                value = { this.state.room } />
-                            { this._renderInsecureRoomNameWarning() }
-                        </form>
+                        <div className = 'header-image' />
+                        {/* { this._renderTabs() } */}
+                        { showAdditionalContent
+                            ? <div
+                                className = 'welcome-page-content'
+                                ref = { this._setAdditionalContentRef } />
+                            : null }
+                        <NotificationsContainer />
                     </div>
-                    <div
-                        className = 'welcome-page-button'
-                        id = 'enter_room_button'
-                        onClick = { this._onFormSubmit }>
-                        {
-                            showResponsiveText
-                                ? t('welcomepage.goSmall')
-                                : t('welcomepage.go')
-                        }
-                    </div>
-                    { _moderatedRoomServiceUrl && (
-                        <div id = 'moderated-meetings'>
-                            <p>
-                                {
-                                    translateToHTML(
-                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
-                                }
-                            </p>
-                        </div>
-                    ) }
-                    { this._renderTabs() }
-                </div>
-                { showAdditionalContent
-                    ? <div
-                        className = 'welcome-page-content'
-                        ref = { this._setAdditionalContentRef } />
-                    : null }
-                <NotificationsContainer />
-                <div className = 'footer'>
-                    <div className = 'container'>
-                        <div className = 'copyright'>
-                            {t('footer.copyright')}
-                        </div>
-                        <div className = 'nav'>
-                            <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
-                            <a href = { `${AUTH_PAGE_BASE}/privacy` }>{t('footer.privacy')}</a>
-                            <a
-                                alt = { t('footer.contactUs') }
-                                href = { interfaceConfig.SUPPORT_URL }>
-                                {t('footer.contactUs')}
-                            </a>
+                    <div className = 'footer'>
+                        <div className = 'container'>
+                            <div className = 'copyright'>
+                                {t('footer.copyright')}
+                            </div>
+                            <div className = 'nav'>
+                                <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
+                                <a href = { `${AUTH_PAGE_BASE}/privacy` }>{t('footer.privacy')}</a>
+                                <a
+                                    alt = { t('footer.contactUs') }
+                                    href = { interfaceConfig.SUPPORT_URL }>
+                                    {t('footer.contactUs')}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
