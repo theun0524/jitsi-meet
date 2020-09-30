@@ -35,6 +35,9 @@ body.welcome-page {
             display: inline-flex;
             justify-content: space-evenly;
             flex-grow: 1;
+            max-width: $maxContentWidth;
+            width: 100%;
+            margin: 0 auto;
         }
 
         .intro-wrapper {
@@ -58,17 +61,17 @@ body.welcome-page {
 
     .header-image {
       background-image: url('../images/header-image.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      height: 100%;
     }
 
     .header-text {
         display: $welcomePageHeaderTextDisplay;
         flex-direction: column;
-        margin-top: $watermarkHeight + $welcomePageHeaderTextMarginTop;
+        margin-top: $welcomePageHeaderTextMarginTop;
         margin-bottom: $welcomePageHeaderTextMarginBottom;
-        margin-left: auto;
-        margin-right: auto;
-        max-width: calc(100% - 40px);
-        width: $welcomePageHeaderTextWidth;
         // z-index: $zindex2;
     }
 
@@ -100,12 +103,9 @@ body.welcome-page {
         display: $welcomePageEnterRoomDisplay;
         align-items: center;
         max-width: calc(100% - 40px);
-        width: $welcomePageEnterRoomWidth;
         z-index: $zindex2;
         background-color: #fff;
-        padding: $welcomePageEnterRoomPadding;
         border-radius: $welcomePageEnterRoomBorderRadius;
-        margin: 0 auto;
 
         .enter-room-input-container {
             width: 100%;
@@ -137,7 +137,7 @@ body.welcome-page {
                 border: 1px solid #dadce0;
                 display: inline-block;
                 width: 100%;
-                font-size: 14px;
+                font-size: 16px;
                 padding: 16px;
                 border-radius: 4px;
             }
