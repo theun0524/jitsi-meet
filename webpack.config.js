@@ -48,6 +48,7 @@ function getPerformanceHints(size) {
 const config = {
     devServer: {
         compress: true,
+        disableHostCheck: true,
         hot: true,
         https: true,
         inline: true,
