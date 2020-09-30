@@ -133,17 +133,18 @@ form {
 }
 
 .leftwatermark {
-    left: 10px;
-    top: 4px;
+    left: 00px;
+    top: 0px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;
     max-width: 80px;
     max-height: 40px;
+    margin: 16px;
 
     @include media-breakpoint-up(md) {
-      left: 32px;
-      top: 32px;
+      left: 0px;
+      top: 0px;
       max-width: 140px;
       max-height: 70px;
     }
