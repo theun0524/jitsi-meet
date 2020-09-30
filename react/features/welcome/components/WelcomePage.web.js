@@ -268,29 +268,31 @@ class WelcomePage extends AbstractWelcomePage {
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'header'>
-                    <div className = 'welcome-watermark'>
-                        <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
-                    </div>
-                    <div className = 'header-toolbars'>
-                        <ButtonGroup>
-                            <Button
-                                appearance = 'subtle'
-                                href = { `${AUTH_PAGE_BASE}/features` }>
-                                {t('toolbar.features')}
-                            </Button>
-                            { buttons }
-                            <Button
-                                appearance = 'subtle'
-                                onClick = { this._onOpenSettings }>
-                                { t('toolbar.Settings') }
-                            </Button>
-                            { showAdditionalToolbarContent
-                                ? <div
-                                    className = 'settings-toolbar-content'
-                                    ref = { this._setAdditionalToolbarContentRef } />
-                                : null
-                            }
-                        </ButtonGroup>
+                    <div className = 'container'>
+                        <div className = 'welcome-watermark'>
+                            <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
+                        </div>
+                        <div className = 'header-toolbars'>
+                            <ButtonGroup>
+                                <Button
+                                    appearance = 'subtle'
+                                    href = { `${AUTH_PAGE_BASE}/features` }>
+                                    {t('toolbar.features')}
+                                </Button>
+                                { buttons }
+                                <Button
+                                    appearance = 'subtle'
+                                    onClick = { this._onOpenSettings }>
+                                    { t('toolbar.Settings') }
+                                </Button>
+                                { showAdditionalToolbarContent
+                                    ? <div
+                                        className = 'settings-toolbar-content'
+                                        ref = { this._setAdditionalToolbarContentRef } />
+                                    : null
+                                }
+                            </ButtonGroup>
+                        </div>
                     </div>
                 </div>
                 <div className = 'header-image' />
@@ -353,18 +355,20 @@ class WelcomePage extends AbstractWelcomePage {
                         ref = { this._setAdditionalContentRef } />
                     : null }
                 <NotificationsContainer />
-                <div className = 'footer-container'>
-                    <div className = 'copyright'>
-                        {t('footer.copyright')}
-                    </div>
-                    <div className = 'nav'>
-                        <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
-                        <a href = { `${AUTH_PAGE_BASE}/privacy` }>{t('footer.privacy')}</a>
-                        <a
-                            alt = { t('footer.contactUs') }
-                            href = { interfaceConfig.SUPPORT_URL }>
-                            {t('footer.contactUs')}
-                        </a>
+                <div className = 'footer'>
+                    <div className = 'container'>
+                        <div className = 'copyright'>
+                            {t('footer.copyright')}
+                        </div>
+                        <div className = 'nav'>
+                            <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
+                            <a href = { `${AUTH_PAGE_BASE}/privacy` }>{t('footer.privacy')}</a>
+                            <a
+                                alt = { t('footer.contactUs') }
+                                href = { interfaceConfig.SUPPORT_URL }>
+                                {t('footer.contactUs')}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
