@@ -7,6 +7,8 @@ $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica
 $hangupColor: #bf2117;
 $hangupFontSize: 2em;
 
+$maxContentWidth: 1280px;
+
 /**
  * Size variables.
  */
@@ -170,10 +172,10 @@ $welcomePageWatermarkHeight: 32px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #fff;
+$welcomePageDescriptionColor: #5f6368;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(-90deg, #1251AE 0%, #0074FF 50%, #1251AE 100%);
-$welcomePageTitleColor: #fff;
+$welcomePageBackground: white;
+$welcomePageTitleColor: #000;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
