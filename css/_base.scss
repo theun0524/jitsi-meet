@@ -141,6 +141,7 @@ form {
     max-width: 80px;
     max-height: 40px;
     margin: 16px;
+    position: relative;
 
     @include media-breakpoint-up(md) {
       left: 0px;
