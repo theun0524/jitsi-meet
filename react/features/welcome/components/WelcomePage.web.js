@@ -30,7 +30,6 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
-const IMG_HEADER = require('../../../../images/header-image.png');
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -297,63 +296,60 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                 </div>
                 <div className = 'welcome-content'>
-                    <div className = 'content-wrapper'>
-                        <div className = 'intro-wrapper'>
-                            <div className = 'header-text'>
-                                <h1 className = 'header-text-title'>
-                                    { t('welcomepage.title') }
-                                </h1>
-                                <p className = 'header-text-description'>
-                                    { t('welcomepage.appDescription',
-                                        { app: APP_NAME }) }
-                                </p>
-                            </div>
-                            <div id = 'enter_room'>
-                                <div className = 'enter-room-input-container'>
-                                    <form onSubmit = { this._onFormSubmit }>
-                                        <input
-                                            autoFocus = { true }
-                                            className = 'enter-room-input'
-                                            id = 'enter_room_field'
-                                            onChange = { this._onRoomChange }
-                                            pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                            placeholder = { this.state.roomPlaceholder }
-                                            ref = { this._setRoomInputRef }
-                                            title = { t('welcomepage.roomNameAllowedChars') }
-                                            type = 'text'
-                                            value = { this.state.room } />
-                                        { this._renderInsecureRoomNameWarning() }
-                                    </form>
+                    <div className = 'bg-wrapper'>
+                        <div className = 'content-wrapper'>
+                            <div className = 'intro-wrapper'>
+                                <div className = 'header-text'>
+                                    <h1 className = 'header-text-title'>
+                                        { t('welcomepage.title') }
+                                    </h1>
+                                    <p className = 'header-text-description'>
+                                        { t('welcomepage.appDescription',
+                                            { app: APP_NAME }) }
+                                    </p>
                                 </div>
-                                <div
-                                    className = 'welcome-page-button'
-                                    id = 'enter_room_button'
-                                    onClick = { this._onFormSubmit }>
-                                    {
-                                        showResponsiveText
-                                            ? t('welcomepage.goSmall')
-                                            : t('welcomepage.go')
-                                    }
-                                </div>
-                                { _moderatedRoomServiceUrl && (
-                                    <div id = 'moderated-meetings'>
-                                        <p>
-                                            {
-                                                translateToHTML(
-                                                    t, 'welcomepage.moderatedMessage',
-                                                    { url: _moderatedRoomServiceUrl })
-                                            }
-                                        </p>
+                                <div id = 'enter_room'>
+                                    <div className = 'enter-room-input-container'>
+                                        <form onSubmit = { this._onFormSubmit }>
+                                            <input
+                                                autoFocus = { true }
+                                                className = 'enter-room-input'
+                                                id = 'enter_room_field'
+                                                onChange = { this._onRoomChange }
+                                                pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                                placeholder = { this.state.roomPlaceholder }
+                                                ref = { this._setRoomInputRef }
+                                                title = { t('welcomepage.roomNameAllowedChars') }
+                                                type = 'text'
+                                                value = { this.state.room } />
+                                            { this._renderInsecureRoomNameWarning() }
+                                        </form>
                                     </div>
-                                ) }
+                                    <div
+                                        className = 'welcome-page-button'
+                                        id = 'enter_room_button'
+                                        onClick = { this._onFormSubmit }>
+                                        {
+                                            showResponsiveText
+                                                ? t('welcomepage.goSmall')
+                                                : t('welcomepage.go')
+                                        }
+                                    </div>
+                                    { _moderatedRoomServiceUrl && (
+                                        <div id = 'moderated-meetings'>
+                                            <p>
+                                                {
+                                                    translateToHTML(
+                                                        t, 'welcomepage.moderatedMessage',
+                                                        { url: _moderatedRoomServiceUrl })
+                                                }
+                                            </p>
+                                        </div>
+                                    ) }
+                                </div>
                             </div>
                         </div>
-                        <div className = 'header-image'>
-                            <img
-                                alt = 'Vmeeting'
-                                src = { IMG_HEADER } />
-                        </div>
-                        {/* { this._renderTabs() } */}
+                        { this._renderTabs() }
                         { showAdditionalContent
                             ? <div
                                 className = 'welcome-page-content'

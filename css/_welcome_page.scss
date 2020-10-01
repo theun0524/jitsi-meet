@@ -31,8 +31,14 @@ body.welcome-page {
         height: calc(100vh - #{$welcomePageHandlerHeight});
         overflow-y: auto;
 
+        .bg-container {
+            background-image: url(../images/bg_sdn.png);
+            background-position: 100% 0;
+            background-repeat: no-repeat;
+            height: 400px;
+            background-color: #4b3fcf;
+        }
         .content-wrapper {
-            display: inline-flex;
             justify-content: space-evenly;
             flex-grow: 1;
             max-width: $maxContentWidth;
@@ -41,19 +47,10 @@ body.welcome-page {
         }
 
         .intro-wrapper {
-          padding: 1em 3em;
+          padding: 0em 3em;
           max-width: 35rem;
           display: flex;
           flex-direction: column;
-          justify-content: center;
-        }
-
-        .header-image {
-            padding: 1em 3em;
-            flex-basis: 45%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
     }
 
@@ -85,7 +82,7 @@ body.welcome-page {
         flex-direction: column;
         margin-top: $welcomePageHeaderTextMarginTop;
         margin-bottom: $welcomePageHeaderTextMarginBottom;
-        // z-index: $zindex2;
+        color: white;
     }
 
     .header-text-title {
@@ -117,7 +114,7 @@ body.welcome-page {
         align-items: center;
         max-width: calc(100% - 40px);
         z-index: $zindex2;
-        background-color: #fff;
+        background-color: transparent;
         border-radius: $welcomePageEnterRoomBorderRadius;
 
         .enter-room-input-container {
@@ -278,6 +275,10 @@ body.welcome-page {
                 cursor: pointer;
                 font-size: 32px;
             }
+        }
+
+        .button {
+            color: $welcomePageButtonTextColor;
         }
     }
 
