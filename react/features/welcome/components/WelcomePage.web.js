@@ -30,7 +30,6 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
-const IMG_HEADER = require('../../../../../../images/avatar.png');
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -220,6 +219,7 @@ class WelcomePage extends AbstractWelcomePage {
                 buttons.push(
                     <Button
                         appearance = 'primary'
+                        className = 'button'
                         href = { `${AUTH_PAGE_BASE}/admin` }>
                         { t('welcomepage.adminConsole') }
                     </Button>
@@ -250,6 +250,7 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'primary'
+                    className = 'button'
                     href = { `${AUTH_PAGE_BASE}/register` }>
                     { t('toolbar.Register') }
                 </Button>
@@ -257,6 +258,7 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'subtle'
+                    className = 'button'
                     href = { `${AUTH_PAGE_BASE}/login` }>
                     {t('toolbar.login')}
                 </Button>
@@ -277,12 +279,14 @@ class WelcomePage extends AbstractWelcomePage {
                             <ButtonGroup>
                                 <Button
                                     appearance = 'subtle'
+                                    className = 'button'
                                     href = { `${AUTH_PAGE_BASE}/features` }>
                                     {t('toolbar.features')}
                                 </Button>
                                 { buttons }
                                 <Button
                                     appearance = 'subtle'
+                                    className = 'button'
                                     onClick = { this._onOpenSettings }>
                                     { t('toolbar.Settings') }
                                 </Button>
@@ -310,11 +314,6 @@ class WelcomePage extends AbstractWelcomePage {
                             </div>
                             <div id = 'enter_room'>
                                 <div className = 'enter-room-input-container'>
-                                    <div className = 'enter-room-title-container'>
-                                        <div className = 'enter-room-title'>
-                                            { t('welcomepage.enterRoomTitle') }
-                                        </div>
-                                    </div>
                                     <form onSubmit = { this._onFormSubmit }>
                                         <input
                                             autoFocus = { true }
@@ -356,7 +355,7 @@ class WelcomePage extends AbstractWelcomePage {
                         <div className = 'header-image'>
                             <img
                                 alt = 'Vmeeting'
-                                src = { IMG_HEADER } />
+                                src = '/images/header-image.png' />
                         </div>
                         {/* { this._renderTabs() } */}
                         { showAdditionalContent
