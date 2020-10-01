@@ -31,7 +31,7 @@ body.welcome-page {
         height: calc(100vh - #{$welcomePageHandlerHeight});
         overflow-y: auto;
 
-        .bg-container {
+        .bg-wrapper {
             background-image: url(../images/bg_sdn.png);
             background-position: 100% 0;
             background-repeat: no-repeat;
