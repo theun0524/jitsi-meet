@@ -52,6 +52,14 @@ body.welcome-page {
           display: flex;
           flex-direction: column;
         }
+
+        .header-image {
+            padding: 1em 3em;
+            flex-basis: 45%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     }
 
     .header, .footer {
