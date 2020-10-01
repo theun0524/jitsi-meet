@@ -27,7 +27,6 @@ import Tabs from './Tabs';
  */
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
-const IMG_HEADER = require('../../../../images/header-image.png');
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
@@ -357,7 +356,7 @@ class WelcomePage extends AbstractWelcomePage {
                             <div className = 'header-image'>
                                 <img
                                     alt = 'Video conference'
-                                    src = { IMG_HEADER } />
+                                    src = '/images/header-image.png' />
                             </div>
                         </div>
                     </div>

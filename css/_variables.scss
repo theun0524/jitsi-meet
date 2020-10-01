@@ -172,10 +172,10 @@ $welcomePageWatermarkHeight: 32px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: white;
+$welcomePageDescriptionColor: #5f6368;
 $welcomePageFontFamily: inherit;
 $welcomePageBackground: white;
-$welcomePageTitleColor: white;
+$welcomePageTitleColor: black;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
@@ -187,7 +187,7 @@ $welcomePageHeaderMinHeight: fit-content;
 $welcomePageHandlerHeight: 64px;
 
 $welcomePageHeaderTextMarginTop: 4rem;
-$welcomePageHeaderTextMarginBottom: 5rem;
+$welcomePageHeaderTextMarginBottom: 1rem;
 $welcomePageHeaderTextDisplay: flex;
 $welcomePageHeaderTextWidth: 650px;
 

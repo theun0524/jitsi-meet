@@ -32,33 +32,60 @@ body.welcome-page {
         overflow-y: auto;
 
         .bg-wrapper {
-            background-image: url(../images/bg_sdn.png);
-            background-position: 100% 0;
-            background-repeat: no-repeat;
-            height: 400px;
-            background-color: #4b3fcf;
+            display: flex;
         }
+
         .content-wrapper {
             justify-content: space-evenly;
-            flex-grow: 1;
             max-width: $maxContentWidth;
             width: 100%;
             margin: 0 auto;
+            display: block;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+
+            @include media-breakpoint-up(md) {
+                text-align: left;
+                display: inline-flex;
+            }
         }
 
         .intro-wrapper {
-          padding: 0em 3em;
-          max-width: 35rem;
-          display: flex;
-          flex-direction: column;
+            padding: 0em 2em 2em;
+            max-width: 39rem;
+            display: inline-flex;
+            flex-direction: column;
+            flex-basis: 35rem;
+            flex-shrink: 1;
+            margin: 0 auto;
+            border-bottom: 1px solid #eee;
+            word-break: keep-all;
+
+            @include media-breakpoint-up(md) {
+                max-width: 35rem;
+                padding: 3em 3em 6em;
+                margin: 0;
+                border-bottom: 0;
+            }
         }
 
         .header-image {
-            padding: 1em 3em;
-            flex-basis: 45%;
-            display: flex;
+            padding: 1em 0em;
+            display: inline-flex;
             justify-content: center;
             align-items: center;
+            flex-basis: 45%;
+            width: 100%;
+            max-width: 39rem;
+
+            @include media-breakpoint-up(md) {
+                width: initial;
+                max-width: initial;
+            }
+
+            img {
+                width: 100%;
+            }
         }
     }
 
@@ -120,7 +147,7 @@ body.welcome-page {
     #enter_room {
         display: $welcomePageEnterRoomDisplay;
         align-items: center;
-        max-width: calc(100% - 40px);
+        max-width: 100%;
         z-index: $zindex2;
         background-color: transparent;
         border-radius: $welcomePageEnterRoomBorderRadius;
@@ -206,7 +233,7 @@ body.welcome-page {
         max-width: $maxContentWidth;
         background: white;
         display: $welcomePageTabContainerDisplay;
-        margin: 2rem auto;
+        margin: 0 auto 2rem auto;
 
         .tab-content{
             display: $welcomePageTabContentDisplay;
