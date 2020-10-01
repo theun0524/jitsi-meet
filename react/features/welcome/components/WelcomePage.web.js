@@ -30,7 +30,7 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
-const IMG_HEADER = require('../../../../../../images/avatar.png');
+const IMG_HEADER = require('../../../../images/header-image.png');
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -310,11 +310,6 @@ class WelcomePage extends AbstractWelcomePage {
                             </div>
                             <div id = 'enter_room'>
                                 <div className = 'enter-room-input-container'>
-                                    <div className = 'enter-room-title-container'>
-                                        <div className = 'enter-room-title'>
-                                            { t('welcomepage.enterRoomTitle') }
-                                        </div>
-                                    </div>
                                     <form onSubmit = { this._onFormSubmit }>
                                         <input
                                             autoFocus = { true }
