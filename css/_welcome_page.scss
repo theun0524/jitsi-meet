@@ -193,24 +193,18 @@ body.welcome-page {
 
     .tab-container {
         font-size: 16px;
-        position: relative;
         text-align: left;
-        min-height: 354px;
-        width: 710px;
-        background: #75A7E7;
+        width: 100%;
+        max-width: $maxContentWidth;
+        background: white;
         display: $welcomePageTabContainerDisplay;
-        flex-direction: column;
+        margin: 2rem auto;
 
         .tab-content{
             display: $welcomePageTabContentDisplay;
-            margin: 5px 0px;
             overflow: hidden;
             flex-grow: 1;
             position: relative;
-
-            > * {
-                position: absolute;
-            }
         }
 
         .tab-buttons {

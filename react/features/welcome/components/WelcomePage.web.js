@@ -354,14 +354,14 @@ class WelcomePage extends AbstractWelcomePage {
                                 </div>
                             </div>
                         </div>
-                        { this._renderTabs() }
-                        { showAdditionalContent
-                            ? <div
-                                className = 'welcome-page-content'
-                                ref = { this._setAdditionalContentRef } />
-                            : null }
-                        <NotificationsContainer />
                     </div>
+                    { this._renderTabs() }
+                    { showAdditionalContent
+                        ? <div
+                            className = 'welcome-page-content'
+                            ref = { this._setAdditionalContentRef } />
+                        : null }
+                    <NotificationsContainer />
                     <div className = 'footer'>
                         <div className = 'container'>
                             <div className = 'copyright'>

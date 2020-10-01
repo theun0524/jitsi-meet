@@ -172,7 +172,7 @@ $welcomePageWatermarkHeight: 32px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #5f6368;
+$welcomePageDescriptionColor: white;
 $welcomePageFontFamily: inherit;
 $welcomePageBackground: white;
 $welcomePageTitleColor: white;
@@ -216,7 +216,7 @@ $welcomePageEnterRoomInputContainerBorderImage: linear-gradient(to right, #dee1e
 
 $welcomePageEnterRoomTitleDisplay: inherit;
 
-$welcomePageTabContainerDisplay: flex;
+$welcomePageTabContainerDisplay: block;
 $welcomePageTabContentDisplay: inherit;
 $welcomePageTabButtonsDisplay: flex;
 $welcomePageTabDisplay: block;

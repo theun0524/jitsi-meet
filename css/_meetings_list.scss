@@ -43,10 +43,8 @@
     }
 
     .item {
-        background: rgba(255,255,255,0.50);
         box-sizing: border-box;
         display: inline-flex;
-        margin-top: 5px;
         min-height: 92px;
         width: 100%;
         word-break: break-word;
@@ -54,8 +52,8 @@
         flex-direction: row;
         text-align: left;
 
-        &:first-child {
-            margin-top: 0px;
+        &:nth-child(even) {
+            background: #eee;
         }
 
         .left-column {
@@ -96,10 +94,6 @@
 
         &.with-click-handler {
             cursor: pointer;
-        }
-
-        &.with-click-handler:hover {
-            background-color: #75A7E7;
         }
 
         .add-button {
