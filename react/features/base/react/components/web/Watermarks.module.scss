@@ -1,0 +1,27 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../../../css/variables';
+
+.watermark {
+    width: $watermarkWidth;
+    height: $watermarkHeight;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: $zindex2;
+
+    .leftwatermark {
+        background-position: center left;
+        background-repeat: no-repeat;
+        background-size: contain;
+        max-height: 32px;
+        margin: 16px;
+        position: relative;
+    }
+    
+    .rightwatermark {
+        right: 32px;
+        top: 32px;
+        background-position: center right;
+    }
+}

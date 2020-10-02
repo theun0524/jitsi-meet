@@ -20,9 +20,14 @@ const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
+const reStyle = /\.(css|less|styl|scss|sass|sss)$/;
+
 const env = Object.assign({}, dotenv.config().parsed, process.env);
 
-console.log(env);
+const minimizeCssOptions = {
+    discardComments: { removeAll: true },
+};
+const isDebug = env.NODE_ENV === 'development';
 
 // reduce it to a nice object, the same as before
 const envKeys = Object.keys(env).reduce((prev, next) => {
@@ -122,13 +127,37 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            // Allow CSS to be imported into JavaScript.
-
-            test: /\.css$/,
-            exclude: /node_modules/,
-            use: [
-                'style-loader',
-                'css-loader'
+            test: reStyle,
+            rules: [
+                {
+                    loader: 'style-loader',
+                },
+                {
+                    loader: 'css-loader',
+                    options: {
+                        sourceMap: isDebug,
+                        importLoaders: 2,
+                        modules: {
+                            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]', 
+                        },
+                    }
+                },
+                {
+                    test: /\.(scss|sass)$/,
+                    loader: 'sass-loader',
+                }, {
+                    test: /\.less$/,
+                    use: [
+                        'style-loader',
+                        'css-loader',
+                        {
+                            loader: 'less-loader',
+                            options: {
+                                javascriptEnabled: true,
+                            }
+                        }
+                    ]
+                },
             ]
         }, {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
@@ -154,14 +183,6 @@ const config = {
                     expandProps: 'start'
                 }
             } ]
-        }, {
-            test: /\.(scss)/,
-            exclude: /node_modules/,
-            use: [
-                'style-loader',
-                'css-loader',
-                'sass-loader'
-            ]
         } ]
     },
     node: {

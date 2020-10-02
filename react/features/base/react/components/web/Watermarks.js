@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 
+import s from './Watermarks.module.scss';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -145,7 +147,7 @@ class Watermarks extends Component<Props, State> {
      */
     render() {
         return (
-            <div>
+            <div className={s.watermark}>
                 {
                     this._renderJitsiWatermark()
                 }
@@ -234,7 +236,7 @@ class Watermarks extends Component<Props, State> {
             };
 
             reactElement = (<div
-                className = 'watermark leftwatermark'
+                className = {`${s.watermark} ${s.leftwatermark}`}
                 style = { style } />);
 
             if (link) {

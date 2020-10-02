@@ -234,6 +234,7 @@ body.welcome-page {
         background: white;
         display: $welcomePageTabContainerDisplay;
         margin: 0 auto 2rem auto;
+        flex-grow: 1;
 
         .tab-content{
             display: $welcomePageTabContentDisplay;

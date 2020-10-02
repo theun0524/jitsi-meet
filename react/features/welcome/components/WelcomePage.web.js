@@ -20,6 +20,7 @@ import { openSettingsDialog } from '../../settings/actions';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
+import s from './WelcomePage.module.scss';
 
 /**
  * The pattern used to validate room name.
@@ -219,7 +220,7 @@ class WelcomePage extends AbstractWelcomePage {
                 buttons.push(
                     <Button
                         appearance = 'primary'
-                        className = 'button'
+                        className = {s.button}
                         href = { `${AUTH_PAGE_BASE}/admin` }>
                         { t('welcomepage.adminConsole') }
                     </Button>
@@ -228,12 +229,13 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <DropdownMenu
                     isLoading = { submitting }
+                    className = { s.dropdownMenu }
                     trigger = {
-                        <div className = 'user-container'>
+                        <div className = {s.userContainer}>
                             { _user.avatarURL && (
                                 <img
                                     alt = 'avatar'
-                                    className = 'avatar'
+                                    className = {s.avatar}
                                     src = { _user.avatarURL } />
                             )}
                             { _user.name }
@@ -250,7 +252,7 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'primary'
-                    className = 'button'
+                    className = {s.button}
                     href = { `${AUTH_PAGE_BASE}/register` }>
                     { t('toolbar.Register') }
                 </Button>
@@ -258,7 +260,7 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'subtle'
-                    className = 'button'
+                    className = {s.button}
                     href = { `${AUTH_PAGE_BASE}/login` }>
                     {t('toolbar.login')}
                 </Button>
@@ -267,26 +269,24 @@ class WelcomePage extends AbstractWelcomePage {
 
         return (
             <div
-                className = { `welcome ${showAdditionalContent
+                className = { `${s.welcome} ${showAdditionalContent
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
-                <div className = 'header'>
-                    <div className = 'container'>
-                        <div className = 'welcome-watermark'>
-                            <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
-                        </div>
-                        <div className = 'header-toolbars'>
+                <div className = {s.header}>
+                    <div className = {s.container}>
+                        <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
+                        <div className = {s.toolbars}>
                             <ButtonGroup>
                                 <Button
                                     appearance = 'subtle'
-                                    className = 'button'
+                                    className = {s.button}
                                     href = { `${AUTH_PAGE_BASE}/features` }>
                                     {t('toolbar.features')}
                                 </Button>
                                 { buttons }
                                 <Button
                                     appearance = 'subtle'
-                                    className = 'button'
+                                    className = {s.button}
                                     onClick = { this._onOpenSettings }>
                                     { t('toolbar.Settings') }
                                 </Button>

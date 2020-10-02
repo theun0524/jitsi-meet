@@ -1,0 +1,108 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../css/variables';
+
+body {
+    font-size: 14px;
+}
+
+.welcome {
+    font-family: $welcomePageFontFamily;
+    background: $welcomePageBackground;
+
+    .header {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 0 10px;
+        box-sizing: border-box;
+
+        @include media-breakpoint-up(md) {
+            padding: 0 50px;
+        }
+    
+        .container {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            text-align: center;
+        }
+    
+        .userContainer {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            .avatar {
+                width: 24px;
+                height: 24px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin-right: 6px;
+            }
+        }
+    
+        .toolbars {
+            z-index: $zindex2;
+            margin-right: 16px;
+            display: inline-flex;
+            align-items: center;
+
+            .welcome-page-settings {
+                color: $welcomePageDescriptionColor;
+        
+                * {
+                    cursor: pointer;
+                    font-size: 32px;
+                }
+            }
+    
+            button, .button {
+                color: $welcomePageButtonTextColor !important;
+                height: 40px;
+
+                &:hover {
+                    color: $welcomePageButtonTextColor !important;
+                    background: rgba(0,0,0,.1);
+                }
+            }
+
+            :global .cLrmQm button {
+                border: 1px solid #d2d2d2;
+                background: none;
+                padding-right: 0;
+                
+                &:hover {
+                    color: $welcomePageButtonTextColor !important;
+                    background: rgba(0,0,0,.1);
+                }
+            }
+
+            :global .cksvax {
+                background: white;
+                border: 1px solid #d2d2d2;
+            }
+
+            :global .jxcBAF, :global .jXQlZM {
+                background: white;
+                fill: white;
+                color: $welcomePageButtonTextColor;
+
+                &:hover {
+                    background: rgba(0,0,0,.1);
+                }
+            }
+        }
+    }
+
+    .header, .footer {
+        .container {
+            margin: 0 auto;
+            max-width: $maxContentWidth;
+            word-break: keep-all;
+        }
+    }
+}
