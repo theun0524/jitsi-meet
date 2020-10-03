@@ -251,8 +251,7 @@ class WelcomePage extends AbstractWelcomePage {
         } else {
             buttons.push(
                 <Button
-                    appearance = 'primary'
-                    className = {s.button}
+                    className = {`${s.primary} ${s.button}`}
                     href = { `${AUTH_PAGE_BASE}/register` }>
                     { t('toolbar.Register') }
                 </Button>
