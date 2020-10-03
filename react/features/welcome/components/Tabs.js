@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 
 import Tab from './Tab';
+import s from './Tabs.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link Tabs}
@@ -46,12 +47,12 @@ export default class Tabs extends Component<Props> {
             : {};
 
         return (
-            <div className = 'tab-container'>
-                <div className = 'tab-content'>
+            <div className = {s.tabContainer}>
+                <div className = {s.tabContent}>
                     { content }
                 </div>
                 { tabs.length > 1 ? (
-                    <div className = 'tab-buttons'>
+                    <div className = {s.tabButtons}>
                         {
                             tabs.map((tab, index) => (
                                 <Tab

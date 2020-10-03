@@ -300,25 +300,25 @@ class WelcomePage extends AbstractWelcomePage {
                         </div>
                     </div>
                 </div>
-                <div className = 'welcome-content'>
-                    <div className = 'bg-wrapper'>
-                        <div className = 'content-wrapper'>
-                            <div className = 'intro-wrapper'>
-                                <div className = 'header-text'>
-                                    <h1 className = 'header-text-title'>
+                <div className = {s.welcomeContent}>
+                    <div className = {s.bgWrapper}>
+                        <div className = {s.contentWrapper}>
+                            <div className = {s.introWrapper}>
+                                <div className = {s.headerText}>
+                                    <h1 className = {s.headerTextTitle}>
                                         { t('welcomepage.title') }
                                     </h1>
-                                    <p className = 'header-text-description'>
+                                    <p className = {s.headerTextDescription}>
                                         { t('welcomepage.appDescription',
                                             { app: APP_NAME }) }
                                     </p>
                                 </div>
-                                <div id = 'enter_room'>
-                                    <div className = 'enter-room-input-container'>
+                                <div className = {s.enterRoom}>
+                                    <div className = {s.enterRoomInputContainer}>
                                         <form onSubmit = { this._onFormSubmit }>
                                             <input
                                                 autoFocus = { true }
-                                                className = 'enter-room-input'
+                                                className = {s.enterRoomInput}
                                                 id = 'enter_room_field'
                                                 onChange = { this._onRoomChange }
                                                 pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
@@ -331,7 +331,7 @@ class WelcomePage extends AbstractWelcomePage {
                                         </form>
                                     </div>
                                     <div
-                                        className = 'welcome-page-button'
+                                        className = {s.welcomePageButton}
                                         id = 'enter_room_button'
                                         onClick = { this._onFormSubmit }>
                                         {
@@ -353,7 +353,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     ) }
                                 </div>
                             </div>
-                            <div className = 'header-image'>
+                            <div className = {s.headerImage}>
                                 <img
                                     alt = 'Video conference'
                                     src = '/images/header-image.png' />
@@ -363,16 +363,16 @@ class WelcomePage extends AbstractWelcomePage {
                     { this._renderTabs() }
                     { showAdditionalContent
                         ? <div
-                            className = 'welcome-page-content'
+                            className = {s.welcomePageContent}
                             ref = { this._setAdditionalContentRef } />
                         : null }
                     <NotificationsContainer />
-                    <div className = 'footer'>
-                        <div className = 'container'>
-                            <div className = 'copyright'>
+                    <div className = {s.footer}>
+                        <div className = {s.container}>
+                            <div className = {s.copyright}>
                                 {t('footer.copyright')}
                             </div>
-                            <div className = 'nav'>
+                            <div className = {s.nav}>
                                 <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
                                 <a href = { `${AUTH_PAGE_BASE}/privacy` }>{t('footer.privacy')}</a>
                                 <a

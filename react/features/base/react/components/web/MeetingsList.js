@@ -9,6 +9,7 @@ import {
 
 import Container from './Container';
 import Text from './Text';
+import s from './MeetingList.module.scss';
 
 type Props = {
 
@@ -107,7 +108,7 @@ export default class MeetingsList extends Component<Props> {
         if (meetings) {
             return (
                 <Container
-                    className = 'meetings-list'>
+                    className = {s.meetingsList}>
                     {
                         meetings.length === 0
                             ? listEmptyComponent
@@ -160,24 +161,23 @@ export default class MeetingsList extends Component<Props> {
         const { hideURL = false } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
-            = `item ${
-                onPress ? 'with-click-handler' : 'without-click-handler'}`;
+            = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
 
         return (
             <Container
                 className = { rootClassName }
                 key = { index }
                 onClick = { onPress }>
-                <Container className = 'left-column'>
-                    <Text className = 'date'>
+                <Container className = {s.leftColumn}>
+                    <Text className = {s.date}>
                         { _toDateString(date) }
                     </Text>
                     <Text>
                         { _toTimeString(time) }
                     </Text>
                 </Container>
-                <Container className = 'right-column'>
-                    <Text className = 'title'>
+                <Container className = {s.rightColumn}>
+                    <Text className = {s.title}>
                         { title }
                     </Text>
                     {
@@ -193,7 +193,7 @@ export default class MeetingsList extends Component<Props> {
                             </Text>) : null
                     }
                 </Container>
-                <Container className = 'actions'>
+                <Container className = {s.actions}>
                     { elementAfter || null }
                 </Container>
             </Container>

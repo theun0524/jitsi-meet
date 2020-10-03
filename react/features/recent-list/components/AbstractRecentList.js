@@ -16,6 +16,7 @@ import {
 } from '../../base/react';
 
 import styles from './styles';
+import s from './AbstractRecentList.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractRecentList}
@@ -74,10 +75,10 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
 
         return (
             <Container
-                className = 'meetings-list-empty'
+                className = {s.meetingsListEmpty}
                 style = { styles.emptyListContainer }>
                 <Text
-                    className = 'description'
+                    className = {s.description}
                     style = { styles.emptyListText }>
                     { t('welcomepage.recentListEmpty') }
                 </Text>
