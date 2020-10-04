@@ -219,7 +219,7 @@ class WelcomePage extends AbstractWelcomePage {
             if (_user.isAdmin) {
                 buttons.push(
                     <Button
-                        className = {`${s.primary} ${s.button}`}
+                        className = {s.button}
                         href = { `${AUTH_PAGE_BASE}/admin` }>
                         { t('welcomepage.adminConsole') }
                     </Button>
