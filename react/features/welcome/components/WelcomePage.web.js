@@ -219,8 +219,9 @@ class WelcomePage extends AbstractWelcomePage {
             if (_user.isAdmin) {
                 buttons.push(
                     <Button
+                        key = 'adminConsole'
                         appearance = 'subtle'
-                        className = {s.button}
+                        className = {`${s.button} ${s.desktop}`}
                         href = { `${AUTH_PAGE_BASE}/admin` }>
                         { t('welcomepage.adminConsole') }
                     </Button>
@@ -229,7 +230,7 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <DropdownMenu
                     isLoading = { submitting }
-                    className = { s.dropdownMenu }
+                    key = 'userMenu'
                     trigger = {
                         <div className = {s.userContainer}>
                             { _user.avatarURL && (
@@ -243,8 +244,18 @@ class WelcomePage extends AbstractWelcomePage {
                     }
                     triggerType = 'button'>
                     <DropdownItemGroup>
+                        <DropdownItem 
+                            className = {`${s.button} ${s.mobile}`}
+                            href = { `${AUTH_PAGE_BASE}/features` }>
+                            {t('toolbar.features')}
+                        </DropdownItem>
                         <DropdownItem href = { `${AUTH_PAGE_BASE}/account` }>{ t('welcomepage.account') }</DropdownItem>
                         <DropdownItem onClick = { this._onLogout }>{ t('toolbar.logout') }</DropdownItem>
+                        <DropdownItem
+                            className = {`${s.button} ${s.mobile}`}
+                            onClick = { this._onOpenSettings }>
+                            { t('toolbar.Settings') }
+                        </DropdownItem>
                     </DropdownItemGroup>
                 </DropdownMenu>
             );
@@ -252,7 +263,8 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     className = {`${s.primary} ${s.button}`}
-                    href = { `${AUTH_PAGE_BASE}/register` }>
+                    href = { `${AUTH_PAGE_BASE}/register` }
+                    key = 'register'>
                     { t('toolbar.Register') }
                 </Button>
             );
@@ -260,7 +272,8 @@ class WelcomePage extends AbstractWelcomePage {
                 <Button
                     appearance = 'subtle'
                     className = {s.button}
-                    href = { `${AUTH_PAGE_BASE}/login` }>
+                    href = { `${AUTH_PAGE_BASE}/login` }
+                    key = 'login'>
                     {t('toolbar.login')}
                 </Button>
             );
@@ -278,14 +291,14 @@ class WelcomePage extends AbstractWelcomePage {
                             <ButtonGroup>
                                 <Button
                                     appearance = 'subtle'
-                                    className = {s.button}
+                                    className = {`${s.button} ${s.desktop}`}
                                     href = { `${AUTH_PAGE_BASE}/features` }>
                                     {t('toolbar.features')}
                                 </Button>
                                 { buttons }
                                 <Button
                                     appearance = 'subtle'
-                                    className = {s.button}
+                                    className = {`${s.button} ${s.desktop}`}
                                     onClick = { this._onOpenSettings }>
                                     { t('toolbar.Settings') }
                                 </Button>
@@ -451,9 +464,9 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     _renderTabs() {
-        if (isMobileBrowser()) {
-            return null;
-        }
+        // if (isMobileBrowser()) {
+        //     return null;
+        // }
 
         const { _calendarEnabled, _recentListEnabled, t } = this.props;
 
