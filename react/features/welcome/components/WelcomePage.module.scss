@@ -70,7 +70,13 @@ body {
                 }
             }
 
-            .mobile.button {
+            .menuItem {
+                min-width: 100px;
+                min-height: 40px;
+                text-align: left;
+            }
+
+            .mobile.menuItem {
                 display: flex;
 
                 @include media-breakpoint-up(md) {

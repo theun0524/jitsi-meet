@@ -68,10 +68,10 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            padding-left: 30px;
+            padding-left: 25px;
             padding-top: 25px;
-            padding-right: 1rem;
-            width: calc(100vw - 140px - 3rem);
+            padding-right: 25px;
+            width: calc(100vw - 140px - 52px);
 
             @include media-breakpoint-up(md) {
                 padding-right: 0;

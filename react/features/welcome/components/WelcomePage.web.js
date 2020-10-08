@@ -229,6 +229,7 @@ class WelcomePage extends AbstractWelcomePage {
             }
             buttons.push(
                 <DropdownMenu
+                    position="bottom right"
                     isLoading = { submitting }
                     key = 'userMenu'
                     trigger = {
@@ -245,14 +246,22 @@ class WelcomePage extends AbstractWelcomePage {
                     triggerType = 'button'>
                     <DropdownItemGroup>
                         <DropdownItem 
-                            className = {`${s.button} ${s.mobile}`}
+                            className = {`${s.menuItem} ${s.mobile}`}
                             href = { `${AUTH_PAGE_BASE}/features` }>
                             {t('toolbar.features')}
                         </DropdownItem>
-                        <DropdownItem href = { `${AUTH_PAGE_BASE}/account` }>{ t('welcomepage.account') }</DropdownItem>
-                        <DropdownItem onClick = { this._onLogout }>{ t('toolbar.logout') }</DropdownItem>
                         <DropdownItem
-                            className = {`${s.button} ${s.mobile}`}
+                            className = {s.menuItem}
+                            href = { `${AUTH_PAGE_BASE}/account` }>
+                            { t('welcomepage.account') }
+                        </DropdownItem>
+                        <DropdownItem
+                            className = {s.menuItem}
+                            onClick = { this._onLogout }>
+                            { t('toolbar.logout') }
+                        </DropdownItem>
+                        <DropdownItem
+                            className = {`${s.menuItem} ${s.mobile}`}
                             onClick = { this._onOpenSettings }>
                             { t('toolbar.Settings') }
                         </DropdownItem>
