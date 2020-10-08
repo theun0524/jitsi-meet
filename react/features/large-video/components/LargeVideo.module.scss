@@ -1,0 +1,13 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../css/variables';
+
+.watermark {
+    display: none;
+    margin: 20px;
+
+    @include media-breakpoint-up(sm) {
+        display: block;
+    }
+}

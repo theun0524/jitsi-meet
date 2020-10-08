@@ -295,7 +295,9 @@ class WelcomePage extends AbstractWelcomePage {
                 id = 'welcome_page'>
                 <div className = {s.header}>
                     <div className = {s.container}>
-                        <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
+                        <Watermarks
+                            className = {s.watermark}
+                            defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
                         <div className = {s.toolbars}>
                             <ButtonGroup>
                                 <Button

@@ -4,19 +4,20 @@
 @import '../../../../../../css/variables';
 
 .watermark {
-    width: $watermarkWidth;
+    display: flex;
+    justify-content: start;
+    align-items: center;
     height: $watermarkHeight;
-    background-size: contain;
-    background-repeat: no-repeat;
     z-index: $zindex2;
 
     .leftwatermark {
-        background-position: center left;
-        background-repeat: no-repeat;
-        background-size: contain;
-        max-height: 32px;
-        margin: 16px;
+        margin: 0;
+        max-height: 20px;
         position: relative;
+
+        @include media-breakpoint-up(md) {
+            max-height: 32px;
+        }
     }
     
     .rightwatermark {
