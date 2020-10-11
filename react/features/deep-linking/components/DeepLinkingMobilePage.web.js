@@ -1,8 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import type { Dispatch } from 'redux';
 
+import Div100vh from '../../../components/Div100vh';
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { isSupportedMobileBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
@@ -71,16 +73,9 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        window.addEventListener('resize', resizeHeight);
-        resizeHeight();
-
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'displayed', 'DeepLinkingMobile', { isMobileBrowser: true }));
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', resizeHeight);
     }
 
     /**
@@ -116,7 +111,10 @@ class DeepLinkingMobilePage extends Component<Props> {
             : '/images/appstore.png';
 
         return (
-            <div className = { s.wrapper } id = 'deep-linking-page-wrapper'>
+            <Div100vh className = { s.wrapper }>
+                <Helmet>
+                    <meta name='viewport' content='initial-scale=1, maximum-scale=1' />
+                </Helmet>
                 <div className = { s.deepLinkingMobile }>
                     <div className = { s.header }>
                         {
@@ -176,7 +174,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                             room = { _room } /> */}
                     </div>
                 </div>
-            </div>
+            </Div100vh>
         );
     }
 
@@ -271,10 +269,6 @@ function _mapStateToProps(state) {
         _downloadUrl: interfaceConfig[`MOBILE_DOWNLOAD_LINK_${Platform.OS.toUpperCase()}`],
         _room: decodeURIComponent(state['features/base/conference'].room)
     };
-}
-
-function resizeHeight() {
-    document.getElementById('deep-linking-page-wrapper').style.height = window.innerHeight;
 }
 
 export default translate(connect(_mapStateToProps)(DeepLinkingMobilePage));
