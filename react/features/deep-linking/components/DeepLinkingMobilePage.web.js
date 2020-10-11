@@ -71,9 +71,16 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
+        window.addEventListener('resize', resizeHeight);
+        resizeHeight();
+
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'displayed', 'DeepLinkingMobile', { isMobileBrowser: true }));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', resizeHeight);
     }
 
     /**
@@ -109,63 +116,65 @@ class DeepLinkingMobilePage extends Component<Props> {
             : '/images/appstore.png';
 
         return (
-            <div className = { s.deepLinkingMobile }>
-                <div className = { s.header }>
-                    {
-                        HIDE_DEEP_LINKING_LOGO
-                            ? null
-                            : <img
-                                className = {s.logo}
-                                src = '/images/header-image.png' />
-                    }
-                </div>
-                <div className = { s.body }>
-                    {
-                        SHOW_DEEP_LINKING_IMAGE
-                            ? <img
-                                className = {s.image}
-                                src = 'images/deep-linking-image.png' />
-                            : null
-                    }
-                    <p className = {s.text}>
-                        { t(`${_TNS}.appNotInstalled`) }
-                    </p>
-                    <a
-                        { ...onOpenLinkProperties }
-                        href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }
-                        target = '_top'>
-                        <img
-                            className = { `${s.image} ${s.block}` }
-                            src = {downloadImage} />
-                    </a>
-                    <div className = { s.line }>
-                        <span>{ t('prejoin.or') }</span>
+            <div className = { s.wrapper } id = 'deep-linking-page-wrapper'>
+                <div className = { s.deepLinkingMobile }>
+                    <div className = { s.header }>
+                        {
+                            HIDE_DEEP_LINKING_LOGO
+                                ? null
+                                : <img
+                                    className = {s.logo}
+                                    src = '/images/header-image.png' />
+                        }
                     </div>
-                    <a
-                        { ...onOpenLinkProperties }
-                        className = { s.href }
-                        href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }
-                        target = '_top'>
-                        <button className = { `${s.button} ${s.primary} ${s.block} ${s.large}` }>
-                            { t(`${_TNS}.joinInApp`, { app: NATIVE_APP_NAME }) }
-                        </button>
-                    </a>
-                    {
-                        isSupportedMobileBrowser()
-                            && <a
-                                className = { s.link }
-                                onClick = { this._onLaunchWeb }
-                                target = '_top'>
-                                { t(`${_TNS}.launchWebButton`) }
-                            </a>
-                    }
-                    {/* { renderPromotionalFooter() }
-                    <DialInSummary
-                        className = 'deep-linking-dial-in'
-                        clickableNumbers = { true }
-                        room = { _room } /> */}
+                    <div className = { s.body }>
+                        {
+                            SHOW_DEEP_LINKING_IMAGE
+                                ? <img
+                                    className = {s.image}
+                                    src = 'images/deep-linking-image.png' />
+                                : null
+                        }
+                        <p className = {s.text}>
+                            { t(`${_TNS}.appNotInstalled`) }
+                        </p>
+                        <a
+                            { ...onOpenLinkProperties }
+                            href = { this._generateDownloadURL() }
+                            onClick = { this._onDownloadApp }
+                            target = '_top'>
+                            <img
+                                className = { `${s.image} ${s.block}` }
+                                src = {downloadImage} />
+                        </a>
+                        <div className = { s.line }>
+                            <span>{ t('prejoin.or') }</span>
+                        </div>
+                        <a
+                            { ...onOpenLinkProperties }
+                            className = { s.href }
+                            href = { generateDeepLinkingURL() }
+                            onClick = { this._onOpenApp }
+                            target = '_top'>
+                            <button className = { `${s.button} ${s.primary} ${s.block} ${s.large}` }>
+                                { t(`${_TNS}.joinInApp`, { app: NATIVE_APP_NAME }) }
+                            </button>
+                        </a>
+                        {
+                            isSupportedMobileBrowser()
+                                && <a
+                                    className = { s.link }
+                                    onClick = { this._onLaunchWeb }
+                                    target = '_top'>
+                                    { t(`${_TNS}.launchWebButton`) }
+                                </a>
+                        }
+                        {/* { renderPromotionalFooter() }
+                        <DialInSummary
+                            className = 'deep-linking-dial-in'
+                            clickableNumbers = { true }
+                            room = { _room } /> */}
+                    </div>
                 </div>
             </div>
         );
@@ -262,6 +271,10 @@ function _mapStateToProps(state) {
         _downloadUrl: interfaceConfig[`MOBILE_DOWNLOAD_LINK_${Platform.OS.toUpperCase()}`],
         _room: decodeURIComponent(state['features/base/conference'].room)
     };
+}
+
+function resizeHeight() {
+    document.getElementById('deep-linking-page-wrapper').style.height = window.innerHeight;
 }
 
 export default translate(connect(_mapStateToProps)(DeepLinkingMobilePage));
