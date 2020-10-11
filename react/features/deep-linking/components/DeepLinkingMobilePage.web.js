@@ -115,7 +115,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         HIDE_DEEP_LINKING_LOGO
                             ? null
                             : <img
-                                class = {s.logo}
+                                className = {s.logo}
                                 src = '/images/header-image.png' />
                     }
                 </div>
@@ -127,6 +127,9 @@ class DeepLinkingMobilePage extends Component<Props> {
                                 src = 'images/deep-linking-image.png' />
                             : null
                     }
+                    <p className = {s.text}>
+                        { t(`${_TNS}.appNotInstalled`) }
+                    </p>
                     <a
                         { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
@@ -136,9 +139,9 @@ class DeepLinkingMobilePage extends Component<Props> {
                             className = { `${s.image} ${s.block}` }
                             src = {downloadImage} />
                     </a>
-                    <p className = { s.text }>
-                        { t('prejoin.or') }
-                    </p>
+                    <div className = { s.line }>
+                        <span>{ t('prejoin.or') }</span>
+                    </div>
                     <a
                         { ...onOpenLinkProperties }
                         className = { s.href }

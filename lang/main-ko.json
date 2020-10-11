@@ -136,13 +136,13 @@
         "yesterday": "어제"
     },
     "deepLinking": {
-        "appNotInstalled": "미팅에 참여하려면 모바일 앱이 필요합니다",
+        "appNotInstalled": "미팅에 참여하려면",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
         "descriptionWithoutWeb": "{{app}} 데스크톱 앱에서 회의를 시작하려고 했습니다.",
         "downloadApp": "앱 다운로드",
         "ifDoNotHaveApp": "아직 앱이 없는 경우:",
         "ifHaveApp": "이미 앱이 있다면:",
-        "launchWebButton": "괜찮습니다. 모바일웹으로 참여할께요.",
+        "launchWebButton": "괜찮습니다. 모바일 웹으로 참여할께요.",
         "joinInApp": "{{app}} 앱으로 참여 >",
         "title": "{{app}}에서 회의 시작…",
         "tryAgainButton": "데스크톱에서 다시 시도하십시오"
