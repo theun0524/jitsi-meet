@@ -32,30 +32,52 @@ const Filmstrip = {
      *
      * @param {number} width - The new width of the thumbnails.
      * @param {number} height - The new height of the thumbnails.
+     * @param {number} lastRowWidth - Width of last row in case tile division is unbalanced.
      * @param {boolean} forceUpdate
      * @returns {void}
      */
-    resizeThumbnailsForTileView(width, height, forceUpdate = false) {
+    resizeThumbnailsForTileView(width, height, lastRowWidth, unbalancedThumbNailCount, forceUpdate = false) {
         const thumbs = this._getThumbs(!forceUpdate);
-        const avatarSize = height / 2;
+        const avatarSize = Math.min(width, height) / 2;
+
+        //the 1st unbalancedThumbNailCount is implicitly set to local thumbnail, so we reduce unbalanced thumbail count by 1
+        // unbalancedThumbNailCount = unbalancedThumbNailCount - 1;
+
+        if (thumbs.remoteThumbs) {
+            if (unbalancedThumbNailCount <= 1) {
+                thumbs.remoteThumbs.css({
+                    'padding-top': '',
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+            } else {
+                const count = unbalancedThumbNailCount - 1;
+                thumbs.remoteThumbs.slice(0, -count).css({
+                    'padding-top': '',
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                thumbs.remoteThumbs.slice(-count).css({
+                    'padding-top': '',
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${lastRowWidth}px`,
+                    width: `${lastRowWidth}px`
+                })
+            }
+        }
 
         if (thumbs.localThumb) {
             thumbs.localThumb.css({
                 'padding-top': '',
                 height: `${height}px`,
                 'min-height': `${height}px`,
-                'min-width': `${width}px`,
-                width: `${width}px`
-            });
-        }
-
-        if (thumbs.remoteThumbs) {
-            thumbs.remoteThumbs.css({
-                'padding-top': '',
-                height: `${height}px`,
-                'min-height': `${height}px`,
-                'min-width': `${width}px`,
-                width: `${width}px`
+                'min-width': `${unbalancedThumbNailCount > 0 ? lastRowWidth : width}px`,
+                width: `${unbalancedThumbNailCount > 0 ? lastRowWidth : width}px`
             });
         }
 

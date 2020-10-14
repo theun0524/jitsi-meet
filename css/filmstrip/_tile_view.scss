@@ -17,7 +17,7 @@
         flex-direction: column;
         height: calc(100vh - 200px);
         width: 100vw;
-        margin: 100px 0px;
+        margin: 10px 0px;
     }
 
     .filmstrip__videos .videocontainer {
@@ -99,7 +99,7 @@
         }
 
         video {
-            object-fit: contain;
+            object-fit: cover;
         }
     }
 

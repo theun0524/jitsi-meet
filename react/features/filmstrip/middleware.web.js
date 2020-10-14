@@ -53,10 +53,11 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
 
         if (shouldDisplayTileView(state)) {
-            const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
+            const { width, height, lastRowWidth, unbalancedThumbNailCount } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
 
+            console.log("I found a circuit. UnbalanceThumbnailCount:", unbalancedThumbNailCount);
             // Once the thumbnails are reactified this should be moved there too.
-            Filmstrip.resizeThumbnailsForTileView(width, height, true);
+            Filmstrip.resizeThumbnailsForTileView(width, height, lastRowWidth, unbalancedThumbNailCount, true);
         }
         break;
     }
