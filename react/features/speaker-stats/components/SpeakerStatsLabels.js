@@ -39,6 +39,12 @@ class SpeakerStatsLabels extends Component<Props> {
                 <div className = 'speaker-stats-item__time'>
                     { t('speakerStats.speakerTime') }
                 </div>
+                <div className = 'speaker-stats-item__s_time'>
+                    { t('speakerStats.joinTime') }
+                </div>
+                <div className = 'speaker-stats-item__l_time'>
+                    { t('speakerStats.leaveTime') }
+                </div>
             </div>
         );
     }

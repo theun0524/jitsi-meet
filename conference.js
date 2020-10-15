@@ -1060,6 +1060,20 @@ export default {
     },
 
     /**
+     * Get speaker stats index by identity that track total dominant speaker time.
+     * */
+    getSpeakerStatsIdentity() {
+        return room.getSpeakerStatsIdentity();
+    },
+
+    /**
+     * Get speaker stats index by identity that track join/leave time.
+     * */
+    getParticipantLogIdentity() {
+        return room.getParticipantLogIdentity();
+    },
+
+    /**
      * Returns the connection times stored in the library.
      */
     getConnectionTimes() {
