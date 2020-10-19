@@ -136,14 +136,14 @@
         "yesterday": "어제"
     },
     "deepLinking": {
-        "appNotInstalled": "중계 서비스에 참여하려면 모바일 앱 설치가 필요합니다",
+        "appNotInstalled": "미팅에 참여하려면",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
         "descriptionWithoutWeb": "{{app}} 데스크톱 앱에서 회의를 시작하려고 했습니다.",
         "downloadApp": "앱 다운로드",
         "ifDoNotHaveApp": "아직 앱이 없는 경우:",
         "ifHaveApp": "이미 앱이 있다면:",
-        "joinInApp": "앱으로 이 회의에 참여",
-        "launchWebButton": "웹에서 실행",
+        "launchWebButton": "괜찮습니다. 모바일 웹으로 참여할께요.",
+        "joinInApp": "{{app}} 앱으로 참여 >",
         "title": "{{app}}에서 회의 시작…",
         "tryAgainButton": "데스크톱에서 다시 시도하십시오"
     },
@@ -864,7 +864,7 @@
         "pending": "{{displayName}} 이미 초대되었습니다"
     },
     "videoStatus": {
-        "audioOnly": "오디오 전용",
+        "audioOnly": "AUD",
         "audioOnlyExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유 만 수신합니다.",
         "callQuality": "비디오 품질",
         "hd": "HD",
@@ -921,7 +921,7 @@
         "privacy": "개인정보",
         "recentList": "최근 이력",
         "recentListDelete": "삭제",
-        "recentListEmpty": "채팅 기록이 비었습니다. 최근 채팅 목록이 이곳에 표시됩니다.",
+        "recentListEmpty": "회의 기록이 비었습니다. 최근 회의 목록이 이곳에 표시됩니다.",
         "reducedUIText": "{{app}}에 오신 것을 환영합니다!",
         "register": "회원가입",
         "roomname": "방 이름 입력",

@@ -7,6 +7,7 @@ import { connect } from '../../base/redux';
 import { InviteMore, Subject } from '../../conference';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
 import { Captions } from '../../subtitles/';
+import s from './LargeVideo.module.scss';
 
 declare var interfaceConfig: Object;
 
@@ -77,7 +78,7 @@ class LargeVideo extends Component<Props> {
                 </div>
                 <div id = 'etherpad' />
 
-                <Watermarks />
+                <Watermarks className = { s.watermark } />
 
                 <div id = 'dominantSpeaker'>
                     <div className = 'dynamic-shadow' />

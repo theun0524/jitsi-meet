@@ -151,7 +151,7 @@ $formPadding: 16px;
 /**
  * Unsupported browser
  */
-$primaryUnsupportedBrowserButtonBgColor: #0052CC;
+$primaryUnsupportedBrowserButtonBgColor: #3769b1;
 $unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
 $unsupportedBrowserTextColor: #4a4a4a;
 $unsupportedBrowserTextSmallFontSize: 17px;
@@ -262,14 +262,14 @@ $depLinkingMobileHrefLineHeight: 2.2857142857142856em;
 $deepLinkingMobileHrefFontWeight: bolder;
 $deepLinkingMobileHrefFontSize: inherit;
 
-$deepLinkingMobileButtonHeight: 2.2857142857142856em;
-$deepLinkingMobileButtonLineHeight: 2.2857142857142856em;
+$deepLinkingMobileButtonHeight: auto;
+$deepLinkingMobileButtonLineHeight: inherit;
 $deepLinkingMobileButtonMargin: 18px auto 10px;
 $deepLinkingMobileButtonWidth: auto;
-$deepLinkingMobileButtonFontWeight: bold;
+$deepLinkingMobileButtonFontWeight: normal;
 $deepLinkingMobileButtonFontSize: inherit;
 
-$primaryDeepLinkingMobileButtonBorderRadius: inherit;
+$primaryDeepLinkingMobileButtonBorderRadius: 3px;
 
 /**
 * Chrome extension banner variables.

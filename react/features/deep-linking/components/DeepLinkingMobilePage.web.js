@@ -1,8 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import type { Dispatch } from 'redux';
 
+import Div100vh from '../../../components/Div100vh';
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { isSupportedMobileBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
@@ -13,16 +15,9 @@ import { openWebApp } from '../actions';
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
 import { renderPromotionalFooter } from '../renderPromotionalFooter';
+import s from './DeepLinkingMobilePage.module.scss';
 
 declare var interfaceConfig: Object;
-
-/**
- * The namespace of the CSS styles of DeepLinkingMobilePage.
- *
- * @private
- * @type {string}
- */
-const _SNS = 'deep-linking-mobile';
 
 /**
  * The type of the React {@code Component} props of
@@ -92,8 +87,7 @@ class DeepLinkingMobilePage extends Component<Props> {
     render() {
         const { _downloadUrl, _room, t } = this.props;
         const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
-        const downloadButtonClassName
-            = `${_SNS}__button ${_SNS}__button_primary`;
+        const downloadButtonClassName = `${s.button} ${s.primary}`;
 
 
         const onOpenLinkProperties = _downloadUrl
@@ -112,70 +106,75 @@ class DeepLinkingMobilePage extends Component<Props> {
                 rel: 'noopener noreferrer'
             };
 
+        const downloadImage = Platform.OS === 'android'
+            ? '/images/playstore.png'
+            : '/images/appstore.png';
+
         return (
-            <div className = { _SNS }>
-                <div className = 'header'>
-                    {
-                        HIDE_DEEP_LINKING_LOGO
-                            ? null
-                            : <img
-                                className = 'logo'
-                                src = 'images/watermark.png' />
-                    }
-                </div>
-                <div className = { `${_SNS}__body` }>
-                    {
-                        SHOW_DEEP_LINKING_IMAGE
-                            ? <img
-                                className = 'image'
-                                src = 'images/deep-linking-image.png' />
-                            : null
-                    }
-                    <p className = { `${_SNS}__text` }>
-                        { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
-                    </p>
-                    <p className = { `${_SNS}__text` }>
-                        { t(`${_TNS}.ifHaveApp`) }
-                    </p>
-                    <a
-                        { ...onOpenLinkProperties }
-                        className = { `${_SNS}__href` }
-                        href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }
-                        target = '_top'>
-                        <button className = { `${_SNS}__button ${_SNS}__button_primary` }>
-                            { t(`${_TNS}.joinInApp`) }
-                        </button>
-                    </a>
-                    <p className = { `${_SNS}__text` }>
-                        { t(`${_TNS}.ifDoNotHaveApp`) }
-                    </p>
-                    <a
-                        { ...onOpenLinkProperties }
-                        href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }
-                        target = '_top'>
-                        <button className = { downloadButtonClassName }>
-                            { t(`${_TNS}.downloadApp`) }
-                        </button>
-                    </a>
-                    {
-                        isSupportedMobileBrowser()
-                            && <a
-                                onClick = { this._onLaunchWeb }
-                                target = '_top'>
-                                <button className = { downloadButtonClassName }>
+            <Div100vh className = { s.wrapper }>
+                <Helmet>
+                    <meta name='viewport' content='initial-scale=1, maximum-scale=1' />
+                </Helmet>
+                <div className = { s.deepLinkingMobile }>
+                    <div className = { s.header }>
+                        {
+                            HIDE_DEEP_LINKING_LOGO
+                                ? null
+                                : <img
+                                    className = {s.logo}
+                                    src = '/images/header-image.png' />
+                        }
+                    </div>
+                    <div className = { s.body }>
+                        {
+                            SHOW_DEEP_LINKING_IMAGE
+                                ? <img
+                                    className = {s.image}
+                                    src = 'images/deep-linking-image.png' />
+                                : null
+                        }
+                        <p className = {s.text}>
+                            { t(`${_TNS}.appNotInstalled`) }
+                        </p>
+                        <a
+                            { ...onOpenLinkProperties }
+                            href = { this._generateDownloadURL() }
+                            onClick = { this._onDownloadApp }
+                            target = '_top'>
+                            <img
+                                className = { `${s.image} ${s.block}` }
+                                src = {downloadImage} />
+                        </a>
+                        <div className = { s.line }>
+                            <span>{ t('prejoin.or') }</span>
+                        </div>
+                        <a
+                            { ...onOpenLinkProperties }
+                            className = { s.href }
+                            href = { generateDeepLinkingURL() }
+                            onClick = { this._onOpenApp }
+                            target = '_top'>
+                            <button className = { `${s.button} ${s.primary} ${s.block} ${s.large}` }>
+                                { t(`${_TNS}.joinInApp`, { app: NATIVE_APP_NAME }) }
+                            </button>
+                        </a>
+                        {
+                            isSupportedMobileBrowser()
+                                && <a
+                                    className = { s.link }
+                                    onClick = { this._onLaunchWeb }
+                                    target = '_top'>
                                     { t(`${_TNS}.launchWebButton`) }
-                                </button>
-                            </a>
-                    }
-                    { renderPromotionalFooter() }
-                    <DialInSummary
-                        className = 'deep-linking-dial-in'
-                        clickableNumbers = { true }
-                        room = { _room } />
+                                </a>
+                        }
+                        {/* { renderPromotionalFooter() }
+                        <DialInSummary
+                            className = 'deep-linking-dial-in'
+                            clickableNumbers = { true }
+                            room = { _room } /> */}
+                    </div>
                 </div>
-            </div>
+            </Div100vh>
         );
     }
 

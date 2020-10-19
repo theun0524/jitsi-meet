@@ -35,6 +35,9 @@ export function setTileViewDimensions(dimensions: Object, windowSize: Object, is
         clientWidth: widthToUse,
         clientHeight
     });
+    console.log("Priting the thumbnail size. Thumbnail width is: " + thumbnailSize.width);
+    console.log("Printing thumbnail size. Thumbnail last row width is: " + thumbnailSize.lastRowWidth);
+    console.log("Unbalanced thumbnail size count is: " + thumbnailSize.unbalancedThumbNailCount);
     const filmstripWidth = dimensions.columns * (TILE_VIEW_SIDE_MARGINS + thumbnailSize.width);
 
     return {

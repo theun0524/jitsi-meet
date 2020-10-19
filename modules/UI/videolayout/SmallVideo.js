@@ -16,6 +16,7 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { clientResized } from '../../../react/features/base/responsive-ui';
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
@@ -871,19 +872,22 @@ export default class SmallVideo {
             const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
 
             if (typeof thumbnailSize !== 'undefined') {
-                const { height, width } = thumbnailSize;
-                const avatarSize = height / 2;
+                const { innerHeight, innerWidth } = window;
+                // const { height, width } = thumbnailSize;
+                // const avatarSize = height / 2;
 
-                this.$container.css({
-                    height: `${height}px`,
-                    'min-height': `${height}px`,
-                    'min-width': `${width}px`,
-                    width: `${width}px`
-                });
-                this.$avatar().css({
-                    height: `${avatarSize}px`,
-                    width: `${avatarSize}px`
-                });
+                // this.$container.css({
+                //     height: `${height}px`,
+                //     'min-height': `${height}px`,
+                //     'min-width': `${width}px`,
+                //     width: `${width}px`
+                // });
+                // this.$avatar().css({
+                //     height: `${avatarSize}px`,
+                //     width: `${avatarSize}px`
+                // });
+
+                APP.store.dispatch(clientResized(innerWidth, innerHeight));
             }
             break;
         }

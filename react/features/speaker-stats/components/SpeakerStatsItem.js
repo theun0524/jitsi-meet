@@ -28,6 +28,11 @@ type Props = {
      * True if the participant is currently the dominant speaker.
      */
     isDominantSpeaker: boolean,
+
+    /**
+     * The participants' join/leave time.
+     */
+    participantLog: Object,
 };
 
 /**
@@ -62,8 +67,25 @@ class SpeakerStatsItem extends Component<Props> {
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
                 </div>
+                <div className = 'speaker-stats-item__s_time'>
+                    { this.props.participantLog && this.props.participantLog["joinTime"]? this.hhmmss(this.props.participantLog["joinTime"]) : '' }
+                </div>
+                <div className = 'speaker-stats-item__l_time'>
+                    { this.props.participantLog && this.props.participantLog["leaveTime"]? this.hhmmss(this.props.participantLog["leaveTime"]) : '' } 
+                </div>
             </div>
         );
+    }
+    
+    hhmmss(hms) {
+        var hh = hms["hour"];
+        var mm = hms["min"];
+        var ss = hms["sec"];
+
+        return [(hh>9 ? '' : '0') + hh, ':',
+                (mm>9 ? '' : '0') + mm, ':',
+                (ss>9 ? '' : '0') + ss,
+                ].join('');
     }
 }
 

@@ -13,8 +13,8 @@
     flex-direction: column;
     position: relative;
     width: 100%;
-    height: 100%;
     overflow: auto;
+    white-space: nowrap;
 
     .button {
         background: #0074E0;
@@ -68,22 +68,36 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            padding-left: 30px;
+            padding-left: 25px;
             padding-top: 25px;
+            padding-right: 25px;
+            width: calc(100vw - 140px - 52px);
+
+            @include media-breakpoint-up(md) {
+                padding-right: 0;
+                width: initial;
+            }
 
             .title {
                 font-size: 16px;
                 font-weight: bold;
                 padding-bottom: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
 
         .actions {
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             flex-grow: 0;
             padding-right: 30px;
+
+            @include media-breakpoint-up(md) {
+                display: flex;
+            }
         }
 
         &.withClickHandler {

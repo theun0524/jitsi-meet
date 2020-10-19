@@ -9,6 +9,7 @@ import {
     getParticipantById,
     pinParticipant
 } from '../../../react/features/base/participants';
+// import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
@@ -479,6 +480,11 @@ const VideoLayout = {
             logger.info(`Removing remote video: ${id}`);
             delete remoteVideos[id];
             remoteVideo.remove();
+
+            // setTimeout(() => {
+            //     const { innerHeight, innerWidth } = window;
+            //     APP.store.dispatch(clientResized(innerWidth, innerHeight))
+            // });
         } else {
             logger.warn(`No remote video for ${id}`);
         }

@@ -11,10 +11,11 @@ body {
     font-family: $welcomePageFontFamily;
     background: $welcomePageBackground;
     box-sizing: border-box;
+    overflow: hidden;
 
     .header {
         width: 100%;
-        position: sticky;
+        position: fixed;
         top: 0;
         background: white;
         z-index: 2;
@@ -31,6 +32,10 @@ body {
             @include media-breakpoint-up(md) {
                 padding: 0 3rem;
             }
+        }
+
+        .watermark {
+            padding: 0;
         }
     
         .userContainer {
@@ -49,7 +54,6 @@ body {
     
         .toolbars {
             z-index: $zindex2;
-            margin-right: 16px;
             display: inline-flex;
             align-items: center;
 
@@ -62,6 +66,28 @@ body {
                 }
             }
     
+            .desktop.button {
+                display: none;
+
+                @include media-breakpoint-up(md) {
+                    display: flex;
+                }
+            }
+
+            .menuItem {
+                min-width: 100px;
+                min-height: 40px;
+                text-align: left;
+            }
+
+            .mobile.menuItem {
+                display: flex;
+
+                @include media-breakpoint-up(md) {
+                    display: none;
+                }
+            }
+
             button, .button {
                 color: $welcomePageButtonTextColor !important;
                 height: 40px;
@@ -126,9 +152,15 @@ body {
         flex-direction: column;
         height: calc(100vh - #{$welcomePageHandlerHeight});
         overflow-y: auto;
+        margin-top: $welcomePageHandlerHeight;
 
         .bgWrapper {
-            display: flex;
+            display: block;
+
+            @include media-breakpoint-up(md) {
+                display: flex;
+                flex-grow: 1;
+            }
         }
 
         .contentWrapper {
@@ -166,22 +198,25 @@ body {
         }
 
         .headerImage {
-            padding: 1em;
-            display: inline-flex;
+            display: block;
             justify-content: center;
             align-items: center;
-            flex-basis: 45%;
             width: 100%;
             max-width: 39rem;
+            margin: 0 auto;
 
             @include media-breakpoint-up(md) {
+                display: inline-flex;
                 width: initial;
                 max-width: initial;
                 padding: 1em 2em 0em 0;
+                flex-basis: 45%;
+                margin: 0;
             }
 
             img {
                 width: 100%;
+                object-fit: contain;
             }
         }
     }
@@ -211,11 +246,15 @@ body {
 
     .headerTextTitle {
         color: $welcomePageTitleColor;
-        font-size: $welcomePageHeaderTextTitleFontSize;
+        font-size: 28px;
         font-weight: $welcomePageHeaderTextTitleFontWeight;
         line-height: $welcomePageHeaderTextTitleLineHeight;
         margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
         opacity: $welcomePageHeaderTextTitleOpacity;
+
+        @include media-breakpoint-up(md) {
+            font-size: $welcomePageHeaderTextTitleFontSize;
+        }
     }
 
     .headerTextDescription {
@@ -228,7 +267,7 @@ body {
         align-self: $welcomePageHeaderTextDescriptionAlignSelf;
         word-break: keep-all;
 
-        @include media-breakpoint-up(sm) {
+        @include media-breakpoint-up(md) {
             display: $welcomePageHeaderTextDescriptionDisplay;
         }
     }
@@ -237,7 +276,6 @@ body {
         display: $welcomePageEnterRoomDisplay;
         align-items: center;
         max-width: 100%;
-        z-index: $zindex2;
         background-color: transparent;
         border-radius: $welcomePageEnterRoomBorderRadius;
 
@@ -388,6 +426,7 @@ body {
         background-color: #343a40 !important;
         font-size: 16px;
         z-index: 1;
+        display: block;
 
         .container {
             box-sizing: border-box;

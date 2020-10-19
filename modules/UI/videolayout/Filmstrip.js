@@ -37,10 +37,10 @@ const Filmstrip = {
      */
     resizeThumbnailsForTileView(width, height, forceUpdate = false) {
         const thumbs = this._getThumbs(!forceUpdate);
-        const avatarSize = height / 2;
+        const avatarSize = Math.min(width, height) / 2;
 
-        if (thumbs.localThumb) {
-            thumbs.localThumb.css({
+        if (thumbs.remoteThumbs) {
+            thumbs.remoteThumbs.css({
                 'padding-top': '',
                 height: `${height}px`,
                 'min-height': `${height}px`,
@@ -49,8 +49,8 @@ const Filmstrip = {
             });
         }
 
-        if (thumbs.remoteThumbs) {
-            thumbs.remoteThumbs.css({
+        if (thumbs.localThumb) {
+            thumbs.localThumb.css({
                 'padding-top': '',
                 height: `${height}px`,
                 'min-height': `${height}px`,

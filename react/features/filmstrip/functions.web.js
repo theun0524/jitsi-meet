@@ -1,4 +1,5 @@
 // @flow
+/* global APP */
 
 import {
     getParticipantCountWithFake,
@@ -99,23 +100,40 @@ export function calculateThumbnailSizeForTileView({
 }: Object) {
     // The distance from the top and bottom of the screen, as set by CSS, to
     // avoid overlapping UI elements.
-    const topBottomPadding = 200;
+    const topBottomPadding = 10; // was initially 200
 
     // Minimum space to keep between the sides of the tiles and the sides
     // of the window.
-    const sideMargins = 30 * 2;
-
+    const sideMargins = 10; // was initailly 30 * 2
     const verticalMargins = visibleRows * 10;
-    const viewWidth = clientWidth - sideMargins;
+    const viewWidth = clientWidth - (sideMargins * columns);
     const viewHeight = clientHeight - topBottomPadding - verticalMargins;
     const initialWidth = viewWidth / columns;
-    const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;
-    const height = Math.floor(Math.min(aspectRatioHeight, viewHeight / visibleRows));
-    const width = Math.floor(TILE_ASPECT_RATIO * height);
+    const initialHeight = viewHeight / visibleRows;
+
+    let height = Math.floor(initialHeight);
+    const width = Math.floor(initialWidth);
+    let lastRowWidth = width;
+
+    const participants = getParticipantCountWithFake(APP.store.getState());
+    const unbalancedThumbNailCount = participants % columns;
+
+    if (columns > 1) {
+        height = Math.floor(Math.max(height, width / TILE_ASPECT_RATIO));
+    }
+
+    if (visibleRows > 1) {
+        height = Math.floor(Math.min(height, initialHeight));
+        if (unbalancedThumbNailCount !== 0) {
+            lastRowWidth = (clientWidth - (sideMargins * unbalancedThumbNailCount)) / unbalancedThumbNailCount;
+        }
+    }
 
     return {
         height,
-        width
+        width,
+        lastRowWidth,
+        unbalancedThumbNailCount
     };
 }
 

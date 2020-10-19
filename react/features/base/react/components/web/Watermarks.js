@@ -50,6 +50,11 @@ type Props = {
     _welcomePageIsVisible: boolean,
 
     /**
+     * Classname for custom style
+     */
+    className: ?string,
+
+    /**
      * The default value for the Jitsi logo URL.
      */
     defaultJitsiLogoURL: ?string,
@@ -226,22 +231,22 @@ class Watermarks extends Component<Props, State> {
         const {
             _customLogoUrl,
             _customLogoLink,
+            className,
             defaultJitsiLogoURL
         } = this.props;
 
         if (this._canDisplayJitsiWatermark()) {
             const link = _customLogoLink || this.state.jitsiWatermarkLink;
-            const style = {
-                backgroundImage: `url(${_customLogoUrl || defaultJitsiLogoURL || interfaceConfig.DEFAULT_LOGO_URL})`
-            };
+            const src = _customLogoUrl || defaultJitsiLogoURL || interfaceConfig.DEFAULT_LOGO_URL;
 
-            reactElement = (<div
+            reactElement = (<img
                 className = {`${s.watermark} ${s.leftwatermark}`}
-                style = { style } />);
+                src = { src } />);
 
             if (link) {
                 reactElement = (
                     <a
+                        className = { className }
                         href = { link }
                         target = '_new'>
                         { reactElement }

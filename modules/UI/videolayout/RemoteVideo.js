@@ -16,6 +16,7 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { clientResized } from '../../../react/features/base/responsive-ui';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
@@ -376,6 +377,11 @@ export default class RemoteVideo extends SmallVideo {
         }
 
         this.updateView();
+
+        setTimeout(() => {
+            const { innerHeight, innerWidth } = window;
+            APP.store.dispatch(clientResized(innerWidth, innerHeight));
+        });
     }
 
     /**
