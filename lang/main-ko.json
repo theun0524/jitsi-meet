@@ -921,7 +921,7 @@
         "privacy": "개인정보",
         "recentList": "최근 이력",
         "recentListDelete": "삭제",
-        "recentListEmpty": "채팅 기록이 비었습니다. 최근 채팅 목록이 이곳에 표시됩니다.",
+        "recentListEmpty": "회의 기록이 비었습니다. 최근 회의 목록이 이곳에 표시됩니다.",
         "reducedUIText": "{{app}}에 오신 것을 환영합니다!",
         "register": "회원가입",
         "roomname": "방 이름 입력",
