@@ -864,7 +864,7 @@
         "pending": "{{displayName}} 이미 초대되었습니다"
     },
     "videoStatus": {
-        "audioOnly": "오디오 전용",
+        "audioOnly": "AUD",
         "audioOnlyExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유 만 수신합니다.",
         "callQuality": "비디오 품질",
         "hd": "HD",
