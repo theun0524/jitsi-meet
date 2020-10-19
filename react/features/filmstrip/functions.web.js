@@ -1,4 +1,5 @@
 // @flow
+/* global APP */
 
 import {
     getParticipantCountWithFake,
@@ -105,21 +106,21 @@ export function calculateThumbnailSizeForTileView({
     // of the window.
     const sideMargins = 10; // was initailly 30 * 2
     const verticalMargins = visibleRows * 10;
-    const viewWidth = clientWidth - sideMargins * columns;
+    const viewWidth = clientWidth - (sideMargins * columns);
     const viewHeight = clientHeight - topBottomPadding - verticalMargins;
     const initialWidth = viewWidth / columns;
     const initialHeight = viewHeight / visibleRows;
 
-    const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;
     let height = Math.floor(initialHeight);
-    let width = Math.floor(initialWidth);
+    const width = Math.floor(initialWidth);
     let lastRowWidth = width;
-    if(columns > 1) {
+
+    const participants = getParticipantCountWithFake(APP.store.getState());
+    const unbalancedThumbNailCount = participants % columns;
+
+    if (columns > 1) {
         height = Math.floor(Math.max(height, width / TILE_ASPECT_RATIO));
     }
-
-    let participants = getParticipantCountWithFake(APP.store.getState());
-    let unbalancedThumbNailCount =  participants % columns;
 
     if (visibleRows > 1) {
         height = Math.floor(Math.min(height, initialHeight));
@@ -127,7 +128,7 @@ export function calculateThumbnailSizeForTileView({
             lastRowWidth = (clientWidth - (sideMargins * unbalancedThumbNailCount)) / unbalancedThumbNailCount;
         }
     }
-    
+
     return {
         height,
         width,
