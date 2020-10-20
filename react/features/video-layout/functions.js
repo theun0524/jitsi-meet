@@ -31,9 +31,10 @@ export function getCurrentLayout(state: Object) {
  * @returns {number}
  */
 export function getMaxColumnCount() {
-    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5;
-
-    return Math.min(Math.max(configuredMax, 1), 5);
+    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 7; // was initially 5
+    //interfaceConfig.TILE_VIEW_MAX_COLUMNS is undefined
+    console.log("Configured value for max number of columns for tile_view is : " + configuredMax); 
+    return Math.min(Math.max(configuredMax, 1), 7); // last argument was initially 5
 }
 
 /**
