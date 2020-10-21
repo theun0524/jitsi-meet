@@ -1,4 +1,5 @@
 // @flow
+/* global config */
 
 import {
     CLEAR_INTERVAL,
@@ -52,10 +53,13 @@ export default class JitsiStreamPresenterEffect {
             document.body.appendChild(videoDiv);
         }
 
+        const { maxWidth = 240 } = config.presenter || {};
+        const maxHeight = maxWidth * 3 / 4;
+
         // Set the video element properties
         this._frameRate = parseInt(frameRate, 10);
-        this._videoElement.width = parseInt(width, 10);
-        this._videoElement.height = parseInt(height, 10);
+        this._videoElement.width = Math.min(parseInt(width, 10), maxWidth);
+        this._videoElement.height = Math.min(parseInt(height, 10), maxHeight);
         this._videoElement.autoplay = true;
         this._videoElement.srcObject = videoStream;
 
@@ -89,10 +93,12 @@ export default class JitsiStreamPresenterEffect {
         // adjust the canvas width/height on every frame incase the window has been resized.
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
+        const { pipMode = true } = config.presenter || {};
+        const pipOffset = pipMode ? 0 : this._videoElement.width;
 
-        this._canvas.width = parseInt(width, 10);
+        this._canvas.width = parseInt(width, 10) + pipOffset;
         this._canvas.height = parseInt(height, 10);
-        this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width - pipOffset, this._canvas.height);
         this._ctx.drawImage(this._videoElement, this._canvas.width - this._videoElement.width, this._canvas.height
             - this._videoElement.height, this._videoElement.width, this._videoElement.height);
 

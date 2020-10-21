@@ -670,6 +670,14 @@ var config = {
     //     }
     // },
 
+    presenter: {
+        startEnabled: true, // default: true
+        maxWidth: 160,      // default: 240
+        pipMode: false,     // default: true.
+                            // if true, presenter appears inside the video in right bottom.
+                            // if false, presenter appears outside the video in right bottom.
+    },
+
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     makeJsonParserHappy: 'even if last key had a trailing comma'
