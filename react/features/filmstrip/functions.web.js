@@ -118,9 +118,9 @@ export function calculateThumbnailSizeForTileView({
     const participants = getParticipantCountWithFake(APP.store.getState());
     const unbalancedThumbNailCount = participants % columns;
 
-    if(columns > 1) {
-        //adjusting the height with respect to aspect ratio in case of two participants only
-        if(columns === 2 && visibleRows === 1) {
+    if (columns > 1) {
+        // adjusting the height with respect to aspect ratio in case of two participants only
+        if (columns === 2 && visibleRows === 1) {
             height = Math.floor(Math.min(height, width / TILE_ASPECT_RATIO));
         }
         height = Math.floor(Math.max(height, width / TILE_ASPECT_RATIO));
