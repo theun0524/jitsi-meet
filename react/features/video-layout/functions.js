@@ -4,8 +4,8 @@ import { getPinnedParticipant, getParticipantCount } from '../base/participants'
 import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
-
-declare var interfaceConfig: Object;
+import { interfaceConfig } from '../../../interface_config';
+// declare var interfaceConfig: Object;
 
 /**
  * Returns the {@code LAYOUTS} constant associated with the layout
@@ -33,7 +33,7 @@ export function getCurrentLayout(state: Object) {
 export function getMaxColumnCount() {
     const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5; // was initially 5
 
-    // interfaceConfig.TILE_VIEW_MAX_COLUMNS is undefined
+    console.log("InterfaceConfig.TILE_VIEW_MAX_COLUMNS is " + interfaceConfig.TILE_VIEW_MAX_COLUMNS);
     console.log('Configured value for max number of columns for tile_view is : ', configuredMax);
 
     return Math.max(configuredMax, 1); // It should be configurable by TILE_VIEW_MAX_COLUMNS
