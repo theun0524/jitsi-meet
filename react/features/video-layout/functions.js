@@ -4,8 +4,8 @@ import { getPinnedParticipant, getParticipantCount } from '../base/participants'
 import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
-import { interfaceConfig } from '../../../interface_config';
-// declare var interfaceConfig: Object;
+
+declare var interfaceConfig: Object;
 
 /**
  * Returns the {@code LAYOUTS} constant associated with the layout
