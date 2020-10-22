@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-spaces */
 /* eslint-disable no-unused-vars, no-var */
 
 var config = {
@@ -85,6 +86,7 @@ var config = {
 
     // Disable measuring of audio levels.
     disableAudioLevels: true,
+
     // audioLevelsInterval: 200,
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
@@ -424,7 +426,8 @@ var config = {
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            { urls: 'stun:jitsi-meet.example.com:3478' },
+            { urls: 'stun:jitsi-meet.example.com:3478' }
+
             // { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
         ]
 
@@ -527,15 +530,15 @@ var config = {
 
     // Options related to end-to-end (participant to participant) ping.
     e2eping: {
-      // The interval in milliseconds at which pings will be sent.
-      // Defaults to 10000, set to <= 0 to disable.
-      pingInterval: -1,
+        // The interval in milliseconds at which pings will be sent.
+        // Defaults to 10000, set to <= 0 to disable.
+        pingInterval: -1
 
-      // The interval in milliseconds at which analytics events
-      // with the measured RTT will be sent. Defaults to 60000, set
-      // to <= 0 to disable.
-    //   analyticsInterval: 60000,
-      },
+        // The interval in milliseconds at which analytics events
+        // with the measured RTT will be sent. Defaults to 60000, set
+        // to <= 0 to disable.
+        //   analyticsInterval: 60000,
+    },
 
     // If set, will attempt to use the provided video input device label when
     // triggering a screenshare, instead of proceeding through the normal flow
@@ -673,9 +676,12 @@ var config = {
     presenter: {
         startEnabled: true, // default: true
         maxWidth: 160,      // default: 240
-        pipMode: false,     // default: true.
-                            // if true, presenter appears inside the video in right bottom.
-                            // if false, presenter appears outside the video in right bottom.
+
+        /* pipMode for presenter video. default is true.
+         * if true, presenter appears inside the video in right bottom.
+         * if false, presenter appears outside the video in right bottom.
+         */
+        pipMode: true
     },
 
     // Allow all above example options to include a trailing comma and
