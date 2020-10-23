@@ -37,9 +37,12 @@ import {
     getName
 } from './functions';
 import logger from './logger';
+import axios from 'axios';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
+
+const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 
 // eslint-disable-next-line require-jsdoc
 function getParams(uri: string) {
@@ -129,6 +132,9 @@ export function appNavigate(uri: ?string) {
         if (!config) {
             try {
                 config = await loadConfig(url);
+
+                //load data about room and do config setting here
+
                 dispatch(storeConfig(baseURL, config));
             } catch (error) {
                 config = restoreConfig(baseURL);
@@ -186,6 +192,42 @@ export function appNavigate(uri: ?string) {
         } else {
             // Load current logged in user
             dispatch(loadCurrentUser());
+        }
+
+        if(room){
+            let api_base_url = `${baseURL}${AUTH_API_BASE}`;
+
+            const api_url = api_base_url +  `/conference?name=${room}`
+
+            console.log('api_url is', api_url);
+
+            let reserved;
+            let isHost = false;
+
+            axios.get(api_url).then(res => {
+                console.log('Response Data is' , res.data);
+                reserved = res.data;
+                if(getState()['features/base/jwt']['user'].email === reserved.mail_owner)
+                    isHost = true;
+            }).catch(err => {
+                console.log('Response Error is ', err);
+
+                axios.post(api_base_url + '/conference', {
+                    name: room,
+                    start_time: new Date(),
+                    mail_owner: getState()['features/base/jwt']['user'].email
+                }).then(res2 => {
+                    console.log(res2);
+                }).catch(err2 => {
+                    console.log(err2);
+                });
+            }).finally(() => {
+                if(reserved && !isHost){
+                    console.log('Already reserved and you are not a host');
+                    //dispatch(disconnect());
+                    //TODO Connect to Waiting room, maybe using similar function below (redirectToStaticPage)
+                }
+            })
         }
 
         dispatch(setRoom(room));

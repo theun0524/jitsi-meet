@@ -353,15 +353,19 @@ class WelcomePage extends AbstractWelcomePage {
                                             { this._renderInsecureRoomNameWarning() }
                                         </form>
                                     </div>
-                                    <div
-                                        className = {s.welcomePageButton}
-                                        id = 'enter_room_button'
-                                        onClick = { this._onFormSubmit }>
-                                        {
-                                            showResponsiveText
-                                                ? t('welcomepage.goSmall')
-                                                : t('welcomepage.go')
-                                        }
+                                    <div className = {s.welcomePageButton}
+                                        id = 'enter_room_button'>
+                                        <DropdownMenu
+                                            className = { s.dropdownMenu }
+                                            trigger = {
+                                                t('welcomepage.go')
+                                            }
+                                            triggerType = 'default'>
+                                            <DropdownItemGroup>
+                                                <DropdownItem onClick = { this._onFormSubmit }>{ t('welcomepage.startNow') }</DropdownItem>
+                                                <DropdownItem href = { `${AUTH_PAGE_BASE}/reservation` }>{ t('welcomepage.reserve') }</DropdownItem>
+                                            </DropdownItemGroup>
+                                        </DropdownMenu>
                                     </div>
                                     { _moderatedRoomServiceUrl && (
                                         <div id = 'moderated-meetings'>

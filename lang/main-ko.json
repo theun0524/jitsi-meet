@@ -929,7 +929,9 @@
         "roomNameAllowedChars": "미팅 이름에는 다음 문자가 포함되지 않아야 합니다: ?, &, :, ', \", %, #.",
         "sendFeedback": "피드백 보내기",
         "terms": "이용약관",
-        "title": "안전하고 편리한 화상 회의"
+        "title": "안전하고 편리한 화상 회의",
+        "startNow": "바로 시작",
+        "reserve": "회의 예약"
     },
     "lonelyMeetingExperience": {
         "button": "다른 사람 초대",

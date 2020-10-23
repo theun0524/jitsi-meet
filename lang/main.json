@@ -929,7 +929,9 @@
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure and easy video conferencing"
+        "title": "Secure and easy video conferencing",
+        "startNow": "Start Now",
+        "reserve": "Book Conference"
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",
