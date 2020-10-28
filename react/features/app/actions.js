@@ -1,5 +1,9 @@
+/* eslint-disable camelcase */
 // @flow
 
+/* global interfaceConfig, process */
+
+import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import type { Dispatch } from 'redux';
 
@@ -37,10 +41,6 @@ import {
     getName
 } from './functions';
 import logger from './logger';
-import axios from 'axios';
-
-declare var APP: Object;
-declare var interfaceConfig: Object;
 
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 
@@ -133,8 +133,7 @@ export function appNavigate(uri: ?string) {
             try {
                 config = await loadConfig(url);
 
-                //load data about room and do config setting here
-
+                // load data about room and do config setting here
                 dispatch(storeConfig(baseURL, config));
             } catch (error) {
                 config = restoreConfig(baseURL);
@@ -194,43 +193,46 @@ export function appNavigate(uri: ?string) {
             dispatch(loadCurrentUser());
         }
 
-        if(room){
-            let api_base_url = `${baseURL}${AUTH_API_BASE}`;
+        let roomInfo;
 
-            const api_url = api_base_url +  `/conference?name=${room}`
+        if (room) {
+            const apiBaseUrl = `${baseURL}${AUTH_API_BASE}`;
+            const apiUrl = `${apiBaseUrl}/conference?name=${room}`;
+            let resp;
 
-            console.log('api_url is', api_url);
+            console.log('apiUrl is', apiUrl);
 
-            let reserved;
-            let isHost = false;
-
-            axios.get(api_url).then(res => {
-                console.log('Response Data is' , res.data);
-                reserved = res.data;
-                if(getState()['features/base/jwt']['user'].email === reserved.mail_owner)
-                    isHost = true;
-            }).catch(err => {
+            try {
+                resp = await axios.get(apiUrl);
+                console.log('Response Data is', resp.data);
+                roomInfo = resp.data;
+                roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
+            } catch (err) {
                 console.log('Response Error is ', err);
 
-                axios.post(api_base_url + '/conference', {
-                    name: room,
-                    start_time: new Date(),
-                    mail_owner: getState()['features/base/jwt']['user'].email
-                }).then(res2 => {
-                    console.log(res2);
-                }).catch(err2 => {
+                try {
+                    resp = await axios.post(`${apiBaseUrl}/conference`, {
+                        name: room,
+                        start_time: new Date(),
+                        mail_owner: getState()['features/base/jwt'].user.email
+                    });
+                    roomInfo = resp.data;
+                    roomInfo.isHost = true;
+                    console.log(resp);
+                } catch (err2) {
                     console.log(err2);
-                });
-            }).finally(() => {
-                if(reserved && !isHost){
-                    console.log('Already reserved and you are not a host');
-                    //dispatch(disconnect());
-                    //TODO Connect to Waiting room, maybe using similar function below (redirectToStaticPage)
                 }
-            })
+            }
+
+            // if (roomInfo && !roomInfo.isHost) {
+            //     console.log('Already reserved and you are not a host');
+
+            //     // dispatch(disconnect());
+            //     // TODO Connect to Waiting room, maybe using similar function below (redirectToStaticPage)
+            // }
         }
 
-        dispatch(setRoom(room));
+        dispatch(setRoom(room, roomInfo));
 
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {

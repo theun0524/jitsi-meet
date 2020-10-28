@@ -432,13 +432,14 @@ function _setPassword(state, { conference, method, password }) {
  * reduction of the specified action.
  */
 function _setRoom(state, action) {
-    let { room } = action;
+    let { room, roomInfo } = action;
 
     if (!isRoomValid(room)) {
         // Technically, there are multiple values which don't represent valid
         // room names. Practically, each of them is as bad as the rest of them
         // because we can't use any of them to join a conference.
         room = undefined;
+        roomInfo = undefined;
     }
 
     /**
@@ -448,7 +449,8 @@ function _setRoom(state, action) {
      */
     return assign(state, {
         error: undefined,
-        room
+        room,
+        roomInfo
     });
 }
 
