@@ -226,15 +226,16 @@ export default {
     showAuthRequiredDialog(room, onAuthNow) {
         const msg = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitForHostMsg',
-            { room }
+            { room: decodeURI(room) }
         );
-        const buttonTxt = APP.translation.generateTranslationHTML(
-            'dialog.login'
-        );
-        const buttons = [ {
-            title: buttonTxt,
-            value: 'authNow'
-        } ];
+        // const buttonTxt = APP.translation.generateTranslationHTML(
+        //     'dialog.login'
+        // );
+        // const buttons = [ {
+        //     title: buttonTxt,
+        //     value: 'authNow'
+        // } ];
+        const buttons = [];
 
         return APP.UI.messageHandler.openDialog(
             'dialog.WaitingForHost',
