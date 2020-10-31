@@ -41,6 +41,7 @@ import {
     getName
 } from './functions';
 import logger from './logger';
+import { setLobbyModeEnabled } from '../lobby/actions';
 
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 
@@ -200,15 +201,15 @@ export function appNavigate(uri: ?string) {
             const apiUrl = `${apiBaseUrl}/conference?name=${room}`;
             let resp;
 
-            console.log('apiUrl is', apiUrl);
+            //console.log('apiUrl is', apiUrl);
 
             try {
                 resp = await axios.get(apiUrl);
-                console.log('Response Data is', resp.data);
+                //console.log('Response Data is', resp.data);
                 roomInfo = resp.data;
                 roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
             } catch (err) {
-                console.log('Response Error is ', err);
+                //console.log('Response Error is ', err);
 
                 try {
                     resp = await axios.post(`${apiBaseUrl}/conference`, {
@@ -218,18 +219,11 @@ export function appNavigate(uri: ?string) {
                     });
                     roomInfo = resp.data;
                     roomInfo.isHost = true;
-                    console.log(resp);
+                    //console.log(resp);
                 } catch (err2) {
-                    console.log(err2);
+                    //console.log(err2);
                 }
             }
-
-            // if (roomInfo && !roomInfo.isHost) {
-            //     console.log('Already reserved and you are not a host');
-
-            //     // dispatch(disconnect());
-            //     // TODO Connect to Waiting room, maybe using similar function below (redirectToStaticPage)
-            // }
         }
 
         dispatch(setRoom(room, roomInfo));
