@@ -201,16 +201,19 @@ export function appNavigate(uri: ?string) {
             const apiUrl = `${apiBaseUrl}/conference?name=${room}`;
             let resp;
 
-            //console.log('apiUrl is', apiUrl);
-
             try {
                 resp = await axios.get(apiUrl);
-                //console.log('Response Data is', resp.data);
                 roomInfo = resp.data;
                 roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
-            } catch (err) {
-                //console.log('Response Error is ', err);
 
+                if(roomInfo.isHost){
+                    let resp_b = await axios.post(`${apiBaseUrl}/conference`, {
+                        name: room,
+                        start_time: new Date(),
+                        mail_owner: getState()['features/base/jwt'].user.email
+                    });
+                }
+            } catch (err) { 
                 try {
                     resp = await axios.post(`${apiBaseUrl}/conference`, {
                         name: room,
@@ -219,9 +222,9 @@ export function appNavigate(uri: ?string) {
                     });
                     roomInfo = resp.data;
                     roomInfo.isHost = true;
-                    //console.log(resp);
                 } catch (err2) {
-                    //console.log(err2);
+                    console.log("Error! Not navigate to target, ", err2);
+                    disconnect();
                 }
             }
         }
