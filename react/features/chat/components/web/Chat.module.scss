@@ -20,9 +20,13 @@
 .overlayToolbarContainer {
     background-color: initial !important;
     height: 100%;
-    width: 30%;
+    width: 100%;
     top: 0;
     z-index: 400 !important;
     background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 30%);
+
+    @include media-breakpoint-up(md) {
+        width: 30%;
+    }
 }
 
