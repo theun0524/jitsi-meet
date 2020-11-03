@@ -14,6 +14,7 @@ import {
  * desktop stream.
  */
 export default class JitsiStreamPresenterEffect {
+    _backgroundElement: HTMLImageElement;
     _canvas: HTMLCanvasElement;
     _ctx: CanvasRenderingContext2D;
     _desktopElement: HTMLVideoElement;
@@ -47,13 +48,15 @@ export default class JitsiStreamPresenterEffect {
 
         this._desktopElement = document.createElement('video');
         this._videoElement = document.createElement('video');
+        this._backgroundElement = document.createElement('img');
         videoDiv.appendChild(this._videoElement);
         videoDiv.appendChild(this._desktopElement);
+        videoDiv.appendChild(this._backgroundElement);
         if (document.body !== null) {
             document.body.appendChild(videoDiv);
         }
 
-        const { maxWidth = 240 } = config.presenter || {};
+        const { maxWidth = 240, layout, pipMode } = config.presenter || {};
         const maxHeight = maxWidth * 3 / 4;
 
         // Set the video element properties
@@ -62,6 +65,15 @@ export default class JitsiStreamPresenterEffect {
         this._videoElement.height = Math.min(parseInt(height, 10), maxHeight);
         this._videoElement.autoplay = true;
         this._videoElement.srcObject = videoStream;
+
+        // Set the background element properties
+        if (!pipMode && layout) {
+            this._backgroundElement.src = layout.backgroundImageUrl;
+            this._backgroundElement.style = {
+                'width': '100%',
+                'object-fit': 'contain'
+            };
+        }
 
         // set the style attribute of the div to make it invisible
         videoDiv.style.display = 'none';
@@ -93,14 +105,35 @@ export default class JitsiStreamPresenterEffect {
         // adjust the canvas width/height on every frame incase the window has been resized.
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
-        const { pipMode = true } = config.presenter || {};
+        const { pipMode = true, layout } = config.presenter || {};
         const pipOffset = pipMode ? 0 : this._videoElement.width;
 
         this._canvas.width = parseInt(width, 10) + pipOffset;
         this._canvas.height = parseInt(height, 10);
-        this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width - pipOffset, this._canvas.height);
-        this._ctx.drawImage(this._videoElement, this._canvas.width - this._videoElement.width, this._canvas.height
-            - this._videoElement.height, this._videoElement.width, this._videoElement.height);
+
+        if (!pipMode && layout) {
+            this._ctx.drawImage(this._backgroundElement, 0, 0, this._canvas.width, this._canvas.height);
+            this._ctx.drawImage(
+                this._desktopElement,
+                layout.x,
+                layout.y,
+                this._canvas.width - layout.x - pipOffset,
+                this._canvas.height - layout.y);
+            this._ctx.drawImage(
+                this._videoElement,
+                this._canvas.width - this._videoElement.width,
+                this._canvas.height - this._videoElement.height,
+                this._videoElement.width,
+                this._videoElement.height);
+        } else {
+            this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width - pipOffset, this._canvas.height);
+            this._ctx.drawImage(
+                this._videoElement,
+                this._canvas.width - this._videoElement.width,
+                this._canvas.height - this._videoElement.height,
+                this._videoElement.width,
+                this._videoElement.height);
+        }
 
         // draw a border around the video element.
         this._ctx.beginPath();
