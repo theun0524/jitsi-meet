@@ -123,7 +123,7 @@ function _mapStateToProps(state, ownProps) {
     const { visible = enabled } = ownProps;
 
     return {
-        _showNamePrompt: !localParticipant.name,
+        _showNamePrompt: false,
         _unreadMessageCount: getUnreadCount(state),
         visible
     };
