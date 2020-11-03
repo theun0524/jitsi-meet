@@ -18,6 +18,19 @@ var interfaceConfig = {
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
     BRAND_WATERMARK_LINK: '',
 
+    /**
+     * Whether the chat component will be on the left or bottom part
+     * of the screen
+     * @type {boolean}
+     */
+    CHAT_ON_LAYOUT: 'overlay',  // 'left', 'bottom', 'overlay'
+
+    /**
+     * Whether the chat component will be opened by default or not.
+     * @type {boolean}
+     */
+    CHAT_STARTS_OPEN: true,
+
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
     /**
      * Whether the connection indicator icon should hide itself based on
@@ -236,6 +249,7 @@ var interfaceConfig = {
      * between 1 and 5.
      */
     TILE_VIEW_MAX_COLUMNS: 7,
+    TILE_VIEW_MODE_DISABLED: true,
 
     /**
      * Specify custom URL for downloading android mobile app.

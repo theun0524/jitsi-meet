@@ -7,6 +7,8 @@ import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAY
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
 
+declare var interfaceConfig: Object;
+
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
  */
@@ -97,13 +99,17 @@ StateListenerRegistry.register(
     /* selector */ state => state['features/chat'].isOpen,
     /* listener */ (isChatOpen, store) => {
         const state = store.getState();
+        const shiftClass = {
+            left: 'shift-right',
+            bottom: 'shift-up'
+        }[interfaceConfig.CHAT_ON_LAYOUT] || '';
 
         if (isChatOpen) {
             // $FlowFixMe
-            document.body.classList.add('shift-right');
+            document.body.classList.add(shiftClass);
         } else {
             // $FlowFixMe
-            document.body.classList.remove('shift-right');
+            document.body.classList.remove(shiftClass);
         }
 
         if (shouldDisplayTileView(state)) {

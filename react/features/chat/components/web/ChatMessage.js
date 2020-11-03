@@ -1,21 +1,38 @@
 // @flow
+/* global APP */
 
+import Button from '@atlaskit/button';
 import React from 'react';
 import { toArray } from 'react-emoji-render';
 
-
+import { KickRemoteParticipantDialog } from '../../../../features/remote-video-menu';
+import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { Linkify } from '../../../base/react';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import AbstractChatMessage, {
     type Props
 } from '../AbstractChatMessage';
 import PrivateMessageButton from '../PrivateMessageButton';
+import s from './ChatMessage.module.scss';
 
 /**
  * Renders a single chat message.
  */
 class ChatMessage extends AbstractChatMessage<Props> {
+    /**
+     * Initializes a new {@code MessageContainer} instance.
+     *
+     * @param {Props} props - The React {@code Component} props to initialize
+     * the new {@code MessageContainer} instance with.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._handleKickOut = this._handleKickOut.bind(this);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -102,11 +119,32 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderTimestamp() {
+        const isModerator = isLocalParticipantModerator(APP.store.getState());
+        const { messageType } = this.props.message;
+        const { t } = this.props;
+
         return (
             <div className = 'timestamp'>
                 { this._getFormattedTimestamp() }
+                { (isModerator && messageType !== MESSAGE_TYPE_LOCAL) && (
+                    <span className = { s.divider}>
+                        ·
+                        <Button
+                            appearance = 'subtle'
+                            className = { s.button }
+                            onClick = { this._handleKickOut }>
+                            { t('videothumbnail.kick') }
+                        </Button>
+                    </span>
+                ) }
             </div>
         );
+    }
+
+    _handleKickOut() {
+        const { id: participantID } = this.props.message || {};
+
+        APP.store.dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));
     }
 }
 

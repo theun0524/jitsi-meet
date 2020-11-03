@@ -12,7 +12,7 @@ import {
 import { CHAT_VIEW_MODAL_ID } from './constants';
 
 const DEFAULT_STATE = {
-    isOpen: false,
+    isOpen: interfaceConfig.CHAT_STARTS_OPEN,
     lastReadMessage: undefined,
     messages: [],
     privateMessageRecipient: undefined

@@ -15,6 +15,9 @@ import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import s from './Chat.module.scss';
+
+declare var interfaceConfig: Object;
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -151,27 +154,33 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const { _isOpen, _showNamePrompt } = this.props;
+        const _isOpen = this.props._isOpen;
+        const _showNamePrompt = this.props._showNamePrompt;
+
         const ComponentToRender = _isOpen
             ? (
                 <>
-                    { this._renderChatHeader() }
+                    {/* { this._renderChatHeader() } */}
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
                 </>
             )
             : null;
-        let className = '';
+        let className = {
+            left: s.sideToolbarContainer,
+            bottom: s.bottomToolbarContainer,
+            overlay: s.overlayToolbarContainer
+        }[interfaceConfig.CHAT_ON_LAYOUT] || '';
 
         if (_isOpen) {
-            className = 'slideInExt';
+            className += ' slideInExt';
         } else if (this._isExited) {
-            className = 'invisible';
+            className += ' invisible';
         }
 
         return (
             <div
-                className = { `sideToolbarContainer ${className}` }
+                className = { className }
                 id = 'sideToolbarContainer'>
                 { ComponentToRender }
             </div>

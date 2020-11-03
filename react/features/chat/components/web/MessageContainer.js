@@ -8,6 +8,8 @@ import AbstractMessageContainer, { type Props }
 
 import ChatMessageGroup from './ChatMessageGroup';
 
+declare var interfaceConfig: Object;
+
 /**
  * Displays all received chat messages, grouped by sender.
  *
@@ -48,6 +50,11 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
         this._messagesListEndRef = React.createRef();
 
         this._onChatScroll = this._onChatScroll.bind(this);
+
+        this._className = {
+            left: 'chatconversation-vertical',
+            bottom: 'chatconversation-horizontal'
+        }[interfaceConfig.CHAT_ON_LAYOUT] || '';
     }
 
     /**
@@ -70,6 +77,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
         return (
             <div
+                className = { this._className }
                 id = 'chatconversation'
                 onScroll = { this._onChatScroll }
                 ref = { this._messageListRef }>

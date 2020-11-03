@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, interfaceConfig */
 /* eslint-disable no-unused-vars */
 import Logger from 'jitsi-meet-logger';
 import React from 'react';
@@ -12,7 +12,10 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
-import { CHAT_SIZE } from '../../../react/features/chat';
+import {
+    CHAT_SIZE_HEIGHT,
+    CHAT_SIZE_WIDTH
+} from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
@@ -324,19 +327,37 @@ export default class LargeVideoManager {
      * Update container size.
      */
     updateContainerSize() {
-        let widthToUse = UIUtil.getAvailableVideoWidth();
+        let widthToUse = this.preferredWidth || window.innerWidth;
+        let heightToUse = this.preferredHeight || window.innerHeight;
+
         const { isOpen } = APP.store.getState()['features/chat'];
 
-        if (isOpen) {
-            /**
-             * If chat state is open, we re-compute the container width
-             * by subtracting the default width of the chat.
-             */
-            widthToUse -= CHAT_SIZE;
+        /**
+         * If chat state is open, we re-compute the container width by subtracting the default width of
+         * the chat. We re-compute the width again after the chat window is closed. This is needed when
+         * custom styling is configured on the large video container through the iFrame API.
+         */
+        if (interfaceConfig.CHAT_ON_LAYOUT === 'left') {
+            if (isOpen && !this.resizedForChat) {
+                widthToUse -= CHAT_SIZE_WIDTH;
+                this.resizedForChat = true;
+            } else if (!isOpen && this.resizedForChat) {
+                this.resizedForChat = false;
+                widthToUse += CHAT_SIZE_WIDTH;
+            }
+        } else if (interfaceConfig.CHAT_ON_LAYOUT === 'bottom') {
+            // eslint-disable-next-line no-lonely-if
+            if (isOpen && !this.resizedForChat) {
+                heightToUse -= CHAT_SIZE_HEIGHT;
+                this.resizedForChat = true;
+            } else if (!isOpen && this.resizedForChat) {
+                this.resizedForChat = false;
+                heightToUse += CHAT_SIZE_HEIGHT;
+            }
         }
 
         this.width = widthToUse;
-        this.height = window.innerHeight;
+        this.height = heightToUse;
     }
 
     /**

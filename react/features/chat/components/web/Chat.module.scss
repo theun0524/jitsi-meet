@@ -1,0 +1,28 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../../css/variables';
+
+.sideToolbarContainer {
+    height: 100%;
+    left: -$sidebarWidth;
+    top: 0;
+    width: $sidebarWidth;
+}
+
+.bottomToolbarContainer {
+    height: $bottomBarHeight;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.overlayToolbarContainer {
+    background-color: initial !important;
+    height: 100%;
+    width: 30%;
+    top: 0;
+    z-index: 400 !important;
+    background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 30%);
+}
+

@@ -35,7 +35,7 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { CHAT_SIZE_WIDTH, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -367,7 +367,8 @@ class Toolbox extends Component<Props, State> {
     render() {
         const { _chatOpen, _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen
+                ? ({ left: 'shift-right', bottom: 'shift-up' }[interfaceConfig.CHAT_ON_LAYOUT] || '') : ''}`;
 
         return (
             <div
@@ -568,8 +569,8 @@ class Toolbox extends Component<Props, State> {
         let widthToUse = window.innerWidth;
 
         // Take chat size into account when resizing toolbox.
-        if (this.props._chatOpen) {
-            widthToUse -= CHAT_SIZE;
+        if (interfaceConfig.CHAT_ON_LAYOUT === 'left' && this.props._chatOpen) {
+            widthToUse -= CHAT_SIZE_WIDTH;
         }
 
         if (this.state.windowWidth !== widthToUse) {
@@ -1216,6 +1217,7 @@ class Toolbox extends Component<Props, State> {
     _renderToolboxContent() {
         const {
             _chatOpen,
+            _isGuest,
             _overflowMenuVisible,
             _raisedHand,
             t
@@ -1252,16 +1254,16 @@ class Toolbox extends Component<Props, State> {
 
         const showOverflowMenu = this.state.windowWidth >= verySmallThreshold || isMobileBrowser();
 
-        if (this._shouldShowButton('chat')) {
-            buttonsLeft.push('chat');
-        }
-        if (this._shouldShowButton('desktop')
-                && this._isDesktopSharingButtonVisible()) {
-            buttonsLeft.push('desktop');
-        }
-        if (this._shouldShowButton('raisehand')) {
-            buttonsLeft.push('raisehand');
-        }
+        // if (this._shouldShowButton('chat')) {
+        //     buttonsLeft.push('chat');
+        // }
+        // if (this._shouldShowButton('desktop')
+        //         && this._isDesktopSharingButtonVisible()) {
+        //     buttonsLeft.push('desktop');
+        // }
+        // if (this._shouldShowButton('raisehand')) {
+        //     buttonsLeft.push('raisehand');
+        // }
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
@@ -1365,7 +1367,7 @@ class Toolbox extends Component<Props, State> {
                             tooltip = { t('toolbar.invite') } /> }
                     { buttonsRight.indexOf('security') !== -1
                         && <SecurityDialogButton customClass = 'security-toolbar-button' /> }
-                    { buttonsRight.indexOf('overflowmenu') !== -1
+                    { !_isGuest && buttonsRight.indexOf('overflowmenu') !== -1
                         && <OverflowMenuButton
                             isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
@@ -1390,6 +1392,10 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean} True if the button should be displayed.
      */
     _shouldShowButton(buttonName) {
+        if (this.props._isGuest) {
+            return false;
+        }
+
         return this.props._visibleButtons.has(buttonName);
     }
 }

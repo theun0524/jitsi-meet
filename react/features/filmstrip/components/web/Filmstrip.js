@@ -342,6 +342,10 @@ class Filmstrip extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderToggleButton() {
+        if (this.props._isGuest) {
+            return null;
+        }
+
         const icon = this.props._visible ? IconMenuDown : IconMenuUp;
         const { t } = this.props;
 
@@ -372,9 +376,10 @@ function _mapStateToProps(state) {
     const reduceHeight
         = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const { isOpen: shiftRight } = state['features/chat'];
-    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${reduceHeight ? 'reduce-height' : ''
-        } ${shiftRight ? 'shift-right' : ''}`.trim();
+    const { isOpen: shift } = state['features/chat'];
+    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
+        reduceHeight && ['left', 'overlay'].includes(interfaceConfig.CHAT_ON_LAYOUT) ? 'reduce-height' : ''
+    } ${shift ? ({ left: 'shift-right', bottom: 'shift-up' }[interfaceConfig.CHAT_ON_LAYOUT] || '') : ''}`.trim();
     const videosClassName = `filmstrip__videos${isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
 
@@ -387,6 +392,7 @@ function _mapStateToProps(state) {
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _hovered: hovered,
+        _isGuest: state['features/base/jwt'].isGuest,
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible

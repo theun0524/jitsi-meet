@@ -65,6 +65,7 @@ StateListenerRegistry.register(
             // conference changed, left or failed...
             // Clear tile view state.
             dispatch(setTileView());
+            console.log('>>> setTileView(', !tileViewActive);
         }
     });
 
@@ -79,6 +80,7 @@ function _restoreTileViewState({ dispatch, getState }) {
 
     if (tileViewEnabled === undefined && previousTileViewEnabled !== undefined) {
         dispatch(setTileView(previousTileViewEnabled));
+        console.log('>>> setTileView(', !tileViewActive);
     }
 
     previousTileViewEnabled = undefined;
@@ -96,5 +98,6 @@ function _storeTileViewStateAndClear({ dispatch, getState }) {
     if (tileViewEnabled !== undefined) {
         previousTileViewEnabled = tileViewEnabled;
         dispatch(setTileView(undefined));
+        console.log('>>> setTileView(', !tileViewActive);
     }
 }
