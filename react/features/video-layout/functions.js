@@ -4,7 +4,7 @@ import { getPinnedParticipant, getParticipantCount } from '../base/participants'
 import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
-
+let userSetMaxCol = 7;
 declare var interfaceConfig: Object;
 
 /**
@@ -24,6 +24,10 @@ export function getCurrentLayout(state: Object) {
     return LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
 }
 
+export function setMaxColumnCount(newValue) {
+    userSetMaxCol = newValue;
+}
+
 /**
  * Returns how many columns should be displayed in tile view. The number
  * returned will be between 1 and 5, inclusive.
@@ -31,12 +35,8 @@ export function getCurrentLayout(state: Object) {
  * @returns {number}
  */
 export function getMaxColumnCount() {
-    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5; // was initially 5
-
-    console.log("InterfaceConfig.TILE_VIEW_MAX_COLUMNS is " + interfaceConfig.TILE_VIEW_MAX_COLUMNS);
-    console.log('Configured value for max number of columns for tile_view is : ', configuredMax);
-
-    return Math.max(configuredMax, 1); // It should be configurable by TILE_VIEW_MAX_COLUMNS
+    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS; // contains the value 7 set at interface_config.js
+    return Math.min(configuredMax, userSetMaxCol); // It should be configurable by TILE_VIEW_MAX_COLUMNS
 }
 
 /**

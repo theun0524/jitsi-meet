@@ -23,7 +23,9 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareVideo
+    IconShareVideo,
+    IconBlurBackground,
+    IconArrowDown
 } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -32,7 +34,7 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox/components';
+import { OverflowMenuItem, ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
@@ -64,7 +66,8 @@ import {
 import {
     TileViewButton,
     shouldDisplayTileView,
-    toggleTileView
+    toggleTileView,
+    setMaxColumnCount
 } from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
@@ -79,13 +82,14 @@ import { isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
-
 import AudioSettingsButton from './AudioSettingsButton';
 import MuteEveryoneButton from './MuteEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
+import Range from '@atlaskit/range';
+import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -217,7 +221,7 @@ type State = {
 };
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
+
 
 // XXX: We are not currently using state here, but in the future, when
 // interfaceConfig is part of redux we will. This will have to be retrieved from the store.
@@ -1346,6 +1350,37 @@ class Toolbox extends Component<Props, State> {
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
+
+                    <ToolboxButtonWithIcon
+                        icon = { IconArrowDown }
+                        iconDisabled = { !this.props._tileViewEnabled } 
+                        onIconClick = { this._displayTileConfigDialog } >
+                        <ToolbarButton
+                            accessibilityLabel = { 'Tile Configuration Settings' }
+                            icon = { IconBlurBackground }
+                            tooltip = { 'Tile Configuration Settings' } 
+                            onClick = { this._displayTileConfigDialog } >
+                        </ToolbarButton>
+                    </ToolboxButtonWithIcon>
+
+                    <div style={{width:"200px", display:"flex", flexDirection:"row", alignItems:"flex-start"}}>
+                        {4} {/* Hard-coded value to show the range of possible tile columns  */}
+                        <span style={{ width:"150px" }}>
+                            <Range 
+                                step={1} 
+                                min={2} 
+                                max={interfaceConfig.TILE_VIEW_MAX_COLUMNS} 
+                                defaultValue={interfaceConfig.TILE_VIEW_MAX_COLUMNS} 
+                                disabled={!this.props._tileViewEnabled} 
+                                onChange= { (e) => {
+                                    setMaxColumnCount(e); 
+                                    // naive logic to reflect the tile view configuration changes by toggling the tileView button twice
+                                    this.props.dispatch(toggleTileView()); 
+                                    this.props.dispatch(toggleTileView());
+                                } } />
+                        </span>
+                        {interfaceConfig.TILE_VIEW_MAX_COLUMNS ** 2} {/* Hard-coded value to show the range of possible tile columns  */}
+                    </div>
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
@@ -1377,6 +1412,21 @@ class Toolbox extends Component<Props, State> {
                         </OverflowMenuButton> }
                 </div>
             </div>);
+    }
+
+    _displayTileConfigDialog = () => {
+        return (
+            <div className = 'audio-preview'>
+            <InlineDialog
+                content = { <div>
+                                <p>Hello!</p>
+                            </div> 
+                            }
+                isOpen = {true}
+                position = 'top left'>
+            </InlineDialog>
+            </div>
+        )
     }
 
     _shouldShowButton: (string) => boolean;
