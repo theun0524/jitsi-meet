@@ -363,7 +363,9 @@ class WelcomePage extends AbstractWelcomePage {
                                             triggerType = 'default'>
                                             <DropdownItemGroup>
                                                 <DropdownItem onClick = { this._onFormSubmit }>{ t('welcomepage.startNow') }</DropdownItem>
-                                                <DropdownItem href = { `${AUTH_PAGE_BASE}/reservation` }>{ t('welcomepage.reserve') }</DropdownItem>
+                                                {_user?
+                                                <DropdownItem href = { `${AUTH_PAGE_BASE}/reservation` }>{ t('welcomepage.reserve') }</DropdownItem> :
+                                                <DropdownItem href = { `${AUTH_PAGE_BASE}/login` }>{ t('welcomepage.reserve') }</DropdownItem> }
                                             </DropdownItemGroup>
                                         </DropdownMenu>
                                     </div>

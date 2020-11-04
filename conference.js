@@ -2936,7 +2936,6 @@ export default {
                         name: APP.conference.roomName,
                         end_time: new Date()
                     });
-                    console.log("Updated DB: ", resp);
                 }
                 catch(err){
                     console.log(err);
