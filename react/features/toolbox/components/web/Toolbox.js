@@ -23,7 +23,8 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareVideo
+    IconShareVideo,
+    IconTileView
 } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -1010,6 +1011,14 @@ class Toolbox extends Component<Props, State> {
         } = this.props;
 
         return [
+            this._shouldShowButton('tileview')
+                && <OverflowMenuItem
+                    icon = { IconTileView }
+                    key = 'tileviewanother'
+                    onClick = { () => {
+                        window.open(window.location.href + "?tileviewanother=true#config.startSilent=true");
+                    } }
+                    text = '타일뷰 다른 창' />,
             this._isProfileVisible()
                 && <OverflowMenuProfileItem
                     key = 'profile'
