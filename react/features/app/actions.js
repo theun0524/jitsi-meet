@@ -14,12 +14,12 @@ import {
     loadConfigError,
     restoreConfig,
     setConfig,
-    storeConfig
+    updateConfig
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
 import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../base/media';
+import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../base/media';
 import { toState } from '../base/redux';
 import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
@@ -31,6 +31,8 @@ import {
 } from '../base/util';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
+import { updateSettings } from '../base/settings';
+import { setTileView } from '../video-layout';
 
 import {
     getDefaultURL,
@@ -190,6 +192,25 @@ export function appNavigate(uri: ?string) {
 
         dispatch(setRoom(room));
 
+        console.log("appNavigate state", getState(), config)
+
+        if (params["tileviewanother"] === "true"){
+            dispatch(updateSettings({
+                userSelectedSkipPrejoin: true
+            }));
+            dispatch(setAudioMuted(true));
+            dispatch(setVideoMuted(true));
+            dispatch(setTileView(true)); // only works when there is more than 2 people already in the room
+        }
+        else{
+            dispatch(updateSettings({
+                userSelectedSkipPrejoin: false,
+            }));
+            dispatch(updateConfig({
+                startSilent: false
+            }))
+        }
+
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());
@@ -309,6 +330,7 @@ export function reloadWithStoredParams() {
         const newURL = addTrackStateToURL(locationURL, state);
         const windowLocation = window.location;
         const oldSearchString = windowLocation.search;
+
 
         windowLocation.replace(newURL.toString());
 
