@@ -226,7 +226,7 @@ export default {
     showAuthRequiredDialog(room, onAuthNow) {
         const msg = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitForHostMsg',
-            { encodeURI(room) }
+            { room: encodeURI(room) }
         );
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.login'
