@@ -1,12 +1,21 @@
 // @flow
-/* global config */
+/* global APP, config */
 
+import { trim } from 'lodash';
+import { getLocalParticipant } from '../../base/participants';
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
     SET_INTERVAL,
     timerWorkerScript
 } from './TimeWorker';
+
+const screen = {
+    x: 34,
+    y: 120,
+    w: 768,
+    h: 433
+};
 
 /**
  * Represents a modified MediaStream that adds video as pip on a desktop stream.
@@ -42,7 +51,11 @@ export default class JitsiStreamPresenterEffect {
         const videoDiv = document.createElement('div');
         const firstVideoTrack = videoStream.getVideoTracks()[0];
         const { height, width, frameRate } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
+        const localParticipant = getLocalParticipant(APP.store.getState());
+        const [name, title] = localParticipant.name.split('/').map(trim);
 
+        this._name = name;
+        this._title = title;
         this._canvas = document.createElement('canvas');
         this._ctx = this._canvas.getContext('2d');
 
@@ -108,23 +121,59 @@ export default class JitsiStreamPresenterEffect {
         const { pipMode = true, layout } = config.presenter || {};
         const pipOffset = pipMode ? 0 : this._videoElement.width;
 
-        this._canvas.width = parseInt(width, 10) + pipOffset;
-        this._canvas.height = parseInt(height, 10);
+        this._canvas.width = 1080;
+        this._canvas.height = 608;
 
         if (!pipMode && layout) {
+            let w, h;
+
+            if (width >= height) {
+                // width is 100%
+                w = screen.w;
+                h = height * screen.w / width;
+            } else {
+                // height is 100%
+                h = screen.h;
+                w = width * screen.h / height;
+            }
+
+            // adjust max width and height
+            if (w > screen.w) {
+                h = h * screen.w / w;
+                w = screen.w;
+            } else if (h > screen.h) {
+                w = w * screen.h / h;
+                h = screen.h;
+            }
+            // console.log('track:', width, height, w, h);
+
             this._ctx.drawImage(this._backgroundElement, 0, 0, this._canvas.width, this._canvas.height);
             this._ctx.drawImage(
                 this._desktopElement,
-                layout.x,
-                layout.y,
-                this._canvas.width - layout.x - pipOffset,
-                this._canvas.height - layout.y);
+                0, 0, width, height,
+                34 + (screen.w - w) / 2, 120 + (screen.h - h) / 2, w, h);
             this._ctx.drawImage(
                 this._videoElement,
-                this._canvas.width - this._videoElement.width,
-                this._canvas.height - this._videoElement.height,
-                this._videoElement.width,
-                this._videoElement.height);
+                824,
+                120,
+                222,
+                166);
+
+            // draw a border around the video element.
+            this._ctx.beginPath();
+            this._ctx.lineWidth = 2;
+            this._ctx.strokeStyle = '#A9A9A9'; // dark grey
+            this._ctx.rect(824, 120, 222, 166);
+            this._ctx.stroke();
+
+            // draw presenter name
+            this._ctx.font = "18px '맑은 고딕'";
+            this._ctx.fillStyle = 'white';
+            this._ctx.fillText(this._name, 824, 320);
+            if (this._title) {
+                this._ctx.font = "14px '맑은 고딕'";
+                this._ctx.fillText(this._title, 824, 345);
+            }
         } else {
             this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width - pipOffset, this._canvas.height);
             this._ctx.drawImage(
@@ -133,15 +182,15 @@ export default class JitsiStreamPresenterEffect {
                 this._canvas.height - this._videoElement.height,
                 this._videoElement.width,
                 this._videoElement.height);
-        }
 
-        // draw a border around the video element.
-        this._ctx.beginPath();
-        this._ctx.lineWidth = 2;
-        this._ctx.strokeStyle = '#A9A9A9'; // dark grey
-        this._ctx.rect(this._canvas.width - this._videoElement.width, this._canvas.height - this._videoElement.height,
-            this._videoElement.width, this._videoElement.height);
-        this._ctx.stroke();
+            // draw a border around the video element.
+            this._ctx.beginPath();
+            this._ctx.lineWidth = 2;
+            this._ctx.strokeStyle = '#A9A9A9'; // dark grey
+            this._ctx.rect(this._canvas.width - this._videoElement.width, this._canvas.height - this._videoElement.height,
+                this._videoElement.width, this._videoElement.height);
+            this._ctx.stroke();
+        }
     }
 
     /**
@@ -180,7 +229,14 @@ export default class JitsiStreamPresenterEffect {
             timeMs: 1000 / this._frameRate
         });
 
-        return this._canvas.captureStream(this._frameRate);
+        const capturedStream = this._canvas.captureStream(this._frameRate);
+
+        // Put emphasis on the text details for the presenter's stream;
+        // See https://www.w3.org/TR/mst-content-hint/
+        // $FlowExpectedError
+        capturedStream.getVideoTracks()[0].contentHint = 'text';
+
+        return capturedStream;
     }
 
     /**
