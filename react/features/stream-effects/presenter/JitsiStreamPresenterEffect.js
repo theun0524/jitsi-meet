@@ -109,7 +109,7 @@ export default class JitsiStreamPresenterEffect {
             document.body.appendChild(videoDiv);
         }
 
-        const { maxWidth = 240, layout, pipMode } = config.presenter || {};
+        const { maxWidth = 240, pipMode, backgroundImageUrl } = config.presenter || {};
         const maxHeight = maxWidth * 3 / 4;
 
         // Set the video element properties
@@ -120,8 +120,8 @@ export default class JitsiStreamPresenterEffect {
         this._videoElement.srcObject = videoStream;
 
         // Set the background element properties
-        if (!pipMode && layout) {
-            this._backgroundElement.src = layout.backgroundImageUrl;
+        if (!pipMode && backgroundImageUrl) {
+            this._backgroundElement.src = backgroundImageUrl;
             this._backgroundElement.style = {
                 'width': '100%',
                 'object-fit': 'contain'
