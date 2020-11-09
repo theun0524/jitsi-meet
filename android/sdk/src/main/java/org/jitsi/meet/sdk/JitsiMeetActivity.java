@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -107,7 +108,7 @@ public class JitsiMeetActivity extends FragmentActivity
     protected JitsiMeetView getJitsiView() {
         JitsiMeetFragment fragment
             = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-        return fragment.getJitsiView();
+      return fragment == null ? null : fragment.getJitsiView();
     }
 
     public void join(@Nullable String url) {
@@ -123,7 +124,10 @@ public class JitsiMeetActivity extends FragmentActivity
     }
 
     public void leave() {
-        getJitsiView().leave();
+      JitsiMeetView myView = getJitsiView();
+      if (myView != null) {
+        myView.leave();
+      }
     }
 
     private @Nullable JitsiMeetConferenceOptions getConferenceOptions(Intent intent) {

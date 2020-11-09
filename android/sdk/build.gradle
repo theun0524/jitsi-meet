@@ -50,6 +50,7 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
+    implementation project(path: ':react-native-splash-screen')
 
     // Hermes JS engine
     def hermesPath = "../../node_modules/hermes-engine/android/"

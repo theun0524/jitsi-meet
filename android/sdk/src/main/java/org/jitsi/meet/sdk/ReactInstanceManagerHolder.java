@@ -39,6 +39,7 @@ import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
+import org.devio.rn.splashscreen.SplashScreenModule;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ class ReactInstanceManagerHolder {
                 new JavaScriptSandboxModule(reactContext),
                 new LocaleDetector(reactContext),
                 new LogBridgeModule(reactContext),
+                new SplashScreenModule(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
@@ -186,7 +188,7 @@ class ReactInstanceManagerHolder {
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
                 new com.BV.LinearGradient.LinearGradientPackage(),
-                new com.calendarevents.CalendarEventsPackage(),
+                new com.calendarevents.RNCalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.horcrux.svg.SvgPackage(),
