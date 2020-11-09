@@ -79,6 +79,12 @@ public class MainActivity extends JitsiMeetActivity {
     //
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        JitsiMeet.showSplashScreen(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected boolean extraInitialize() {
         Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
 
@@ -144,7 +150,7 @@ public class MainActivity extends JitsiMeetActivity {
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setWelcomePageEnabled(true)
-            .setServerURL(buildURL("https://vmeeting.io/"))
+            .setServerURL(buildURL("https://dk.seetalk.net"))
             .setFeatureFlag("call-integration.enabled", false)
             .setFeatureFlag("resolution", 360)
             // .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
