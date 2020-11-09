@@ -14,7 +14,8 @@ import {
     loadConfigError,
     restoreConfig,
     setConfig,
-    updateConfig
+    storeConfig,
+    updateConfig,
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
 import { setJWT } from '../base/jwt';
