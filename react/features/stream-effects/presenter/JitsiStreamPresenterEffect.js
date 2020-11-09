@@ -10,11 +10,51 @@ import {
     timerWorkerScript
 } from './TimeWorker';
 
-const screen = {
-    x: 34,
-    y: 120,
-    w: 768,
-    h: 433
+// Background image size
+const BACKGROUND_WIDTH = 1280;
+const BACKGROUND_HEIGHT = 720;
+
+// Canvas size
+const CANVAS_WIDTH = 1280;
+const CANVAS_HEIGHT = 720;
+
+// scale position from background to canvas
+const scaleX = x => parseInt(CANVAS_WIDTH * x / BACKGROUND_WIDTH, 10);
+const scaleY = y => parseInt(CANVAS_HEIGHT * y / BACKGROUND_HEIGHT, 10);
+
+const layout = {
+    video: {
+        rect: {
+            x: scaleX(40),
+            y: scaleY(142),
+            w: scaleX(910),
+            h: scaleY(512)
+        }
+    },
+    presenter: {
+        rect: {
+            x: scaleX(978),
+            y: scaleY(142),
+            w: scaleX(262),
+            h: scaleY(196),
+        },
+        outline: {
+            lineWidth: 2,
+            lineColor: '#A9A9A9',
+        },
+        name: {
+            font: "18px '맑은 고딕'",
+            color: 'white',
+            x: scaleX(978),
+            y: scaleY(370)
+        },
+        title: {
+            font: "14px '맑은 고딕'",
+            color: 'white',
+            x: scaleX(978),
+            y: scaleY(395),
+        },
+    },
 };
 
 /**
@@ -118,64 +158,69 @@ export default class JitsiStreamPresenterEffect {
         // adjust the canvas width/height on every frame incase the window has been resized.
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
-        const { pipMode = true, layout } = config.presenter || {};
+        const { pipMode = true } = config.presenter || {};
         const pipOffset = pipMode ? 0 : this._videoElement.width;
 
-        this._canvas.width = 1080;
-        this._canvas.height = 608;
+        this._desktopElement.width = parseInt(width, 10);
+        this._desktopElement.height = parseInt(height, 10);
+        this._canvas.width = CANVAS_WIDTH;
+        this._canvas.height = CANVAS_HEIGHT;
 
         if (!pipMode && layout) {
-            let w, h;
+            let rc = layout.video.rect;
+            let { w, h } = rc;
 
             if (width >= height) {
                 // width is 100%
-                w = screen.w;
-                h = height * screen.w / width;
+                w = rc.w;
+                h = parseInt(height * rc.w / width, 10);
             } else {
                 // height is 100%
-                h = screen.h;
-                w = width * screen.h / height;
+                h = rc.h;
+                w = parseInt(width * rc.h / height, 10);
             }
 
             // adjust max width and height
-            if (w > screen.w) {
-                h = h * screen.w / w;
-                w = screen.w;
-            } else if (h > screen.h) {
-                w = w * screen.h / h;
-                h = screen.h;
+            if (w > rc.w) {
+                h = parseInt(h * rc.w / w, 10);
+                w = rc.w;
+            } else if (h > rc.h) {
+                w = parseInt(w * rc.h / h, 10);
+                h = rc.h;
             }
-            // console.log('track:', width, height, w, h);
+            console.log('track:', width, height, w, h);
 
             this._ctx.drawImage(this._backgroundElement, 0, 0, this._canvas.width, this._canvas.height);
             this._ctx.drawImage(
                 this._desktopElement,
                 0, 0, width, height,
-                34 + (screen.w - w) / 2, 120 + (screen.h - h) / 2, w, h);
-            this._ctx.drawImage(
-                this._videoElement,
-                824,
-                120,
-                222,
-                166);
+                parseInt(rc.x + (rc.w - w) / 2, 10), parseInt(rc.y + (rc.h - h) / 2, 10), w, h);
+
+            rc = layout.presenter.rect;
+            this._ctx.drawImage(this._videoElement, rc.x, rc.y, rc.w, rc.h);
 
             // draw a border around the video element.
+            const outline = layout.presenter.outline;
             this._ctx.beginPath();
-            this._ctx.lineWidth = 2;
-            this._ctx.strokeStyle = '#A9A9A9'; // dark grey
-            this._ctx.rect(824, 120, 222, 166);
+            this._ctx.lineWidth = outline.lineWidth;
+            this._ctx.strokeStyle = outline.lineColor; // dark grey
+            this._ctx.rect(rc.x, rc.y, rc.w, rc.h);
             this._ctx.stroke();
 
             // draw presenter name
-            this._ctx.font = "18px '맑은 고딕'";
-            this._ctx.fillStyle = 'white';
-            this._ctx.fillText(this._name, 824, 320);
+            let text = layout.presenter.name;
+            this._ctx.font = text.font;
+            this._ctx.fillStyle = text.color;
+            this._ctx.fillText(this._name, text.x, text.y);
+
             if (this._title) {
-                this._ctx.font = "14px '맑은 고딕'";
-                this._ctx.fillText(this._title, 824, 345);
+                text = layout.presenter.title;
+                this._ctx.font = text.font;
+                this._ctx.fillStyle = text.color;
+                this._ctx.fillText(this._title, text.x, text.y);
             }
         } else {
-            this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width - pipOffset, this._canvas.height);
+            this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width, this._canvas.height);
             this._ctx.drawImage(
                 this._videoElement,
                 this._canvas.width - this._videoElement.width,
