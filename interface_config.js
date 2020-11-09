@@ -231,7 +231,7 @@ var interfaceConfig = {
      * between 1 and 5.
      */
     TILE_VIEW_MAX_COLUMNS: 7,
-
+    TILE_VIEW_MIN_COLS: 2,
     /**
      * Specify custom URL for downloading android mobile app.
      */
