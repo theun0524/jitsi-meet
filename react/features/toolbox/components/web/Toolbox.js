@@ -23,7 +23,11 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareVideo
+    IconShareVideo,
+    IconBlurBackground,
+    IconCheck,
+    Icon,
+    IconArrowDown
 } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -32,7 +36,7 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox/components';
+import { OverflowMenuItem, ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
@@ -64,7 +68,10 @@ import {
 import {
     TileViewButton,
     shouldDisplayTileView,
-    toggleTileView
+    toggleTileView,
+    getMaxColumnCount,
+    setMaxColumnCount,
+    setTileView
 } from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
@@ -86,7 +93,9 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
-
+import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
+import AudioSettingsContent, { type Props as AudioSettingsContentProps } from '../../../settings/components/web/audio/AudioSettingsContent';
+let _ = require('underscore');
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
@@ -213,7 +222,8 @@ type State = {
     /**
      * The width of the browser's window.
      */
-    windowWidth: number
+    windowWidth: number,
+    dialogOpen: boolean
 };
 
 declare var APP: Object;
@@ -265,10 +275,14 @@ class Toolbox extends Component<Props, State> {
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
         this.state = {
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            dialogOpen: false
         };
     }
 
+    toggleDialog = () => {
+        this.setState({ dialogOpen: !this.state.dialogOpen });
+    }
     /**
      * Sets keyboard shortcuts for to trigger ToolbarButtons actions.
      *
@@ -1346,6 +1360,7 @@ class Toolbox extends Component<Props, State> {
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
+                    { this._renderTileConfigButton() }
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
@@ -1378,6 +1393,66 @@ class Toolbox extends Component<Props, State> {
                 </div>
             </div>);
     }
+
+    _renderTileConfigButton = () => {
+        const arr = _.range(interfaceConfig.TILE_VIEW_MIN_COLS, interfaceConfig.TILE_VIEW_MAX_COLUMNS + 1, 1);
+        const tilerow = arr.map((element) => (
+            <div className = 'audio-preview-microphone'>
+                <div className = { `audio-preview-entry ${element == getMaxColumnCount() ? 'audio-preview-entry--selected' : ''}`}>
+                    { element == getMaxColumnCount() && (
+                        <Icon
+                            className = 'audio-preview-icon audio-preview-icon--check'
+                            color = '#1C2025'
+                            size = { 14 }
+                            src = { IconCheck } />
+                        )}
+                    <span 
+                        className='audio-preview-entry-text' 
+                        onClick={ () => {
+                                            setMaxColumnCount(element);
+                                            //naive hack to reflect the changes in column config by toggling tile view twice
+                                            this.props.dispatch(toggleTileView());
+                                            this.props.dispatch(toggleTileView());
+                                            this.toggleDialog();
+                                        }
+                                }>
+                                    {element} X {element}
+                    </span>
+                </div>
+            </div>
+        ));
+        return (
+            <div className = 'audio-preview'>
+                <InlineDialog
+                    onClose={() => {
+                        this.setState({ dialogOpen: false });
+                    }}
+                    content = { 
+                        <div className = 'audio-preview-content'>
+                            <div className = 'audio-preview-header audio-preview-header-text'> Tiles Configuration </div>
+                            {tilerow}
+                        </div>
+                     }
+                    position = 'top left'
+                    isOpen={this.state.dialogOpen} >
+
+                     <ToolboxButtonWithIcon 
+                        icon = { IconArrowDown }
+                        iconDisabled = { !this.props._tileViewEnabled }
+                        onIconClick = { this.toggleDialog } >
+                         <ToolbarButton
+                            accessibilityLabel = { 'Tile Configuration Settings' }
+                            icon = { IconBlurBackground }
+                            tooltip = { 'Tile Configuration Settings' } >
+                        </ToolbarButton>
+                     </ToolboxButtonWithIcon>
+                    
+                </InlineDialog>
+            </div>
+            
+        );
+    }
+
 
     _shouldShowButton: (string) => boolean;
 

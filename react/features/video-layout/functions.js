@@ -5,6 +5,7 @@ import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
 
+let userSetMaxCol = 7;
 declare var interfaceConfig: Object;
 
 /**
@@ -24,6 +25,11 @@ export function getCurrentLayout(state: Object) {
     return LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
 }
 
+export function setMaxColumnCount(newValue) {
+    userSetMaxCol = newValue;
+    console.log("Setting the new max columns as: " + newValue);
+}
+
 /**
  * Returns how many columns should be displayed in tile view. The number
  * returned will be between 1 and 5, inclusive.
@@ -31,12 +37,8 @@ export function getCurrentLayout(state: Object) {
  * @returns {number}
  */
 export function getMaxColumnCount() {
-    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5; // was initially 5
-
-    console.log("InterfaceConfig.TILE_VIEW_MAX_COLUMNS is " + interfaceConfig.TILE_VIEW_MAX_COLUMNS);
-    console.log('Configured value for max number of columns for tile_view is : ', configuredMax);
-
-    return Math.max(configuredMax, 1); // It should be configurable by TILE_VIEW_MAX_COLUMNS
+    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS; // was initially 5
+    return Math.min(configuredMax, userSetMaxCol); // It should be configurable by TILE_VIEW_MAX_COLUMNS
 }
 
 /**
@@ -55,7 +57,6 @@ export function getTileViewGridDimensions(state: Object, maxColumns: number = ge
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
     const numberOfParticipants = state['features/base/participants'].length - (iAmRecorder ? 1 : 0);
-
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
