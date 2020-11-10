@@ -44,7 +44,8 @@ export default {
         borderRadius: 4,
         borderWidth: 1,
         marginVertical: 8,
-        padding: 8
+        padding: 8,
+        color: 'black'
     },
 
     fieldError: {
