@@ -13,8 +13,7 @@ import { parseURIString, safeDecodeURIComponent } from '../base/util';
  */
 export function toDisplayableList(dbList) {
     return (
-        dbList.slice(-3).reverse()
-            .map(item => {
+        dbList.map(item => {
                 return {
                     schedule: item.schedule,
                     lock: item.lock,
