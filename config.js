@@ -682,11 +682,7 @@ var config = {
          * if false, presenter appears outside the video in right bottom.
          */
         pipMode: true,
-        // layout: {    // if pipMode is false, layout will be applied.
-        //   x: 0,
-        //   y: 60,
-        //   backgroundImageUrl: https://conf.vmeeting.io/images/onk2020_bg.png,
-        // }
+        // backgroundImageUrl: https://conf.vmeeting.io/images/onk2020_bg.png,
     },
 
     // Allow all above example options to include a trailing comma and
