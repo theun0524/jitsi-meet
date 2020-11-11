@@ -2,6 +2,7 @@
 /* global APP */
 
 import Button from '@atlaskit/button';
+import { keyBy } from 'lodash';
 import React from 'react';
 import { toArray } from 'react-emoji-render';
 
@@ -10,6 +11,7 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { Linkify } from '../../../base/react';
+import { connect, equals } from '../../../base/redux';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import AbstractChatMessage, {
     type Props
@@ -40,8 +42,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message } = this.props;
+        const { message, _participants } = this.props;
         const processedMessage = [];
+        const typeClass = _participants[message.id]?.role === 'moderator' ? s.local : '';
 
         // content is an array of text and emoji components
         const content = toArray(this._getMessageText(), { className: 'smiley' });
@@ -55,19 +58,19 @@ class ChatMessage extends AbstractChatMessage<Props> {
         });
 
         return (
-            <div className = 'chatmessage-wrapper'>
-                <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
-                    <div className = 'replywrapper'>
-                        <div className = 'messagecontent'>
+            <div className = { `${s.chatmessageWrapper} ${typeClass}` }>
+                <div className = { `${s.chatmessage} ${message.privateMessage ? s.privatemessage : ''}` }>
+                    <div className = { s.replywrapper }>
+                        <div className = { s.messagecontent }>
                             { this.props.showDisplayName && this._renderDisplayName() }
-                            <div className = 'usermessage'>
+                            <div className = { s.usermessage }>
                                 { processedMessage }
                             </div>
                             { message.privateMessage && this._renderPrivateNotice() }
                         </div>
                         { message.privateMessage && message.messageType !== MESSAGE_TYPE_LOCAL
                             && (
-                                <div className = 'messageactions'>
+                                <div className = { s.messageactions }>
                                     <PrivateMessageButton
                                         participantID = { message.id }
                                         reply = { true }
@@ -94,7 +97,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     _renderDisplayName() {
         return (
-            <div className = 'display-name'>
+            <div className = { s.displayName }>
                 { this.props.message.displayName }
             </div>
         );
@@ -107,7 +110,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     _renderPrivateNotice() {
         return (
-            <div className = 'privatemessagenotice'>
+            <div className = { s.privatemessagenotice }>
                 { this._getPrivateNoticeMessage() }
             </div>
         );
@@ -124,7 +127,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         const { t } = this.props;
 
         return (
-            <div className = 'timestamp'>
+            <div className = { s.timestamp }>
                 { this._getFormattedTimestamp() }
                 { (isModerator && messageType !== MESSAGE_TYPE_LOCAL) && (
                     <span className = { s.divider}>
@@ -148,4 +151,11 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage);
+function _mapStateToProps(state) {
+    return {
+        _isGuest: state['features/base/jwt'].isGuest,
+        _participants: keyBy(state['features/base/participants'], 'id'),
+    };
+}
+
+export default translate(connect(_mapStateToProps)(ChatMessage));

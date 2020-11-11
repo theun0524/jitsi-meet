@@ -3,15 +3,88 @@
 @import '~bootstrap/scss/variables';
 @import '../../../../../css/variables';
 
-.divider {
-    padding-left: 10px;
-}
+.chatmessageWrapper {
+    max-width: 100%;
+    margin-top: 8px;
 
-button, .button {
-    color: $welcomePageButtonTextColor !important;
+    .replywrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-    &:hover {
-        color: $welcomePageButtonTextColor !important;
-        background: rgba(0,0,0,.1);
+        .messageactions {
+            align-self: stretch;
+            border-left: 1px solid $chatActionsSeparatorColor;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5px;
+
+            .toolbox-icon {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .chatmessage {
+        display: inline-block;
+        color: white;
+
+        &.privatemessage {
+            color: $chatPrivateMessageColor;
+        }
+
+        .displayName {
+            display: none;
+        }
+
+        .usermessage {
+            display: inline-block;
+        }
+    }
+
+    &.local {
+        align-items: flex-start;
+
+        .chatmessage {
+            color: $chatLocalMessageColor;
+        }
+
+        .displayName {
+            display: none;
+        }
+    
+        .usermessage {
+            margin-left: 0px;
+        }
+
+        .timestamp {
+            text-align: right;
+    
+            .divider {
+                padding-left: 10px;
+            }
+            
+            button, .button {
+                color: $welcomePageButtonTextColor !important;
+            
+                &:hover {
+                    color: $welcomePageButtonTextColor !important;
+                    background: rgba(0,0,0,.1);
+                }
+            }
+        }
+    }
+
+    &.error {
+        .chatmessage {
+            background-color: $defaultWarningColor;
+            border-radius: 0px;
+            font-weight: 100;
+        }
+
+        .displayName {
+            display: none;
+        }
     }
 }

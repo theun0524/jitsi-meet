@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import ChatMessage from './ChatMessage';
+import s from './ChatMessageGroup.module.scss';
 
 type Props = {
 
@@ -43,14 +44,15 @@ class ChatMessageGroup extends Component<Props> {
         }
 
         return (
-            <div className = { `chat-message-group ${className}` }>
+            <div className = { s.chatMessageGroup }>
                 {
                     messages.map((message, i) => (
                         <ChatMessage
                             key = { i }
                             message = { message }
-                            showDisplayName = { false }
-                            showTimestamp = { i === messages.length - 1 } />
+                            messageType = { className }
+                            showDisplayName = { true }
+                            showTimestamp = { false } />
                     ))
                 }
             </div>

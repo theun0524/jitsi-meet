@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { getConferenceNameForTitle } from '../../../base/conference';
@@ -193,6 +194,9 @@ class Conference extends AbstractConference<Props, *> {
                 className = { _layoutClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
+                <Helmet>
+                    <meta name='viewport' content='initial-scale=1, maximum-scale=1' />
+                </Helmet>
 
                 <Notice />
                 <div id = 'videospace'>

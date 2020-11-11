@@ -1,0 +1,24 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../../css/variables';
+
+.chatInput {
+    // border-top: 1px solid $chatInputSeparatorColor;
+    display: flex;
+    padding: 5px 10px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 50%);
+
+    * {
+        background-color: transparent;
+    }
+
+    .smileyInput {
+        display: flex;
+        position: relative;
+    }
+    
+    .usrmsgForm {
+        flex: 1;
+    }
+}

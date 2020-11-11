@@ -9,6 +9,7 @@ import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 
 import SmileysPanel from './SmileysPanel';
+import s from './ChatInput.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -109,8 +110,8 @@ class ChatInput extends Component<Props, State> {
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
 
         return (
-            <div id = 'chat-input' >
-                <div className = 'smiley-input'>
+            <div className = { s.chatInput } >
+                <div className = { s.smileyInput }>
                     <div id = 'smileysarea'>
                         <div id = 'smileys'>
                             <Emoji
@@ -123,7 +124,7 @@ class ChatInput extends Component<Props, State> {
                             onSmileySelect = { this._onSmileySelect } />
                     </div>
                 </div>
-                <div className = 'usrmsg-form'>
+                <div className = { s.usrmsgForm }>
                     <TextareaAutosize
                         id = 'usermsg'
                         inputRef = { this._setTextAreaRef }
