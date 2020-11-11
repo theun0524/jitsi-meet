@@ -39,7 +39,8 @@ const DEFAULT_STATE = {
     membersOnly: undefined,
     password: undefined,
     passwordRequired: undefined,
-    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    followMeEnabled: true
 };
 
 /**
