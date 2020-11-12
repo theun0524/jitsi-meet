@@ -24,7 +24,6 @@ import {
     IconRec,
     IconShareDesktop,
     IconShareVideo,
-    IconBlurBackground,
     IconCheck,
     Icon,
     IconArrowDown
@@ -1360,7 +1359,6 @@ class Toolbox extends Component<Props, State> {
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
-                    { this._renderTileConfigButton() }
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
@@ -1370,7 +1368,7 @@ class Toolbox extends Component<Props, State> {
                             } />
                     }
                     { buttonsRight.indexOf('tileview') !== -1
-                        && <TileViewButton /> }
+                        && this._renderTileConfigButton() }
                     { buttonsRight.indexOf('invite') !== -1
                         && <ToolbarButton
                             accessibilityLabel =
@@ -1398,7 +1396,15 @@ class Toolbox extends Component<Props, State> {
         const arr = _.range(interfaceConfig.TILE_VIEW_MIN_COLS, interfaceConfig.TILE_VIEW_MAX_COLUMNS + 1, 1);
         const tilerow = arr.map((element) => (
             <div className = 'audio-preview-microphone'>
-                <div className = { `audio-preview-entry ${element == getMaxColumnCount() ? 'audio-preview-entry--selected' : ''}`}>
+                <div className = { `audio-preview-entry ${element == getMaxColumnCount() ? 'audio-preview-entry--selected' : ''}`}
+                    onClick={ () => {
+                            setMaxColumnCount(element);
+                            //toggle the tileView display and set it back to tileView mode
+                            this.props.dispatch(toggleTileView());
+                            this.props.dispatch(setTileView(true));
+                            this.toggleDialog();
+                        }
+                    }>
                     { element == getMaxColumnCount() && (
                         <Icon
                             className = 'audio-preview-icon audio-preview-icon--check'
@@ -1406,17 +1412,8 @@ class Toolbox extends Component<Props, State> {
                             size = { 14 }
                             src = { IconCheck } />
                         )}
-                    <span 
-                        className='audio-preview-entry-text' 
-                        onClick={ () => {
-                                            setMaxColumnCount(element);
-                                            //naive hack to reflect the changes in column config by toggling tile view twice
-                                            this.props.dispatch(toggleTileView());
-                                            this.props.dispatch(toggleTileView());
-                                            this.toggleDialog();
-                                        }
-                                }>
-                                    {element} X {element}
+                    <span className='audio-preview-entry-text' >
+                        {element} X {element}
                     </span>
                 </div>
             </div>
@@ -1435,22 +1432,28 @@ class Toolbox extends Component<Props, State> {
                      }
                     position = 'top left'
                     isOpen={this.state.dialogOpen} >
-
-                     <ToolboxButtonWithIcon 
-                        icon = { IconArrowDown }
-                        iconDisabled = { !this.props._tileViewEnabled }
-                        onIconClick = { this.toggleDialog } >
-                         <ToolbarButton
-                            accessibilityLabel = { 'Tile Configuration Settings' }
-                            icon = { IconBlurBackground }
-                            tooltip = { 'Tile Configuration Settings' } >
-                        </ToolbarButton>
-                     </ToolboxButtonWithIcon>
-                    
+                    { this._displayTileConfigButtonWithorWithoutArrowIcon() }            
                 </InlineDialog>
             </div>
             
         );
+    }
+    
+    _displayTileConfigButtonWithorWithoutArrowIcon = () => {
+        if(this.props._tileViewEnabled) {
+            return(
+                <ToolboxButtonWithIcon 
+                    icon = { IconArrowDown }
+                    iconDisabled = { !this.props._tileViewEnabled }
+                    onIconClick = { this.toggleDialog } >
+                        <TileViewButton />
+                </ToolboxButtonWithIcon>
+            );
+        } else {
+            return(
+                <TileViewButton />
+            );
+        }
     }
 
 
