@@ -285,6 +285,38 @@ export function getInviteText({
 }
 
 /**
+ * Creates a message describing how to dial in to the conference.
+ *
+ * @returns {string}
+ */
+export function getInviteTextAsModerator({
+    _localParticipantName,
+    _inviteUrl,
+    _liveStreamViewURL,
+    t
+}: Object) {
+    const inviteURL = _decodeRoomURI(_inviteUrl);
+
+    let invite = _localParticipantName
+        ? t('info.inviteURLFirstPartAsModerator', { name: _localParticipantName })
+        : t('info.inviteURLFirstPartGeneral');
+
+    invite += t('info.inviteURLSecondPart', {
+        url: inviteURL
+    });
+
+    if (_liveStreamViewURL) {
+        const liveStream = t('info.inviteLiveStream', {
+            url: _liveStreamViewURL
+        });
+
+        invite = `${invite}\n${liveStream}`;
+    }
+
+    return invite;
+}
+
+/**
  * Helper for determining how many of each type of user is being invited. Used
  * for logging and sending analytics related to invites.
  *

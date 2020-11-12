@@ -183,6 +183,13 @@ export function appNavigate(uri: ?string) {
                     dispatch(setJWT(token));
                 }
             }
+        } else if (params.token) {
+            const { token } = params;
+            const { exp } = jwtDecode(token);
+
+            if (Date.now() < exp * 1000) {
+                dispatch(setJWT(token));
+            }
         } else {
             // Load current logged in user
             dispatch(loadCurrentUser());

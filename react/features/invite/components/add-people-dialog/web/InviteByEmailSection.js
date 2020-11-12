@@ -11,8 +11,10 @@ import {
     IconEmail,
     IconGoogle,
     IconOutlook,
+    IconSecurityOn,
     IconYahoo
 } from '../../../../base/icons';
+import { connect } from '../../../../base/redux';
 import { copyText, openURLInBrowser } from '../../../../base/util';
 
 type Props = {
@@ -38,10 +40,11 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
+function InviteByEmailSection({ _isGuest, inviteSubject, inviteText, inviteTextAsModerator, t }: Props) {
     const [ isActive, setIsActive ] = useState(false);
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
     const encodedInviteText = encodeURIComponent(inviteText);
+    const encodedInviteTextAsModerator = encodeURIComponent(inviteTextAsModerator);
 
     /**
      * Copies the conference invitation to the clipboard.
@@ -101,22 +104,30 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                 icon: IconYahoo,
                 tooltipKey: 'addPeople.yahooEmail',
                 url: `https://compose.mail.yahoo.com/?To=&Subj=${encodedInviteSubject}&Body=${encodedInviteText}`
+            },
+            {
+                icon: IconSecurityOn,
+                tooltipKey: 'addPeople.inviteAsModerator',
+                url: `mailto:?subject=${encodedInviteSubject}&body=${encodedInviteTextAsModerator}`,
+                secure: true
             }
         ];
 
         return (
             <>
                 {
-                    PROVIDER_MAPPING.map(({ icon, tooltipKey, url }, idx) => (
-                        <Tooltip
-                            content = { t(tooltipKey) }
-                            key = { idx }
-                            position = 'top'>
-                            <div
-                                onClick = { _onSelectProvider(url) }>
-                                <Icon src = { icon } />
-                            </div>
-                        </Tooltip>
+                    PROVIDER_MAPPING.map(({ icon, tooltipKey, url, secure }, idx) => (
+                        (secure && _isGuest) ? null : (
+                            <Tooltip
+                                content = { t(tooltipKey) }
+                                key = { idx }
+                                position = 'top'>
+                                <div
+                                    onClick = { _onSelectProvider(url) }>
+                                    <Icon src = { icon } />
+                                </div>
+                            </Tooltip>
+                        )
                     ))
                 }
             </>
@@ -150,4 +161,10 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
     );
 }
 
-export default translate(InviteByEmailSection);
+function _mapStateToProps(state) {
+    return {
+        _isGuest: state['features/base/jwt'].isGuest,
+    };
+}
+
+export default translate(connect(_mapStateToProps)(InviteByEmailSection));

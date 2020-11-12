@@ -13,7 +13,7 @@ import { connect } from '../../../../base/redux';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
-import { _getDefaultPhoneNumber, getInviteText, isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
+import { _getDefaultPhoneNumber, getInviteText, getInviteTextAsModerator, isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
 
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInSection from './DialInSection';
@@ -82,6 +82,8 @@ function AddPeopleDialog({
     _dialIn,
     _inviteContactsVisible,
     _inviteUrl,
+    _isGuest,
+    _jwt,
     _liveStreamViewURL,
     _localParticipantName,
     _locationUrl,
@@ -134,6 +136,12 @@ function AddPeopleDialog({
         phoneNumber,
         t
     });
+    const inviteTextAsModerator = getInviteTextAsModerator({
+        _localParticipantName,
+        _inviteUrl: _inviteUrl + `?token=${_jwt}`,
+        _liveStreamViewURL,
+        t
+    });
     const inviteSubject = t('addPeople.inviteMoreMailSubject', {
         appName: interfaceConfig.APP_NAME
     });
@@ -151,7 +159,8 @@ function AddPeopleDialog({
                 <CopyMeetingLinkSection url = { _inviteUrl } />
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
-                    inviteText = { invite } />
+                    inviteText = { invite }
+                    inviteTextAsModerator = { inviteTextAsModerator } />
                 <EmbedMeetingTrigger />
                 <div className = 'invite-more-dialog separator' />
                 {
@@ -193,6 +202,8 @@ function mapStateToProps(state) {
         _dialIn: state['features/invite'],
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
+        _isGuest: state['features/base/jwt'].isGuest,
+        _jwt: state['features/base/jwt'].jwt,
         _liveStreamViewURL:
             currentLiveStreamingSession
                 && currentLiveStreamingSession.liveStreamViewURL,
