@@ -681,8 +681,8 @@ var config = {
          * if true, presenter appears inside the video in right bottom.
          * if false, presenter appears outside the video in right bottom.
          */
-        pipMode: true,
-        // backgroundImageUrl: https://conf.vmeeting.io/images/onk2020_bg.png,
+        pipMode: false,
+        backgroundImageUrl: '/images/onk2020_bg.png',
     },
 
     // Allow all above example options to include a trailing comma and
