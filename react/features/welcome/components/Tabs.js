@@ -48,9 +48,6 @@ export default class Tabs extends Component<Props> {
 
         return (
             <div className = {s.tabContainer}>
-                <div className = {s.tabContent}>
-                    { content }
-                </div>
                 { tabs.length > 1 ? (
                     <div className = {s.tabButtons}>
                         {
@@ -65,6 +62,9 @@ export default class Tabs extends Component<Props> {
                         }
                     </div>) : null
                 }
+                <div className = {s.tabContent}>
+                    { content }
+                </div>
             </div>
         );
     }

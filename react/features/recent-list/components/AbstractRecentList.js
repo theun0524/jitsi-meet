@@ -10,7 +10,7 @@ import {
 } from '../../analytics';
 import { appNavigate } from '../../app/actions';
 import {
-    AbstractPage,
+    AbstractPageWithState,
     Container,
     Text
 } from '../../base/react';
@@ -38,7 +38,7 @@ type Props = {
  * An abstract component for the recent list.
  *
  */
-export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
+export default class AbstractRecentList<P: Props, S: State> extends AbstractPageWithState<P, S> {
     /**
      * Initializes a new {@code RecentList} instance.
      *

@@ -11,6 +11,8 @@ import Container from './Container';
 import Text from './Text';
 import s from './MeetingList.module.scss';
 
+import TrashIcon from '@atlaskit/icon/glyph/trash';
+
 type Props = {
 
     /**
@@ -39,9 +41,9 @@ type Props = {
     meetings: Array<Object>,
 
     /**
-     * Defines what happens when  an item in the section list is clicked
+     * Handler for deleting an item.
      */
-    onItemClick: Function
+    onItemDelete?: Function
 };
 
 /**
@@ -140,6 +142,25 @@ export default class MeetingsList extends Component<Props> {
         return null;
     }
 
+    _onDelete: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onItemDelete && onItemDelete(item);
+        };
+    }
+
     _renderItem: (Object, number) => React$Node;
 
     /**
@@ -158,7 +179,7 @@ export default class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false } = this.props;
+        const { hideURL = false, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -195,6 +216,11 @@ export default class MeetingsList extends Component<Props> {
                 </Container>
                 <Container className = {s.actions}>
                     { elementAfter || null }
+
+                    { onItemDelete && <TrashIcon
+                        className = 'delete-meeting'
+                        size="large"
+                        onClick = { this._onDelete(meeting) } />}
                 </Container>
             </Container>
         );

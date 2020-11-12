@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import s from './Tab.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link Tab}
@@ -65,9 +66,15 @@ export default class Tab extends Component<Props> {
         const { index, isSelected, label } = this.props;
         const className = `tab${isSelected ? ' selected' : ''}`;
 
-        return (
+        return isSelected? (
             <div
-                className = { className }
+                className = { s.tab }
+                key = { index }
+                onClick = { this._onSelect }>
+                { label }
+            </div>) : (
+            <div
+                className = { s.tab }
                 key = { index }
                 onClick = { this._onSelect }>
                 { label }

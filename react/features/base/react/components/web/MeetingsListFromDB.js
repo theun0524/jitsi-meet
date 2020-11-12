@@ -14,6 +14,7 @@ import s from './MeetingListFromDB.module.scss';
 import ScheduleIcon from '@atlaskit/icon/glyph/schedule';
 import LockIcon from '@atlaskit/icon/glyph/lock';
 import UnlockIcon from '@atlaskit/icon/glyph/unlock';
+import TrashIcon from '@atlaskit/icon/glyph/trash';
 
 type Props = {
 
@@ -38,9 +39,9 @@ type Props = {
     meetings: Array<Object>,
 
     /**
-     * Defines what happens when  an item in the section list is clicked
+     * Handler for deleting an item.
      */
-    onItemClick: Function
+    onItemDelete?: Function
 };
 
 /**
@@ -141,6 +142,25 @@ export default class MeetingsListFromDB extends Component<Props> {
 
     _renderItem: (Object, number) => React$Node;
 
+    _onDelete: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onItemDelete && onItemDelete(item);
+        };
+    }
+
     /**
      * Renders an item for the list.
      *
@@ -159,7 +179,7 @@ export default class MeetingsListFromDB extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false } = this.props;
+        const { hideURL = false, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -202,6 +222,11 @@ export default class MeetingsListFromDB extends Component<Props> {
                 </Container>
                 <Container className = {s.actions}>
                     { elementAfter || null }
+
+                    { onItemDelete && <TrashIcon
+                        className = 'delete-meeting'
+                        size="large"
+                        onClick = { this._onDelete(meeting) } />}
                 </Container>
             </Container>
         );

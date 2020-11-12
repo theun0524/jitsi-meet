@@ -505,12 +505,12 @@ class WelcomePage extends AbstractWelcomePage {
             });
         }
 
-        /*if (_recentListEnabled) {
+        if (_recentListEnabled) {
             tabs.push({
                 label: t('welcomepage.recentList'),
                 content: <RecentList />
             });
-        }*/
+        }
 
         if (tabs.length === 0) {
             return null;

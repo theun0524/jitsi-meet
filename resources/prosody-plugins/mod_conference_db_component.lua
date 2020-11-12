@@ -3,8 +3,9 @@ local socket = require "socket";
 local json = require "util.json";
 local ext_events = module:require "ext_events";
 local it = require "util.iterators";
-local jid_resource = require "util.jid".resource;
+local jid = require "util.jid";
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
+local http = require "net.http";
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -36,11 +37,19 @@ function room_destroyed(event)
     end
 
     -- TODO: find room name from room object and update db(set end time)
-    log("info", "Room is %s", room);
+    local node, host, resource = jid.split(room.jid);
 
-    for k, v in pairs(room) do
-        log("info", "%s is %s", k, v);
-    end
+    -- TODO: find room name from room object and update db(set end time)
+    local header = { ["Content-Type"] = "application/json\r\n" };
+    local reqbody = {};
+    reqbody['name'] = node;
+    local reqbody_string = "{ name: " .. node .. " }";
+
+    -- http.request("http://localhost/auth/api/conference?name=" .. node, {headers = {}, method = "GET"},
+    --     function(content, code, response, request)
+    --             if(code < 0) then print ("HTTP request failed");
+    --             else print(code, content) end
+    --     end)
 end
 
 -- executed on every host added internally in prosody, including components

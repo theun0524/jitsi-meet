@@ -12,6 +12,10 @@ import AbstractDBList from './AbstractDBList';
 
 import axios from 'axios';
 
+import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
+
+import s from './DBList.module.scss';
+
 /**
  * The type of the React {@code Component} props of {@link RecentList}
  */
@@ -33,8 +37,11 @@ type Props = {
 };
 
 type State = {
-    setting: false,
-    _dbList: Object
+    setting: boolean,
+    _dbList: Object,
+    savedList: Object,
+    isModalOpen: boolean,
+    targetEntry: string
 };
 
 /**
@@ -42,8 +49,13 @@ type State = {
  *
  */
 class DBList extends AbstractDBList<Props, State> {
+    _updateInterval: IntervalID;
     _getRenderListEmptyComponent: () => React$Node;
     _onPress: string => {};
+
+    _proceedDelete = () => {this._deleteFromDB(); this.setState({ isModalOpen: false });}
+    _closeModal = () => this.setState({ isModalOpen: false });
+    _openModal = () => this.setState({ isModalOpen: true });
 
     /**
      * Initializes a new {@code RecentList} instance.
@@ -55,12 +67,48 @@ class DBList extends AbstractDBList<Props, State> {
 
         this.state = {
             setting: false,
-            _dbList: []
+            _dbList: [],
+            savedList: [],
+            isModalOpen: false,
+            targetEntry: ''
         }
 
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
+        this._onItemDelete = this._onItemDelete.bind(this);
+        this._updateList = this._updateList.bind(this);
+        this._loadFromDB = this._loadFromDB.bind(this);
+        this._deleteFromDB = this._deleteFromDB.bind(this);
+    }
+
+    _onItemDelete: Object => void;
+
+    /**
+     * Deletes a recent entry.
+     *
+     * @param {Object} entry - The entry to be deleted.
+     * @inheritdoc
+     */
+    _onItemDelete(entry) {
+        //console.log("onItemDeleted Called!");
+        //const str = JSON.stringify(entry);
+        //console.log(`Entry is ${str}`);
+
+        this.setState({ targetEntry: entry.title });
+        this._openModal();
+    }
+
+    componentDidMount(){
+        this.state._dbList = [];
+        this.state.savedList = [];
+        this.state.setting = false;
+
+        this._updateInterval = setInterval(this._updateList, 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this._updateInterval);
     }
     
     /**
@@ -69,6 +117,62 @@ class DBList extends AbstractDBList<Props, State> {
      * @inheritdoc
      */
     render() {
+        const { t } = this.props;
+
+        let dbList;
+        let set = this.state.setting;
+        let modalOpen = this.state.isModalOpen;
+
+        dbList = toDisplayableList(this.state.savedList);
+
+        return set? (<>
+            <MeetingsListFromDB
+                hideURL = { true }
+                listEmptyComponent = { this._getRenderListEmptyComponent() }
+                meetings = { dbList }
+                onItemDelete = { this._onItemDelete }
+                onPress = { this._onPress } />
+            <ModalTransition>
+                {modalOpen && (
+                <Modal
+                        className={s.lightModal}
+                        actions={[{ text: t('welcomepage.deleteElement'), onClick: this._proceedDelete }, { text: t('welcomepage.cancelDelete'), onClick: this._closeModal }]}
+                        onClose={ this._closeModal }
+                        heading={t('welcomepage.deleteModalHeading')}
+                        appearance="warning"
+                        width="small"
+                    >
+                        {t('welcomepage.deleteDBListElementMessage')}
+                    </Modal>
+                    )}
+                </ModalTransition>    
+            </>
+        ):
+        <MeetingsListFromDB
+            hideURL = { true }
+            listEmptyComponent = { this._getRenderListLoadingComponent() }
+            meetings = { [] }
+            onItemDelete = { this._onItemDelete }
+            onPress = { this._onPress } />;
+    }
+
+    _updateList: () => void;
+    _loadFromDB: () => void;
+    _deleteFromDB: () => void;
+
+
+    _updateList() {
+        if(!this.state.setting){
+            this._loadFromDB();
+        }
+        else{
+            const loaded = true;
+            const saved = this.state.savedList;
+            this.setState({ loaded, saved, saved });
+        }
+    }
+
+    _loadFromDB(){
         const {
             email,
             baseURL
@@ -76,39 +180,45 @@ class DBList extends AbstractDBList<Props, State> {
 
         const AUTH_API_BASE = process.env.VMEETING_API_BASE;
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-                
-        let dbList;
-        let set = this.state.setting;
+        try{
+            axios.post(`${apiBaseUrl}/conference/get-conference-by-email`, {
+                mail_owner: email
+            }).then(_dbList => {
+                const _dbListData = _dbList.data;
+                const nextSetting = true;
 
-        if(!set){
-            try{
-                axios.post(`${apiBaseUrl}/conference/get-conference-by-email`, {
-                    mail_owner: email
-                }).then(_dbList => {
-                    const _dbListData = _dbList.data;
-                    const nextSetting = true;
-                    this.state._dbList = _dbListData;
-                    this.state.setting = nextSetting;
-                });
-            }
-            catch(err){    
-                console.log(err);
-            }
-        } else{
-            dbList = toDisplayableList(this.state._dbList);
+                this.setState({ setting: nextSetting, _dbList: _dbListData, savedList: _dbListData });
+            });
         }
+        catch(err){    
+            console.log(err);
+        }
+    }
 
-        return set? (
-            <MeetingsListFromDB
-                hideURL = { true }
-                listEmptyComponent = { this._getRenderListEmptyComponent() }
-                meetings = { dbList }
-                onPress = { this._onPress } />
-        ): <MeetingsListFromDB
-            hideURL = { true }
-            listEmptyComponent = { this._getRenderListEmptyComponent() }
-            meetings = { [] }
-            onPress = { this._onPress } />;
+    _deleteFromDB(){
+        const title = this.state.targetEntry;
+        const {
+            email,
+            baseURL
+        } = this.props;
+
+        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+        
+        try{
+            axios.post(`${apiBaseUrl}/conference/delete-conference-by-name`, {
+                name: title,
+                mail_owner: email
+            }).then(resp => {
+                this.setState({setting: false});
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+        catch(err){    
+            console.log(err);
+            //Pop-up with Delete Failed Message
+        }
     }
 }
 
