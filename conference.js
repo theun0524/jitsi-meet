@@ -781,6 +781,14 @@ export default {
             return APP.store.dispatch(initPrejoin(tracks, errors));
         }
 
+        // 손님은 마이크/카메라 권한 요청없이 채팅만 볼 수 있도록...
+        const { isGuest } = APP.store.getState()['features/base/jwt'];
+        if (isGuest) {
+            const con = await connect(roomName);
+            this._initDeviceList(true);
+            return this.startConference(con, []);
+        }
+
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
             roomName, initialOptions);
 
