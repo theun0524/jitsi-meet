@@ -27,7 +27,7 @@ const DEFAULT_STATE = {
     disableP2P: undefined,
     displayName: undefined,
     email: undefined,
-    localFlipX: true,
+    localFlipX: false,
     micDeviceId: undefined,
     serverURL: undefined,
     startAudioOnly: false,
@@ -150,7 +150,7 @@ function _initSettings(featureState) {
 
     if (!browser.isReactNative()) {
         // Browser only
-        const localFlipX = JSON.parse(jitsiLocalStorage.getItem('localFlipX') || 'true');
+        const localFlipX = JSON.parse(jitsiLocalStorage.getItem('localFlipX') || 'false');
         const cameraDeviceId = jitsiLocalStorage.getItem('cameraDeviceId') || '';
         const micDeviceId = jitsiLocalStorage.getItem('micDeviceId') || '';
 

@@ -7,7 +7,9 @@ import {
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getParticipants,
+    pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
@@ -52,6 +54,13 @@ MiddlewareRegistry.register(store => next => action => {
                 title: displayName
             },
             NOTIFICATION_TIMEOUT));
+
+            // 처음 들어온 방장에게 자동 PIN이 되도록...
+            const participants = getParticipants(getState);
+            const moderators = participants.filter(p => p.role === PARTICIPANT_ROLE.MODERATOR);
+            if (moderators.length === 1) {
+                dispatch(pinParticipant(p.id));
+            }
         }
 
         return result;
@@ -97,6 +106,13 @@ MiddlewareRegistry.register(store => next => action => {
                 title: displayName
             },
             NOTIFICATION_TIMEOUT));
+
+            // 처음 들어온 방장에게 자동 PIN이 되도록...
+            const participants = getParticipants(state);
+            const moderators = participants.filter(p => p.role === PARTICIPANT_ROLE.MODERATOR);
+            if (moderators.length === 0) {
+                store.dispatch(pinParticipant(id));
+            }
         }
 
         return next(action);

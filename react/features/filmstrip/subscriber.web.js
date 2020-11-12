@@ -104,12 +104,14 @@ StateListenerRegistry.register(
             bottom: 'shift-up'
         }[interfaceConfig.CHAT_ON_LAYOUT] || '';
 
-        if (isChatOpen) {
-            // $FlowFixMe
-            document.body.classList.add(shiftClass);
-        } else {
-            // $FlowFixMe
-            document.body.classList.remove(shiftClass);
+        if (shiftClass) {
+            if (isChatOpen) {
+                // $FlowFixMe
+                document.body.classList.add(shiftClass);
+            } else {
+                // $FlowFixMe
+                document.body.classList.remove(shiftClass);
+            }
         }
 
         if (shouldDisplayTileView(state)) {
