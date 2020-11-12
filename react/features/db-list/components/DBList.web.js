@@ -16,6 +16,7 @@ import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
 
 import s from './DBList.module.scss';
 
+
 /**
  * The type of the React {@code Component} props of {@link RecentList}
  */
@@ -41,7 +42,8 @@ type State = {
     _dbList: Object,
     savedList: Object,
     isModalOpen: boolean,
-    targetEntry: string
+    targetEntry: string,
+    isFailedModalOpen: boolean
 };
 
 /**
@@ -57,6 +59,9 @@ class DBList extends AbstractDBList<Props, State> {
     _closeModal = () => this.setState({ isModalOpen: false });
     _openModal = () => this.setState({ isModalOpen: true });
 
+    _closeDeleteFailModal = () => this.setState({ isFailedModalOpen: false });
+    _openDeleteFailModal = () => this.setState({ isFailedModalOpen: true });
+
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -70,7 +75,8 @@ class DBList extends AbstractDBList<Props, State> {
             _dbList: [],
             savedList: [],
             isModalOpen: false,
-            targetEntry: ''
+            targetEntry: '',
+            isFailedModalOpen: false
         }
 
         this._getRenderListEmptyComponent
@@ -122,6 +128,7 @@ class DBList extends AbstractDBList<Props, State> {
         let dbList;
         let set = this.state.setting;
         let modalOpen = this.state.isModalOpen;
+        let failedModalOpen = this.state.isFailedModalOpen;
 
         dbList = toDisplayableList(this.state.savedList);
 
@@ -135,17 +142,27 @@ class DBList extends AbstractDBList<Props, State> {
             <ModalTransition>
                 {modalOpen && (
                 <Modal
-                        className={s.lightModal}
-                        actions={[{ text: t('welcomepage.deleteElement'), onClick: this._proceedDelete }, { text: t('welcomepage.cancelDelete'), onClick: this._closeModal }]}
-                        onClose={ this._closeModal }
-                        heading={t('welcomepage.deleteModalHeading')}
-                        appearance="warning"
-                        width="small"
-                    >
-                        {t('welcomepage.deleteDBListElementMessage')}
-                    </Modal>
-                    )}
-                </ModalTransition>    
+                    className={s.lightModal}
+                    actions={[{ text: t('welcomepage.deleteElement'), onClick: this._proceedDelete }, { text: t('welcomepage.cancelDelete'), onClick: this._closeModal }]}
+                    onClose={ this._closeModal }
+                    heading={t('welcomepage.deleteModalHeading')}
+                    appearance="warning"
+                    width="small" >
+                    {t('welcomepage.deleteDBListElementMessage')}
+                </Modal>)}
+            </ModalTransition>
+            <ModalTransition>
+                {failedModalOpen && (
+                <Modal
+                    className={s.lightModal}
+                    actions={[{ text: t('welcomepage.cancelDelete'), onClick: this._closeDeleteFailModal }]}
+                    onClose={ this._closeDeleteFailModal }
+                    heading={t('welcomepage.deleteFailHeading')}
+                    appearance="danger"
+                    width="small" >
+                    {t('welcomepage.deleteFailMessage')}
+                </Modal>)}
+            </ModalTransition>    
             </>
         ):
         <MeetingsListFromDB
@@ -213,11 +230,16 @@ class DBList extends AbstractDBList<Props, State> {
                 this.setState({setting: false});
             }).catch(err => {
                 console.log(err);
+                //Pop-up error message and reload
+                this._openDeleteFailModal();
+                this.setState({setting: false});
             });
         }
         catch(err){    
             console.log(err);
             //Pop-up with Delete Failed Message
+            this._openDeleteFailModal();
+            this.setState({setting: false});
         }
     }
 }

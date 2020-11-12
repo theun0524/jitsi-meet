@@ -2054,7 +2054,10 @@ export default {
                 const { conference, roomInfo } = APP.store.getState()['features/base/conference'];
 
                 if(role === "moderator" && roomInfo.isHost){
-                    APP.store.dispatch(setStartMutedPolicy(roomInfo.microphone, roomInfo.video));
+                    APP.store.dispatch(setStartMutedPolicy(!roomInfo.microphone, !roomInfo.video));
+                    APP.store.dispatch(updateSettings({ startWithAudioMuted: !roomInfo.microphone, startWithVideoMuted: !roomInfo.video }));
+                    APP.store.dispatch(setAudioMuted(!roomInfo.microphone));
+                    APP.store.dispatch(setVideoMuted(!roomInfo.video));
                     if(!roomInfo.scope && roomInfo.password){
                         APP.store.dispatch(endRoomLockRequest(conference, roomInfo.password));
                     }
