@@ -2930,7 +2930,7 @@ export default {
         APP.store.dispatch(conferenceWillLeave(room));
 
         if (room && room.isJoined()) {  
-            if(room.getParticipants().length == 0){
+            /*if(room.getParticipants().length == 0){
                 let resp;
                 const { locationURL } = APP.store.getState()['features/base/connection'];
                 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
@@ -2945,7 +2945,7 @@ export default {
                 catch(err){
                     console.log(err);
                 }
-            }
+            }*/
 
             return room.leave().then(disconnect, disconnect);
         }

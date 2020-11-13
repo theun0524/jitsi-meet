@@ -36,20 +36,17 @@ function room_destroyed(event)
         return;
     end
 
-    -- TODO: find room name from room object and update db(set end time)
     local node, host, resource = jid.split(room.jid);
 
     -- TODO: find room name from room object and update db(set end time)
-    local header = { ["Content-Type"] = "application/json\r\n" };
-    local reqbody = {};
-    reqbody['name'] = node;
-    local reqbody_string = "{ name: " .. node .. " }";
+    local url = "http://devmeet.postech.ac.kr/auth/api/conference/set-end-time";
+    local reqbody = { name = node };
+    local reqbody_string = http.formencode(reqbody);
 
-    -- http.request("http://localhost/auth/api/conference?name=" .. node, {headers = {}, method = "GET"},
-    --     function(content, code, response, request)
-    --             if(code < 0) then print ("HTTP request failed");
-    --             else print(code, content) end
-    --     end)
+    http.request(url, { body=reqbody_string, method="POST" },
+        function(resp_body, response_code, response)
+                print(resp_body, response_code, response);
+        end);
 end
 
 -- executed on every host added internally in prosody, including components
