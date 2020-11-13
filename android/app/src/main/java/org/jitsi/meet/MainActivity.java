@@ -150,7 +150,7 @@ public class MainActivity extends JitsiMeetActivity {
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setWelcomePageEnabled(true)
-            .setServerURL(buildURL("https://dk.seetalk.net"))
+            .setServerURL(buildURL("https://vmeeting.io/"))
             .setFeatureFlag("call-integration.enabled", false)
             .setFeatureFlag("resolution", 360)
             // .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
