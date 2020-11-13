@@ -39,7 +39,7 @@ function room_destroyed(event)
     local node, host, resource = jid.split(room.jid);
 
     -- TODO: find room name from room object and update db(set end time)
-    local url = "http://devmeet.postech.ac.kr/auth/api/conference/set-end-time";
+    local url = "https://devmeet.postech.ac.kr/auth/api/conference/set-end-time";
     local reqbody = { name = node };
     local reqbody_string = http.formencode(reqbody);
 
