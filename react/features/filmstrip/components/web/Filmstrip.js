@@ -13,13 +13,14 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout, LAYOUTS, getMaxColumnCount } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import Toolbar from './Toolbar';
 import s from './Filmstrip.module.scss';
-
+import { getParticipantCount } from '../../../base/participants';
+import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -234,6 +235,7 @@ class Filmstrip extends Component<Props> {
                           * scrolling thumbnails in Firefox; otherwise, the flex
                           * thumbnails resize instead of causing overflow.
                           */}
+                        { this.displayPrevArrowBtn() }
                         <div
                             className={remoteVideoContainerClassName}
                             id='filmstripRemoteVideosContainer'
@@ -242,10 +244,35 @@ class Filmstrip extends Component<Props> {
                             style={filmstripRemoteVideosContainerStyle}>
                             <div id='localVideoTileViewContainer' />
                         </div>
+                        { this.displayNextArrowBtn() }
                     </div>
                 </div>
             </div>
         );
+    }
+
+    displayPrevArrowBtn = () => {
+        if(this.props._currentLayout === LAYOUTS.TILE_VIEW) {
+            let maxCols = getMaxColumnCount();
+            let participantsInDisplay = maxCols * maxCols;
+            let pcount = getParticipantCount(APP.store.getState());
+            if(pcount > participantsInDisplay) {
+                console.log(s.filmstripVideos);
+                <div className = {s.prevArrowBtn} >
+                    Hello I am some text
+                </div>
+                // $('#filmstripRemoteVideos').animate({ scrollTop: window.innerHeight}, "slow");
+                console.log("Render logic for slider button here")
+            }
+            
+        }
+        
+    }
+
+    displayNextArrowBtn = () => {
+        if(this.props._currentLayout === LAYOUTS.TILE_VIEW) {
+            console.log("Should display right slider button");
+        }
     }
 
     /**
@@ -387,7 +414,7 @@ function _mapStateToProps(state) {
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _hovered: hovered,
-        _rows: gridDimensions.rows,
+        _rows: gridDimensions.visibleRows,
         _videosClassName: videosClassName,
         _visible: visible
     };
