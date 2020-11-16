@@ -123,14 +123,16 @@ class DBList extends AbstractDBList<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { t } = this.props;
-
+        const
+        { t,
+          email
+        } = this.props;
         let dbList;
         let set = this.state.setting;
         let modalOpen = this.state.isModalOpen;
         let failedModalOpen = this.state.isFailedModalOpen;
 
-        dbList = toDisplayableList(this.state.savedList);
+        dbList = toDisplayableList(this.state.savedList, email);
 
         return set? (<>
             <MeetingsListFromDB

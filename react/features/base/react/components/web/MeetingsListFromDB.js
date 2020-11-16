@@ -177,7 +177,9 @@ export default class MeetingsListFromDB extends Component<Props> {
             elementAfter,
             time,
             title,
-            url
+            url,
+            owner,
+            current_user
         } = meeting;
         const { hideURL = false, onItemDelete } = this.props;
         const onPress = this._onPress(url);
@@ -223,7 +225,7 @@ export default class MeetingsListFromDB extends Component<Props> {
                 <Container className = {s.actions}>
                     { elementAfter || null }
 
-                    { onItemDelete && <TrashIcon
+                    { owner === current_user && onItemDelete && <TrashIcon
                         className = 'delete-meeting'
                         size="large"
                         onClick = { this._onDelete(meeting) } />}

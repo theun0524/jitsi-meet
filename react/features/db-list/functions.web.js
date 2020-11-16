@@ -9,9 +9,10 @@ import { parseURIString, safeDecodeURIComponent } from '../base/util';
  *
  * @private
  * @param {Array<Object>} dbList - The recent list form the redux store.
+ * @param {string} my_email - Email form the redux store.
  * @returns {Array<Object>}
  */
-export function toDisplayableList(dbList) {
+export function toDisplayableList(dbList, my_email) {
     return (
         dbList.map(item => {
                 return {
@@ -21,7 +22,9 @@ export function toDisplayableList(dbList) {
                     duration: item.duration,
                     time: [ item.date ],
                     title: safeDecodeURIComponent(parseURIString(item.conference).room),
-                    url: item.conference
+                    url: item.conference,
+                    owner: item.owner,
+                    current_user: my_email
                 };
             }));
 }
