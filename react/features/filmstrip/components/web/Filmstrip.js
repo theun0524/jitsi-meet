@@ -235,7 +235,6 @@ class Filmstrip extends Component<Props> {
                           * scrolling thumbnails in Firefox; otherwise, the flex
                           * thumbnails resize instead of causing overflow.
                           */}
-                        { this.displayPrevArrowBtn() }
                         <div
                             className={remoteVideoContainerClassName}
                             id='filmstripRemoteVideosContainer'
@@ -244,36 +243,12 @@ class Filmstrip extends Component<Props> {
                             style={filmstripRemoteVideosContainerStyle}>
                             <div id='localVideoTileViewContainer' />
                         </div>
-                        { this.displayNextArrowBtn() }
                     </div>
                 </div>
             </div>
         );
     }
 
-    displayPrevArrowBtn = () => {
-        if(this.props._currentLayout === LAYOUTS.TILE_VIEW) {
-            let maxCols = getMaxColumnCount();
-            let participantsInDisplay = maxCols * maxCols;
-            let pcount = getParticipantCount(APP.store.getState());
-            if(pcount > participantsInDisplay) {
-                console.log(s.filmstripVideos);
-                <div className = {s.prevArrowBtn} >
-                    Hello I am some text
-                </div>
-                // $('#filmstripRemoteVideos').animate({ scrollTop: window.innerHeight}, "slow");
-                console.log("Render logic for slider button here")
-            }
-            
-        }
-        
-    }
-
-    displayNextArrowBtn = () => {
-        if(this.props._currentLayout === LAYOUTS.TILE_VIEW) {
-            console.log("Should display right slider button");
-        }
-    }
 
     /**
      * Dispatches an action to change the visibility of the filmstrip.
