@@ -26,13 +26,16 @@ import {
     IconShareVideo,
     IconCheck,
     Icon,
-    IconArrowDown
+    IconArrowDown,
+    IconMenuUp,
+    IconMenuDown
 } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    getParticipantCountWithFake
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem, ToolboxButtonWithIcon } from '../../../base/toolbox/components';
@@ -1329,6 +1332,7 @@ class Toolbox extends Component<Props, State> {
 
         return (
             <div className = 'toolbox-content'>
+                {/* toolbox left-side buttons set */}
                 <div className = 'button-group-left'>
                     { buttonsLeft.indexOf('chat') !== -1
                         && <div className = 'toolbar-button-with-badge'>
@@ -1354,12 +1358,24 @@ class Toolbox extends Component<Props, State> {
                             && <ClosedCaptionButton />
                     }
                 </div>
+                
+                {/* toolbox central buttons set */}
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
+                    { this.props._tileViewEnabled && this._areParticipantsMoreThanInCurrentDisplay() &&<ToolbarButton
+                        icon = { IconMenuUp }
+                        onClick = {() => $('#filmstripRemoteVideos').animate({ scrollTop: $('#filmstripRemoteVideos').scrollTop() - window.innerHeight}, "slow") }
+                        tooltip = { t('toolbar.invite') } /> }
+                    { this.props._tileViewEnabled && this._areParticipantsMoreThanInCurrentDisplay() && <ToolbarButton
+                        icon = { IconMenuDown }
+                        onClick = {() => $('#filmstripRemoteVideos').animate({ scrollTop: $('#filmstripRemoteVideos').scrollTop() + window.innerHeight}, "slow") }
+                        tooltip = { t('toolbar.invite') } /> }
                 </div>
+
+                {/* toolbox right-side buttons set */}
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
                         && <LocalRecordingButton
@@ -1390,6 +1406,13 @@ class Toolbox extends Component<Props, State> {
                         </OverflowMenuButton> }
                 </div>
             </div>);
+    }
+
+    _areParticipantsMoreThanInCurrentDisplay = () => {
+        const maxCols = getMaxColumnCount();
+        const participantsInDisplay = maxCols * maxCols;
+        const pcount = getParticipantCountWithFake(APP.store.getState());
+        return (pcount > participantsInDisplay) ? true : false;
     }
 
     _renderTileConfigButton = () => {
