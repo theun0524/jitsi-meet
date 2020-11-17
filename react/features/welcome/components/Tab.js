@@ -68,7 +68,7 @@ export default class Tab extends Component<Props> {
 
         return isSelected? (
             <div
-                className = { s.tab }
+                className = { s.currentTab }
                 key = { index }
                 onClick = { this._onSelect }>
                 { label }
