@@ -4,6 +4,7 @@ import { toJid } from '../../../react/features/base/connection/functions';
 import {
     JitsiConnectionErrors
 } from '../../../react/features/base/lib-jitsi-meet';
+import { disconnect } from '../../../react/features/base/connection';
 
 /**
  * Build html for "password required" dialog.
@@ -231,10 +232,15 @@ export default {
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.login'
         );
-        const buttons = [ {
-            title: buttonTxt,
-            value: 'authNow'
-        } ];
+        const homeButtonTxt = APP.translation.generateTranslationHTML(
+            'dialog.goHome'
+        );
+        const buttons = [
+                { title: buttonTxt,
+                value: 'authNow'},
+                { title: homeButtonTxt,
+                  value: 'goHome' }
+                ];
 
         return APP.UI.messageHandler.openDialog(
             'dialog.WaitingForHost',
@@ -248,6 +254,10 @@ export default {
                 // Open login popup.
                 if (submitValue === 'authNow') {
                     onAuthNow();
+                }
+                // goHome popup.
+                if (submitValue === 'goHome') {
+                    APP.store.dispatch(disconnect());
                 }
             }
         );
