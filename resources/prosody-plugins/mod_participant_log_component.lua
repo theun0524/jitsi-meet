@@ -110,18 +110,20 @@ function room_destroyed(event)
 
     local node, host, resource = jid.split(room.jid);
 
-    -- TODO: find room name from room object and update db(set end time)
-    local url = "https://~~ should be http";
+    local url = "http://vmapi:5000/stats/";
 
-    local users_json = {};
+    local body = {};
+    body.room = node;
+    body.user = {};
+
     for k, v in pairs(room.participant) do
-        users_json[k] = v;
+        body.user[k] = v;
     end
 
-    local encoded = json.encode(users_json);
+    local encoded_body = json.encode(body);
 
     -- https://prosody.im/doc/developers/net/http
-    http.request(url, { body=encoded, method="POST" },
+    http.request(url, { body=encoded_body, method="POST" },
         function(resp_body, response_code, response)
                 print(resp_body, response_code, response);
         end);

@@ -1,5 +1,6 @@
 // @flow
 
+import { last, map } from 'lodash';
 import React from 'react';
 import type { Dispatch } from 'redux';
 
@@ -9,6 +10,7 @@ import { connect } from '../../base/redux';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
+import ExcelExportButton from './ExcelExportButton';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}
@@ -68,9 +70,18 @@ class RecentList extends AbstractRecentList<Props> {
         }
         const {
             disabled,
+            _isGuest,
             _recentList
         } = this.props;
-        const recentList = toDisplayableList(_recentList);
+        const recentList = map(
+            toDisplayableList(_recentList),
+            meet => {
+                if (_isGuest) return meet;
+                
+                const room = last(meet.url.split('/'));
+                meet.elementAfter = <ExcelExportButton room = { room } />
+                return meet;
+            });
 
         return (
             <MeetingsList
@@ -94,6 +105,7 @@ class RecentList extends AbstractRecentList<Props> {
  */
 export function _mapStateToProps(state: Object) {
     return {
+        _isGuest: state['features/base/jwt'].isGuest,
         _recentList: state['features/recent-list']
     };
 }
