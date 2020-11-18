@@ -51,14 +51,12 @@ var interfaceConfig = {
     DEFAULT_REMOTE_DISPLAY_NAME: 'Vmeeter',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.png?v=2',
 
-    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
-
-    DISABLE_FOCUS_INDICATOR: false,
-
-    /**
-     * If true, notifications regarding joining/leaving are no longer displayed.
-     */
-    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+    // improve the end user experience
+    // with lower CPU usage and better audio quality
+    DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+    DISABLE_FOCUS_INDICATOR: true,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+    DISABLE_VIDEO_BACKGROUND: true,
 
     /**
      * If true, presence status: busy, calling, connected etc. is not displayed.
@@ -81,11 +79,6 @@ var interfaceConfig = {
      */
     DISABLE_TRANSCRIPTION_SUBTITLES: false,
 
-    /**
-     * Whether or not the blurred video background for large video should be
-     * displayed on browsers that can support it.
-     */
-    DISABLE_VIDEO_BACKGROUND: false,
 
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,

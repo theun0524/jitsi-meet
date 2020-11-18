@@ -348,7 +348,7 @@ var config = {
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
-    enableUserRolesBasedOnToken: false,
+    enableUserRolesBasedOnToken: true,
 
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
@@ -675,14 +675,25 @@ var config = {
 
     presenter: {
         startEnabled: true, // default: true
-        maxWidth: 160,      // default: 240
 
         /* pipMode for presenter video. default is true.
          * if true, presenter appears inside the video in right bottom.
          * if false, presenter appears outside the video in right bottom.
          */
         pipMode: true,
-        // backgroundImageUrl: https://conf.vmeeting.io/images/onk2020_bg.png,
+        // backgroundImageUrl: '/images/onk2020_bg.png',
+        layout: {
+            background: { w: 1280, h: 720 },
+            desktop: {
+                rect: { x: 330, y: 142, w: 910, h: 512 },
+            },
+            presenter: {
+                rect: { x: 40, y: 142, w: 262, h: 196 },
+                outline: { color: '#A9A9A9', width: 2 },
+                name: { color: 'white', font: "18px '맑은 고딕'", x: 40, y: 646 },
+                title: { color: 'white', font: "14px '맑은 고딕'", x: 40, y: 620 },
+            },
+        },
     },
 
     // Allow all above example options to include a trailing comma and
