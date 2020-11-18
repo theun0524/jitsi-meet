@@ -329,6 +329,7 @@
         "WaitForHostMsg": "The conference <b>{{room}}</b> is the room someone using and not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> is the room someone using and not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "Waiting for the host ...",
+        "WaitingRoomMsg": "The conference <b>{{room}}</b> is the room someone using and not yet started. Please wait for the host to arrive.",
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen"
     },
@@ -918,7 +919,7 @@
         "deleteRecentListElementMessage": "Delete Conference from only recent list. This action cannot be recovered.",
         "deleteElement": "Delete",
         "deleteFailHeading": "Failed to Delete",
-        "deleteFailMessage": "You can't delete this conference",
+        "deleteFailMessage": "You can't delete ongoing or not existing conference.",
         "deleteModalHeading": "Delete Conference",
         "enterRoomTitle": "Start a new meeting",
         "getHelp": "Get help",

@@ -9,6 +9,7 @@ import { disconnect } from '../../../react/features/base/connection';
 import axios from 'axios';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../../../react/features/base/jwt';
+import { getCurrentUser } from '../../../react/features/base/auth/functions';
 
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
@@ -236,22 +237,38 @@ export default {
             '[html]dialog.WaitForHostMsg',
             { room }
         );
+        const msg_waiting = APP.translation.generateTranslationHTML(
+            '[html]dialog.WaitingRoomMsg',
+            { room }
+        );
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.login'
         );
         const homeButtonTxt = APP.translation.generateTranslationHTML(
             'dialog.goHome'
         );
-        const buttons = [
+        let buttons;
+
+        const user = getCurrentUser(APP.store.getState());
+
+        if (!user){
+            buttons = [
                 { title: buttonTxt,
                 value: 'authNow'},
                 { title: homeButtonTxt,
                   value: 'goHome' }
                 ];
+        }
+        else {
+            buttons = [
+                { title: homeButtonTxt,
+                  value: 'goHome' }
+                ];
+        }
 
         return APP.UI.messageHandler.openDialog(
             'dialog.WaitingForHost',
-            msg,
+            user? msg_waiting : msg,
             true,
             buttons,
             (e, submitValue) => {
