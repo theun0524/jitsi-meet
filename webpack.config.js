@@ -57,6 +57,7 @@ const config = {
         hot: true,
         https: true,
         inline: true,
+        watchContentBase: true,
         host: '0.0.0.0',
         sockPath: '/sockjs-web',
         proxy: {
@@ -138,7 +139,7 @@ const config = {
                         sourceMap: isDebug,
                         importLoaders: 2,
                         modules: {
-                            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]', 
+                            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
                         },
                     }
                 },
