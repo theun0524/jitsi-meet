@@ -108,15 +108,21 @@ const exportExcel = ({ room, csvData }) => {
 };
 
 async function makeExportData(room) {
-    const resp = await axios.get(`/auth/api/participants/?room__exact=${room}&limit=1`);
+    let csvData = [];
 
-    Moment.locale('ko');
-    const csvData = map(resp.data.docs[0].stats, doc => ({
-        name: doc.name,
-        email: doc.email, 
-        joinTime: Moment.unix(doc.joinTime).format('lll'),
-        leaveTime: Moment.unix(doc.leaveTime).format('lll'),
-    }));
+    try {
+        const resp = await axios.get(`/auth/api/participants/?room__exact=${room}&limit=1`);
+    
+        Moment.locale('ko');
+        csvData = map(resp.data.docs[0].stats, doc => ({
+            name: doc.name,
+            email: doc.email, 
+            joinTime: Moment.unix(doc.joinTime).format('lll'),
+            leaveTime: Moment.unix(doc.leaveTime).format('lll'),
+        }));
+    } catch(err) {
+        console.error(err);
+    }
 
     return { room, csvData };
 }
