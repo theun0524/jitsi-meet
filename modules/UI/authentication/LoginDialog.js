@@ -6,6 +6,13 @@ import {
 } from '../../../react/features/base/lib-jitsi-meet';
 import { disconnect } from '../../../react/features/base/connection';
 
+import axios from 'axios';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { setJWT } from '../../../react/features/base/jwt';
+
+const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
+
 /**
  * Build html for "password required" dialog.
  * @returns {string} html string
@@ -253,7 +260,12 @@ export default {
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
-                    onAuthNow();
+                    axios.get(`${AUTH_API_BASE}/logout`).then(() => {
+                        // dispatch(setCurrentUser());
+                        jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                        APP.store.dispatch(setJWT());
+                        onAuthNow();
+                    });
                 }
                 // goHome popup.
                 if (submitValue === 'goHome') {
