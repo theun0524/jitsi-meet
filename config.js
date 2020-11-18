@@ -694,6 +694,7 @@ var config = {
                 title: { color: 'white', font: "14px '맑은 고딕'", x: 40, y: 620 },
             },
         },
+    },
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
