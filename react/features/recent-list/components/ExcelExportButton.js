@@ -108,7 +108,7 @@ const exportExcel = ({ room, csvData }) => {
 };
 
 async function makeExportData(room) {
-    const resp = await axios.get(`/auth/api/participants/?room_exact=${room}&limit=1`);
+    const resp = await axios.get(`/auth/api/participants/?room__exact=${room}&limit=1`);
 
     Moment.locale('ko');
     const csvData = map(resp.data.docs[0].stats, doc => ({
