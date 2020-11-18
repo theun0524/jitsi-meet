@@ -1,7 +1,7 @@
 // @flow
 /* global APP, config */
 
-import { trim } from 'lodash';
+import { merge, trim } from 'lodash';
 import { getLocalParticipant } from '../../base/participants';
 import {
     CLEAR_INTERVAL,
@@ -10,52 +10,9 @@ import {
     timerWorkerScript
 } from './TimeWorker';
 
-// Background image size
-const BACKGROUND_WIDTH = 1280;
-const BACKGROUND_HEIGHT = 720;
-
 // Canvas size
 const CANVAS_WIDTH = 1280;
 const CANVAS_HEIGHT = 720;
-
-// scale position from background to canvas
-const scaleX = x => parseInt(CANVAS_WIDTH * x / BACKGROUND_WIDTH, 10);
-const scaleY = y => parseInt(CANVAS_HEIGHT * y / BACKGROUND_HEIGHT, 10);
-
-const layout = {
-    video: {
-        rect: {
-            x: scaleX(40),
-            y: scaleY(142),
-            w: scaleX(910),
-            h: scaleY(512)
-        }
-    },
-    presenter: {
-        rect: {
-            x: scaleX(978),
-            y: scaleY(142),
-            w: scaleX(262),
-            h: scaleY(196),
-        },
-        outline: {
-            lineWidth: 2,
-            lineColor: '#A9A9A9',
-        },
-        name: {
-            font: "18px '맑은 고딕'",
-            color: 'white',
-            x: scaleX(978),
-            y: scaleY(370)
-        },
-        title: {
-            font: "14px '맑은 고딕'",
-            color: 'white',
-            x: scaleX(978),
-            y: scaleY(395),
-        },
-    },
-};
 
 /**
  * Represents a modified MediaStream that adds video as pip on a desktop stream.
@@ -98,6 +55,7 @@ export default class JitsiStreamPresenterEffect {
         this._title = title;
         this._canvas = document.createElement('canvas');
         this._ctx = this._canvas.getContext('2d');
+        this._config = this._loadConfig();
 
         this._desktopElement = document.createElement('video');
         this._videoElement = document.createElement('video');
@@ -109,8 +67,9 @@ export default class JitsiStreamPresenterEffect {
             document.body.appendChild(videoDiv);
         }
 
-        const { maxWidth = 240, pipMode, backgroundImageUrl } = config.presenter || {};
-        const maxHeight = maxWidth * 3 / 4;
+        const { pipMode, backgroundImageUrl } = this._config;
+        const maxWidth  = this._config.layout.presenter.rect.w;
+        const maxHeight = this._config.layout.presenter.rect.w * 3 / 4;
 
         // Set the video element properties
         this._frameRate = parseInt(frameRate, 10);
@@ -158,16 +117,14 @@ export default class JitsiStreamPresenterEffect {
         // adjust the canvas width/height on every frame incase the window has been resized.
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
-        const { pipMode = true } = config.presenter || {};
-        const pipOffset = pipMode ? 0 : this._videoElement.width;
 
         this._desktopElement.width = parseInt(width, 10);
         this._desktopElement.height = parseInt(height, 10);
         this._canvas.width = CANVAS_WIDTH;
         this._canvas.height = CANVAS_HEIGHT;
 
-        if (!pipMode && layout) {
-            let rc = layout.video.rect;
+        if (!this._config.pipMode) {
+            let rc = this._config.layout.desktop.rect;
             let { w, h } = rc;
 
             if (width >= height) {
@@ -196,25 +153,25 @@ export default class JitsiStreamPresenterEffect {
                 0, 0, width, height,
                 parseInt(rc.x + (rc.w - w) / 2, 10), parseInt(rc.y + (rc.h - h) / 2, 10), w, h);
 
-            rc = layout.presenter.rect;
+            rc = this._config.layout.presenter.rect;
             this._ctx.drawImage(this._videoElement, rc.x, rc.y, rc.w, rc.h);
 
             // draw a border around the video element.
-            const outline = layout.presenter.outline;
+            const outline = this._config.layout.presenter.outline;
             this._ctx.beginPath();
-            this._ctx.lineWidth = outline.lineWidth;
-            this._ctx.strokeStyle = outline.lineColor; // dark grey
+            this._ctx.lineWidth = outline.width;
+            this._ctx.strokeStyle = outline.color; // dark grey
             this._ctx.rect(rc.x, rc.y, rc.w, rc.h);
             this._ctx.stroke();
 
             // draw presenter name
-            let text = layout.presenter.name;
+            let text = this._config.layout.presenter.name;
             this._ctx.font = text.font;
             this._ctx.fillStyle = text.color;
             this._ctx.fillText(this._name, text.x, text.y);
 
             if (this._title) {
-                text = layout.presenter.title;
+                text = this._config.layout.presenter.title;
                 this._ctx.font = text.font;
                 this._ctx.fillStyle = text.color;
                 this._ctx.fillText(this._title, text.x, text.y);
@@ -236,6 +193,72 @@ export default class JitsiStreamPresenterEffect {
                 this._videoElement.width, this._videoElement.height);
             this._ctx.stroke();
         }
+    }
+
+    /**
+     * Load config to render the video frame input and draw presenter effect.
+     *
+     * @private
+     * @returns {void}
+     */
+    _loadConfig() {
+        const layout = merge({
+            background: { w: 1280, h: 720 },
+            desktop: { 
+                rect: { x: 40, y: 142, w: 910, h: 512 },
+            },
+            presenter: {
+                rect: { x: 978, y: 142, w: 262, h: 196 },
+                outline: { color: '#A9A9A9', width: 2 },
+                name: { color: 'white', font: "18px '맑은 고딕'", x: 978, y: 370 },
+                title: { color: 'white', font: "14px '맑은 고딕'", x: 978, y: 395 },
+            }
+        }, config.presenter?.layout);
+        
+        // map position from background to canvas
+        const mapX = x => parseInt(CANVAS_WIDTH * x / layout.background.w, 10);
+        const mapY = y => parseInt(CANVAS_HEIGHT * y / layout.background.h, 10);
+        
+        const _config = {
+            backgroundImageUrl: config.presenter?.backgroundImageUrl || '',
+            pipMode: config.presenter?.pipMode ?? true,
+            layout: {
+                desktop: {
+                    rect: {
+                        x: mapX(layout.desktop.rect.x),
+                        y: mapY(layout.desktop.rect.y),
+                        w: mapX(layout.desktop.rect.w),
+                        h: mapY(layout.desktop.rect.h)
+                    }
+                },
+                presenter: {
+                    rect: {
+                        x: mapX(layout.presenter.rect.x),
+                        y: mapY(layout.presenter.rect.y),
+                        w: mapX(layout.presenter.rect.w),
+                        h: mapY(layout.presenter.rect.h),
+                    },
+                    outline: {
+                        width: layout.presenter.outline.width,
+                        color: layout.presenter.outline.color,
+                    },
+                    name: {
+                        font: layout.presenter.name.font,
+                        color: layout.presenter.name.color,
+                        x: mapX(layout.presenter.name.x),
+                        y: mapY(layout.presenter.name.y)
+                    },
+                    title: {
+                        font: layout.presenter.title.font,
+                        color: layout.presenter.title.color,
+                        x: mapX(layout.presenter.title.x),
+                        y: mapY(layout.presenter.title.y),
+                    },
+                },
+            }
+        };
+
+        return _config;
     }
 
     /**

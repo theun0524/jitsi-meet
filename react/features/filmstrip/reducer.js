@@ -41,7 +41,7 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    visible: true
+    visible: false
 };
 
 ReducerRegistry.register(

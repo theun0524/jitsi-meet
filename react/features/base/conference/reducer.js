@@ -40,7 +40,7 @@ const DEFAULT_STATE = {
     password: undefined,
     passwordRequired: undefined,
     preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
-    followMeEnabled: true
+    followMeEnabled: false
 };
 
 /**
