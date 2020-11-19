@@ -252,7 +252,7 @@ class RecentList extends AbstractRecentList<Props, State> {
 
         const AUTH_API_BASE = process.env.VMEETING_API_BASE;
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-        let initialData = [];
+        let tempList = [];
 
         const asyncList = await recentList.reduce(async (accum, item) => {
             try{
@@ -265,7 +265,7 @@ class RecentList extends AbstractRecentList<Props, State> {
                     url: item.url,
                     canDelete: email === resp.data.mail_owner
                 };
-                accum.push(tempItem);  
+                tempList.push(tempItem);
                 return accum;
             }
             catch(err){    
@@ -278,13 +278,13 @@ class RecentList extends AbstractRecentList<Props, State> {
                     url: item.url,
                     canDelete: false
                 };
-                accum.push(tempItem);
+                tempList.push(tempItem);
                 return accum;
             }
-        }, initialData);
+        }, []);
 
         Promise.all(asyncList).then(values => {
-            const dbList = values;
+            const dbList = tempList;
             const nextSetting = true;
             this.setState({ setting: nextSetting, displayableList: dbList });
         });
