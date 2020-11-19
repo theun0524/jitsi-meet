@@ -303,7 +303,7 @@ class RecentList extends AbstractRecentList<Props, State> {
 export function _mapStateToProps(state: Object) {
     return {
         _recentList: state['features/recent-list'],
-        email: state['features/base/jwt'].user.email,
+        email: state['features/base/jwt'].user? state['features/base/jwt'].user.email : null,
         baseURL: state['features/base/connection'].locationURL
     };
 }
