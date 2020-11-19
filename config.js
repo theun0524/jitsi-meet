@@ -685,13 +685,13 @@ var config = {
         layout: {
             background: { w: 1280, h: 720 },
             desktop: {
-                rect: { x: 330, y: 142, w: 910, h: 512 },
+                rect: { x: 260, y: 122, w: 980, h: 551 },
             },
             presenter: {
-                rect: { x: 40, y: 142, w: 262, h: 196 },
+                rect: { x: 40, y: 122, w: 180, h: 135 },
                 outline: { color: '#A9A9A9', width: 2 },
-                name: { color: 'white', font: "18px '맑은 고딕'", x: 40, y: 646 },
-                title: { color: 'white', font: "14px '맑은 고딕'", x: 40, y: 620 },
+                name: { color: 'white', fontSize: 18, fontFamily: '맑은 고딕', x: 40, y: 265 },
+                title: { color: 'white', fontSize: 14, fontFamily: '맑은 고딕', x: 40, y: 289 },
             },
         },
     },
