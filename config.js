@@ -690,8 +690,8 @@ var config = {
             presenter: {
                 rect: { x: 40, y: 122, w: 180, h: 135 },
                 outline: { color: '#A9A9A9', width: 2 },
-                name: { color: 'white', fontSize: 18, fontFamily: '맑은 고딕', x: 40, y: 265 },
-                title: { color: 'white', fontSize: 14, fontFamily: '맑은 고딕', x: 40, y: 289 },
+                name: { color: 'white', fontSize: 18, fontFamily: '맑은 고딕', lineHeight: 1.5, x: 40, y: 265 },
+                title: { color: 'white', fontSize: 14, fontFamily: '맑은 고딕', lineHeight: 1.5, x: 40, y: 289 },
             },
         },
     },
