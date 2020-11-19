@@ -86,6 +86,24 @@ export default class AbstractRecentList<P: Props, S: State> extends AbstractPage
         );
     }
 
+    _getRenderListLoadingComponent: () => React$Node;
+
+    _getRenderListLoadingComponent() {
+        const { t } = this.props;
+
+        return (
+            <Container
+                className = {s.meetingsListEmpty}
+                style = { styles.emptyListContainer }>
+                <Text
+                    className = {s.description}
+                    style = { styles.emptyListText }>
+                    { t('welcomepage.dbListLoading') }
+                </Text>
+            </Container>
+        );
+    }
+
     _onPress: string => void;
 
     /**

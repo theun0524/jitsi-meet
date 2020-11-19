@@ -12,6 +12,7 @@ import Text from './Text';
 import s from './MeetingList.module.scss';
 
 import TrashIcon from '@atlaskit/icon/glyph/trash';
+import EditorCloseIcon from '@atlaskit/icon/glyph/editor/close';
 
 type Props = {
 
@@ -43,7 +44,12 @@ type Props = {
     /**
      * Handler for deleting an item.
      */
-    onItemDelete?: Function
+    onDeleteFromDB?: Function,
+
+    /**
+     * Handler for deleting an item.
+     */
+    onDeleteFromRecent?: Function
 };
 
 /**
@@ -142,7 +148,7 @@ export default class MeetingsList extends Component<Props> {
         return null;
     }
 
-    _onDelete: Object => Function;
+    _onDeleteFromDB: Object => Function;
 
     /**
      * Returns a function that is used on the onDelete callback.
@@ -151,13 +157,32 @@ export default class MeetingsList extends Component<Props> {
      * @private
      * @returns {Function}
      */
-    _onDelete(item) {
-        const { onItemDelete } = this.props;
+    _onDeleteFromDB(item) {
+        const { onDeleteFromDB } = this.props;
 
         return evt => {
             evt.stopPropagation();
 
-            onItemDelete && onItemDelete(item);
+            onDeleteFromDB && onDeleteFromDB(item);
+        };
+    }
+
+    _onDeleteFromRecent: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDeleteFromRecent(item) {
+        const { onDeleteFromRecent } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onDeleteFromRecent && onDeleteFromRecent(item);
         };
     }
 
@@ -177,9 +202,10 @@ export default class MeetingsList extends Component<Props> {
             elementAfter,
             time,
             title,
-            url
+            url,
+            canDelete
         } = meeting;
-        const { hideURL = false, onItemDelete } = this.props;
+        const { hideURL = false, onDeleteFromDB, onDeleteFromRecent } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -215,12 +241,20 @@ export default class MeetingsList extends Component<Props> {
                     }
                 </Container>
                 <Container className = {s.actions}>
-                    { elementAfter || null }
-
-                    { onItemDelete && <TrashIcon
+                    { canDelete && onDeleteFromDB && <TrashIcon
                         className = 'delete-meeting'
                         size="large"
-                        onClick = { this._onDelete(meeting) } />}
+                        label="Delete from My Conference"
+                        onClick = { this._onDeleteFromDB(meeting) } />}
+                </Container>
+                <Container className = {s.actionsUpper}>
+                    { elementAfter || null }
+
+                    { onDeleteFromRecent && <EditorCloseIcon
+                        className = 'delete-from-recent'
+                        size="medium" 
+                        label="Delete from Recent List"
+                        onClick = { this._onDeleteFromRecent(meeting) } />}
                 </Container>
             </Container>
         );
