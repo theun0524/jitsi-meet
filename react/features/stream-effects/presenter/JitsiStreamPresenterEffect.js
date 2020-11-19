@@ -9,6 +9,7 @@ import {
     SET_INTERVAL,
     timerWorkerScript
 } from './TimeWorker';
+import './jsTifier';
 
 // Canvas size
 const CANVAS_WIDTH = 1280;
@@ -49,7 +50,7 @@ export default class JitsiStreamPresenterEffect {
         const firstVideoTrack = videoStream.getVideoTracks()[0];
         const { height, width, frameRate } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
         const localParticipant = getLocalParticipant(APP.store.getState());
-        const [name, title] = localParticipant.name.split('/').map(trim);
+        const [name, ...title] = localParticipant.name.split('/').map(trim);
 
         this._name = name;
         this._title = title;
@@ -69,7 +70,7 @@ export default class JitsiStreamPresenterEffect {
 
         const { pipMode, backgroundImageUrl } = this._config;
         const maxWidth  = this._config.layout.presenter.rect.w;
-        const maxHeight = this._config.layout.presenter.rect.w * 3 / 4;
+        const maxHeight = this._config.layout.presenter.rect.w * 9 / 16;
 
         // Set the video element properties
         this._frameRate = parseInt(frameRate, 10);
@@ -157,24 +158,29 @@ export default class JitsiStreamPresenterEffect {
             this._ctx.drawImage(this._videoElement, rc.x, rc.y, rc.w, rc.h);
 
             // draw a border around the video element.
-            const outline = this._config.layout.presenter.outline;
-            this._ctx.beginPath();
-            this._ctx.lineWidth = outline.width;
-            this._ctx.strokeStyle = outline.color; // dark grey
-            this._ctx.rect(rc.x, rc.y, rc.w, rc.h);
-            this._ctx.stroke();
+            // const outline = this._config.layout.presenter.outline;
+            // this._ctx.beginPath();
+            // this._ctx.lineWidth = outline.width;
+            // this._ctx.strokeStyle = outline.color; // dark grey
+            // this._ctx.rect(rc.x, rc.y, rc.w, rc.h);
+            // this._ctx.stroke();
 
             // draw presenter name
             let text = this._config.layout.presenter.name;
-            this._ctx.font = text.font;
+            let lineHeight = parseInt(text.fontSize * text.lineHeight, 10);
+            let lineY = text.y;
+            this._ctx.font = `${text.fontWeight} ${text.fontSize}px ${text.fontFamily}`;
             this._ctx.fillStyle = text.color;
-            this._ctx.fillText(this._name, text.x, text.y);
+            this._ctx.mlFillText(this._name, text.x, lineY, rc.w, rc.h, 'top', 'center', lineHeight);
+            lineY += lineHeight;
 
-            if (this._title) {
-                text = this._config.layout.presenter.title;
-                this._ctx.font = text.font;
-                this._ctx.fillStyle = text.color;
-                this._ctx.fillText(this._title, text.x, text.y);
+            text = this._config.layout.presenter.title;
+            lineHeight = parseInt(text.fontSize * text.lineHeight, 10);
+            this._ctx.font = `${text.fontWeight} ${text.fontSize}px ${text.fontFamily}`;
+            this._ctx.fillStyle = text.color;
+            for (let title of this._title) {
+                this._ctx.mlFillText(title, text.x, lineY, rc.w, rc.h, 'top', 'center', lineHeight);
+                lineY += lineHeight;
             }
         } else {
             this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width, this._canvas.height);
@@ -210,8 +216,8 @@ export default class JitsiStreamPresenterEffect {
             presenter: {
                 rect: { x: 978, y: 142, w: 262, h: 196 },
                 outline: { color: '#A9A9A9', width: 2 },
-                name: { color: 'white', font: "18px '맑은 고딕'", x: 978, y: 370 },
-                title: { color: 'white', font: "14px '맑은 고딕'", x: 978, y: 395 },
+                name: { color: 'white', fontSize: 18, fontWeight: 'normal', fontFamily: '맑은 고딕', lineHeight: 1.5, x: 978, y: 370 },
+                title: { color: 'white', fontSize: 14, fontWeight: 'lighter', fontFamily: '맑은 고딕', lineHeight: 1.5, x: 978, y: 395 },
             }
         }, config.presenter?.layout);
         
@@ -238,25 +244,22 @@ export default class JitsiStreamPresenterEffect {
                         w: mapX(layout.presenter.rect.w),
                         h: mapY(layout.presenter.rect.h),
                     },
-                    outline: {
-                        width: layout.presenter.outline.width,
-                        color: layout.presenter.outline.color,
-                    },
+                    outline: layout.presenter.outline,
                     name: {
-                        font: layout.presenter.name.font,
-                        color: layout.presenter.name.color,
+                        ...layout.presenter.name,
                         x: mapX(layout.presenter.name.x),
                         y: mapY(layout.presenter.name.y)
                     },
                     title: {
-                        font: layout.presenter.title.font,
-                        color: layout.presenter.title.color,
+                        ...layout.presenter.title,
                         x: mapX(layout.presenter.title.x),
                         y: mapY(layout.presenter.title.y),
                     },
                 },
             }
         };
+
+        console.log('config:', _config);
 
         return _config;
     }
