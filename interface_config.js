@@ -47,9 +47,9 @@ var interfaceConfig = {
 
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    DEFAULT_LOGO_URL: 'images/watermark2.png?v=2',
+    DEFAULT_LOGO_URL: '/images/watermark2.png?v=2',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Vmeeter',
-    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.png?v=2',
+    DEFAULT_WELCOME_PAGE_LOGO_URL: '/images/watermark.png?v=2',
 
     // improve the end user experience
     // with lower CPU usage and better audio quality
