@@ -916,7 +916,7 @@
         "dbList": "전체 회의",
         "dbListLoading": "회의를 불러오는 중입니다..",
         "deleteDBListElementMessage": "회의를 삭제합니다. 이 작업은 되돌릴 수 없습니다.",
-        "deleteRecentListElementMessage": "회의를 삭제합니다. 최근 이력에서만 삭제되며, 이 작업은 되돌릴 수 없습니다.",
+        "deleteRecentListElementMessage": "회의를 삭제합니다. 이 작업은 되돌릴 수 없습니다.",
         "deleteElement": "삭제",
         "deleteFailHeading": "삭제에 실패하였습니다",
         "deleteFailMessage": "찾을 수 없거나 진행 중인 회의는 삭제 할 수 없습니다.",

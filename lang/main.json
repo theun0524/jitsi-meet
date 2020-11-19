@@ -916,7 +916,7 @@
         "dbList": "All",
         "dbListLoading": "Loading..",
         "deleteDBListElementMessage": "Delete Conference. This action cannot be recovered.",
-        "deleteRecentListElementMessage": "Delete Conference from only recent list. This action cannot be recovered.",
+        "deleteRecentListElementMessage": "Delete Conference. This action cannot be recovered.",
         "deleteElement": "Delete",
         "deleteFailHeading": "Failed to Delete",
         "deleteFailMessage": "You can't delete ongoing or not existing conference.",
