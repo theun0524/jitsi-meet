@@ -270,6 +270,15 @@ class RecentList extends AbstractRecentList<Props, State> {
             }
             catch(err){    
                 console.log(err);
+                const tempItem = {
+                    date: item.date,
+                    duration: item.duration,
+                    time: item.time,
+                    title: item.title,
+                    url: item.url,
+                    canDelete: false
+                };
+                accum.push(tempItem);
                 return accum;
             }
         }, initialData);
