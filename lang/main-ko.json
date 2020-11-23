@@ -357,7 +357,7 @@
     },
     "footer": {
         "contactUs": "문의하기",
-        "copyright": "Copyright@2020 (주)케이에듀텍. ALL RIGHTS RESERVED.",
+        "copyright": "Copyright@2020 {{provider}}. ALL RIGHTS RESERVED.",
         "privacy": "개인정보처리방침",
         "tos": "이용약관"
     },
