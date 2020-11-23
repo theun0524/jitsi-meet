@@ -13,14 +13,12 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
-import { getCurrentLayout, LAYOUTS, getMaxColumnCount } from '../../../video-layout';
+import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import Toolbar from './Toolbar';
 import s from './Filmstrip.module.scss';
-import { getParticipantCount } from '../../../base/participants';
-import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
