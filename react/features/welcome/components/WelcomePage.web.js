@@ -393,7 +393,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = {s.footer}>
                         <div className = {s.container}>
                             <div className = {s.copyright}>
-                                {t('footer.copyright')}
+                                {t('footer.copyright', { provider: interfaceConfig.PROVIDER_NAME || '(주)케이에듀텍' })}
                             </div>
                             <div className = {s.nav}>
                                 <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
