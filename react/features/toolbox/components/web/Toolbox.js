@@ -1368,11 +1368,11 @@ class Toolbox extends Component<Props, State> {
                     { this.props._tileViewEnabled && this._areParticipantsMoreThanInCurrentDisplay() &&<ToolbarButton
                         icon = { IconMenuUp }
                         onClick = {() => $('#filmstripRemoteVideos').animate({ scrollTop: $('#filmstripRemoteVideos').scrollTop() - window.innerHeight}, "slow") }
-                        tooltip = { t('toolbar.invite') } /> }
+                        tooltip = { 'Click to slide up' } /> }
                     { this.props._tileViewEnabled && this._areParticipantsMoreThanInCurrentDisplay() && <ToolbarButton
                         icon = { IconMenuDown }
                         onClick = {() => $('#filmstripRemoteVideos').animate({ scrollTop: $('#filmstripRemoteVideos').scrollTop() + window.innerHeight}, "slow") }
-                        tooltip = { t('toolbar.invite') } /> }
+                        tooltip = { 'Click to slide down' } /> }
                 </div>
 
                 {/* toolbox right-side buttons set */}
