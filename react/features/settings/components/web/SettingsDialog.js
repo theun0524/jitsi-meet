@@ -135,6 +135,8 @@ function _mapStateToProps(state) {
         = configuredTabs.includes('profile');
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const showBackgroundSettings
+        = configuredTabs.includes('background');
     const tabs = [];
 
     if (showDeviceSettings) {
@@ -171,6 +173,32 @@ function _mapStateToProps(state) {
             props: getProfileTabProps(state),
             styles: 'settings-pane profile-pane',
             submit: submitProfileTab
+        });
+    }
+
+    if (showBackgroundSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.BACKGROUND,
+            component: BackgroundSelection,
+            label: 'settings.background',
+            onMount: getAvailableDevices,
+            props: getDeviceSelectionDialogProps(state),
+            propsUpdateFunction: (tabState, newProps) => {
+                // Ensure the device selection tab gets updated when new devices
+                // are found by taking the new props and only preserving the
+                // current user selected devices. If this were not done, the
+                // tab would keep using a copy of the initial props it received,
+                // leaving the device list to become stale.
+
+                return {
+                    ...newProps,
+                    selectedAudioInputId: tabState.selectedAudioInputId,
+                    selectedAudioOutputId: tabState.selectedAudioOutputId,
+                    selectedVideoInputId: tabState.selectedVideoInputId
+                };
+            },
+            styles: 'settings-pane devices-pane',
+            submit: submitDeviceSelectionTab
         });
     }
 
