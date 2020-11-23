@@ -250,7 +250,7 @@ export default class MeetingsList extends Component<Props> {
                 <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 
-                    { onDeleteFromRecent && <EditorCloseIcon
+                    { !canDelete && onDeleteFromRecent && <EditorCloseIcon
                         className = 'delete-from-recent'
                         size="medium" 
                         label="Delete from Recent List"
