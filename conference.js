@@ -1902,7 +1902,7 @@ export default {
                 logger.log('Screen sharing started');
 
                 const { startEnabled } = config.presenter || {};
-                if (startEnabled) {
+                if (startEnabled && !this.isLocalVideoMuted()) {
                     setTimeout(() => {
                         // send camera toggle shortcut key 'V' event
                         $.event.trigger({ type: 'keyup', which: 'V'.charCodeAt(0) });
