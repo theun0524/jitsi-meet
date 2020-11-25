@@ -18,7 +18,8 @@ import {
     getPinnedParticipant,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    RECV_VIDEO_PARTICIPANT
 } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
@@ -55,6 +56,12 @@ declare var APP: Object;
 let beforeUnloadHandler;
 
 /**
+ * parameters for RECV_VIDEO_PARTICIPANT action.
+ */
+const WAIT_TIME = 100;
+let recvVideoParCallbackId = null;
+
+/**
  * Implements the middleware of the feature base/conference.
  *
  * @param {Store} store - The redux store.
@@ -89,6 +96,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
+
+    case RECV_VIDEO_PARTICIPANT:
+        return _recvVideoParticipant(store, next, action);
 
     case SEND_TONES:
         return _sendTones(store, next, action);
@@ -421,6 +431,55 @@ function _pinParticipant({ getState }, next, action) {
         }));
 
     return next(action);
+}
+
+/**
+ * Notifies the feature base/conference that the action {@code RECV_VIDEO_PARTICIPANT}
+ * is being dispatched within a specific redux store. Pins the specified remote
+ * participant in the associated conference, ignores the local participant.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code RECV_VIDEO_PARTICIPANT} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _recvVideoParticipant({ getState }, next, action) {
+    if (recvVideoParCallbackId !== null) {
+        clearTimeout(recvVideoParCallbackId);
+    }
+    recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
+                                        WAIT_TIME);
+    return next(action);
+}
+
+function _recvVideoParCallback({ getState }, next, action) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+
+    if (!conference) {
+        return;
+    }
+
+    const participants = state['features/base/participants'];
+    const disableRecvVideoPars = new Set(participants
+                                    .filter(p => p.toRecvVideo === false)
+                                    .map(p => p.id));
+
+    // Because the data is written to redux AFTER this function happen, we need to
+    // consider the current user id separatedly
+    const id = action.participant.id;
+    const toRecvVideo = action.participant.toRecvVideo;
+    (toRecvVideo === false) ? disableRecvVideoPars.add(id) : disableRecvVideoPars.delete(id);
+
+    // Do not disable large-video
+    const largeVideoId = state['features/large-video'].participantId;
+    disableRecvVideoPars.delete(largeVideoId)
+
+    conference.disableRecvVideoParticipants(Array.from(disableRecvVideoPars));
 }
 
 /**

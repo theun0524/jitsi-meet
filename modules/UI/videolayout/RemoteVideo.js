@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
+import { InView } from 'react-intersection-observer';
 
 import { i18next } from '../../../react/features/base/i18n';
 import {
@@ -14,7 +15,8 @@ import {
 } from '../../../react/features/base/lib-jitsi-meet';
 import {
     getPinnedParticipant,
-    pinParticipant
+    pinParticipant,
+    recvVideoParticipant
 } from '../../../react/features/base/participants';
 import { clientResized } from '../../../react/features/base/responsive-ui';
 import { PresenceLabel } from '../../../react/features/presence-status';
@@ -33,9 +35,20 @@ const logger = Logger.getLogger(__filename);
 /**
  *
  * @param {*} spanId
+ * @param {*} userid
  */
-function createContainer(spanId) {
-    const container = document.createElement('span');
+function createContainer(spanId, userid) {
+    let _container = document.createElement('span');
+    var onInViewportChange = (inView, entry) => {
+        APP.store.dispatch(recvVideoParticipant(userid, inView === true));
+    }
+    ReactDOM.render(
+        <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
+        _container
+    );
+    // FIXME: reactDOM render another span element inside current span element,
+    // thus we need to strip the outer video tag. There should be a better way to do this
+    const container = _container.firstChild;
 
     container.id = spanId;
     container.className = 'videocontainer';
@@ -125,7 +138,7 @@ export default class RemoteVideo extends SmallVideo {
      *
      */
     addRemoteVideoContainer() {
-        this.container = createContainer(this.videoSpanId);
+        this.container = createContainer(this.videoSpanId, this.id);
         this.$container = $(this.container);
         this.initializeAvatar();
         this._setThumbnailSize();
