@@ -42,6 +42,11 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "backgroundSelection": {
+        "add": "Add Background Image",
+        "delete": "Delete Background Image",
+        "none": "None"
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",
@@ -650,6 +655,7 @@
         "securityOptions": "Security options"
     },
     "settings": {
+        "background": "Background",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
             "disconnect": "Disconnect",

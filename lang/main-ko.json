@@ -42,6 +42,11 @@
     "audioOnly": {
         "audioOnly": "낮은 대역폭"
     },
+    "backgroundSelection": {
+        "add": "배경 이미지 추가",
+        "delete": "배경 이미지 삭제",
+        "none": "없음"
+    },
     "calendarSync": {
         "addMeetingURL": "회의 링크 추가",
         "confirmAddLink": "이 이벤트에 회의 링크를 추가 하시겠습니까?",
@@ -650,6 +655,7 @@
         "securityOptions": "보안 옵션"
     },
     "settings": {
+        "background": "배경",
         "calendar": {
             "about": "{{appName}} 캘린더 통합은 향후 일정을 읽을 수 있도록 캘린더에 안전하게 액세스하는 데 사용됩니다.",
             "disconnect": "연결 끊기",

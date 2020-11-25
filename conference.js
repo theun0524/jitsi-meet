@@ -133,9 +133,10 @@ import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
+import { createBackgroundEffect } from './react/features/stream-effects/background';
 
 const logger = Logger.getLogger(__filename);
-
+const apiBase = process.env.VMEETING_API_BASE;
 const eventEmitter = new EventEmitter();
 
 let room;
@@ -1433,12 +1434,30 @@ export default {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
 
+                const startBackgroundEffect = track => {
+                    const id = state['features/base/jwt'].user?.background;
+                    console.log('startBackgroundEffect:', id);
+                    // return;
+
+                    return id 
+                        ? createBackgroundEffect(`${apiBase}/backgrounds/${id}/hd`)
+                            .then(backgroundEffectInstance => {
+                                console.log('background Effect:', backgroundEffectInstance);
+                                newTrack.setEffect(backgroundEffectInstance);
+                            })
+                            .catch(error => {
+                                logger.error('createBackgroundEffect failed with error:', error);
+                            })
+                        : Promise.resolve();
+                };
+    
                 // When the prejoin page is displayed localVideo is not set
                 // so just replace the video track from the store with the new one.
                 if (isPrejoinPageVisible(state)) {
                     const oldTrack = getLocalJitsiVideoTrack(state);
 
                     return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
+                        .then(startBackgroundEffect)
                         .then(resolve)
                         .catch(reject)
                         .then(onFinish);
@@ -1454,6 +1473,7 @@ export default {
                         }
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
+                    .then(startBackgroundEffect)
                     .then(resolve)
                     .catch(reject)
                     .then(onFinish);
@@ -1868,6 +1888,7 @@ export default {
         }
 
         this.videoSwitchInProgress = true;
+        const _isLocalVideoMuted = this.isLocalVideoMuted();
 
         return this._createDesktopTrack(options)
             .then(async streams => {
@@ -1902,7 +1923,7 @@ export default {
                 logger.log('Screen sharing started');
 
                 const { startEnabled } = config.presenter || {};
-                if (startEnabled) {
+                if (startEnabled && !_isLocalVideoMuted) {
                     setTimeout(() => {
                         // send camera toggle shortcut key 'V' event
                         $.event.trigger({ type: 'keyup', which: 'V'.charCodeAt(0) });
