@@ -12,7 +12,8 @@ import { LobbySection } from '../../../lobby';
 
 import Header from './Header';
 import PasswordSection from './PasswordSection';
-import ScopeSection from './ScopeSection'
+import ScopeSection from './ScopeSection';
+import MessageSection from './MessageSection';
 
 type Props = {
 
@@ -102,20 +103,26 @@ function SecurityDialog({
             titleKey = 'security.securityOptions'
             width = { 'small' }>
             <div className = 'security-dialog'>
-                <ScopeSection />
+                <MessageSection />
                 {
-                    publicScope?
-                    <LobbySection /> :
-                    <PasswordSection
-                    canEditPassword = { _canEditPassword }
-                    conference = { _conference }
-                    locked = { _locked }
-                    password = { _password }
-                    passwordEditEnabled = { passwordEditEnabled }
-                    passwordNumberOfDigits = { _passwordNumberOfDigits }
-                    setPassword = { setPassword }
-                    setPasswordEditEnabled = { setPasswordEditEnabled } />
+                    _roomInfo.isHost?
+                    <>
+                    <ScopeSection />
+                    {
+                        publicScope?
+                        <LobbySection /> :
+                        <PasswordSection
+                        canEditPassword = { _canEditPassword }
+                        conference = { _conference }
+                        locked = { _locked }
+                        password = { _password }
+                        passwordEditEnabled = { passwordEditEnabled }
+                        passwordNumberOfDigits = { _passwordNumberOfDigits }
+                        setPassword = { setPassword }
+                        setPasswordEditEnabled = { setPasswordEditEnabled } />
+                    } </>: null
                 }
+
                 {
                     _showE2ee ? <>
                         <div className = 'separator-line' />
