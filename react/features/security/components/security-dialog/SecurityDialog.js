@@ -12,6 +12,7 @@ import { LobbySection } from '../../../lobby';
 
 import Header from './Header';
 import PasswordSection from './PasswordSection';
+import ScopeSection from './ScopeSection'
 
 type Props = {
 
@@ -25,6 +26,8 @@ type Props = {
      * password.
      */
     _conference: Object,
+
+    _roomInfo: Object,
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
@@ -66,6 +69,7 @@ type Props = {
 function SecurityDialog({
     _canEditPassword,
     _conference,
+    _roomInfo,
     _locked,
     _password,
     _passwordNumberOfDigits,
@@ -73,12 +77,22 @@ function SecurityDialog({
     setPassword
 }: Props) {
     const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
+    const [ publicScope, setPublicScope ] = useState(true);
 
     useEffect(() => {
         if (passwordEditEnabled && _password) {
             setPasswordEditEnabled(false);
         }
     }, [ _password ]);
+
+    useEffect(() => {
+        if (_roomInfo.scope) {
+            setPublicScope(true);
+        }
+        else{
+            setPublicScope(false);
+        }
+    }, [ _roomInfo ]);
 
     return (
         <Dialog
@@ -88,8 +102,11 @@ function SecurityDialog({
             titleKey = 'security.securityOptions'
             width = { 'small' }>
             <div className = 'security-dialog'>
-                <LobbySection />
-                <PasswordSection
+                <ScopeSection />
+                {
+                    publicScope?
+                    <LobbySection /> :
+                    <PasswordSection
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }
                     locked = { _locked }
@@ -98,6 +115,7 @@ function SecurityDialog({
                     passwordNumberOfDigits = { _passwordNumberOfDigits }
                     setPassword = { setPassword }
                     setPasswordEditEnabled = { setPasswordEditEnabled } />
+                }
                 {
                     _showE2ee ? <>
                         <div className = 'separator-line' />
@@ -123,7 +141,8 @@ function mapStateToProps(state) {
         conference,
         e2eeSupported,
         locked,
-        password
+        password,
+        roomInfo
     } = state['features/base/conference'];
     const {
         lockRoomGuestEnabled,
@@ -133,6 +152,7 @@ function mapStateToProps(state) {
     return {
         _canEditPassword: isLocalParticipantModerator(state, lockRoomGuestEnabled),
         _conference: conference,
+        _roomInfo: roomInfo,
         _dialIn: state['features/invite'],
         _locked: locked,
         _password: password,

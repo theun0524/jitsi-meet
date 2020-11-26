@@ -26,6 +26,10 @@ import {
     SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
 } from './actionTypes';
+
+import {
+    SET_PUBLIC_SCOPE_ENABLED
+} from '../../security'
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
@@ -39,7 +43,8 @@ const DEFAULT_STATE = {
     membersOnly: undefined,
     password: undefined,
     passwordRequired: undefined,
-    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    roomInfo: undefined
 };
 
 /**
@@ -120,6 +125,13 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+        case SET_PUBLIC_SCOPE_ENABLED:
+            return set(
+                state,
+                'roomInfo',
+                {...state.roomInfo,
+                scope: action.enabled
+                });
         }
 
         return state;
