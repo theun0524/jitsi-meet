@@ -1,5 +1,9 @@
+/* eslint-disable camelcase */
 // @flow
 
+/* global interfaceConfig, process */
+
+import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import type { Dispatch } from 'redux';
 
@@ -37,9 +41,9 @@ import {
     getName
 } from './functions';
 import logger from './logger';
+import { setLobbyModeEnabled } from '../lobby/actions';
 
-declare var APP: Object;
-declare var interfaceConfig: Object;
+const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 
 // eslint-disable-next-line require-jsdoc
 function getParams(uri: string) {
@@ -129,6 +133,8 @@ export function appNavigate(uri: ?string) {
         if (!config) {
             try {
                 config = await loadConfig(url);
+
+                // load data about room and do config setting here
                 dispatch(storeConfig(baseURL, config));
             } catch (error) {
                 config = restoreConfig(baseURL);
@@ -188,7 +194,42 @@ export function appNavigate(uri: ?string) {
             dispatch(loadCurrentUser());
         }
 
-        dispatch(setRoom(room));
+        let roomInfo;
+
+        if (room) {
+            const apiBaseUrl = `${baseURL}${AUTH_API_BASE}`;
+            const apiUrl = `${apiBaseUrl}/conference?name=${room}`;
+            let resp;
+
+            try {
+                resp = await axios.get(apiUrl);
+                roomInfo = resp.data;
+                roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
+
+                if(roomInfo.isHost){
+                    let resp_b = await axios.post(`${apiBaseUrl}/conference`, {
+                        name: room,
+                        start_time: new Date(),
+                        mail_owner: getState()['features/base/jwt'].user.email
+                    });
+                }
+            } catch (err) { 
+                try {
+                    resp = await axios.post(`${apiBaseUrl}/conference`, {
+                        name: room,
+                        start_time: new Date(),
+                        mail_owner: getState()['features/base/jwt'].user.email
+                    });
+                    roomInfo = resp.data;
+                    roomInfo.isHost = true;
+                } catch (err2) {
+                    console.log("Error! Not navigate to target, ", err2);
+                    disconnect();
+                }
+            }
+        }
+
+        dispatch(setRoom(room, roomInfo));
 
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {

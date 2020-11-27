@@ -9,17 +9,14 @@ import {
 
 import Container from './Container';
 import Text from './Text';
-import s from './MeetingList.module.scss';
+import s from './MeetingListFromDB.module.scss';
 
+import ScheduleIcon from '@atlaskit/icon/glyph/schedule';
+import LockIcon from '@atlaskit/icon/glyph/lock';
+import UnlockIcon from '@atlaskit/icon/glyph/unlock';
 import TrashIcon from '@atlaskit/icon/glyph/trash';
-import EditorCloseIcon from '@atlaskit/icon/glyph/editor/close';
 
 type Props = {
-
-    /**
-     * Indicates if the list is disabled or not.
-     */
-    disabled: boolean,
 
     /**
      * Indicates if the URL should be hidden or not.
@@ -44,12 +41,7 @@ type Props = {
     /**
      * Handler for deleting an item.
      */
-    onDeleteFromDB?: Function,
-
-    /**
-     * Handler for deleting an item.
-     */
-    onDeleteFromRecent?: Function
+    onItemDelete?: Function
 };
 
 /**
@@ -89,7 +81,7 @@ function _toTimeString(times) {
  *
  * @extends Component
  */
-export default class MeetingsList extends Component<Props> {
+export default class MeetingsListFromDB extends Component<Props> {
     /**
      * Constructor of the MeetingsList component.
      *
@@ -139,54 +131,35 @@ export default class MeetingsList extends Component<Props> {
      * @returns {Function}
      */
     _onPress(url) {
-        const { disabled, onPress } = this.props;
+        const { onPress } = this.props;
 
-        if (!disabled && url && typeof onPress === 'function') {
+        if ( url && typeof onPress === 'function') {
             return () => onPress(url);
         }
 
         return null;
     }
 
-    _onDeleteFromDB: Object => Function;
-
-    /**
-     * Returns a function that is used on the onDelete callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
-    _onDeleteFromDB(item) {
-        const { onDeleteFromDB } = this.props;
-
-        return evt => {
-            evt.stopPropagation();
-
-            onDeleteFromDB && onDeleteFromDB(item);
-        };
-    }
-
-    _onDeleteFromRecent: Object => Function;
-
-    /**
-     * Returns a function that is used on the onDelete callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
-    _onDeleteFromRecent(item) {
-        const { onDeleteFromRecent } = this.props;
-
-        return evt => {
-            evt.stopPropagation();
-
-            onDeleteFromRecent && onDeleteFromRecent(item);
-        };
-    }
-
     _renderItem: (Object, number) => React$Node;
+
+    _onDelete: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onItemDelete && onItemDelete(item);
+        };
+    }
 
     /**
      * Renders an item for the list.
@@ -197,15 +170,18 @@ export default class MeetingsList extends Component<Props> {
      */
     _renderItem(meeting, index) {
         const {
+            schedule,
+            lock,
             date,
             duration,
             elementAfter,
             time,
             title,
             url,
-            canDelete
+            owner,
+            current_user
         } = meeting;
-        const { hideURL = false, onDeleteFromDB, onDeleteFromRecent } = this.props;
+        const { hideURL = false, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -215,6 +191,12 @@ export default class MeetingsList extends Component<Props> {
                 className = { rootClassName }
                 key = { index }
                 onClick = { onPress }>
+                <Container className = {s.iconColumn}>
+                    { schedule? <ScheduleIcon size="large"/> : null }
+                </Container>
+                <Container className = {s.iconColumn}>
+                    { lock? <LockIcon size="large"/> : <UnlockIcon size="large"/> }
+                </Container>
                 <Container className = {s.leftColumn}>
                     <Text className = {s.date}>
                         { _toDateString(date) }
@@ -241,20 +223,12 @@ export default class MeetingsList extends Component<Props> {
                     }
                 </Container>
                 <Container className = {s.actions}>
-                    { canDelete && onDeleteFromDB && <TrashIcon
-                        className = 'delete-meeting'
-                        size="large"
-                        label="Delete from My Conference"
-                        onClick = { this._onDeleteFromDB(meeting) } />}
-                </Container>
-                <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 
-                    { !canDelete && onDeleteFromRecent && <EditorCloseIcon
-                        className = 'delete-from-recent'
-                        size="medium" 
-                        label="Delete from Recent List"
-                        onClick = { this._onDeleteFromRecent(meeting) } />}
+                    { owner === current_user && onItemDelete && <TrashIcon
+                        className = 'delete-meeting'
+                        size="large"
+                        onClick = { this._onDelete(meeting) } />}
                 </Container>
             </Container>
         );

@@ -15,6 +15,7 @@ import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { NotificationsContainer } from '../../notifications/components';
 import { RecentList } from '../../recent-list';
+import { DBList } from '../../db-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
 
@@ -353,15 +354,21 @@ class WelcomePage extends AbstractWelcomePage {
                                             { this._renderInsecureRoomNameWarning() }
                                         </form>
                                     </div>
-                                    <div
-                                        className = {s.welcomePageButton}
-                                        id = 'enter_room_button'
-                                        onClick = { this._onFormSubmit }>
-                                        {
-                                            showResponsiveText
-                                                ? t('welcomepage.goSmall')
-                                                : t('welcomepage.go')
-                                        }
+                                    <div className = {s.welcomePageButton}
+                                        id = 'enter_room_button'>
+                                        <DropdownMenu
+                                            className = { s.dropdownMenu }
+                                            trigger = {
+                                                t('welcomepage.go')
+                                            }
+                                            triggerType = 'default'>
+                                            <DropdownItemGroup>
+                                                <DropdownItem onClick = { this._onFormSubmit }>{ t('welcomepage.startNow') }</DropdownItem>
+                                                {_user?
+                                                <DropdownItem href = { `${AUTH_PAGE_BASE}/reservation/${this.state.room}` }>{ t('welcomepage.reserve') }</DropdownItem> :
+                                                <DropdownItem href = { `${AUTH_PAGE_BASE}/login` }>{ t('welcomepage.reserve') }</DropdownItem> }
+                                            </DropdownItemGroup>
+                                        </DropdownMenu>
                                     </div>
                                     { _moderatedRoomServiceUrl && (
                                         <div id = 'moderated-meetings'>
@@ -478,10 +485,18 @@ class WelcomePage extends AbstractWelcomePage {
         // if (isMobileBrowser()) {
         //     return null;
         // }
-
-        const { _calendarEnabled, _recentListEnabled, t } = this.props;
+        const { _calendarEnabled, _recentListEnabled, _user, t } = this.props;
 
         const tabs = [];
+
+        const _dbEnabled = true;
+
+        if(_user && _dbEnabled){
+            tabs.push({
+                label: t('welcomepage.dbList'),
+                content: <DBList />
+            });
+        }
 
         if (_calendarEnabled) {
             tabs.push({

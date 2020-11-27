@@ -43,7 +43,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    setDesktopSharingEnabled
+    setDesktopSharingEnabled,
+    setStartMutedPolicy
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -115,6 +116,9 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import {
+    toggleLobbyMode
+} from './react/features/lobby/actions';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -125,6 +129,9 @@ import {
     makePrecallTest
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
+import {
+    endRoomLockRequest
+} from './react/features/room-lock/actions';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
@@ -134,6 +141,7 @@ import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import { createBackgroundEffect } from './react/features/stream-effects/background';
+import axios from 'axios';
 
 const logger = Logger.getLogger(__filename);
 const apiBase = process.env.VMEETING_API_BASE;
@@ -1926,7 +1934,10 @@ export default {
                 if (startEnabled && !_isLocalVideoMuted) {
                     setTimeout(() => {
                         // send camera toggle shortcut key 'V' event
-                        $.event.trigger({ type: 'keyup', which: 'V'.charCodeAt(0) });
+                        $.event.trigger({
+                            type: 'keyup',
+                            which: 'V'.charCodeAt(0)
+                        });
                     }, 1000);
                 }
             })
@@ -2059,6 +2070,21 @@ export default {
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
                 APP.API.notifyUserRoleChanged(id, role);
+
+                const { conference, roomInfo } = APP.store.getState()['features/base/conference'];
+
+                if(role === "moderator" && roomInfo.isHost){
+                    if(roomInfo.schedule){
+                        APP.store.dispatch(setStartMutedPolicy(!roomInfo.microphone, !roomInfo.video));
+                        APP.store.dispatch(updateSettings({ startWithAudioMuted: !roomInfo.microphone, startWithVideoMuted: !roomInfo.video }));
+                        APP.store.dispatch(setAudioMuted(!roomInfo.microphone));
+                        APP.store.dispatch(setVideoMuted(!roomInfo.video));
+                        if(!roomInfo.scope && roomInfo.password){
+                            APP.store.dispatch(endRoomLockRequest(conference, roomInfo.password));
+                        }
+                        APP.store.dispatch(toggleLobbyMode(roomInfo.lobby));
+                    }
+                }
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
             }
@@ -2920,10 +2946,27 @@ export default {
      *
      * @returns {Promise}
      */
-    leaveRoomAndDisconnect() {
+    async leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        if (room && room.isJoined()) {
+        if (room && room.isJoined()) {  
+            /*if(room.getParticipants().length == 0){
+                let resp;
+                const { locationURL } = APP.store.getState()['features/base/connection'];
+                const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+                const apiBaseUrl = `${locationURL.origin}${AUTH_API_BASE}`;
+
+                try{
+                    resp = await axios.post(`${apiBaseUrl}/conference`, {
+                        name: APP.conference.roomName,
+                        end_time: new Date()
+                    });
+                }
+                catch(err){
+                    console.log(err);
+                }
+            }*/
+
             return room.leave().then(disconnect, disconnect);
         }
 
