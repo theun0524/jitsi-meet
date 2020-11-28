@@ -933,6 +933,8 @@
         "deleteElement": "Delete",
         "deleteFailHeading": "Failed to Delete",
         "deleteFailMessage": "You can't delete ongoing or not existing conference.",
+        "deleteFromDB" : "Delete from my conference",
+        "deleteFromRecent" : "Delete only from recent list",
         "deleteModalHeading": "Delete Conference",
         "enterRoomTitle": "Start a new meeting",
         "getHelp": "Get help",

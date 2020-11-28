@@ -186,6 +186,7 @@ class RecentList extends AbstractRecentList<Props, State> {
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { recentList }
+                t = { t }
                 onDeleteFromDB = { this._onDeleteFromDB }
                 onDeleteFromRecent = { this._onDeleteFromRecent }
                 onPress = { this._onPress } />
@@ -220,6 +221,7 @@ class RecentList extends AbstractRecentList<Props, State> {
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListLoadingComponent() }
                 meetings = { [] }
+                t = { t }
                 onDeleteFromDB = { this._onDeleteFromDB }
                 onDeleteFromRecent = { this._onDeleteFromRecent }
                 onPress = { this._onPress } />;

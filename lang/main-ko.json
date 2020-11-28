@@ -933,6 +933,8 @@
         "deleteElement": "삭제",
         "deleteFailHeading": "삭제에 실패하였습니다",
         "deleteFailMessage": "찾을 수 없거나 진행 중인 회의는 삭제 할 수 없습니다.",
+        "deleteFromDB" : "내 회의에서 삭제",
+        "deleteFromRecent" : "최근 이력에서 삭제",
         "deleteModalHeading": "회의 삭제",
         "enterRoomTitle": "새로운 미팅 시작하기",
         "getHelp": "도움말",

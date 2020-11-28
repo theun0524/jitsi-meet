@@ -11,6 +11,7 @@ import Container from './Container';
 import Text from './Text';
 import s from './MeetingListFromDB.module.scss';
 
+import Tooltip from '@atlaskit/tooltip';
 import ScheduleIcon from '@atlaskit/icon/glyph/schedule';
 import LockIcon from '@atlaskit/icon/glyph/lock';
 import UnlockIcon from '@atlaskit/icon/glyph/unlock';
@@ -37,6 +38,8 @@ type Props = {
      * An array of meetings.
      */
     meetings: Array<Object>,
+
+    t: Function,
 
     /**
      * Handler for deleting an item.
@@ -181,7 +184,7 @@ export default class MeetingsListFromDB extends Component<Props> {
             owner,
             current_user
         } = meeting;
-        const { hideURL = false, onItemDelete } = this.props;
+        const { hideURL = false, t, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -225,10 +228,13 @@ export default class MeetingsListFromDB extends Component<Props> {
                 <Container className = {s.actions}>
                     { elementAfter || null }
 
-                    { owner === current_user && onItemDelete && <TrashIcon
-                        className = 'delete-meeting'
-                        size="large"
-                        onClick = { this._onDelete(meeting) } />}
+                    { owner === current_user && onItemDelete && <Tooltip content = {t('welcomepage.deleteFromDB')}>
+                            <div
+                                className = 'delete-meeting'
+                                onClick = { this._onDelete(meeting) }>
+                                <TrashIcon size="large" />
+                            </div>
+                        </Tooltip>}
                 </Container>
             </Container>
         );

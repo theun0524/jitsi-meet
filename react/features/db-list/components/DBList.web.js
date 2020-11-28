@@ -139,6 +139,7 @@ class DBList extends AbstractDBList<Props, State> {
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { dbList }
+                t = { t }
                 onItemDelete = { this._onItemDelete }
                 onPress = { this._onPress } />
             <ModalTransition>
@@ -171,6 +172,7 @@ class DBList extends AbstractDBList<Props, State> {
             hideURL = { true }
             listEmptyComponent = { this._getRenderListLoadingComponent() }
             meetings = { [] }
+            t = { t }
             onItemDelete = { this._onItemDelete }
             onPress = { this._onPress } />;
     }

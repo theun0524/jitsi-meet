@@ -11,6 +11,7 @@ import Container from './Container';
 import Text from './Text';
 import s from './MeetingList.module.scss';
 
+import Tooltip from '@atlaskit/tooltip';
 import TrashIcon from '@atlaskit/icon/glyph/trash';
 import EditorCloseIcon from '@atlaskit/icon/glyph/editor/close';
 
@@ -40,6 +41,8 @@ type Props = {
      * An array of meetings.
      */
     meetings: Array<Object>,
+
+    t: Function,
 
     /**
      * Handler for deleting an item.
@@ -205,7 +208,7 @@ export default class MeetingsList extends Component<Props> {
             url,
             canDelete
         } = meeting;
-        const { hideURL = false, onDeleteFromDB, onDeleteFromRecent } = this.props;
+        const { hideURL = false, t, onDeleteFromDB, onDeleteFromRecent } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -241,20 +244,24 @@ export default class MeetingsList extends Component<Props> {
                     }
                 </Container>
                 <Container className = {s.actions}>
-                    { canDelete && onDeleteFromDB && <TrashIcon
-                        className = 'delete-meeting'
-                        size="large"
-                        label="Delete from My Conference"
-                        onClick = { this._onDeleteFromDB(meeting) } />}
+                    { canDelete && onDeleteFromDB && <Tooltip content = {t('welcomepage.deleteFromDB')}>
+                            <div
+                                className = 'delete-meeting'
+                                onClick = { this._onDeleteFromDB(meeting) }>
+                                <TrashIcon size="large" />
+                            </div>
+                        </Tooltip>}
                 </Container>
                 <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 
-                    { !canDelete && onDeleteFromRecent && <EditorCloseIcon
-                        className = 'delete-from-recent'
-                        size="medium" 
-                        label="Delete from Recent List"
-                        onClick = { this._onDeleteFromRecent(meeting) } />}
+                    { !canDelete && onDeleteFromRecent && <Tooltip content = {t('welcomepage.deleteFromRecent')}>
+                            <div
+                                className = 'delete-from-recent'
+                                onClick = { this._onDeleteFromRecent(meeting) }>
+                                <EditorCloseIcon size="medium" />
+                            </div>
+                        </Tooltip>}
                 </Container>
             </Container>
         );
