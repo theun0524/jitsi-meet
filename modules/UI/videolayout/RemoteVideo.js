@@ -42,8 +42,8 @@ function createContainer(spanId, userId) {
 
     const config = APP.store.getState()['features/base/config'];
     const enableLastOnScreen = typeof config.enableLastOnScreen === 'undefined' ?
-        true : (config.enableLastOnScreen == true || config.enableLastOnScreen == 1);
-    if (enableLastOnScreen == true) {
+        true : (config.enableLastOnScreen === true || config.enableLastOnScreen === 1);
+    if (enableLastOnScreen === true) {
         var onInViewportChange = (inView, entry) => {
             APP.store.dispatch(recvVideoParticipant(userId, inView === true));
         }
@@ -54,7 +54,7 @@ function createContainer(spanId, userId) {
     }
     // FIXME: (tu-nv) reactDOM render another span element inside current span element,
     // thus we need to strip the outer video tag. There should be a better way to do this
-    const container = (enableLastOnScreen == true) ? _container.firstChild : _container;
+    const container = (enableLastOnScreen === true) ? _container.firstChild : _container;
 
     container.id = spanId;
     container.className = 'videocontainer';
