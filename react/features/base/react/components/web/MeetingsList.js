@@ -244,18 +244,21 @@ export default class MeetingsList extends Component<Props> {
                     }
                 </Container>
                 <Container className = {s.actions}>
-                    { canDelete && onDeleteFromDB && <Tooltip content = {t('welcomepage.deleteFromDB')}>
+                    { //erase false if you want to activate delete button
+                        false && canDelete && onDeleteFromDB && <Tooltip content = {t('welcomepage.deleteFromDB')}>
                             <div
                                 className = 'delete-meeting'
                                 onClick = { this._onDeleteFromDB(meeting) }>
                                 <TrashIcon size="large" />
                             </div>
-                        </Tooltip>}
+                        </Tooltip>
+                        }
                 </Container>
                 <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 
-                    { !canDelete && onDeleteFromRecent && <Tooltip content = {t('welcomepage.deleteFromRecent')}>
+                    { // !canDelete && onDeleteFromRecent 
+                        onDeleteFromRecent && <Tooltip content = {t('welcomepage.deleteFromRecent')}>
                             <div
                                 className = 'delete-from-recent'
                                 onClick = { this._onDeleteFromRecent(meeting) }>

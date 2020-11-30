@@ -936,6 +936,7 @@
         "deleteFromDB" : "Delete from my conference",
         "deleteFromRecent" : "Delete only from recent list",
         "deleteModalHeading": "Delete Conference",
+        "deleteReservation" : "Delete Reserved Conference",
         "enterRoomTitle": "Start a new meeting",
         "getHelp": "Get help",
         "go": "GO",

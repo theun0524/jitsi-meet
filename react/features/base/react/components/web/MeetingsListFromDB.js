@@ -228,7 +228,7 @@ export default class MeetingsListFromDB extends Component<Props> {
                 <Container className = {s.actions}>
                     { elementAfter || null }
 
-                    { owner === current_user && onItemDelete && <Tooltip content = {t('welcomepage.deleteFromDB')}>
+                    { owner === current_user && onItemDelete && <Tooltip content = {t('welcomepage.deleteReservation')}>
                             <div
                                 className = 'delete-meeting'
                                 onClick = { this._onDelete(meeting) }>

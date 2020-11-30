@@ -936,6 +936,7 @@
         "deleteFromDB" : "내 회의에서 삭제",
         "deleteFromRecent" : "최근 이력에서 삭제",
         "deleteModalHeading": "회의 삭제",
+        "deleteReservation" : "예약된 회의 삭제",
         "enterRoomTitle": "새로운 미팅 시작하기",
         "getHelp": "도움말",
         "go": "회의 생성",
