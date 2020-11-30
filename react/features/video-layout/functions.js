@@ -5,9 +5,8 @@ import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
 
-let userSetMaxCol = 7;
 declare var interfaceConfig: Object;
-
+let userSetMaxCol = interfaceConfig.TILE_VIEW_MIN_COLS;
 /**
  * Returns the {@code LAYOUTS} constant associated with the layout
  * the application should currently be in.
