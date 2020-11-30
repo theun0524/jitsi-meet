@@ -24,6 +24,7 @@ export function toDisplayableList(dbList, my_email) {
                     title: safeDecodeURIComponent(parseURIString(item.conference).room),
                     url: item.conference,
                     owner: item.owner,
+                    ongoing: item.ongoing,
                     current_user: my_email
                 };
             }));

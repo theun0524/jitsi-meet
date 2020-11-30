@@ -182,6 +182,7 @@ export default class MeetingsListFromDB extends Component<Props> {
             title,
             url,
             owner,
+            ongoing,
             current_user
         } = meeting;
         const { hideURL = false, t, onItemDelete } = this.props;
@@ -228,7 +229,7 @@ export default class MeetingsListFromDB extends Component<Props> {
                 <Container className = {s.actions}>
                     { elementAfter || null }
 
-                    { owner === current_user && onItemDelete && <Tooltip content = {t('welcomepage.deleteReservation')}>
+                    { !ongoing && owner === current_user && onItemDelete && <Tooltip content = {t('welcomepage.deleteReservation')}>
                             <div
                                 className = 'delete-meeting'
                                 onClick = { this._onDelete(meeting) }>
