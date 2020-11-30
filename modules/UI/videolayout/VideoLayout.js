@@ -358,10 +358,51 @@ const VideoLayout = {
             if (remoteVideo) {
                 remoteVideo.setVideoMutedView(value);
             }
+            this.moveMutedRemoteVideoToTheEndofDOM(id);
         }
 
         // large video will show avatar instead of muted stream
         this._updateLargeVideoIfDisplayed(id, true);
+    },
+
+    /**
+     * When someone mutes their video, the video being rendered as remote video in other participants
+     * will be moved to the end using DOM manipulation
+     * 
+     * Core Logic
+     *  i. Get the muted participants thumbnail id
+     *  ii. Remove the local video container first from the DOM
+     *  iii. Append a muted video to the end of DOM
+     *  iv. Identify the position to insert local thumbnail and insert it
+     */
+    moveMutedRemoteVideoToTheEndofDOM(id) {
+        // get the video muted participant's span element thumbnail from DOM
+        const mutedParticipantID = 'participant_'.concat(id);
+        const mutedParticipantThumbnail = document.getElementById(mutedParticipantID);
+        
+        // remove the local video container from DOM
+        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
+        const localTVC = document.getElementById('localVideoTileViewContainer');
+        allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
+
+        // append the muted video to the end of DOM
+        allVideosContainers.appendChild(mutedParticipantThumbnail);
+
+        // identify the position as to where to insert local video thumbnail
+        // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
+        let totalThumbnailsCount  = allVideosContainers.childElementCount;
+        let mutedThumbnailsCount = 0;
+        const allChildNodes = allVideosContainers.childNodes;
+        allChildNodes.forEach((child) => {
+            let participantID = child.id;
+            let i = participantID.split("_")[1];
+            let rv = remoteVideos[i];
+            if (rv.isVideoMuted) {
+                mutedThumbnailsCount = mutedThumbnailsCount + 1;
+            }
+        });
+        const pos = totalThumbnailsCount - mutedThumbnailsCount;
+        allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
     },
 
     /**
@@ -829,5 +870,5 @@ const VideoLayout = {
         VideoLayout.resizeVideoArea();
     }
 };
-
+export { remoteVideos };
 export default VideoLayout;
