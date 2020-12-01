@@ -314,7 +314,7 @@ const VideoLayout = {
      */
     addRemoteVideoContainer(id, remoteVideo) {
         remoteVideos[id] = remoteVideo;
-
+        this.moveMutedVideosAndAddNewVideoToTheStartOfDOM(id);
         // Initialize the view
         remoteVideo.updateView();
     },
@@ -377,6 +377,7 @@ const VideoLayout = {
      */
     moveMutedRemoteVideoToTheEndofDOM(id) {
         // get the video muted participant's span element thumbnail from DOM
+        console.log("Start of moveMutedRemoteVideoToTheEndofDOM");
         const mutedParticipantID = 'participant_'.concat(id);
         const mutedParticipantThumbnail = document.getElementById(mutedParticipantID);
         
@@ -403,6 +404,60 @@ const VideoLayout = {
         });
         const pos = totalThumbnailsCount - mutedThumbnailsCount;
         allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
+        console.log("End of moveMutedRemoteVideoToTheEndofDOM");
+    },
+
+    moveMutedVideosAndAddNewVideoToTheStartOfDOM(newParticipantId) {
+        console.log("Start of moveMutedVideosAndAddNewVideoToTheStartOfDOM");
+
+        console.log("New participant ID is: ", newParticipantId);
+
+        // create a javascript variable to store the HTML element for new participant
+        let newParticipantThumbnail; 
+
+        // remove the local video container from DOM
+        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
+        
+        const localTVC = document.getElementById('localVideoTileViewContainer');
+        allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
+        console.log("All remote videos container: ", allVideosContainers);
+        // identify the position as to where to insert local video thumbnail
+        // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
+        let totalThumbnailsCount  = allVideosContainers.childElementCount;
+        console.log("Total thumbnails count is: ", totalThumbnailsCount);
+        let mutedThumbnailsCount = 0;
+        const allChildNodes = allVideosContainers.childNodes;
+        console.log("All child nodes are: ", allChildNodes);
+        allChildNodes.forEach((child) => {
+            let participantID = child.id;
+            console.log("Participant id: ", participantID);
+            let i = participantID.split("_")[1];
+            let rv = remoteVideos[i];
+            console.log("Remote video is: ", rv)
+            
+            if (rv.isVideoMuted) {
+                console.log("Muted remote video is: ", rv);
+                mutedThumbnailsCount = mutedThumbnailsCount + 1;
+                const mutedParticipantThumbnail = document.getElementById(participantID);
+                allVideosContainers.appendChild(mutedParticipantThumbnail);
+            }
+            
+            if(i == newParticipantId) {
+                newParticipantThumbnail = document.getElementById(participantID);
+                console.log("New participant thumbnail is: ", newParticipantThumbnail);
+            }
+        });
+        console.log("MutedThumbnailsCount is: ", mutedThumbnailsCount);
+
+        const pos = totalThumbnailsCount - mutedThumbnailsCount;
+        console.log("Position to insert local video is: ", pos)
+        allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
+
+        // insert the newly joined participant before localTVC
+        allVideosContainers.insertBefore(newParticipantThumbnail, allVideosContainers.firstChild);
+        console.log("Video container after modifying: ", allVideosContainers);
+
+        console.log("End of moveMutedVideosAndAddNewVideoToTheStartOfDOM");
     },
 
     /**

@@ -65,37 +65,6 @@ const Filmstrip = {
         });
     },
 
-    moveMutedVideos() {
-        // remove the local video container from DOM
-        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
-        console.log("All videos container: ", allVideosContainers);
-        // const localTVC = document.getElementById('localVideoTileViewContainer');
-        // allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
-
-
-        // identify the position as to where to insert local video thumbnail
-        // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
-        let totalThumbnailsCount  = allVideosContainers.childElementCount;
-        console.log("Total thumbnails count is: ", totalThumbnailsCount);
-        let mutedThumbnailsCount = 0;
-        const allChildNodes = allVideosContainers.childNodes;
-        console.log("All child nodes are: ", allChildNodes);
-        allChildNodes.forEach((child) => {
-            let participantID = child.id;
-            console.log("Participant id: ", participantID);
-            let i = participantID.split("_")[1];
-            console.log("ID is ", i);
-            let rv = remoteVideos[i];
-            console.log("Remote video is: ", rv)
-            if (rv.isVideoMuted) {
-                console.log("Muted remote video is: ", rv);
-                mutedThumbnailsCount = mutedThumbnailsCount + 1;
-            }
-        });
-        const pos = totalThumbnailsCount - mutedThumbnailsCount;
-        allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
-    },
-
     /**
      * Resizes thumbnails for horizontal view.
      *
