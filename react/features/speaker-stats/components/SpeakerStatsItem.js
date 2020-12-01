@@ -55,6 +55,10 @@ class SpeakerStatsItem extends Component<Props> {
             ? 'status-active' : 'status-inactive';
         const speakerStatusClass = `speaker-stats-item__status-dot ${dotClass}`;
 
+        //prosody(lua) gives time in seconds (not in milliseconds)
+        const joinTime = this.props.participantLog && this.props.participantLog.joinTime? this.hhmmss(new Date(1000 * this.props.participantLog.joinTime)) : '';
+        const leaveTime = this.props.participantLog && this.props.participantLog.leaveTime? this.hhmmss(new Date(1000 * this.props.participantLog.leaveTime)) : '';
+
         return (
             <div className = { rowDisplayClass }>
                 <div className = 'speaker-stats-item__status'>
@@ -68,19 +72,19 @@ class SpeakerStatsItem extends Component<Props> {
                         time = { this.props.dominantSpeakerTime } />
                 </div>
                 <div className = 'speaker-stats-item__s_time'>
-                    { this.props.participantLog && this.props.participantLog["joinTime"]? this.hhmmss(this.props.participantLog["joinTime"]) : '' }
+                    { joinTime }
                 </div>
                 <div className = 'speaker-stats-item__l_time'>
-                    { this.props.participantLog && this.props.participantLog["leaveTime"]? this.hhmmss(this.props.participantLog["leaveTime"]) : '' } 
+                    { leaveTime } 
                 </div>
             </div>
         );
     }
     
     hhmmss(hms) {
-        var hh = hms["hour"];
-        var mm = hms["min"];
-        var ss = hms["sec"];
+        var hh = hms.getHours();
+        var mm = hms.getMinutes();
+        var ss = hms.getSeconds();
 
         return [(hh>9 ? '' : '0') + hh, ':',
                 (mm>9 ? '' : '0') + mm, ':',

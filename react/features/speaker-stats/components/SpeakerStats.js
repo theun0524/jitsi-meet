@@ -10,6 +10,8 @@ import { connect } from '../../base/redux';
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
+import axios from 'axios';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -26,6 +28,10 @@ type Props = {
      * The JitsiConference from which stats will be pulled.
      */
     conference: Object,
+
+    baseURL: Object,
+
+    participants: Object,
 
     /**
      * The function to translate human-readable text.
@@ -46,7 +52,11 @@ type State = {
     /**
      * The participant logs provided by the JitsiConference.
      */
-    logs: Object
+    logs: Object,
+
+    loading: Boolean,
+
+    participants: Object
 };
 
 /**
@@ -67,8 +77,9 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: this.props.conference.getSpeakerStatsIdentity(),
-            logs: this.props.conference.getParticipantLogIdentity()
+            stats: this.props.conference.getSpeakerStats(),
+            logs: {},
+            loading: false
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -81,6 +92,8 @@ class SpeakerStats extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
+        this._loadStatsFromDB();
+
         this._updateInterval = setInterval(this._updateStats, 1000);
     }
 
@@ -101,7 +114,7 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const userIds = Object.keys(this.state.logs);
+        const userIds = Object.keys(this.state.stats);
         const items = userIds.map(userId => this._createStatsItem(userId));
 
         return (
@@ -111,7 +124,12 @@ class SpeakerStats extends Component<Props, State> {
                 titleKey = 'speakerStats.speakerStats'>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsLabels />
-                    { items }
+                    { this.state.loading? items :
+                        <div className = 'speaker-stats-item'>
+                            <div className = 'speaker-stats-item__loading'>
+                                Loading..
+                            </div> 
+                        </div> }
                 </div>
             </Dialog>
         );
@@ -174,10 +192,42 @@ class SpeakerStats extends Component<Props, State> {
      * @private
      */
     _updateStats() {
-        const stats = this.props.conference.getSpeakerStatsIdentity();
-        const logs = this.props.conference.getParticipantLogIdentity();
+        const stats = this.props.conference.getSpeakerStats();
+        const participants_changed = this.props.participants !== this.state.participants ? true : false;
 
-        this.setState({ stats, logs });
+        if(participants_changed){
+            this.setState({ ...this.state, stats: stats, loading: !participants_changed, participants: this.props.participants });
+            this._loadStatsFromDB();
+        }
+        else{
+            this.setState({ ...this.state, stats: stats });
+        }
+    }
+
+    _loadStatsFromDB: () => void;
+
+    _loadStatsFromDB(){
+        const {
+            conference,
+            baseURL
+        } = this.props;
+
+        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+        const room_name = conference.options.name;
+        const meetingId = conference.room.meetingId;
+
+        try{
+            axios.post(`${apiBaseUrl}/plog/get-participant-log`, {
+                name: room_name,
+                meetingId: meetingId
+            }).then(logs => {
+                this.setState({ ...this.state, logs: logs.data[0], loading: true });
+            });
+        }
+        catch(err){    
+            console.log(err);
+        }
     }
 }
 
@@ -200,7 +250,9 @@ function _mapStateToProps(state) {
          * @private
          * @type {string|undefined}
          */
-        _localDisplayName: localParticipant && localParticipant.name
+        _localDisplayName: localParticipant && localParticipant.name,
+        baseURL: state['features/base/connection'].locationURL,
+        participants: state['features/base/participants']
     };
 }
 
