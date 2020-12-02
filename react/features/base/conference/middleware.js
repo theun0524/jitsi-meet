@@ -466,7 +466,7 @@ function _recvVideoParCallback({ getState }, next, action) {
 
     const participants = state['features/base/participants'];
     const disableRecvVideoPars = new Set(participants
-                                    .filter(p => p.toRecvVideo === false)
+                                    .filter(p => (p.toRecvVideo === false && p.pinned === false))
                                     .map(p => p.id));
 
     // Because the data is written to redux AFTER this function happen, we need to
