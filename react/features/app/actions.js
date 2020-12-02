@@ -1,5 +1,6 @@
 // @flow
 
+import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import type { Dispatch } from 'redux';
 
@@ -40,6 +41,8 @@ import logger from './logger';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
+
+const apiBase = process.env.VMEETING_API_BASE;
 
 // eslint-disable-next-line require-jsdoc
 function getParams(uri: string) {
@@ -190,6 +193,21 @@ export function appNavigate(uri: ?string) {
             if (Date.now() < exp * 1000) {
                 dispatch(setJWT(token));
             }
+        } else if (params.siteId && params.socialId) {
+            const { siteId, socialId } = params;
+            const options = { siteId, socialId };
+
+            try {
+                const resp = await axios.post(`${apiBase}/conference/token`, options);
+                const { error, token } = resp.data;
+
+                if (token) {
+                    dispatch(setJWT(token));
+                }
+            } catch (err) {
+                console.error('Failed to get token:', err);
+            }
+
         } else {
             // Load current logged in user
             dispatch(loadCurrentUser());
