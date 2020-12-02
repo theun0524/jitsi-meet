@@ -69,8 +69,9 @@ export default class JitsiStreamPresenterEffect {
         }
 
         const { pipMode, backgroundImageUrl } = this._config;
-        const maxWidth  = this._config.layout.presenter.rect.w;
-        const maxHeight = this._config.layout.presenter.rect.w * 9 / 16;
+        const { w, h } = this._config.layout.presenter.rect;
+        const maxWidth  = w;
+        const maxHeight = h;
 
         // Set the video element properties
         this._frameRate = parseInt(frameRate, 10);
