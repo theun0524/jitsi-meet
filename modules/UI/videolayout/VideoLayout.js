@@ -314,9 +314,11 @@ const VideoLayout = {
      */
     addRemoteVideoContainer(id, remoteVideo) {
         remoteVideos[id] = remoteVideo;
-        this.moveMutedVideosAndAddNewVideoToTheStartOfDOM(id);
+        
         // Initialize the view
         remoteVideo.updateView();
+
+        this.moveMutedVideosAndAddNewVideoToTheStartOfDOM(id);
     },
 
     // FIXME: what does this do???
@@ -358,7 +360,7 @@ const VideoLayout = {
             if (remoteVideo) {
                 remoteVideo.setVideoMutedView(value);
             }
-            this.moveMutedRemoteVideoToTheEndofDOM(id);
+            // this.moveMutedRemoteVideoToTheEndofDOM(id);
         }
 
         // large video will show avatar instead of muted stream
@@ -391,7 +393,7 @@ const VideoLayout = {
 
         // identify the position as to where to insert local video thumbnail
         // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
-        let totalThumbnailsCount  = allVideosContainers.childElementCount;
+        let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
         let mutedThumbnailsCount = 0;
         const allChildNodes = allVideosContainers.childNodes;
         allChildNodes.forEach((child) => {
@@ -402,7 +404,7 @@ const VideoLayout = {
                 mutedThumbnailsCount = mutedThumbnailsCount + 1;
             }
         });
-        const pos = totalThumbnailsCount - mutedThumbnailsCount;
+        const pos = totalRemoteThumbnailsCount - mutedThumbnailsCount;
         allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
         console.log("End of moveMutedRemoteVideoToTheEndofDOM");
     },
@@ -412,50 +414,56 @@ const VideoLayout = {
 
         console.log("New participant ID is: ", newParticipantId);
 
-        // create a javascript variable to store the HTML element for new participant
-        let newParticipantThumbnail; 
+        // create a javascript variable to store the HTML element for new participant and insert before first thumbnail
+        const newParticipantThumbnail = document.getElementById('participant_'.concat(newParticipantId)); 
 
-        // remove the local video container from DOM
+        // get all participant thumbnail videos
         let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
-        
+
+        // insert the new participant thumbnail before the first participant
+        allVideosContainers.insertBefore(newParticipantThumbnail, allVideosContainers.firstChild);
+
+        // remove local participant thumbnail videos
         const localTVC = document.getElementById('localVideoTileViewContainer');
         allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
         console.log("All remote videos container: ", allVideosContainers);
-        // identify the position as to where to insert local video thumbnail
-        // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
-        let totalThumbnailsCount  = allVideosContainers.childElementCount;
-        console.log("Total thumbnails count is: ", totalThumbnailsCount);
+
+        // get total thumbnails in the current conference
+        let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
+        console.log("Total remote thumbnails count is: ", totalRemoteThumbnailsCount);
+        
+        // determine which particpants are (video) muted and store their participantId in an array
+        let mutedParticipantsIdArr = [];
         let mutedThumbnailsCount = 0;
         const allChildNodes = allVideosContainers.childNodes;
-        console.log("All child nodes are: ", allChildNodes);
         allChildNodes.forEach((child) => {
-            let participantID = child.id;
-            console.log("Participant id: ", participantID);
-            let i = participantID.split("_")[1];
+            let participantId = child.id;
+            let i = participantId.split("_")[1];
             let rv = remoteVideos[i];
-            console.log("Remote video is: ", rv)
             
             if (rv.isVideoMuted) {
                 console.log("Muted remote video is: ", rv);
                 mutedThumbnailsCount = mutedThumbnailsCount + 1;
-                const mutedParticipantThumbnail = document.getElementById(participantID);
-                allVideosContainers.appendChild(mutedParticipantThumbnail);
-            }
-            
-            if(i == newParticipantId) {
-                newParticipantThumbnail = document.getElementById(participantID);
-                console.log("New participant thumbnail is: ", newParticipantThumbnail);
+                mutedParticipantsIdArr.push(participantId);
             }
         });
         console.log("MutedThumbnailsCount is: ", mutedThumbnailsCount);
 
-        const pos = totalThumbnailsCount - mutedThumbnailsCount;
-        console.log("Position to insert local video is: ", pos)
-        allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
+        // loop through the array and append muted videos to the end of DOM
+        mutedParticipantsIdArr.forEach((mutedParticipantId) => {
+            const mutedParticipantThumbnail = document.getElementById(mutedParticipantId);
+            allVideosContainers.appendChild(mutedParticipantThumbnail);
+        });
 
-        // insert the newly joined participant before localTVC
-        allVideosContainers.insertBefore(newParticipantThumbnail, allVideosContainers.firstChild);
-        console.log("Video container after modifying: ", allVideosContainers);
+        // position before to put local video container
+        const pos = totalRemoteThumbnailsCount - mutedThumbnailsCount;
+        console.log("Position before to insert local video is: ", pos);
+        if(mutedThumbnailsCount > 0) {
+            allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
+        } else {
+            allVideosContainers.appendChild(localTVC);
+        }
+        
 
         console.log("End of moveMutedVideosAndAddNewVideoToTheStartOfDOM");
     },
