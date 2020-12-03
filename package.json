@@ -106,7 +106,7 @@
     "rtcstats": "github:jitsi/rtcstats#v6.2.0",
     "string-template": "1.0.0",
     "styled-components": "3.4.9",
-    "underscore": "^1.11.0",
+    "underscore": "^1.12.0",
     "util": "0.12.1",
     "uuid": "3.1.0",
     "windows-iana": "^3.1.0",
