@@ -97,7 +97,7 @@ import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
 import AudioSettingsContent, { type Props as AudioSettingsContentProps } from '../../../settings/components/web/audio/AudioSettingsContent';
-let _ = require('underscore');
+import { range } from 'underscore';
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
@@ -1416,7 +1416,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     _renderTileConfigButton = () => {
-        const arr = _.range(interfaceConfig.TILE_VIEW_MIN_COLS, interfaceConfig.TILE_VIEW_MAX_COLUMNS + 1, 1);
+        const arr = range(interfaceConfig.TILE_VIEW_MIN_COLS, interfaceConfig.TILE_VIEW_MAX_COLUMNS + 1, 1);
         const tilerow = arr.map((element) => (
             <div className = 'audio-preview-microphone'>
                 <div className = { `audio-preview-entry ${element == getMaxColumnCount() ? 'audio-preview-entry--selected' : ''}`}
