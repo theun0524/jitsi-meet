@@ -82,7 +82,6 @@ deploy-local:
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
-
 dev-start:
 	$(WEBPACK_DEV_SERVER)
 
