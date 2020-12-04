@@ -450,7 +450,6 @@ const VideoLayout = {
             let participantId = child.id;
             let i = participantId.split("_")[1];
             let rv = remoteVideos[i];
-            console.log()
             if (rv.isVideoMuted) {
                 mutedThumbnailsCount = mutedThumbnailsCount + 1;
                 mutedParticipantsIdArr.push(participantId);
