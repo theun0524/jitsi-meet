@@ -58,7 +58,6 @@ let beforeUnloadHandler;
 /**
  * parameters for RECV_VIDEO_PARTICIPANT action.
  */
-const WAIT_TIME = 100;
 let recvVideoParCallbackId = null;
 
 /**
@@ -98,7 +97,7 @@ MiddlewareRegistry.register(store => next => action => {
         return _pinParticipant(store, next, action);
 
     case RECV_VIDEO_PARTICIPANT:
-        return _recvVideoParticipant(store, next, action);
+        return _recvVideoParticipantDebounced(store, next, action);
 
     case SEND_TONES:
         return _sendTones(store, next, action);
@@ -447,12 +446,16 @@ function _pinParticipant({ getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _recvVideoParticipant({ getState }, next, action) {
+function _recvVideoParticipantDebounced({ getState }, next, action) {
     if (recvVideoParCallbackId !== null) {
         clearTimeout(recvVideoParCallbackId);
     }
+    const config = getState()['features/base/config'];
+    const debounceTimeout = config.lastOnScreenDebounceTimeout === 'undefined' ?
+                        100 : config.lastOnScreenDebounceTimeout;
+
     recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
-                                        WAIT_TIME);
+                                                debounceTimeout);
     return next(action);
 }
 
