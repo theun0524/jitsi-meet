@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 
 import TimeElapsed from './TimeElapsed';
-
+import { BaseIndicator } from '../../base/react';
+import { IconMicrophone, IconMicDisabled, IconCamera, IconCameraDisabled } from '../../base/icons'
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
  */
@@ -33,6 +34,16 @@ type Props = {
      * The participants' join/leave time.
      */
     participantLog: Object,
+
+    /**
+     * True if the participant's video is muted.
+     */
+    videoMuted: boolean,
+
+    /**
+     * True if the participant's audio is muted.
+     */
+    audioMuted: boolean,
 };
 
 /**
@@ -59,13 +70,16 @@ class SpeakerStatsItem extends Component<Props> {
         const joinTime = this.props.participantLog && this.props.participantLog.joinTime? this.hhmmss(new Date(1000 * this.props.participantLog.joinTime)) : '';
         const leaveTime = this.props.participantLog && this.props.participantLog.leaveTime? this.hhmmss(new Date(1000 * this.props.participantLog.leaveTime)) : '';
 
+        const videoMuted = this.props.videoMuted;
+        const audioMuted = this.props.audioMuted;
+
         return (
             <div className = { rowDisplayClass }>
                 <div className = 'speaker-stats-item__status'>
                     <span className = { speakerStatusClass } />
                 </div>
-                <div className = 'speaker-stats-item__name'>
-                    { this.props.displayName }
+                <div className = 'speaker-stats-item__name'> 
+                    { this.props.displayName } &nbsp; { this.displayAudioStatus(audioMuted) } &nbsp; { this.displayVideoStatus(videoMuted) }
                 </div>
                 <div className = 'speaker-stats-item__time'>
                     <TimeElapsed
@@ -78,6 +92,44 @@ class SpeakerStatsItem extends Component<Props> {
                     { leaveTime } 
                 </div>
             </div>
+        );
+    }
+
+    displayAudioStatus(audioMuted) {
+        let iconClass;
+        if(audioMuted) {
+            iconClass = IconMicDisabled;
+        }
+        else {
+            iconClass = IconMicrophone;
+        }
+        return(
+            <BaseIndicator
+                className = 'audioMuted toolbar-icon'
+                icon = { iconClass }
+                iconId = 'mic-disabled'
+                iconSize = { 13 }
+                tooltipKey = 'videothumbnail.mute'
+                tooltipPosition = { 'top' } />
+        );
+    }
+
+    displayVideoStatus(videoMuted) {
+        let iconClass;
+        if(videoMuted) {
+            iconClass = IconCameraDisabled;
+        }
+        else {
+            iconClass = IconCamera;
+        }
+        return(
+            <BaseIndicator
+                className = 'videoMuted toolbar-icon'
+                icon = { iconClass }
+                iconId = 'camera-disabled'
+                iconSize = { 16 }
+                tooltipKey = 'videothumbnail.videomute'
+                tooltipPosition = { 'top' } />
         );
     }
     

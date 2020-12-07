@@ -30,7 +30,7 @@
     .speaker-stats-item__time,
     .speaker-stats-item__s_time,
     .speaker-stats-item__l_time {
-        display: inline-block;
+        display: inline-flex;
         margin: 5px 0;
         vertical-align: middle;
     }
@@ -38,16 +38,16 @@
         width: 5%;
     }
     .speaker-stats-item__name {
-        width: 25%;
+        width: 35%;
     }
     .speaker-stats-item__time {
-        width: 30%;
+        width: 20%;
     }
     .speaker-stats-item__s_time {
-        width: 20%;
+        width: 15%;
     }
     .speaker-stats-item__l_time {
-        width: 20%;
+        width: 15%;
     }
 
     .speaker-stats-item__name,
