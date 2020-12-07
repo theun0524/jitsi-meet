@@ -167,7 +167,9 @@ class SpeakerStats extends Component<Props, State> {
             <Dialog
                 cancelKey = { 'dialog.close' }
                 customHeader = { this._customHeader }
-                submitDisabled = { true }>
+                submitDisabled = { true }
+                width = { 'large' }
+                titleKey = 'speakerStats.speakerStats'>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsLabels />
                     { this.state.loading ? <Spinner appearance = 'invert' /> : items }
@@ -191,6 +193,21 @@ class SpeakerStats extends Component<Props, State> {
         if (!statsModel || !logModel) {
             return null;
         }
+
+        // variables for indicating whether or not audio and video is accessible
+        // the variables videoMuted and audioMuted will be passed as props to SpeakerStatsItem
+        const participantId = statsModel._userId;
+        let videoMuted = false;
+        let audioMuted = false;
+        const tracks = Object.values(APP.store.getState()['features/base/tracks'])
+        tracks.forEach((track) => {
+            if(track.participantId == participantId && track.mediaType == "video") {
+                videoMuted = track.muted;
+            }
+            if(track.participantId == participantId && track.mediaType == "audio") {
+                audioMuted = track.muted;
+            }
+        });
 
         const isDominantSpeaker = statsModel.isDominantSpeaker();
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
@@ -220,6 +237,8 @@ class SpeakerStats extends Component<Props, State> {
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 participantLog = { participantLog }
+                videoMuted = { videoMuted }
+                audioMuted = { audioMuted }
                 key = { userId } />
         );
     }
