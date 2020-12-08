@@ -4,6 +4,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { hideNotification } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getAvailableDevices } from '../devices/actions';
+import { selectParticipant } from '../../large-video/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -34,6 +35,7 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
+import { findSelectedParticipant } from '../../large-video/functions';
 
 declare var APP: Object;
 
@@ -162,6 +164,11 @@ MiddlewareRegistry.register(store => next => action => {
                     APP.conference.setVideoMuteStatus(muted);
                 } else {
                     APP.UI.setVideoMuted(participantID, muted);
+
+                    const found = findSelectedParticipant(participantID);
+                    if (found === muted) {
+                        store.dispatch(selectParticipant());
+                    }
                 }
                 APP.UI.onPeerVideoTypeChanged(participantID, jitsiTrack.videoType);
             } else if (jitsiTrack.isLocal()) {
