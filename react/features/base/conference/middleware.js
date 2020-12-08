@@ -451,8 +451,8 @@ function _recvVideoParticipantDebounced({ getState }, next, action) {
         clearTimeout(recvVideoParCallbackId);
     }
     const config = getState()['features/base/config'];
-    const debounceTimeout = config.lastOnScreenDebounceTimeout === 'undefined' ?
-                        100 : config.lastOnScreenDebounceTimeout;
+    const debounceTimeout = config.inViewportDebounceTimeout === 'undefined' ?
+                        100 : config.inViewportDebounceTimeout;
 
     recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
                                                 debounceTimeout);
