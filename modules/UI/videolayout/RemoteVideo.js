@@ -347,6 +347,7 @@ export default class RemoteVideo extends SmallVideo {
      */
     setVideoMutedView(isMuted) {
         super.setVideoMutedView(isMuted);
+        logger.log("set video mute called");
 
         // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
