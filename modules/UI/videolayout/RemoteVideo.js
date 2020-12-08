@@ -38,23 +38,17 @@ const logger = Logger.getLogger(__filename);
  * @param {*} userId
  */
 function createContainer(spanId, userId) {
-    let _container = document.createElement('span');
-
-    const config = APP.store.getState()['features/base/config'];
-    const onlyRecvInViewportVideos = typeof config.onlyRecvInViewportVideos === 'undefined' ?
-        true : (config.onlyRecvInViewportVideos === true || config.onlyRecvInViewportVideos === 1);
-    if (onlyRecvInViewportVideos === true) {
-        var onInViewportChange = (inView, entry) => {
-            APP.store.dispatch(recvVideoParticipant(userId, inView === true));
-        }
-        ReactDOM.render(
-            <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
-            _container
-        );
+    const _container = document.createElement('span');
+    var onInViewportChange = (inView, entry) => {
+        APP.store.dispatch(recvVideoParticipant(userId, inView === true));
     }
+    ReactDOM.render(
+        <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
+        _container
+    );
     // FIXME: (tu-nv) reactDOM render another span element inside current span element,
     // thus we need to strip the outer video tag. There should be a better way to do this
-    const container = (onlyRecvInViewportVideos === true) ? _container.firstChild : _container;
+    const container = _container.firstChild;
 
     container.id = spanId;
     container.className = 'videocontainer';

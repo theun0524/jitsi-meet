@@ -221,8 +221,7 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
-    // Enable/disable client to only recv video of participants currently on the screen (viewport)
-    onlyRecvInViewportVideos: true,
+    // debounce timeout for sending message to jvb about in viewport endpoints to recv video from
     inViewportDebounceTimeout: 200,
 
     // Provides a way to use different "last N" values based on the number of participants in the conference.
