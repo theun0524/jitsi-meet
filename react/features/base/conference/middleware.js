@@ -451,8 +451,8 @@ function _recvVideoParticipantDebounced({ getState }, next, action) {
         clearTimeout(recvVideoParCallbackId);
     }
     const config = getState()['features/base/config'];
-    const debounceTimeout = config.lastOnScreenDebounceTimeout === 'undefined' ?
-                        100 : config.lastOnScreenDebounceTimeout;
+    const debounceTimeout = config.inViewportDebounceTimeout === 'undefined' ?
+                        100 : config.inViewportDebounceTimeout;
 
     recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
                                                 debounceTimeout);
@@ -468,21 +468,21 @@ function _recvVideoParCallback({ getState }, next, action) {
     }
 
     const participants = state['features/base/participants'];
-    const disableRecvVideoPars = new Set(participants
-                                    .filter(p => (p.toRecvVideo === false && p.pinned === false))
+    const recvVideoPars = new Set(participants
+                                    .filter(p => (p.toRecvVideo === true))
                                     .map(p => p.id));
 
     // Because the data is written to redux AFTER this function happen, we need to
     // consider the current user id separatedly
     const id = action.participant.id;
     const toRecvVideo = action.participant.toRecvVideo;
-    (toRecvVideo === false) ? disableRecvVideoPars.add(id) : disableRecvVideoPars.delete(id);
+    (toRecvVideo === true) ? recvVideoPars.add(id) : recvVideoPars.delete(id);
 
-    // Do not disable large-video
-    const largeVideoId = state['features/large-video'].participantId;
-    disableRecvVideoPars.delete(largeVideoId)
+    // alway receive large-video id
+    // const largeVideoId = state['features/large-video'].participantId;
+    // recvVideoPars.add(largeVideoId)
 
-    conference.disableRecvVideoParticipants(Array.from(disableRecvVideoPars));
+    conference.recvVideoParticipants(Array.from(recvVideoPars));
 }
 
 /**

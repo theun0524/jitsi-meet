@@ -38,23 +38,17 @@ const logger = Logger.getLogger(__filename);
  * @param {*} userId
  */
 function createContainer(spanId, userId) {
-    let _container = document.createElement('span');
-
-    const config = APP.store.getState()['features/base/config'];
-    const enableLastOnScreen = typeof config.enableLastOnScreen === 'undefined' ?
-        true : (config.enableLastOnScreen === true || config.enableLastOnScreen === 1);
-    if (enableLastOnScreen === true) {
-        var onInViewportChange = (inView, entry) => {
-            APP.store.dispatch(recvVideoParticipant(userId, inView === true));
-        }
-        ReactDOM.render(
-            <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
-            _container
-        );
+    const _container = document.createElement('span');
+    var onInViewportChange = (inView, entry) => {
+        APP.store.dispatch(recvVideoParticipant(userId, inView === true));
     }
+    ReactDOM.render(
+        <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
+        _container
+    );
     // FIXME: (tu-nv) reactDOM render another span element inside current span element,
     // thus we need to strip the outer video tag. There should be a better way to do this
-    const container = (enableLastOnScreen === true) ? _container.firstChild : _container;
+    const container = _container.firstChild;
 
     container.id = spanId;
     container.className = 'videocontainer';
@@ -347,6 +341,7 @@ export default class RemoteVideo extends SmallVideo {
      */
     setVideoMutedView(isMuted) {
         super.setVideoMutedView(isMuted);
+        logger.log("set video mute called");
 
         // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
