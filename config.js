@@ -241,34 +241,36 @@ var config = {
     // },
 
     // Specify the settings for video quality optimizations on the client.
-    // videoQuality: {
-    //
-    //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
-    //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
-    //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
-    //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
-    //    // This is currently not implemented on app based clients on mobile.
-    //    maxBitratesVideo: {
-    //        low: 200000,
-    //        standard: 500000,
-    //        high: 1500000
-    //    },
-    //
-    //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
-    //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
-    //    //     'low' - for the low quality level (180p at the time of this writing)
-    //    //     'standard' - for the medium quality level (360p)
-    //    //     'high' - for the high quality level (720p)
-    //    // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
-    //    //
-    //    // With the default config value below the application will use 'low' quality until the thumbnails are
-    //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
-    //    // the high quality.
-    //    minHeightForQualityLvl: {
-    //        360: 'standard,
-    //        720: 'high'
-    //    }
-    // },
+    videoQuality: {
+    
+       // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
+       // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
+       // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
+       // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
+       // This is currently not implemented on app based clients on mobile.
+       maxBitratesVideo: {
+           low: 200000,
+           standard: 500000,
+           high: 1500000
+       },
+    
+       // The options can be used to override default thresholds of video thumbnail heights corresponding to
+       // the video quality levels used in the application. At the time of this writing the allowed levels are:
+       //     'low' - for the low quality level (180p at the time of this writing)
+       //     'standard' - for the medium quality level (360p)
+       //     'high' - for the high quality level (720p)
+       // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
+       //
+       // With the default config value below the application will use 'low' quality until the thumbnails are
+       // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
+       // the high quality.
+       minHeightForQualityLvl: {
+           360: 'standard',
+           720: 'high'
+       },
+
+       resizeDesktopForPresenter: true,
+    },
 
     // // Options for the recording limit notification.
     // recordingLimit: {

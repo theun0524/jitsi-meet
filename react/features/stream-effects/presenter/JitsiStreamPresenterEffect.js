@@ -109,6 +109,29 @@ export default class JitsiStreamPresenterEffect {
         }
     }
 
+    _getObjectFitSize(contains, width, height) {
+        const dRatio = width / height;
+        const cRatio = this._canvas.width / this._canvas.height;
+        let targetWidth = 0;
+        let targetHeight = 0;
+        const test = contains ? (dRatio > cRatio) : (dRatio < cRatio);
+
+        if (test) {
+            targetWidth = this._canvas.width;
+            targetHeight = targetWidth / dRatio;
+        } else {
+            targetHeight = this._canvas.height;
+            targetWidth = targetHeight * dRatio;
+        }
+
+        return {
+            w: targetWidth,
+            h: targetHeight,
+            x: (this._canvas.width - targetWidth) / 2,
+            y: (this._canvas.height - targetHeight) / 2,
+        };
+    }
+
     /**
      * Loop function to render the video frame input and draw presenter effect.
      *
@@ -120,8 +143,6 @@ export default class JitsiStreamPresenterEffect {
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
 
-        this._desktopElement.width = parseInt(width, 10);
-        this._desktopElement.height = parseInt(height, 10);
         this._canvas.width = CANVAS_WIDTH;
         this._canvas.height = CANVAS_HEIGHT;
 
@@ -184,7 +205,12 @@ export default class JitsiStreamPresenterEffect {
                 lineY += lineHeight;
             }
         } else {
-            this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width, this._canvas.height);
+            const { x, y, w, h } = this._getObjectFitSize(true, width, height);
+            this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+            this._ctx.drawImage(this._desktopElement,
+                0, 0, width, height,
+                x, y, w, h);
+
             this._ctx.drawImage(
                 this._videoElement,
                 this._canvas.width - this._videoElement.width,
