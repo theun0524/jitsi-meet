@@ -6,7 +6,7 @@
     flex-direction: column;
     overflow: hidden;
     position: absolute;
-    z-index: $sideToolbarContainerZ;
+    // z-index: $sideToolbarContainerZ;
 
     /**
      * The sidebar (chat) is off-screen when hidden. Move it flush to the left
