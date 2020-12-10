@@ -46,6 +46,7 @@ import {
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Middleware that captures CONFERENCE_JOINED and CONFERENCE_LEFT actions and
@@ -329,7 +330,8 @@ function _maybePlaySounds({ getState, dispatch }, action) {
     // The intention there was to not play user joined notification in big
     // conferences where 100th person is joining.
     if (!action.participant.local
-            && (!startAudioMuted
+        && !interfaceConfig.DISABLE_JOIN_LEAVE_NOTIFICATION_SOUND
+        && (!startAudioMuted
                 || getParticipantCount(state) < startAudioMuted)) {
         if (action.type === PARTICIPANT_JOINED) {
             const { presence } = action.participant;

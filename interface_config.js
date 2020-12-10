@@ -64,19 +64,21 @@ var interfaceConfig = {
     DEFAULT_REMOTE_DISPLAY_NAME: 'Vmeeter',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.png?v=2',
 
-    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+    DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
 
-    DISABLE_FOCUS_INDICATOR: false,
+    DISABLE_FOCUS_INDICATOR: true,
 
     /**
      * If true, notifications regarding joining/leaving are no longer displayed.
      */
-    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+    DISABLE_JOIN_LEAVE_NOTIFICATION_SOUND: true,
 
     /**
      * If true, presence status: busy, calling, connected etc. is not displayed.
      */
     DISABLE_PRESENCE_STATUS: false,
+    DISABLE_MUTED_NOTIFICATION: true,
 
     /**
      * Whether the ringing sound in the call/ring overlay is disabled. If
@@ -98,7 +100,7 @@ var interfaceConfig = {
      * Whether or not the blurred video background for large video should be
      * displayed on browsers that can support it.
      */
-    DISABLE_VIDEO_BACKGROUND: false,
+    DISABLE_VIDEO_BACKGROUND: true,
 
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
@@ -189,7 +191,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto:vmeeting-info@postech.ac.kr',
+    SUPPORT_URL: 'mailto:vmeeting-info@kedutech.kr',
 
     THIRD_PARTY_AUTH_ENABLED: false,
 
