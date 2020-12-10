@@ -1366,10 +1366,12 @@ class Toolbox extends Component<Props, State> {
                         visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
                     { this.props._tileViewEnabled && this._areParticipantsMoreThanInCurrentDisplay() &&<ToolbarButton
+                        key = 'upSlideButton'
                         icon = { IconMenuUp }
                         onClick = {() => $('#filmstripRemoteVideos').animate({ scrollTop: $('#filmstripRemoteVideos').scrollTop() - window.innerHeight}, "slow") }
                         tooltip = { 'Click to slide up' } /> }
                     { this.props._tileViewEnabled && this._areParticipantsMoreThanInCurrentDisplay() && <ToolbarButton
+                        key = 'downSlideButton'
                         icon = { IconMenuDown }
                         onClick = {() => $('#filmstripRemoteVideos').animate({ scrollTop: $('#filmstripRemoteVideos').scrollTop() + window.innerHeight}, "slow") }
                         tooltip = { 'Click to slide down' } /> }
@@ -1418,7 +1420,7 @@ class Toolbox extends Component<Props, State> {
     _renderTileConfigButton = () => {
         const arr = _.range(interfaceConfig.TILE_VIEW_MIN_COLS, interfaceConfig.TILE_VIEW_MAX_COLUMNS + 1, 1);
         const tilerow = arr.map((element) => (
-            <div className = 'audio-preview-microphone'>
+            <div key = { element } className = 'audio-preview-microphone'>
                 <div className = { `audio-preview-entry ${element == getMaxColumnCount() ? 'audio-preview-entry--selected' : ''}`}
                     onClick={ () => {
                             setMaxColumnCount(element);
