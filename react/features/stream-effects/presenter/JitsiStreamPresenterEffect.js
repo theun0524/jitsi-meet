@@ -143,10 +143,10 @@ export default class JitsiStreamPresenterEffect {
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
 
-        this._canvas.width = CANVAS_WIDTH;
-        this._canvas.height = CANVAS_HEIGHT;
-
         if (!this._config.pipMode) {
+            this._canvas.width = CANVAS_WIDTH;
+            this._canvas.height = CANVAS_HEIGHT;
+    
             let rc = this._config.layout.desktop.rect;
             let { w, h } = rc;
 
@@ -205,11 +205,16 @@ export default class JitsiStreamPresenterEffect {
                 lineY += lineHeight;
             }
         } else {
-            const { x, y, w, h } = this._getObjectFitSize(true, width, height);
-            this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-            this._ctx.drawImage(this._desktopElement,
-                0, 0, width, height,
-                x, y, w, h);
+            this._canvas.width = parseInt(width, 10);
+            this._canvas.height = parseInt(height, 10);
+
+            this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width, this._canvas.height);
+            // const { x, y, w, h } = this._getObjectFitSize(true, width, height);
+            // this._ctx.fillStyle = '#474747';
+            // this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+            // this._ctx.drawImage(this._desktopElement,
+            //     0, 0, width, height,
+            //     x, y, w, h);
 
             this._ctx.drawImage(
                 this._videoElement,
