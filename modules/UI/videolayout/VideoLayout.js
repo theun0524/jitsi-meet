@@ -7,7 +7,8 @@ import {
     getLocalParticipant as getLocalParticipantFromStore,
     getPinnedParticipant,
     getParticipantById,
-    pinParticipant
+    pinParticipant,
+    getParticipantCount
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
@@ -378,6 +379,13 @@ const VideoLayout = {
     moveMutedRemoteVideoToTheEndofDOM(id = 0) {
         // default parameter id=0 for moving all muted remote videos to end of DOM
         // when parameter id has a value, we mute only that participant and move to end of DOM
+        
+        // when there is only one participant, the console will log error when 
+        // we try to remove elements from filmstrip remote container
+        // so we dont want to execute this function if there is only one participant
+        if(getParticipantCount(APP.store.getState()) == 1) {
+            return;
+        }
 
         //create an array to store mutedParticipantsList
         let mutedParticipantsList = [];
@@ -436,11 +444,9 @@ const VideoLayout = {
         // remove local participant thumbnail videos
         const localTVC = document.getElementById('localVideoTileViewContainer');
         allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
-        console.log("All remote videos container: ", allVideosContainers);
 
         // get total thumbnails in the current conference
         let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
-        console.log("Total remote thumbnails count is: ", totalRemoteThumbnailsCount);
         
         // determine which particpants are (video) muted and store their participantId in an array
         let mutedParticipantsIdArr = [];
