@@ -93,10 +93,11 @@
             align-items: center;
             justify-content: center;
             flex-grow: 0;
-            padding-right: 30px;
+            padding-right: 2em;
 
             @include media-breakpoint-up(md) {
                 display: flex;
+                padding-right: 5em;
             }
         }
 

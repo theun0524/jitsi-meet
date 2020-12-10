@@ -221,6 +221,9 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
+    // debounce timeout for sending message to jvb about in viewport endpoints to recv video from
+    inViewportDebounceTimeout: 200,
+
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
     // participants gets to or above the number.
@@ -238,34 +241,36 @@ var config = {
     // },
 
     // Specify the settings for video quality optimizations on the client.
-    // videoQuality: {
-    //
-    //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
-    //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
-    //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
-    //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
-    //    // This is currently not implemented on app based clients on mobile.
-    //    maxBitratesVideo: {
-    //        low: 200000,
-    //        standard: 500000,
-    //        high: 1500000
-    //    },
-    //
-    //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
-    //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
-    //    //     'low' - for the low quality level (180p at the time of this writing)
-    //    //     'standard' - for the medium quality level (360p)
-    //    //     'high' - for the high quality level (720p)
-    //    // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
-    //    //
-    //    // With the default config value below the application will use 'low' quality until the thumbnails are
-    //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
-    //    // the high quality.
-    //    minHeightForQualityLvl: {
-    //        360: 'standard,
-    //        720: 'high'
-    //    }
-    // },
+    videoQuality: {
+    
+       // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
+       // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
+       // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
+       // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
+       // This is currently not implemented on app based clients on mobile.
+       maxBitratesVideo: {
+           low: 200000,
+           standard: 500000,
+           high: 1500000
+       },
+    
+       // The options can be used to override default thresholds of video thumbnail heights corresponding to
+       // the video quality levels used in the application. At the time of this writing the allowed levels are:
+       //     'low' - for the low quality level (180p at the time of this writing)
+       //     'standard' - for the medium quality level (360p)
+       //     'high' - for the high quality level (720p)
+       // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
+       //
+       // With the default config value below the application will use 'low' quality until the thumbnails are
+       // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
+       // the high quality.
+       minHeightForQualityLvl: {
+           360: 'standard',
+           720: 'high'
+       },
+
+       resizeDesktopForPresenter: true,
+    },
 
     // // Options for the recording limit notification.
     // recordingLimit: {
@@ -348,7 +353,7 @@ var config = {
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
-    enableUserRolesBasedOnToken: false,
+    enableUserRolesBasedOnToken: true,
 
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
@@ -675,14 +680,25 @@ var config = {
 
     presenter: {
         startEnabled: true, // default: true
-        maxWidth: 160,      // default: 240
 
         /* pipMode for presenter video. default is true.
          * if true, presenter appears inside the video in right bottom.
          * if false, presenter appears outside the video in right bottom.
          */
         pipMode: true,
-        // backgroundImageUrl: https://conf.vmeeting.io/images/onk2020_bg.png,
+        // backgroundImageUrl: '/images/onk2020_bg.png',
+        layout: {
+            background: { w: 1280, h: 720 },
+            desktop: {
+                rect: { x: 260, y: 122, w: 980, h: 551 },
+            },
+            presenter: {
+                rect: { x: 40, y: 122, w: 180, h: 135 },
+                outline: { color: '#A9A9A9', width: 2 },
+                name: { color: 'white', fontSize: 18, fontFamily: '맑은 고딕', lineHeight: 1.5, x: 40, y: 265 },
+                title: { color: 'white', fontSize: 14, fontFamily: '맑은 고딕', lineHeight: 1.5, x: 40, y: 289 },
+            },
+        },
     },
 
     // Allow all above example options to include a trailing comma and

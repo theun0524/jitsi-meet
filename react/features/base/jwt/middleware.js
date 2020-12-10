@@ -231,7 +231,7 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin }) {
+function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin, background }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -253,6 +253,9 @@ function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdm
     }
     if (typeof username === 'string') {
         participant.username = username;
+    }
+    if (typeof background === 'string') {
+        participant.background = background;
     }
 
     return Object.keys(participant).length ? participant : undefined;

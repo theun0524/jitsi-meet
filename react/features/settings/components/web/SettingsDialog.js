@@ -2,6 +2,10 @@
 
 import React, { Component } from 'react';
 
+import {
+    BackgroundSelection,
+    submitBackgroundSelectionTab
+} from '../../../background-selection';
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
@@ -14,6 +18,7 @@ import {
 import { submitMoreTab, submitProfileTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import { getMoreTabProps, getProfileTabProps } from '../../functions';
+import { getUserSelectedCameraDeviceId } from '../../../base/settings';
 
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
@@ -126,16 +131,19 @@ class SettingsDialog extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-    const jwt = state['features/base/jwt'];
 
     // The settings sections to display.
     const showDeviceSettings = configuredTabs.includes('devices');
     const moreTabProps = getMoreTabProps(state);
     const { showModeratorSettings, showLanguageSettings, showPrejoinSettings } = moreTabProps;
     const showProfileSettings
-        = configuredTabs.includes('profile') && jwt.isGuest;
+        = configuredTabs.includes('profile');
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const _user = state['features/base/jwt'].user;
+    const _jwt = state['features/base/jwt'].jwt;
+    const showBackgroundSettings
+        = configuredTabs.includes('background') && !!_user;
     const tabs = [];
 
     if (showDeviceSettings) {
@@ -172,6 +180,21 @@ function _mapStateToProps(state) {
             props: getProfileTabProps(state),
             styles: 'settings-pane profile-pane',
             submit: submitProfileTab
+        });
+    }
+
+    if (showBackgroundSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.BACKGROUND,
+            component: BackgroundSelection,
+            label: 'settings.background',
+            props: {
+                selectedVideoInputId: getUserSelectedCameraDeviceId(state),
+                _user,
+                _jwt,
+            },
+            styles: 'settings-pane backgrounds-pane',
+            submit: submitBackgroundSelectionTab
         });
     }
 

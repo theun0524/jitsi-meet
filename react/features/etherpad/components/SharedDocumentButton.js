@@ -29,8 +29,8 @@ type Props = AbstractButtonProps & {
 class SharedDocumentButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.toggleWhiteboard';
     icon = IconEdit;
-    label = 'toolbar.whiteboardClose';
-    toggledLabel = 'toolbar.whiteboardOpen';
+    label = 'toolbar.whiteboardOpen';
+    toggledLabel = 'toolbar.whiteboardClose';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.

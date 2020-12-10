@@ -1,5 +1,6 @@
 // @flow
 
+import { find, xor } from 'lodash';
 import type { Dispatch } from 'redux';
 
 import {
@@ -16,6 +17,10 @@ import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
+import {
+    getSelectedParticipants,
+    setSelectedParticipants
+} from './functions';
 
 declare var APP: Object;
 
@@ -31,11 +36,19 @@ export function selectParticipant() {
 
         if (conference) {
             const ids = shouldDisplayTileView(state)
-                ? getParticipants(state).map(participant => participant.id)
+                ? getParticipants(state)
+                    .filter(participant => find(
+                        state['features/base/tracks'],
+                        { mediaType: 'video', participantId: participant.id, muted: false }
+                    ))
+                    .map(participant => participant.id)
                 : [ state['features/large-video'].participantId ];
 
             try {
-                conference.selectParticipants(ids);
+                if (xor(ids, getSelectedParticipants()).length !== 0) {
+                    conference.selectParticipants(ids);
+                    setSelectedParticipants(ids);
+                }
             } catch (err) {
                 _handleParticipantError(err);
 

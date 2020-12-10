@@ -36,7 +36,7 @@ local function check_for_max_occupants(event)
 		local slots = MAX_OCCUPANTS;
 
 		-- If there is no whitelist, just check the count.
-		if not whitelist and count >= MAX_OCCUPANTS then
+		if not whitelist and count > MAX_OCCUPANTS then
 			module:log("info", "Attempt to enter a maxed out MUC");
 			origin.send(st.error_reply(stanza, "cancel", "service-unavailable"));
 			return true;
