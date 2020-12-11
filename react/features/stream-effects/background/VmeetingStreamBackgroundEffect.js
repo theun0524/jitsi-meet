@@ -71,6 +71,7 @@ export default class VmeetingStreamBackgroundEffect {
             segmentationThreshold: 0.7 // represents probability that a pixel belongs to a person
         });
         this._videoInProgress = false;
+
         this.drawBody();
     }
 
@@ -156,19 +157,17 @@ export default class VmeetingStreamBackgroundEffect {
         if (!this._segmentationData) return;
 
         const { width, height } = this._videoElement;
-
-        this._ctx.drawImage(this._videoElement, 0, 0, width, height);
-        const mixData = this._ctx.getImageData(0, 0, width, height);
-        const pixel = mixData.data;
-
-        const foregroundColor = { r: 0, g: 0, b: 0, a: 255 };
-        const backgroundColor = { r: 0, g: 0, b: 0, a: 0 };
+        const foregroundColor = { r: 0, g: 0, b: 0, a: 0 };
+        const backgroundColor = { r: 0, g: 0, b: 0, a: 255 };
         const coloredPartImage = bodyPix.toMask(this._segmentationData, foregroundColor, backgroundColor);
         const opacity = 1;
         const flipHorizontal = false;
         const maskBlurAmount = 3;
-        bodyPix.drawMask(this._canvas, this._backgroundElement, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
-        // this._ctx.drawImage(this._backgroundElement, 0, 0, width, height);
+        bodyPix.drawMask(this._canvas, this._videoElement, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
+        const mixData = this._ctx.getImageData(0, 0, width, height);
+        const pixel = mixData.data;
+
+        this._ctx.drawImage(this._backgroundElement, 0, 0, width, height);
         const back = this._ctx.getImageData(0, 0, width, height).data;
         for (let p = 0; p < pixel.length; p += 4) {
             if (this._segmentationData.data[p/4] == 0) {
