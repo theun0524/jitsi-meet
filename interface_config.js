@@ -163,7 +163,7 @@ var interfaceConfig = {
     RECENT_LIST_ENABLED: true,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'background' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
     SHOW_BRAND_WATERMARK: false,
 
     /**
@@ -205,7 +205,7 @@ var interfaceConfig = {
         'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
+        'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
     ],
 
     TOOLBAR_TIMEOUT: 4000,
@@ -242,7 +242,7 @@ var interfaceConfig = {
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
-    TILE_VIEW_MAX_COLUMNS: 7,
+    TILE_VIEW_MAX_COLUMNS: 4,
     TILE_VIEW_MODE_DISABLED: true,
 
     /**

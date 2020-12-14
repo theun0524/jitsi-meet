@@ -372,15 +372,17 @@ class Filmstrip extends Component<Props> {
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
     const { hovered, visible } = state['features/filmstrip'];
+    const { isGuest } = state['features/base/jwt'];
+    const _visible = visible && !isGuest;
     const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight
         = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
-    const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
+    const remoteVideosVisible = shouldRemoteVideosBeVisible(state) && !isGuest;
     const { isOpen: shift } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
         reduceHeight && ['left', 'overlay'].includes(interfaceConfig.CHAT_ON_LAYOUT) ? 'reduce-height' : ''
     } ${shift ? ({ left: 'shift-right', bottom: 'shift-up' }[interfaceConfig.CHAT_ON_LAYOUT] || '') : ''}`.trim();
-    const videosClassName = `filmstrip__videos${isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${visible ? '' : ' hidden'}`;
+    const videosClassName = `filmstrip__videos${isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${_visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
 
     return {

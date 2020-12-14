@@ -20,12 +20,25 @@
 .overlayToolbarContainer {
     background-color: initial !important;
     height: 100%;
-    width: 100%;
+    width: 90%;
     top: 0;
+    z-index: 10;
     // z-index: 400 !important;
 
-    @include media-breakpoint-up(md) {
-        width: 30%;
+    @include media-breakpoint-up(sm) {
+        width: 50%;
+    }
+
+    &.withToolbuttons {
+        height: calc(100% - 82px);
+
+        @media only screen and (max-width: $smallScreen) {
+            height: calc(100% - 72px);
+        }
+        
+        @media only screen and (max-width: $verySmallScreen) {
+            height: calc(100% - 62px);
+        }
     }
 }
 

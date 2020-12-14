@@ -86,6 +86,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
+import s from './Toolbox.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -366,7 +367,7 @@ class Toolbox extends Component<Props, State> {
      */
     render() {
         const { _chatOpen, _visible, _visibleButtons } = this.props;
-        const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
+        const rootClassNames = `new-toolbox ${s.toolbox} ${_visible ? 'visible' : ''} ${
             _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen
                 ? ({ left: 'shift-right', bottom: 'shift-up' }[interfaceConfig.CHAT_ON_LAYOUT] || '') : ''}`;
 

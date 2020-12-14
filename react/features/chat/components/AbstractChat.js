@@ -4,6 +4,7 @@ import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant } from '../../base/participants';
+import { isGuest } from '../../invite';
 import { sendMessage, toggleChat } from '../actions';
 
 /**
@@ -103,9 +104,10 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
  */
 export function _mapStateToProps(state: Object) {
     const { isOpen, messages } = state['features/chat'];
-    const _localParticipant = getLocalParticipant(state);
+    const { isGuest } = state['features/base/jwt'];
 
     return {
+        _isGuest: isGuest,
         _isOpen: isOpen,
         _messages: messages,
         _showNamePrompt: false

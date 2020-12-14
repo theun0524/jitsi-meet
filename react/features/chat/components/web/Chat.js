@@ -154,7 +154,7 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const _isOpen = this.props._isOpen;
+        const { _isGuest, _isOpen } = this.props;
         const _showNamePrompt = this.props._showNamePrompt;
 
         const ComponentToRender = _isOpen
@@ -176,6 +176,10 @@ class Chat extends AbstractChat<Props> {
             className += ' slideInExt';
         } else if (this._isExited) {
             className += ' invisible';
+        }
+
+        if (!_isGuest) {
+            className += ` ${s.withToolbuttons}`;
         }
 
         return (

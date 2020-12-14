@@ -105,7 +105,7 @@ var config = {
     // startAudioOnly: false,
 
     // Every participant after the Nth will start audio muted.
-    startAudioMuted: 1,
+    startAudioMuted: 20,
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
@@ -156,7 +156,7 @@ var config = {
     enableLayerSuspension: true,
 
     // Every participant after the Nth will start video muted.
-    startVideoMuted: 1,
+    startVideoMuted: 20,
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
@@ -268,8 +268,6 @@ var config = {
            360: 'standard',
            720: 'high'
        },
-
-       resizeDesktopForPresenter: true,
     },
 
     // // Options for the recording limit notification.
