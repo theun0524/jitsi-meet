@@ -49,10 +49,9 @@ export function isToolboxVisible(state: Object) {
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
-    const { isOpen } = state['features/chat'];
-    const isMobileChatOpen = isMobileBrowser() && isOpen;
+    const { isGuest } = state['features/base/jwt'];
 
-    return Boolean(!isMobileChatOpen && !iAmSipGateway && (timeoutID || visible || alwaysVisible
+    return Boolean(!isGuest && !iAmSipGateway && (timeoutID || visible || alwaysVisible
                                       || audioSettingsVisible || videoSettingsVisible));
 }
 
