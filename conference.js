@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS, config, interfaceConfig */
+/* global APP, JitsiMeetJS, config, interfaceConfig */
 
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
@@ -24,7 +24,6 @@ import {
     reloadWithStoredParams
 } from './react/features/app/actions';
 import {
-    AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
     authStatusChanged,
@@ -56,6 +55,7 @@ import {
     updateDeviceList
 } from './react/features/base/devices';
 import {
+    browser,
     isFatalJitsiConnectionError,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
@@ -111,7 +111,6 @@ import {
 } from './react/features/base/util';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
-import { setE2EEKey } from './react/features/e2ee';
 import {
     maybeOpenFeedbackDialog,
     submitFeedback
@@ -182,7 +181,6 @@ window.JitsiMeetScreenObtainer = {
  * Known custom conference commands.
  */
 const commands = {
-    AVATAR_ID: AVATAR_ID_COMMAND,
     AVATAR_URL: AVATAR_URL_COMMAND,
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
@@ -454,6 +452,7 @@ export default {
      * the tracks won't exist).
      */
     _localTracksInitialized: false,
+
     isSharingScreen: false,
 
     /**
@@ -516,9 +515,9 @@ export default {
 
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
-            browser =>
+            browserName =>
                 APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(true, browser))
+                    mediaPermissionPromptVisibilityChanged(true, browserName))
         );
 
         let tryCreateLocalTracks;
@@ -754,8 +753,6 @@ export default {
         };
 
         this.roomName = roomName;
-
-        window.addEventListener('hashchange', this.onHashChange.bind(this), false);
 
         try {
             // Initialize the device list first. This way, when creating tracks
@@ -1247,47 +1244,8 @@ export default {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
         const logs = APP.connection.getLogs();
-        const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
 
-        const elem = document.createElement('a');
-
-        elem.download = filename;
-        elem.href = `data:application/json;charset=utf-8,\n${data}`;
-        elem.dataset.downloadurl
-            = [ 'text/json', elem.download, elem.href ].join(':');
-        elem.dispatchEvent(new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: false
-        }));
-    },
-
-    /**
-     * Handled location hash change events.
-     */
-    onHashChange() {
-        const items = {};
-        const parts = window.location.hash.substr(1).split('&');
-
-        for (const part of parts) {
-            const param = part.split('=');
-            const key = param[0];
-
-            if (!key) {
-                continue; // eslint-disable-line no-continue
-            }
-
-            items[key] = param[1];
-        }
-
-        if (typeof items.e2eekey !== 'undefined') {
-            APP.store.dispatch(setE2EEKey(items.e2eekey));
-
-            // Clean URL in browser history.
-            const cleanUrl = window.location.href.split('#')[0];
-
-            history.replaceState(history.state, document.title, cleanUrl);
-        }
+        downloadJSON(logs, filename);
     },
 
     /**
@@ -1348,8 +1306,8 @@ export default {
 
     _createRoom(localTracks) {
         room = connection.initJitsiConference(
-            APP.conference.roomName,
-            this._getConferenceOptions());
+                APP.conference.roomName,
+                this._getConferenceOptions());
 
         APP.store.dispatch(conferenceWillJoin(room));
         this._setLocalAudioVideoStreams(localTracks);
@@ -1770,8 +1728,10 @@ export default {
      */
     async _createPresenterStreamEffect(height = null, cameraDeviceId = null) {
         if (!this.localPresenterVideo) {
+            const camera = cameraDeviceId ?? getUserSelectedCameraDeviceId(APP.store.getState());
+
             try {
-                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId }, height);
+                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId: camera }, height);
             } catch (err) {
                 logger.error('Failed to create a camera track for presenter', err);
 
@@ -1812,38 +1772,38 @@ export default {
 
         // Create a new presenter track and apply the presenter effect.
         if (!this.localPresenterVideo && !mute) {
-            let { aspectRatio, height } = this.localVideo.track.getSettings();
-            const { width } = this.localVideo.track.getSettings();
-            let desktopResizeConstraints = {};
-            let resizeDesktopStream = false;
+            const { height, width } = this.localVideo.track.getSettings() ?? this.localVideo.track.getConstraints();
+            const isPortrait = height >= width;
             const DESKTOP_STREAM_CAP = 720;
 
-            // Determine the constraints if the desktop track needs to be resized.
-            // Resizing is needed when the resolution cannot be determined or when
-            // the window is bigger than 720p.
-            if (height && width) {
-                aspectRatio = aspectRatio ?? (width / height).toPrecision(4);
-                const advancedConstraints = [ { aspectRatio } ];
-                const isPortrait = height >= width;
+            // Config.js setting for resizing high resolution desktop tracks to 720p when presenter is turned on.
+            const resizeEnabled = config.videoQuality && config.videoQuality.resizeDesktopForPresenter;
+            const highResolutionTrack
+                = (isPortrait && width > DESKTOP_STREAM_CAP) || (!isPortrait && height > DESKTOP_STREAM_CAP);
 
-                // Determine which dimension needs resizing and resize only that side
-                // keeping the aspect ratio same as before.
-                if (isPortrait && width > DESKTOP_STREAM_CAP) {
-                    resizeDesktopStream = true;
-                    advancedConstraints.push({ width: DESKTOP_STREAM_CAP });
-                } else if (!isPortrait && height > DESKTOP_STREAM_CAP) {
-                    resizeDesktopStream = true;
-                    advancedConstraints.push({ height: DESKTOP_STREAM_CAP });
-                }
-                desktopResizeConstraints.advanced = advancedConstraints;
-            } else {
-                resizeDesktopStream = true;
-                desktopResizeConstraints = {
-                    width: 1280,
-                    height: 720
-                };
-            }
+            // Resizing the desktop track for presenter is causing blurriness of the desktop share on chrome.
+            // Disable resizing by default, enable it only when config.js setting is enabled.
+            // Firefox doesn't return width and height for desktop tracks. Therefore, track needs to be resized
+            // for creating the canvas for presenter.
+            const resizeDesktopStream = browser.isFirefox() || (highResolutionTrack && resizeEnabled);
+
             if (resizeDesktopStream) {
+                let desktopResizeConstraints = {};
+
+                if (height && width) {
+                    const advancedConstraints = [ { aspectRatio: (width / height).toPrecision(4) } ];
+                    const constraint = isPortrait ? { width: DESKTOP_STREAM_CAP } : { height: DESKTOP_STREAM_CAP };
+
+                    advancedConstraints.push(constraint);
+                    desktopResizeConstraints.advanced = advancedConstraints;
+                } else {
+                    desktopResizeConstraints = {
+                        width: 1280,
+                        height: 720
+                    };
+                }
+
+                // Apply the contraints on the desktop track.
                 try {
                     await this.localVideo.track.applyConstraints(desktopResizeConstraints);
                 } catch (err) {
@@ -1851,20 +1811,22 @@ export default {
 
                     return;
                 }
-                height = this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP;
             }
-            const defaultCamera = getUserSelectedCameraDeviceId(APP.store.getState());
+            const trackHeight = resizeDesktopStream
+                ? this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP
+                : height;
             let effect;
 
             try {
-                effect = await this._createPresenterStreamEffect(height,
-                    defaultCamera);
+                effect = await this._createPresenterStreamEffect(trackHeight);
             } catch (err) {
-                logger.error('Failed to unmute Presenter Video');
+                logger.error('Failed to unmute Presenter Video', err);
                 maybeShowErrorDialog(err);
 
                 return;
             }
+
+            // Replace the desktop track on the peerconnection.
             try {
                 await this.localVideo.setEffect(effect);
                 APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
@@ -2292,16 +2254,6 @@ export default {
                         conference: room,
                         id: from,
                         avatarURL: data.value
-                    }));
-            });
-
-        room.addCommandListener(this.commands.defaults.AVATAR_ID,
-            (data, from) => {
-                APP.store.dispatch(
-                    participantUpdated({
-                        conference: room,
-                        id: from,
-                        avatarID: data.value
                     }));
             });
 
@@ -2772,6 +2724,20 @@ export default {
         // following bug.
         // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
         const hasDefaultMicChanged = newDevices.audioinput === 'default';
+
+        // This is the case when the local video is muted and a preferred device is connected.
+        if (requestedInput.video && this.isLocalVideoMuted()) {
+            // We want to avoid creating a new video track in order to prevent turning on the camera.
+            requestedInput.video = false;
+            APP.store.dispatch(updateSettings({ // Update the current selected camera for the device selection dialog.
+                cameraDeviceId: newDevices.videoinput
+            }));
+            delete newDevices.videoinput;
+
+            // Removing the current video track in order to force the unmute to select the preferred device.
+            this.useVideoStream(null);
+
+        }
 
         promises.push(
             mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(

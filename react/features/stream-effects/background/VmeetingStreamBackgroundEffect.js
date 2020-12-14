@@ -1,6 +1,7 @@
 // @flow
 
 import * as bodyPix from '@tensorflow-models/body-pix';
+import { flip } from 'lodash';
 
 import {
     CLEAR_INTERVAL,
@@ -65,11 +66,12 @@ export default class VmeetingStreamBackgroundEffect {
     async _renderVideo() {
         this._videoInProgress = true;
         this._segmentationData = await this._bpModel.segmentPerson(this._videoElement, {
-            internalResolution: 'medium', // resized to 0.5 times of the original resolution before inference
+            internalResolution: 'high', // resized to 0.5 times of the original resolution before inference
             maxDetections: 1, // max. number of person poses to detect per image
-            segmentationThreshold: 0.5 // represents probability that a pixel belongs to a person
+            segmentationThreshold: 0.7 // represents probability that a pixel belongs to a person
         });
         this._videoInProgress = false;
+
         this.drawBody();
     }
 
@@ -111,9 +113,7 @@ export default class VmeetingStreamBackgroundEffect {
         }
 
         this._backgroundElement.src = this._backgroundImageUrl;
-        this._backgroundElement.style = {
-            'object-fit': 'cover'
-        };
+        this._backgroundElement.style.objectFit = 'cover';
 
         // set the style attribute of the div to make it invisible
         this._container.style.display = 'none';
@@ -157,8 +157,13 @@ export default class VmeetingStreamBackgroundEffect {
         if (!this._segmentationData) return;
 
         const { width, height } = this._videoElement;
-
-        this._ctx.drawImage(this._videoElement, 0, 0, width, height);
+        const foregroundColor = { r: 0, g: 0, b: 0, a: 0 };
+        const backgroundColor = { r: 0, g: 0, b: 0, a: 255 };
+        const coloredPartImage = bodyPix.toMask(this._segmentationData, foregroundColor, backgroundColor);
+        const opacity = 1;
+        const flipHorizontal = false;
+        const maskBlurAmount = 3;
+        bodyPix.drawMask(this._canvas, this._videoElement, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
         const mixData = this._ctx.getImageData(0, 0, width, height);
         const pixel = mixData.data;
 
