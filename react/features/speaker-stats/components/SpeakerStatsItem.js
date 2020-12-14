@@ -97,11 +97,14 @@ class SpeakerStatsItem extends Component<Props> {
 
     displayAudioStatus(audioMuted) {
         let iconClass;
+        let toolTipMessage;
         if(audioMuted) {
             iconClass = IconMicDisabled;
+            toolTipMessage = 'videothumbnail.mute'
         }
         else {
             iconClass = IconMicrophone;
+            toolTipMessage = 'videothumbnail.audioconnected'
         }
         return(
             <BaseIndicator
@@ -109,18 +112,21 @@ class SpeakerStatsItem extends Component<Props> {
                 icon = { iconClass }
                 iconId = 'mic-disabled'
                 iconSize = { 13 }
-                tooltipKey = 'videothumbnail.mute'
+                tooltipKey = { toolTipMessage }
                 tooltipPosition = { 'top' } />
         );
     }
 
     displayVideoStatus(videoMuted) {
         let iconClass;
+        let toolTipMessage;
         if(videoMuted) {
             iconClass = IconCameraDisabled;
+            toolTipMessage = 'videothumbnail.videomute'
         }
         else {
             iconClass = IconCamera;
+            toolTipMessage = 'videothumbnail.videoconnected'
         }
         return(
             <BaseIndicator
@@ -128,7 +134,7 @@ class SpeakerStatsItem extends Component<Props> {
                 icon = { iconClass }
                 iconId = 'camera-disabled'
                 iconSize = { 16 }
-                tooltipKey = 'videothumbnail.videomute'
+                tooltipKey = { toolTipMessage }
                 tooltipPosition = { 'top' } />
         );
     }

@@ -11,6 +11,8 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import axios from 'axios';
+import { FieldTextStateless } from '@atlaskit/field-text';
+import { filter } from 'lodash';
 
 declare var interfaceConfig: Object;
 
@@ -57,6 +59,16 @@ type State = {
     loaded: Boolean,
 
     participants: Object
+
+    /**
+     * The search query inserted by the user
+     */
+    searchQuery: String,
+
+    /**
+     * An array of items object containing search results to be returned
+     */
+    searchResult: Array
 };
 
 /**
@@ -80,6 +92,8 @@ class SpeakerStats extends Component<Props, State> {
             stats: this.props.conference.getSpeakerStats(),
             logs: {},
             loaded: false
+            searchQuery: '',
+            searchResult: [] //initialize the initialy state variable as an empty array
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -122,6 +136,63 @@ class SpeakerStats extends Component<Props, State> {
     }
 
     /**
+     * Function to handle search inputs
+     * @param {Object} event from search input box
+     */
+    handleSearchInput = async (event) => {
+
+        // receive the string value from search input and set it to a state variable
+        // setState is asynchronous so if we don't use await, it doesn't capture the last character input
+        await this.setState( {searchQuery: event.target.value});
+
+        // based upon the search query, call the function that filters the participants
+        this.filterParticipants(this.state.searchQuery);
+    }
+
+    /**
+     * Core function that filters participants based on the search input
+     * @param {String} filterText the string from search input, based upon which to filter result
+     */
+    filterParticipants = (filterText) => {
+
+        // convert input text into lower case so that we can ignore case while search
+        filterText = filterText.toLowerCase();
+
+        // variables defined like in render function to display speaker stats item
+        let userIds = Object.keys(this.state.logs);
+        let items = userIds.map(userId => this._createStatsItem(userId));
+
+        // variable that will store new list of items if search results match
+        let newItems = [];
+
+        // create array for all participants and another array for participants who match the search inputs
+        // we use toLowerCase() to ignore case sensitivity
+        const participants = items.map(item => item.props.displayName.toLowerCase());
+        const filteredParticipants = participants.filter((participant) => {
+            if(participant.includes(filterText)) {
+                return participant;
+            }
+        });
+
+        // for each of the participants who matched the search inputs, we identify corresponding items and store them in a new array of items
+        filteredParticipants.map((filteredParticipant) => {
+            items.filter((item) => {
+                // we use toLowerCase() to ignore case sensitivity
+                if(item.props.displayName.toLowerCase() === filteredParticipant) {
+                    // push to the array of javascript object, only if the object has not been inserted before
+                    if(typeof(newItems[item] == "undefined")) {
+                        newItems.push(item);
+                    }
+                }
+            });
+        });
+
+        // the array containing matched items is set to the state variable searchResult
+        this.setState({ searchResult: newItems });
+
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -129,7 +200,21 @@ class SpeakerStats extends Component<Props, State> {
      */
     render() {
         const userIds = Object.keys(this.state.stats);
-        const items = userIds.map(userId => this._createStatsItem(userId));
+        let items = [];
+        
+        if(this.state.searchQuery != '') {
+            if(Object.keys(this.state.searchResult).length > 0) {
+                // case when there is a search input and matching results are found, return item sets
+                items = this.state.searchResult;
+            }
+            else {
+                // case when there is a search input but no matching results, return empty sets
+                items = [];
+            }
+        } else {
+            //first created items, when there has been no search text or search result
+            items = userIds.map(userId => this._createStatsItem(userId))
+        }
 
         return (
             <Dialog
@@ -137,6 +222,22 @@ class SpeakerStats extends Component<Props, State> {
                 width = { 'large' }
                 submitDisabled = { true }
                 titleKey = 'speakerStats.speakerStats'>
+                
+                <div className = 'speaker-stats-searchbox'>
+                    <FieldTextStateless
+                        compact = { true }
+                        id = 'searchBox'
+                        autoFocus = { true }
+                        label = { this.props.t('speakerStats.searchLabel') } 
+                        placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
+                        shouldFitContainer = { true }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = { this.handleSearchInput }
+                        type = 'text'
+                        value = { this.state.searchQuery } />
+                </div>
+                <hr/>
+
                 <div className = 'speaker-stats'>
                     <SpeakerStatsLabels onRefresh = { this._onRefresh }/>
                     { this.state.loaded? items : null }
