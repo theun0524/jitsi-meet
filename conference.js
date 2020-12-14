@@ -734,14 +734,17 @@ export default {
      * @returns {Promise}
      */
     async init({ roomName }) {
+        const { isGuest } = APP.store.getState()['features/base/jwt'];
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: config.startWithAudioMuted
                 || config.startSilent
-                || isUserInteractionRequiredForUnmute(APP.store.getState()),
+                || isUserInteractionRequiredForUnmute(APP.store.getState())
+                || isGuest,
             startWithVideoMuted: config.startWithVideoMuted
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
+                || isGuest
         };
 
         this.roomName = roomName;
@@ -777,14 +780,6 @@ export default {
             this._initDeviceList(true);
 
             return APP.store.dispatch(initPrejoin(tracks, errors));
-        }
-
-        // 손님은 마이크/카메라 권한 요청없이 채팅만 볼 수 있도록...
-        const { isGuest } = APP.store.getState()['features/base/jwt'];
-        if (isGuest) {
-            const con = await connect(roomName);
-            this._initDeviceList(true);
-            return this.startConference(con, []);
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
