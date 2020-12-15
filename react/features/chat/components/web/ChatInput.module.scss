@@ -20,5 +20,9 @@
     
     .usrmsgForm {
         flex: 1;
+
+        textarea {
+            overflow-y: hidden !important;
+        }
     }
 }
