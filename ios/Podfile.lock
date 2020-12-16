@@ -295,8 +295,8 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
-  - react-native-webrtc (1.84.0):
-    - React
+  - react-native-webrtc (1.84.1):
+    - React-Core
   - react-native-webview (7.4.1):
     - React
   - React-RCTActionSheet (0.61.5-jitsi.1):
@@ -580,7 +580,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-webrtc: 9268ae9a2bc9730796b0968d012327e92c392adf
+  react-native-webrtc: edd689b0d5a462d7a6f6f52bca3f9414fc0ee11c
   react-native-webview: 4dbc1d2a4a6b9c5e9e723c62651917aa2b5e579e
   React-RCTActionSheet: b72ddbfbe15b44ce691d128e4b582f4bb9abb540
   React-RCTAnimation: cfaefba5024499d336b76ab850e6bd33b232b5e3
