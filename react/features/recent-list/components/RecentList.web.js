@@ -172,12 +172,14 @@ class RecentList extends AbstractRecentList<Props, State> {
         }
         const { t } = this.props;
         const {
-            disabled
+            disabled,
+            _recentList
         } = this.props;
-        const recentList = this.state.displayableList;
+        const recentList = toDisplayableList(_recentList);
         let modalOpen = this.state.isModalOpen;
         let failedModalOpen = this.state.isFailedModalOpen;
-        let set = this.state.setting;
+        //let set = this.state.setting;
+        let set = true;
 
         return set? (
             <>
@@ -230,13 +232,14 @@ class RecentList extends AbstractRecentList<Props, State> {
     _updateList: () => void;
 
     _updateList() {
-        if(!this.state.setting){
+        /*if(!this.state.setting){
             this._loadFromDB();
         }
         else{
             const loaded = true;
             this.setState({ setting: loaded });
-        }
+        }*/
+        this.setState({ setting: true });
     }
 
     async _loadFromDB(){
