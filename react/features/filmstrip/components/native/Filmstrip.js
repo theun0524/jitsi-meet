@@ -121,6 +121,7 @@ class Filmstrip extends Component<Props> {
                         this._sort(_participants, isNarrowAspectRatio)
                             .map(p => (
                                 <InView
+                                    collapsable = { false }
                                     key = { p.id }
                                     onChange = { visible => this._checkVisible(p.id, visible) }>
                                     <Thumbnail participant = { p } />
