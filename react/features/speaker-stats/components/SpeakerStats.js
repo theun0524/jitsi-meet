@@ -219,11 +219,10 @@ class SpeakerStats extends Component<Props, State> {
         const room_name = conference.options.name;
         const meetingId = conference.room.meetingId;
 
+        const apiUrl = `${apiBaseUrl}/plog/participants?name=${room_name}&meetingId=${meetingId}`;
+
         try{
-            axios.post(`${apiBaseUrl}/plog/get-participant-log`, {
-                name: room_name,
-                meetingId: meetingId
-            }).then(logs => {
+            axios.get(apiUrl).then(logs => {
                 this.setState({ ...this.state, logs: logs.data[0], loaded: true });
             });
         }
