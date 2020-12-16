@@ -6,8 +6,10 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
+import InView from 'react-native-component-inview';
 import type { Dispatch } from 'redux';
 
+import { recvVideoParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { setTileViewDimensions } from '../../actions.native';
@@ -75,6 +77,12 @@ const TILE_ASPECT_RATIO = 1;
  * @extends Component
  */
 class TileView extends Component<Props> {
+    constructor(props) {
+        super(props);
+
+        this._visibles = new Set();
+    }
+
     /**
      * Implements React's {@link Component#componentDidMount}.
      *
@@ -246,13 +254,34 @@ class TileView extends Component<Props> {
 
         return this._getSortedParticipants()
             .map(participant => (
-                <Thumbnail
-                    disableTint = { true }
+                <InView
+                    collapsable = { false }
                     key = { participant.id }
-                    participant = { participant }
-                    renderDisplayName = { true }
-                    styleOverrides = { styleOverrides }
-                    tileView = { true } />));
+                    onChange = { visible => this._checkVisible(participant.id, visible) }>
+                    <Thumbnail
+                        disableTint = { true }
+                        participant = { participant }
+                        renderDisplayName = { true }
+                        styleOverrides = { styleOverrides }
+                        tileView = { true } />
+                </InView>));
+    }
+
+    /**
+     * Handle thumbnail entered in viewport
+     */
+    _checkVisible(userId, visible) {
+        if ((visible && !this._visibles.has(userId))
+            || (!visible && this._visibles.has(userId))) {
+            if (visible) {
+                this._visibles.add(userId);
+            } else {
+                this._visibles.delete(userid);
+            }
+            
+            console.log('_checkVisible:', userId, visible);
+            this.props.dispatch(recvVideoParticipant(userId, visible));
+        }
     }
 
     /**
