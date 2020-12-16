@@ -720,7 +720,8 @@
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time",
         "joinTime": "Join Time",
-        "leaveTime": "Leave Time"
+        "leaveTime": "Leave Time",
+        "refresh": "Refresh"
     },
     "startupoverlay": {
         "policyText": " ",

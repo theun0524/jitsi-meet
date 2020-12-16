@@ -720,7 +720,8 @@
         "speakerStats": "접속자 통계",
         "speakerTime": "오디오 시간", 
         "joinTime": "접속 시간",
-        "leaveTime": "종료 시간"
+        "leaveTime": "종료 시간",
+        "refresh": "새로고침"
     },
     "startupoverlay": {
         "policyText": " ",

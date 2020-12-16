@@ -54,7 +54,7 @@ type State = {
      */
     logs: Object,
 
-    loading: Boolean,
+    loaded: Boolean,
 
     participants: Object
 };
@@ -79,11 +79,12 @@ class SpeakerStats extends Component<Props, State> {
         this.state = {
             stats: this.props.conference.getSpeakerStats(),
             logs: {},
-            loading: false
+            loaded: false
         };
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
+        this._onRefresh = this._onRefresh.bind(this);
     }
 
     /**
@@ -107,6 +108,19 @@ class SpeakerStats extends Component<Props, State> {
         clearInterval(this._updateInterval);
     }
 
+    _onRefresh: () => void;
+
+    /**
+     * Deletes a recent entry.
+     *
+     * @param {Object} entry - The entry to be deleted.
+     * @inheritdoc
+     */
+    _onRefresh() {
+        this.setState({ ...this.state, loaded: false });
+        this._loadStatsFromDB();
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -123,13 +137,8 @@ class SpeakerStats extends Component<Props, State> {
                 submitDisabled = { true }
                 titleKey = 'speakerStats.speakerStats'>
                 <div className = 'speaker-stats'>
-                    <SpeakerStatsLabels />
-                    { this.state.loading? items :
-                        <div className = 'speaker-stats-item'>
-                            <div className = 'speaker-stats-item__loading'>
-                                Loading..
-                            </div> 
-                        </div> }
+                    <SpeakerStatsLabels onRefresh = { this._onRefresh }/>
+                    { this.state.loaded? items : null }
                 </div>
             </Dialog>
         );
@@ -193,15 +202,8 @@ class SpeakerStats extends Component<Props, State> {
      */
     _updateStats() {
         const stats = this.props.conference.getSpeakerStats();
-        const participants_changed = this.props.participants !== this.state.participants ? true : false;
 
-        if(participants_changed){
-            this.setState({ ...this.state, stats: stats, loading: !participants_changed, participants: this.props.participants });
-            this._loadStatsFromDB();
-        }
-        else{
-            this.setState({ ...this.state, stats: stats });
-        }
+        this.setState({ ...this.state, stats: stats });
     }
 
     _loadStatsFromDB: () => void;
@@ -222,7 +224,7 @@ class SpeakerStats extends Component<Props, State> {
                 name: room_name,
                 meetingId: meetingId
             }).then(logs => {
-                this.setState({ ...this.state, logs: logs.data[0], loading: true });
+                this.setState({ ...this.state, logs: logs.data[0], loaded: true });
             });
         }
         catch(err){    
