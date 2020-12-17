@@ -190,7 +190,7 @@ class RecentList extends AbstractRecentList<Props, State> {
                 meetings = { recentList }
                 t = { t }
                 onDeleteFromDB = { this._onDeleteFromDB }
-                onDeleteFromRecent = { this._onDeleteFromRecent }
+                // onDeleteFromRecent = { this._onDeleteFromRecent }
                 onPress = { this._onPress } />
             <ModalTransition>
                 {modalOpen && (
@@ -225,7 +225,7 @@ class RecentList extends AbstractRecentList<Props, State> {
                 meetings = { [] }
                 t = { t }
                 onDeleteFromDB = { this._onDeleteFromDB }
-                onDeleteFromRecent = { this._onDeleteFromRecent }
+                // onDeleteFromRecent = { this._onDeleteFromRecent }
                 onPress = { this._onPress } />;
     }
 

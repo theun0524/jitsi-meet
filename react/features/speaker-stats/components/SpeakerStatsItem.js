@@ -56,8 +56,8 @@ class SpeakerStatsItem extends Component<Props> {
         const speakerStatusClass = `speaker-stats-item__status-dot ${dotClass}`;
 
         //prosody(lua) gives time in seconds (not in milliseconds)
-        const joinTime = this.props.participantLog && this.props.participantLog.joinTime? this.hhmmss(new Date(1000 * this.props.participantLog.joinTime)) : '';
-        const leaveTime = this.props.participantLog && this.props.participantLog.leaveTime? this.hhmmss(new Date(1000 * this.props.participantLog.leaveTime)) : '';
+        const joinTime = this.props.participantLog && this.props.participantLog.joinTime? this.hhmmss(new Date(this.props.participantLog.joinTime)) : '';
+        const leaveTime = this.props.participantLog && this.props.participantLog.leaveTime? this.hhmmss(new Date(this.props.participantLog.leaveTime)) : '';
 
         return (
             <div className = { rowDisplayClass }>

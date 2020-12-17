@@ -1,5 +1,14 @@
 // @flow
 
+import RefreshIcon from '@atlaskit/icon/glyph/refresh';
+import {
+    HeaderComponentProps,
+    ModalHeader
+} from '@atlaskit/modal-dialog';
+import Spinner from '@atlaskit/spinner';
+import Tooltip from '@atlaskit/tooltip';
+import axios from 'axios';
+import { keyBy } from 'lodash';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
@@ -10,7 +19,7 @@ import { connect } from '../../base/redux';
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
-import axios from 'axios';
+import s from './SpeakerStats.module.scss';
 
 declare var interfaceConfig: Object;
 
@@ -54,7 +63,7 @@ type State = {
      */
     logs: Object,
 
-    loaded: Boolean,
+    loading: Boolean,
 
     participants: Object
 };
@@ -79,12 +88,13 @@ class SpeakerStats extends Component<Props, State> {
         this.state = {
             stats: this.props.conference.getSpeakerStats(),
             logs: {},
-            loaded: false
+            loading: false
         };
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
+        this._customHeader = this._customHeader.bind(this);
     }
 
     /**
@@ -117,10 +127,32 @@ class SpeakerStats extends Component<Props, State> {
      * @inheritdoc
      */
     _onRefresh() {
-        this.setState({ ...this.state, loaded: false });
+        this.setState({ loading: true });
         this._loadStatsFromDB();
     }
 
+    _customHeader = (props: HeaderComponentProps) => {
+        const { t } = this.props;
+        const { loading } = this.state;
+
+        return (
+            <ModalHeader {...props}>
+                <h4 className={ s.titleContainer }>
+                    <span>
+                        { t('speakerStats.speakerStats') }
+                    </span>
+                    { !loading && (
+                        <div className = { s.button } onClick = { this._onRefresh }>
+                            <Tooltip content = { t('speakerStats.refresh') } position = 'top'>
+                                <RefreshIcon size = 'small' />
+                            </Tooltip>
+                        </div>
+                    )}
+                </h4>
+            </ModalHeader>
+        );
+    };
+      
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -134,11 +166,11 @@ class SpeakerStats extends Component<Props, State> {
         return (
             <Dialog
                 cancelKey = { 'dialog.close' }
-                submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'>
+                customHeader = { this._customHeader }
+                submitDisabled = { true }>
                 <div className = 'speaker-stats'>
-                    <SpeakerStatsLabels onRefresh = { this._onRefresh }/>
-                    { this.state.loaded? items : null }
+                    <SpeakerStatsLabels />
+                    { this.state.loading ? <Spinner appearance = 'invert' /> : items }
                 </div>
             </Dialog>
         );
@@ -209,21 +241,16 @@ class SpeakerStats extends Component<Props, State> {
     _loadStatsFromDB: () => void;
 
     _loadStatsFromDB(){
-        const {
-            conference,
-            baseURL
-        } = this.props;
-
+        const { conference, baseURL } = this.props;
         const AUTH_API_BASE = process.env.VMEETING_API_BASE;
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-        const room_name = conference.options.name;
-        const meetingId = conference.room.meetingId;
 
-        const apiUrl = `${apiBaseUrl}/plog/participants?name=${room_name}&meetingId=${meetingId}`;
+        const apiUrl = `${apiBaseUrl}/plog?meetingId=${conference.room.meetingId}`;
 
         try{
             axios.get(apiUrl).then(logs => {
-                this.setState({ ...this.state, logs: logs.data[0], loaded: true });
+                console.log(this.state.stats, logs);
+                this.setState({ logs: keyBy(logs.data, 'nick'), loading: false });
             });
         }
         catch(err){    
