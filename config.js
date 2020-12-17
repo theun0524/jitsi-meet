@@ -53,7 +53,12 @@ var config = {
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: false
+        p2pTestMode: false,
+
+        // enable octo
+        octo: {
+            probability: 1
+        }
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -118,7 +123,7 @@ var config = {
     // Sets the preferred target bitrate for the Opus audio codec by setting its
     // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
     // Valid values are in the range 6000 to 510000
-    // opusMaxAverageBitrate: 20000,
+    opusMaxAverageBitrate: 32000,
 
     // Video
 
@@ -242,7 +247,7 @@ var config = {
 
     // Specify the settings for video quality optimizations on the client.
     videoQuality: {
-    
+
        // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
        // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
        // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
@@ -253,7 +258,7 @@ var config = {
            standard: 500000,
            high: 1500000
        },
-    
+
        // The options can be used to override default thresholds of video thumbnail heights corresponding to
        // the video quality levels used in the application. At the time of this writing the allowed levels are:
        //     'low' - for the low quality level (180p at the time of this writing)
