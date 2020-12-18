@@ -65,14 +65,11 @@ type State = {
      */
     logs: Object,
 
-<<<<<<< HEAD
 
     loading: Boolean,
 
     participants: Object,
 
-=======
->>>>>>> 65beb21d85a3284c953d21ca6797145ae56eaffb
     /**
      * The search query inserted by the user
      */
@@ -82,10 +79,6 @@ type State = {
      * An array of items object containing search results to be returned
      */
     searchResult: Array
-<<<<<<< HEAD
-
-=======
->>>>>>> 65beb21d85a3284c953d21ca6797145ae56eaffb
 };
 
 /**
