@@ -721,12 +721,9 @@
         "speakerTime": "Speaker Time",
         "joinTime": "Join Time",
         "leaveTime": "Leave Time",
-<<<<<<< HEAD
-        "refresh": "Refresh"
-=======
+        "refresh": "Refresh",
         "searchLabel": "Search for Participants",
         "searchPlaceholder": "e.g. John Doe"
->>>>>>> Implemented search functionality in Speaker Stats modal dialog box
     },
     "startupoverlay": {
         "policyText": " ",

@@ -58,7 +58,7 @@ type State = {
 
     loaded: Boolean,
 
-    participants: Object
+    participants: Object,
 
     /**
      * The search query inserted by the user
@@ -91,7 +91,7 @@ class SpeakerStats extends Component<Props, State> {
         this.state = {
             stats: this.props.conference.getSpeakerStats(),
             logs: {},
-            loaded: false
+            loaded: false,
             searchQuery: '',
             searchResult: [] //initialize the initialy state variable as an empty array
         };
