@@ -201,79 +201,22 @@ class SpeakerStats extends Component<Props, State> {
 
         // create array for all participants and another array for participants who match the search inputs
         // we use toLowerCase() to ignore case sensitivity
-        const participants = items.map(item => item.props.displayName.toLowerCase());
+        const participants = this.props.participants.map(participant => {
+            return participant.name.toLowerCase();
+        });
+
         const filteredParticipants = participants.filter((participant) => {
             if(participant.includes(filterText)) {
                 return participant;
             }
         });
-
         // for each of the participants who matched the search inputs, we identify corresponding items and store them in a new array of items
         filteredParticipants.map((filteredParticipant) => {
-            items.filter((item) => {
+            items.filter((item, key) => {
                 // we use toLowerCase() to ignore case sensitivity
-                if(item.props.displayName.toLowerCase() === filteredParticipant) {
+                if(item.props.displayName.toLowerCase().match(filteredParticipant)) {
                     // push to the array of javascript object, only if the object has not been inserted before
-                    if(typeof(newItems[item] == "undefined")) {
-                        newItems.push(item);
-                    }
-                }
-            });
-        });
-
-        // the array containing matched items is set to the state variable searchResult
-        this.setState({ searchResult: newItems });
-
-    }
-
-    /**
-     * Function to handle search inputs
-     * @param {Object} event from search input box
-     */
-    handleSearchInput = async (event) => {
-
-        // receive the string value from search input and set it to a state variable
-        // setState is asynchronous so if we don't use await, it doesn't capture the last character input
-        await this.setState( {searchQuery: event.target.value});
-
-        // based upon the search query, call the function that filters the participants
-        this.filterParticipants(this.state.searchQuery);
-    }
-
-    /**
-     * Core function that filters participants based on the search input
-     * @param {String} filterText the string from search input, based upon which to filter result
-     */
-    filterParticipants = (filterText) => {
-
-        // convert input text into lower case so that we can ignore case while search
-        filterText = filterText.toLowerCase();
-
-        // variables defined like in render function to display speaker stats item
-        let userIds = Object.keys(this.state.logs);
-        let items = userIds.map(userId => this._createStatsItem(userId));
-
-        // variable that will store new list of items if search results match
-        let newItems = [];
-
-        // create array for all participants and another array for participants who match the search inputs
-        // we use toLowerCase() to ignore case sensitivity
-        const participants = items.map(item => item.props.displayName.toLowerCase());
-        const filteredParticipants = participants.filter((participant) => {
-            if(participant.includes(filterText)) {
-                return participant;
-            }
-        });
-
-        // for each of the participants who matched the search inputs, we identify corresponding items and store them in a new array of items
-        filteredParticipants.map((filteredParticipant) => {
-            items.filter((item) => {
-                // we use toLowerCase() to ignore case sensitivity
-                if(item.props.displayName.toLowerCase() === filteredParticipant) {
-                    // push to the array of javascript object, only if the object has not been inserted before
-                    if(typeof(newItems[item] == "undefined")) {
-                        newItems.push(item);
-                    }
+                    newItems[key] = item;
                 }
             });
         });
@@ -292,7 +235,6 @@ class SpeakerStats extends Component<Props, State> {
     render() {
         const userIds = Object.keys(this.state.logs);
         let items = [];
-        
         if(this.state.searchQuery != '') {
             if(Object.keys(this.state.searchResult).length > 0) {
                 // case when there is a search input and matching results are found, return item sets
