@@ -58,7 +58,6 @@ let beforeUnloadHandler;
 /**
  * parameters for RECV_VIDEO_PARTICIPANT action.
  */
-const WAIT_TIME = 100;
 let recvVideoParCallbackId = null;
 
 /**
@@ -98,7 +97,7 @@ MiddlewareRegistry.register(store => next => action => {
         return _pinParticipant(store, next, action);
 
     case RECV_VIDEO_PARTICIPANT:
-        return _recvVideoParticipant(store, next, action);
+        return _recvVideoParticipantDebounced(store, next, action);
 
     case SEND_TONES:
         return _sendTones(store, next, action);
@@ -267,7 +266,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished({ dispatch, getState }, next, action) {
+function _connectionEstablished({ dispatch }, next, action) {
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -447,12 +446,16 @@ function _pinParticipant({ getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _recvVideoParticipant({ getState }, next, action) {
+function _recvVideoParticipantDebounced({ getState }, next, action) {
     if (recvVideoParCallbackId !== null) {
         clearTimeout(recvVideoParCallbackId);
     }
+    const config = getState()['features/base/config'];
+    const debounceTimeout = config.inViewportDebounceTimeout === 'undefined' ?
+                        100 : config.inViewportDebounceTimeout;
+
     recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
-                                        WAIT_TIME);
+                                                debounceTimeout);
     return next(action);
 }
 
@@ -465,21 +468,21 @@ function _recvVideoParCallback({ getState }, next, action) {
     }
 
     const participants = state['features/base/participants'];
-    const disableRecvVideoPars = new Set(participants
-                                    .filter(p => p.toRecvVideo === false)
+    const recvVideoPars = new Set(participants
+                                    .filter(p => (p.toRecvVideo === true || p.pinned === true))
                                     .map(p => p.id));
 
     // Because the data is written to redux AFTER this function happen, we need to
     // consider the current user id separatedly
     const id = action.participant.id;
     const toRecvVideo = action.participant.toRecvVideo;
-    (toRecvVideo === false) ? disableRecvVideoPars.add(id) : disableRecvVideoPars.delete(id);
+    (toRecvVideo === true) ? recvVideoPars.add(id) : recvVideoPars.delete(id);
 
-    // Do not disable large-video
-    const largeVideoId = state['features/large-video'].participantId;
-    disableRecvVideoPars.delete(largeVideoId)
+    // alway receive large-video id
+    // const largeVideoId = state['features/large-video'].participantId;
+    // recvVideoPars.add(largeVideoId)
 
-    conference.disableRecvVideoParticipants(Array.from(disableRecvVideoPars));
+    conference.recvVideoParticipants(Array.from(recvVideoPars));
 }
 
 /**

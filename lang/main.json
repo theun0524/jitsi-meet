@@ -213,6 +213,7 @@
         "enterDisplayName": "Name",
         "enterOrganizationName": "Organization",
         "error": "Error",
+        "goHome": "Home",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to make this participant a moderator?",
         "grantModeratorTitle": "Grant moderator",
@@ -333,9 +334,10 @@
         "usernameExample": "Example: jane.doe",
         "usernameMsg": "You can use letters, numbers & periods.",
         "userPassword": "user password",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference <b>{{room}}</b> is the room someone using and not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> is the room someone using and not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "Waiting for the host ...",
+        "WaitingRoomMsg": "The conference <b>{{room}}</b> is the room someone using and not yet started. Please wait for the host to arrive.",
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen"
     },
@@ -651,8 +653,11 @@
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "dialogDescription": "Choose public/private, lobby mode, E2EE. Some options are only displayed to host.",
         "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
-        "securityOptions": "Security options"
+        "securityOptions": "Security options",
+        "enableDialogText": "Determine public/private conference.",
+        "toggleLabel": "Public Conference"
     },
     "settings": {
         "background": "Background",
@@ -715,7 +720,8 @@
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time",
         "joinTime": "Join Time",
-        "leaveTime": "Leave Time"
+        "leaveTime": "Leave Time",
+        "refresh": "Refresh"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -916,9 +922,22 @@
             "video": "Video"
         },
         "calendar": "Calendar",
+        "cancelDelete": "Cancel",
+        "cancelMesasge": "Cancel",
         "connectCalendarButton": "Connect your calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
         "downloadToExcel": "Download participant stats to Excel",
+        "dbList": "All",
+        "dbListLoading": "Loading..",
+        "deleteDBListElementMessage": "Delete Conference. This action cannot be recovered.",
+        "deleteRecentListElementMessage": "Delete Conference. This action cannot be recovered.",
+        "deleteElement": "Delete",
+        "deleteFailHeading": "Failed to Delete",
+        "deleteFailMessage": "You can't delete ongoing or not existing conference.",
+        "deleteFromDB" : "Delete from my conference",
+        "deleteFromRecent" : "Delete only from recent list",
+        "deleteModalHeading": "Delete Conference",
+        "deleteReservation" : "Delete Reserved Conference",
         "enterRoomTitle": "Start a new meeting",
         "getHelp": "Get help",
         "go": "GO",
@@ -939,7 +958,9 @@
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure and easy video conferencing"
+        "title": "Secure and easy video conferencing",
+        "startNow": "Start Now",
+        "reserve": "Book Conference"
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

@@ -58,4 +58,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    .speaker-stats-item__refresh {
+        width: 5%;
+        display: inline-block;
+        margin: 5px 0;
+        vertical-align: middle;
+    }
 }

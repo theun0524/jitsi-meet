@@ -53,7 +53,12 @@ var config = {
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: false
+        p2pTestMode: false,
+
+        // enable octo
+        octo: {
+            probability: 1
+        }
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -118,7 +123,7 @@ var config = {
     // Sets the preferred target bitrate for the Opus audio codec by setting its
     // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
     // Valid values are in the range 6000 to 510000
-    // opusMaxAverageBitrate: 20000,
+    opusMaxAverageBitrate: 32000,
 
     // Video
 
@@ -221,8 +226,8 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
-    // Enable/disable jvb to only send video of participants on the screen (viewport). Default to true
-    // enableLastOnScreen: true,
+    // debounce timeout for sending message to jvb about in viewport endpoints to recv video from
+    inViewportDebounceTimeout: 200,
 
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
@@ -241,34 +246,36 @@ var config = {
     // },
 
     // Specify the settings for video quality optimizations on the client.
-    // videoQuality: {
-    //
-    //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
-    //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
-    //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
-    //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
-    //    // This is currently not implemented on app based clients on mobile.
-    //    maxBitratesVideo: {
-    //        low: 200000,
-    //        standard: 500000,
-    //        high: 1500000
-    //    },
-    //
-    //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
-    //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
-    //    //     'low' - for the low quality level (180p at the time of this writing)
-    //    //     'standard' - for the medium quality level (360p)
-    //    //     'high' - for the high quality level (720p)
-    //    // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
-    //    //
-    //    // With the default config value below the application will use 'low' quality until the thumbnails are
-    //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
-    //    // the high quality.
-    //    minHeightForQualityLvl: {
-    //        360: 'standard,
-    //        720: 'high'
-    //    }
-    // },
+    videoQuality: {
+
+       // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
+       // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
+       // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
+       // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
+       // This is currently not implemented on app based clients on mobile.
+       maxBitratesVideo: {
+           low: 200000,
+           standard: 500000,
+           high: 1500000
+       },
+
+       // The options can be used to override default thresholds of video thumbnail heights corresponding to
+       // the video quality levels used in the application. At the time of this writing the allowed levels are:
+       //     'low' - for the low quality level (180p at the time of this writing)
+       //     'standard' - for the medium quality level (360p)
+       //     'high' - for the high quality level (720p)
+       // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
+       //
+       // With the default config value below the application will use 'low' quality until the thumbnails are
+       // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
+       // the high quality.
+       minHeightForQualityLvl: {
+           360: 'standard',
+           720: 'high'
+       },
+
+    //    resizeDesktopForPresenter: true,
+    },
 
     // // Options for the recording limit notification.
     // recordingLimit: {

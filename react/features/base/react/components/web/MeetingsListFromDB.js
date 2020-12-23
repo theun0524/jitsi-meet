@@ -9,18 +9,15 @@ import {
 
 import Container from './Container';
 import Text from './Text';
-import s from './MeetingList.module.scss';
+import s from './MeetingListFromDB.module.scss';
 
 import Tooltip from '@atlaskit/tooltip';
+import ScheduleIcon from '@atlaskit/icon/glyph/schedule';
+import LockIcon from '@atlaskit/icon/glyph/lock';
+import UnlockIcon from '@atlaskit/icon/glyph/unlock';
 import TrashIcon from '@atlaskit/icon/glyph/trash';
-import EditorCloseIcon from '@atlaskit/icon/glyph/editor/close';
 
 type Props = {
-
-    /**
-     * Indicates if the list is disabled or not.
-     */
-    disabled: boolean,
 
     /**
      * Indicates if the URL should be hidden or not.
@@ -47,12 +44,7 @@ type Props = {
     /**
      * Handler for deleting an item.
      */
-    onDeleteFromDB?: Function,
-
-    /**
-     * Handler for deleting an item.
-     */
-    onDeleteFromRecent?: Function
+    onItemDelete?: Function
 };
 
 /**
@@ -92,7 +84,7 @@ function _toTimeString(times) {
  *
  * @extends Component
  */
-export default class MeetingsList extends Component<Props> {
+export default class MeetingsListFromDB extends Component<Props> {
     /**
      * Constructor of the MeetingsList component.
      *
@@ -142,54 +134,35 @@ export default class MeetingsList extends Component<Props> {
      * @returns {Function}
      */
     _onPress(url) {
-        const { disabled, onPress } = this.props;
+        const { onPress } = this.props;
 
-        if (!disabled && url && typeof onPress === 'function') {
+        if ( url && typeof onPress === 'function') {
             return () => onPress(url);
         }
 
         return null;
     }
 
-    _onDeleteFromDB: Object => Function;
-
-    /**
-     * Returns a function that is used on the onDelete callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
-    _onDeleteFromDB(item) {
-        const { onDeleteFromDB } = this.props;
-
-        return evt => {
-            evt.stopPropagation();
-
-            onDeleteFromDB && onDeleteFromDB(item);
-        };
-    }
-
-    _onDeleteFromRecent: Object => Function;
-
-    /**
-     * Returns a function that is used on the onDelete callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
-    _onDeleteFromRecent(item) {
-        const { onDeleteFromRecent } = this.props;
-
-        return evt => {
-            evt.stopPropagation();
-
-            onDeleteFromRecent && onDeleteFromRecent(item);
-        };
-    }
-
     _renderItem: (Object, number) => React$Node;
+
+    _onDelete: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onItemDelete && onItemDelete(item);
+        };
+    }
 
     /**
      * Renders an item for the list.
@@ -200,15 +173,19 @@ export default class MeetingsList extends Component<Props> {
      */
     _renderItem(meeting, index) {
         const {
+            schedule,
+            lock,
             date,
             duration,
             elementAfter,
             time,
             title,
             url,
-            canDelete
+            owner,
+            ongoing,
+            current_user
         } = meeting;
-        const { hideURL = false, t, onDeleteFromDB, onDeleteFromRecent } = this.props;
+        const { hideURL = false, t, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -218,6 +195,12 @@ export default class MeetingsList extends Component<Props> {
                 className = { rootClassName }
                 key = { index }
                 onClick = { onPress }>
+                <Container className = {s.iconColumn}>
+                    { schedule? <ScheduleIcon size="large"/> : null }
+                </Container>
+                <Container className = {s.iconColumn}>
+                    { lock? <LockIcon size="large"/> : <UnlockIcon size="large"/> }
+                </Container>
                 <Container className = {s.leftColumn}>
                     <Text className = {s.date}>
                         { _toDateString(date) }
@@ -244,25 +227,13 @@ export default class MeetingsList extends Component<Props> {
                     }
                 </Container>
                 <Container className = {s.actions}>
-                    { //erase false if you want to activate delete button
-                        false && canDelete && onDeleteFromDB && <Tooltip content = {t('welcomepage.deleteFromDB')}>
-                            <div
-                                className = 'delete-meeting'
-                                onClick = { this._onDeleteFromDB(meeting) }>
-                                <TrashIcon size="large" />
-                            </div>
-                        </Tooltip>
-                        }
-                </Container>
-                <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 
-                    { // !canDelete && onDeleteFromRecent 
-                        onDeleteFromRecent && <Tooltip content = {t('welcomepage.deleteFromRecent')}>
+                    { !ongoing && owner === current_user && onItemDelete && <Tooltip content = {t('welcomepage.deleteReservation')}>
                             <div
-                                className = 'delete-from-recent'
-                                onClick = { this._onDeleteFromRecent(meeting) }>
-                                <EditorCloseIcon size="medium" />
+                                className = 'delete-meeting'
+                                onClick = { this._onDelete(meeting) }>
+                                <TrashIcon size="large" />
                             </div>
                         </Tooltip>}
                 </Container>

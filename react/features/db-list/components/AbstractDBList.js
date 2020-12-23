@@ -3,11 +3,7 @@
 import React from 'react';
 import type { Dispatch } from 'redux';
 
-import {
-    createRecentClickedEvent,
-    createRecentSelectedEvent,
-    sendAnalytics
-} from '../../analytics';
+
 import { appNavigate } from '../../app/actions';
 import {
     AbstractPageWithState,
@@ -16,7 +12,7 @@ import {
 } from '../../base/react';
 
 import styles from './styles';
-import s from './AbstractRecentList.module.scss';
+import s from './AbstractDBList.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractRecentList}
@@ -38,7 +34,7 @@ type Props = {
  * An abstract component for the recent list.
  *
  */
-export default class AbstractRecentList<P: Props, S: State> extends AbstractPageWithState<P, S> {
+export default class AbstractDBList<P: Props, S: State> extends AbstractPageWithState<P, S> {
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -58,7 +54,7 @@ export default class AbstractRecentList<P: Props, S: State> extends AbstractPage
      * @returns {void}
      */
     componentDidMount() {
-        sendAnalytics(createRecentSelectedEvent());
+
     }
 
     _getRenderListEmptyComponent: () => React$Node;
@@ -115,8 +111,6 @@ export default class AbstractRecentList<P: Props, S: State> extends AbstractPage
      */
     _onPress(url) {
         const { dispatch } = this.props;
-
-        sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
 
         dispatch(appNavigate(url));
     }
