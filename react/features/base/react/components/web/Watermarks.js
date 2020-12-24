@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 

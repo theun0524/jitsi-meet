@@ -25,6 +25,7 @@ import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
+import { isVpaasMeeting } from '../billing-counter/functions';
 import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
     addHashParamsToURL,
@@ -221,8 +222,7 @@ export function appNavigate(uri: ?string) {
         let roomInfo;
 
         if (room) {
-            const apiBaseUrl = `${baseURL}${AUTH_API_BASE}`;
-            const apiUrl = `${apiBaseUrl}/conference?name=${room}`;
+            const apiUrl = `${apiBase}/conference?name=${room}`;
             let resp;
 
             try {
@@ -231,7 +231,7 @@ export function appNavigate(uri: ?string) {
                 roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
 
                 if(roomInfo.isHost){
-                    let resp_b = await axios.post(`${apiBaseUrl}/conference`, {
+                    let resp_b = await axios.post(`${apiBase}/conference`, {
                         name: room,
                         start_time: new Date(),
                         mail_owner: getState()['features/base/jwt'].user.email
@@ -239,7 +239,7 @@ export function appNavigate(uri: ?string) {
                 }
             } catch (err) { 
                 try {
-                    resp = await axios.post(`${apiBaseUrl}/conference`, {
+                    resp = await axios.post(`${apiBase}/conference`, {
                         name: room,
                         start_time: new Date(),
                         mail_owner: getState()['features/base/jwt'].user.email
@@ -410,12 +410,17 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
-            const { isGuest, jwt } = getState()['features/base/jwt'];
+            if (isVpaasMeeting(getState())) {
+                redirectToStaticPage('/');
+                return;
+            }
+
+            const { jwt } = getState()['features/base/jwt'];
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,
             // before navigating to close page
-            window.sessionStorage.setItem('guest', isGuest);
+            window.sessionStorage.setItem('guest', !jwt);
             window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';
