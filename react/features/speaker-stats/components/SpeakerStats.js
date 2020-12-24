@@ -199,7 +199,7 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const userIds = Object.keys(this.state.stats);
+        const userIds = Object.keys(this.state.logs);
         let items = [];
         
         if(this.state.searchQuery != '') {
