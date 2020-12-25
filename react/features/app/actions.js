@@ -204,8 +204,8 @@ export function appNavigate(uri: ?string) {
             const options = { siteId, socialId };
 
             try {
-                const resp = await axios.post(`${apiBase}/conferences/token`, options);
-                const { error, token } = resp.data;
+                const resp = await axios.post(`${apiBase}/users/token`, options);
+                const { token } = resp.data;
 
                 if (token) {
                     dispatch(setJWT(token));
@@ -222,33 +222,45 @@ export function appNavigate(uri: ?string) {
         let roomInfo;
 
         if (room) {
-            const apiUrl = `${apiBase}/conferences?name=${room}`;
+            const apiUrl = tenant
+                ? `${apiBase}/sites/${tenant}/conferences`
+                : `${apiBase}/conferences`;
             let resp;
 
             try {
-                resp = await axios.get(apiUrl);
+                resp = await axios.post(apiUrl, {
+                    name: room,
+                    start_time: new Date(),
+                });
                 roomInfo = resp.data;
-                roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
-
-                if (roomInfo.isHost) {
-                    axios.patch(
-                        `${apiBase}/conferences/${roomInfo._id}`,
-                        { start_time: new Date() }
-                    );
-                }
+                roomInfo.isHost = true;
             } catch (err) {
-                try {
-                    resp = await axios.post(`${apiBase}/conferences`, {
-                        name: room,
-                        start_time: new Date(),
-                        mail_owner: getState()['features/base/jwt'].user.email
-                    });
-                    roomInfo = resp.data;
-                    roomInfo.isHost = true;
-                } catch (err2) {
-                    console.log("Error! Not navigate to target, ", err2);
-                    disconnect();
+                console.log('Request is failed.', err.response);
+                const { error } = err.response?.data || {};
+
+                if (error === 'invalid_license') {
+                    // 라이센스가 유효하지 않습니다.
+                } else if (error === 'maxed_license') {
+                    // 모든 라이센스가 사용 중 입니다.
+                } else if (error === 'forbidden') {
+                    // 개설 권한이 없는 경우, 게스트로 참석한다.
+                } else if (error === 'not_moderator') {
+                    // 게스트는 회의 조인만 허용한다.
+                } else {
+                    // Unknown error.
                 }
+                // try {
+                //     resp = await axios.post(`${apiBase}/conferences`, {
+                //         name: room,
+                //         start_time: new Date(),
+                //         mail_owner: getState()['features/base/jwt'].user.email
+                //     });
+                //     roomInfo = resp.data;
+                //     roomInfo.isHost = true;
+                // } catch (err2) {
+                //     console.log("Error! Not navigate to target, ", err2);
+                //     disconnect();
+                // }
             }
         }
 

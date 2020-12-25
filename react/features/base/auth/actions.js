@@ -12,6 +12,7 @@ import { SET_CURRENT_USER } from './actionTypes';
 
 // const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
+const JWT_TOKEN_VERSION = process.env.JWT_TOKEN_VERSION;
 
 /**
  * Load current logged in user.
@@ -33,10 +34,10 @@ export function loadCurrentUser() {
                 : jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
 
             if (token) {
-                const { exp } = jwtDecode(token);
+                const { exp, context } = jwtDecode(token);
 
                 // check expire of jwt token
-                if (Date.now() < exp * 1000) {
+                if (Date.now() < exp * 1000 && context.tv === JWT_TOKEN_VERSION) {
                     dispatch(setJWT(token));
                 } else {
                     navigator.product === 'ReactNative'

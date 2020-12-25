@@ -87,7 +87,7 @@ function SecurityDialog({
     }, [ _password ]);
 
     useEffect(() => {
-        if (_roomInfo.scope) {
+        if (_roomInfo?.scope) {
             setPublicScope(true);
         }
         else{
@@ -104,31 +104,30 @@ function SecurityDialog({
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <MessageSection />
-                {
-                    _roomInfo.isHost?
+                { _roomInfo?.isHost ? (
                     <>
-                    <ScopeSection />
-                    {
-                        publicScope?
-                        <LobbySection /> :
-                        <PasswordSection
-                        canEditPassword = { _canEditPassword }
-                        conference = { _conference }
-                        locked = { _locked }
-                        password = { _password }
-                        passwordEditEnabled = { passwordEditEnabled }
-                        passwordNumberOfDigits = { _passwordNumberOfDigits }
-                        setPassword = { setPassword }
-                        setPasswordEditEnabled = { setPasswordEditEnabled } />
-                    } </>: null
-                }
+                        <ScopeSection />
+                        { publicScope
+                            ? <LobbySection /> 
+                            : <PasswordSection
+                                canEditPassword = { _canEditPassword }
+                                conference = { _conference }
+                                locked = { _locked }
+                                password = { _password }
+                                passwordEditEnabled = { passwordEditEnabled }
+                                passwordNumberOfDigits = { _passwordNumberOfDigits }
+                                setPassword = { setPassword }
+                                setPasswordEditEnabled = { setPasswordEditEnabled } />
+                        }
+                    </>
+                ) : null }
 
-                {
-                    _showE2ee ? <>
+                { _showE2ee ? (
+                    <>
                         <div className = 'separator-line' />
                         <E2EESection />
-                    </> : null
-                }
+                    </>
+                ) : null }
 
             </div>
         </Dialog>

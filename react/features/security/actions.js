@@ -26,20 +26,21 @@ export function toggleScope() {
     return function(dispatch: Dispatch<any>, getState: Function) {
         const room = getState()['features/base/conference'].roomInfo;
 
-        const baseURL = getState()['features/base/connection'].locationURL;
-
-        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
-        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-
-        try{
-            axios.patch(`${apiBaseUrl}/conferences/${room._id}`, {
-                scope: !room.scope
-            }).then(conf => {
-                dispatch(setPublicScopeEnabled(!room.scope));
-            });
-        }
-        catch(err){    
-            console.log(err);
+        if (room) {
+            const baseURL = getState()['features/base/connection'].locationURL;
+    
+            const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+            const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+    
+            try {
+                axios.patch(`${apiBaseUrl}/conferences/${room._id}`, {
+                    scope: !room.scope
+                }).then(conf => {
+                    dispatch(setPublicScopeEnabled(!room.scope));
+                });
+            } catch(err) {    
+                console.log(err);
+            }
         }
     };
 }

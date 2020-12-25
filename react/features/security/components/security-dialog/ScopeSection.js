@@ -123,7 +123,7 @@ class ScopeSection extends PureComponent<Props, State> {
  */
 function mapStateToProps(state: Object): $Shape<Props> {
     return {
-        _scope: state['features/base/conference'].roomInfo.scope
+        _scope: state['features/base/conference'].roomInfo?.scope
     };
 }
 
