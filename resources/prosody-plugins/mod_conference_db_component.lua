@@ -37,7 +37,7 @@ function room_destroyed(event)
 
     local node, host, resource = jid.split(room.jid);
 
-    local url = "http://vmapi:5000/conference/set-end-time";
+    local url = "http://vmapi:5000/conferences/set-end-time";
     local reqbody = { name = node };
     local reqbody_string = http.formencode(reqbody);
     log("info", "node is %s", node);

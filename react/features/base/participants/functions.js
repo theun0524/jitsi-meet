@@ -301,9 +301,7 @@ export function isIconUrl(icon: ?string | ?Object) {
  * @param {?boolean} ignoreToken - When true we ignore the token check.
  * @returns {boolean}
  */
-export function isLocalParticipantModerator(
-        stateful: Object | Function,
-        ignoreToken: ?boolean = false) {
+export function isLocalParticipantModerator(stateful: Object | Function) {
     const state = toState(stateful);
     const localParticipant = getLocalParticipant(state);
 
@@ -311,11 +309,7 @@ export function isLocalParticipantModerator(
         return false;
     }
 
-    return (
-        localParticipant.role === PARTICIPANT_ROLE.MODERATOR
-        && (ignoreToken
-                || !state['features/base/config'].enableUserRolesBasedOnToken
-                || !state['features/base/jwt'].isGuest));
+    return localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 }
 
 /**

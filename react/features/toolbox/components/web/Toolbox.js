@@ -1448,7 +1448,7 @@ function _mapStateToProps(state) {
                 String(features['screen-sharing']) === 'true') !== undefined;
 
         // we want to show button and tooltip
-        if (state['features/base/jwt'].isGuest) {
+        if (!state['features/base/jwt'].jwt) {
             desktopSharingDisabledTooltipKey
                 = 'dialog.shareYourScreenDisabledForGuest';
         } else {
@@ -1468,7 +1468,7 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isGuest: !state['features/base/jwt'].jwt,
         _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
         _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),

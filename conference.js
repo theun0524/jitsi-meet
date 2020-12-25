@@ -1359,9 +1359,12 @@ export default {
             options.statisticsId = email;
         }
 
+        if (locationURL) {
+            options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
+        }
+
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
-        options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
         options.createVADProcessor = createRnnoiseProcessorPromise;
 
         // Disable CallStats, if requessted.
@@ -2923,7 +2926,7 @@ export default {
                 const apiBaseUrl = `${locationURL.origin}${AUTH_API_BASE}`;
 
                 try{
-                    resp = await axios.post(`${apiBaseUrl}/conference`, {
+                    resp = await axios.post(`${apiBaseUrl}/conferences`, {
                         name: APP.conference.roomName,
                         end_time: new Date()
                     });

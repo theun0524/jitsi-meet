@@ -99,7 +99,7 @@ export function appNavigate(uri: ?string) {
         }
 
         location.protocol || (location.protocol = 'https:');
-        const { contextRoot, host, room } = location;
+        const { contextRoot, host, room, tenant } = location;
         const locationURL = new URL(location.toString());
 
         // Disconnect from any current conference.
@@ -204,7 +204,7 @@ export function appNavigate(uri: ?string) {
             const options = { siteId, socialId };
 
             try {
-                const resp = await axios.post(`${apiBase}/conference/token`, options);
+                const resp = await axios.post(`${apiBase}/conferences/token`, options);
                 const { error, token } = resp.data;
 
                 if (token) {
@@ -222,7 +222,7 @@ export function appNavigate(uri: ?string) {
         let roomInfo;
 
         if (room) {
-            const apiUrl = `${apiBase}/conference?name=${room}`;
+            const apiUrl = `${apiBase}/conferences?name=${room}`;
             let resp;
 
             try {
@@ -230,16 +230,15 @@ export function appNavigate(uri: ?string) {
                 roomInfo = resp.data;
                 roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
 
-                if(roomInfo.isHost){
-                    let resp_b = await axios.post(`${apiBase}/conference`, {
-                        name: room,
-                        start_time: new Date(),
-                        mail_owner: getState()['features/base/jwt'].user.email
-                    });
+                if (roomInfo.isHost) {
+                    axios.patch(
+                        `${apiBase}/conferences/${roomInfo._id}`,
+                        { start_time: new Date() }
+                    );
                 }
-            } catch (err) { 
+            } catch (err) {
                 try {
-                    resp = await axios.post(`${apiBase}/conference`, {
+                    resp = await axios.post(`${apiBase}/conferences`, {
                         name: room,
                         start_time: new Date(),
                         mail_owner: getState()['features/base/jwt'].user.email

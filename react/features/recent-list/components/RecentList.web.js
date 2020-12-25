@@ -82,7 +82,7 @@ class RecentList extends AbstractRecentList<Props, State> {
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
         
         try{
-            axios.post(`${apiBaseUrl}/conference/delete-conference-by-name`, {
+            axios.post(`${apiBaseUrl}/conferences/delete-conference-by-name`, {
                 name: title,
                 mail_owner: email
             }).then(resp => {
@@ -261,7 +261,7 @@ class RecentList extends AbstractRecentList<Props, State> {
 
         const asyncList = await recentList.reduce(async (accum, item) => {
             try{
-                let resp = await axios.get(`${apiBaseUrl}/conference?name=${item.title}`); 
+                let resp = await axios.get(`${apiBaseUrl}/conferences?name=${item.title}`); 
                 const tempItem = {
                     date: item.date,
                     duration: item.duration,

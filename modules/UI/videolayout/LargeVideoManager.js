@@ -6,17 +6,21 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
+import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
+import { getParticipantById } from '../../../react/features/base/participants';
+import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
 import { PresenceLabel } from '../../../react/features/presence-status';
+import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
 import { createDeferred } from '../../util/helpers';
@@ -180,8 +184,7 @@ export default class LargeVideoManager {
             // FIXME this does not really make sense, because the videoType
             // (camera or desktop) is a completely different thing than
             // the video container type (Etherpad, SharedVideo, VideoContainer).
-            const isVideoContainer
-                = LargeVideoManager.isVideoContainer(videoType);
+            const isVideoContainer = LargeVideoManager.isVideoContainer(videoType);
 
             this.newStreamData = null;
 
@@ -202,7 +205,8 @@ export default class LargeVideoManager {
             const wasUsersImageCached
                 = !isUserSwitch && container.wasVideoRendered;
             const isVideoMuted = !stream || stream.isMuted();
-
+            const state = APP.store.getState();
+            const participant = getParticipantById(state, id);
             const connectionStatus
                 = APP.conference.getParticipantConnectionStatus(id);
             const isVideoRenderable
@@ -211,10 +215,11 @@ export default class LargeVideoManager {
                         || connectionStatus
                                 === JitsiParticipantConnectionStatus.ACTIVE
                         || wasUsersImageCached);
+            const isAudioOnly = APP.conference.isAudioOnly();
 
             const showAvatar
                 = isVideoContainer
-                    && ((APP.conference.isAudioOnly() && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
+                && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
 
             let promise;
 
@@ -226,6 +231,29 @@ export default class LargeVideoManager {
                 // If the intention of this switch is to show the avatar
                 // we need to make sure that the video is hidden
                 promise = container.hide();
+
+                if ((!shouldDisplayTileView(state) || participant?.pinned) // In theory the tile view may not be
+                // enabled yet when we auto pin the participant.
+
+                        && participant && !participant.local && !participant.isFakeParticipant) {
+                    // remote participant only
+                    const track = getTrackByMediaTypeAndParticipant(
+                        state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+                    const isScreenSharing = track?.videoType === 'desktop';
+
+                    if (isScreenSharing) {
+                        // send the event
+                        sendAnalytics(createScreenSharingIssueEvent({
+                            source: 'large-video',
+                            connectionStatus,
+                            isVideoMuted,
+                            isAudioOnly,
+                            isVideoContainer,
+                            videoType
+                        }));
+                    }
+                }
+
             } else {
                 promise = container.show();
             }
