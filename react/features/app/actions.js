@@ -25,6 +25,8 @@ import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
+import { setLicenseError } from '../billing-counter/actions';
+import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../billing-counter/constants';
 import { isVpaasMeeting } from '../billing-counter/functions';
 import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
@@ -240,10 +242,10 @@ export function appNavigate(uri: ?string) {
                 console.log('Request is failed.', err.response);
                 const { error } = err.response?.data || {};
 
-                if (error === 'invalid_license') {
+                if (error === LICENSE_ERROR_INVALID_LICENSE ||
+                    error === LICENSE_ERROR_MAXED_LICENSE) {
                     // 라이센스가 유효하지 않습니다.
-                } else if (error === 'maxed_license') {
-                    // 모든 라이센스가 사용 중 입니다.
+                    dispatch(setLicenseError(error));
                 } else if (error === 'forbidden') {
                     // 개설 권한이 없는 경우, 게스트로 참석한다.
                 } else if (error === 'not_moderator') {

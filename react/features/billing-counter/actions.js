@@ -2,7 +2,7 @@
 
 import uuid from 'uuid';
 
-import { SET_BILLING_ID, SET_ENDPOINT_COUNTED } from './actionTypes';
+import { SET_BILLING_ID, SET_ENDPOINT_COUNTED, SET_LICENSE_ERROR } from './actionTypes';
 import { extractVpaasTenantFromPath, getBillingId, sendCountRequest } from './functions';
 
 /**
@@ -59,5 +59,17 @@ function setBillingId(value) {
 function setEndpointCounted() {
     return {
         type: SET_ENDPOINT_COUNTED
+    };
+}
+
+/**
+ * Action used to mark the license error.
+ *
+ * @returns {Object}
+ */
+export function setLicenseError(error) {
+    return {
+        type: SET_LICENSE_ERROR,
+        error
     };
 }

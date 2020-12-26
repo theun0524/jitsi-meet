@@ -2,7 +2,7 @@
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
-import { BILLING_ID, VPAAS_TENANT_PREFIX } from './constants';
+import { BILLING_ID, LICENSE_ERROR, VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
 
 /**
@@ -88,4 +88,23 @@ export function getBillingId() {
  */
 export function setBillingId(value: string) {
     jitsiLocalStorage.setItem(BILLING_ID, value);
+}
+
+/**
+ * Returns the stored license error.
+ *
+ * @returns {string}
+ */
+export function getLicenseError() {
+    return jitsiLocalStorage.getItem(LICENSE_ERROR);
+}
+
+/**
+ * Stores the billing id.
+ *
+ * @param {string} value - The id to be stored.
+ * @returns {void}
+ */
+export function setLicenseError(value: string) {
+    jitsiLocalStorage.setItem(LICENSE_ERROR, value);
 }

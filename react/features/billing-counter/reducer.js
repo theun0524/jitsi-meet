@@ -1,8 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    SET_ENDPOINT_COUNTED
-} from './actionTypes';
+import { SET_ENDPOINT_COUNTED, SET_LICENSE_ERROR } from './actionTypes';
 
 const DEFAULT_STATE = {
     endpointCounted: false
@@ -19,6 +17,13 @@ ReducerRegistry.register(
             return {
                 ...state,
                 endpointCounted: true
+            };
+        }
+
+        case SET_LICENSE_ERROR: {
+            return {
+                ...state,
+                error: action.error
             };
         }
 

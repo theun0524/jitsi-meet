@@ -3,9 +3,9 @@ import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { PARTICIPANT_JOINED } from '../base/participants/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_BILLING_ID } from './actionTypes';
+import { SET_BILLING_ID, SET_LICENSE_ERROR } from './actionTypes';
 import { countEndpoint } from './actions';
-import { isVpaasMeeting, extractVpaasTenantFromPath, setBillingId } from './functions';
+import { isVpaasMeeting, extractVpaasTenantFromPath, setBillingId, setLicenseError } from './functions';
 
 /**
  * The redux middleware for billing counter.
@@ -24,6 +24,10 @@ MiddlewareRegistry.register(store => next => async action => {
     case SET_BILLING_ID: {
         setBillingId(action.value);
 
+        break;
+    }
+    case SET_LICENSE_ERROR: {
+        setLicenseError(action.error);
         break;
     }
 
