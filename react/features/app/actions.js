@@ -220,8 +220,10 @@ export function appNavigate(uri: ?string) {
         }
 
         let roomInfo;
-
-        if (room) {
+        
+        // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
+        const pathname = window?.location?.pathname;
+        if (room && pathname !== '/') {
             const apiUrl = tenant
                 ? `${apiBase}/sites/${tenant}/conferences`
                 : `${apiBase}/conferences`;
