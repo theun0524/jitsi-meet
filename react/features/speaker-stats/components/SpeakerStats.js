@@ -245,7 +245,7 @@ class SpeakerStats extends Component<Props, State> {
         const AUTH_API_BASE = process.env.VMEETING_API_BASE;
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
 
-        const apiUrl = `${apiBaseUrl}/plog?meetingId=${conference.room.meetingId}`;
+        const apiUrl = `${apiBaseUrl}/plog?meeting_id=${conference.room.meetingId}`;
 
         try{
             axios.get(apiUrl).then(logs => {
