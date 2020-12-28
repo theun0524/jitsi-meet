@@ -74,6 +74,7 @@ export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
         let location = parseURIString(uri);
         const params = getParams(uri);
+        const { tenant: userTenant, user } = getState()['features/base/jwt'];
 
         console.log(uri, params, 'appNavigate');
 
@@ -167,8 +168,9 @@ export function appNavigate(uri: ?string) {
         if (!room && navigator.product === 'ReactNative') {
             dispatch(setJWT());
         }
-        const willAuthenticateURL = getLocationURL(getState());
 
+        const willAuthenticateURL = getLocationURL(getState());
+        const pathname = window?.location?.pathname;
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
@@ -198,21 +200,26 @@ export function appNavigate(uri: ?string) {
             if (Date.now() < exp * 1000) {
                 dispatch(setJWT(token));
             }
-        } else if (params.siteId && params.socialId) {
-            const { siteId, socialId } = params;
-            const options = { siteId, socialId };
-
+        } else if (!user && params.partnerCode) {
             try {
-                const resp = await axios.post(`${apiBase}/users/token`, options);
-                const { token } = resp.data;
+                const { partnerCode, ...options } = params;
 
-                if (token) {
-                    dispatch(setJWT(token));
+                // 인증이 완료된 후에 다시 현재 URL로 이동하기 위해.
+                options.next = pathname;
+
+                // apiToken이 없으면 서버에 저장된 토큰을 이용한다.
+                if (!options.apiToken) {
+                    options.apiToken = 'fake-token';
                 }
+
+                // 사용자가 없으면 일단 토큰을 발급받으러 간다.
+                // 원래는 파트너가 제공하는 로그인 페이지로 가야 하지만 제공하는 경우에만 이동하고
+                // 그렇지 않고 직접 방으로 접속하는 경우에는 자동 SSO 로그인을 위해 SSO 완료 URL로 이동한다.
+                window.location.href = `${apiBase}/complete/${partnerCode}?${qs.stringify(options)}`;
+                return;
             } catch (err) {
                 console.error('Failed to get token:', err);
             }
-
         } else {
             // Load current logged in user
             dispatch(loadCurrentUser());
@@ -221,9 +228,7 @@ export function appNavigate(uri: ?string) {
         let roomInfo;
         
         // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
-        const pathname = window?.location?.pathname;
         if (room && pathname !== '/') {
-            const { tenant: userTenant } = getState()['features/base/jwt'];
             let apiUrl;
             let resp;
 
