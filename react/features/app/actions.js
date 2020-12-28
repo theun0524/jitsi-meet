@@ -44,9 +44,6 @@ import {
     getName
 } from './functions';
 import logger from './logger';
-import { setLobbyModeEnabled } from '../lobby/actions';
-
-const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 
 const apiBase = process.env.VMEETING_API_BASE;
 
@@ -226,10 +223,18 @@ export function appNavigate(uri: ?string) {
         // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
         const pathname = window?.location?.pathname;
         if (room && pathname !== '/') {
-            const apiUrl = tenant
-                ? `${apiBase}/sites/${tenant}/conferences`
-                : `${apiBase}/conferences`;
+            const { tenant: userTenant } = getState()['features/base/jwt'];
+            let apiUrl;
             let resp;
+
+            if (tenant) {
+                apiUrl = `${apiBase}/sites/${tenant}/conferences`;
+            } else if (!userTenant) {
+                apiUrl = `${apiBase}/conferences`;
+            } else {
+                window.location.replace(`/${userTenant}/${room}`);
+                return;
+            }
 
             try {
                 resp = await axios.post(apiUrl, {
@@ -246,12 +251,13 @@ export function appNavigate(uri: ?string) {
                     error === LICENSE_ERROR_MAXED_LICENSE) {
                     // 라이센스가 유효하지 않습니다.
                     dispatch(setLicenseError(error));
-                } else if (error === 'forbidden') {
                     // 개설 권한이 없는 경우, 게스트로 참석한다.
-                } else if (error === 'not_moderator') {
                     // 게스트는 회의 조인만 허용한다.
                 } else {
+                    // (error === 'not_moderator')
+                    // (error === 'forbidden')
                     // Unknown error.
+                    dispatch(setLicenseError(''));
                 }
                 // try {
                 //     resp = await axios.post(`${apiBase}/conferences`, {
