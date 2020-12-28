@@ -263,7 +263,6 @@ export default {
         const msgTitleKey = error ? 'dialog.LicenseError' : 'dialog.WaitingForHost';
         const description = user ? (msg_errors[error] || msg_waiting) : msg;
 
-        console.log('=========> ', error, msg_errors);
         if (!user && !error) {
             buttons = [
                 { title: buttonTxt,

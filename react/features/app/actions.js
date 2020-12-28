@@ -74,7 +74,6 @@ export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
         let location = parseURIString(uri);
         const params = getParams(uri);
-        const { tenant: userTenant, user } = getState()['features/base/jwt'];
 
         console.log(uri, params, 'appNavigate');
 
@@ -200,7 +199,15 @@ export function appNavigate(uri: ?string) {
             if (Date.now() < exp * 1000) {
                 dispatch(setJWT(token));
             }
-        } else if (!user && params.partnerCode) {
+        } else {
+            // Load current logged in user
+            dispatch(loadCurrentUser());
+        }
+
+        let roomInfo;
+        const { tenant: userTenant, user } = getState()['features/base/jwt'];
+
+        if (!user && params.partnerCode) {
             try {
                 const { partnerCode, ...options } = params;
 
@@ -220,13 +227,8 @@ export function appNavigate(uri: ?string) {
             } catch (err) {
                 console.error('Failed to get token:', err);
             }
-        } else {
-            // Load current logged in user
-            dispatch(loadCurrentUser());
         }
 
-        let roomInfo;
-        
         // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
         if (room && pathname !== '/') {
             let apiUrl;
