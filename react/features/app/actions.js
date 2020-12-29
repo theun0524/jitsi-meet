@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import qs from 'query-string';
 import type { Dispatch } from 'redux';
 
 import { API_ID } from '../../../modules/API/constants';
