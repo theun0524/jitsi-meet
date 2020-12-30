@@ -7,6 +7,7 @@ import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
+import s from './MessageContainer.module.scss';
 
 declare var interfaceConfig: Object;
 
@@ -77,7 +78,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
         return (
             <div
-                className = { this._className }
+                className = { `${s.chatConversation} ${this._className} || ''` }
                 id = 'chatconversation'
                 onScroll = { this._onChatScroll }
                 ref = { this._messageListRef }>
