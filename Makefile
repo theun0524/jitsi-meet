@@ -16,7 +16,7 @@ WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 all: compile deploy clean
 
 compile:
-	$(WEBPACK) -p
+	node --max-old-space-size=4096 $(WEBPACK) -p
 
 clean:
 	rm -fr $(BUILD_DIR)
