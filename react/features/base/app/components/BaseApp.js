@@ -7,6 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
+import reduxLogger from 'redux-logger';
 
 import { i18next } from '../../i18n';
 import {
@@ -186,7 +187,7 @@ export default class BaseApp extends Component<*, State> {
         // additional 3rd party middleware:
         // - Thunk - allows us to dispatch async actions easily. For more info
         // @see https://github.com/gaearon/redux-thunk.
-        let middleware = MiddlewareRegistry.applyMiddleware(Thunk);
+        let middleware = MiddlewareRegistry.applyMiddleware(Thunk, reduxLogger);
 
         // Try to enable Redux DevTools Chrome extension in order to make it
         // available for the purposes of facilitating development.
