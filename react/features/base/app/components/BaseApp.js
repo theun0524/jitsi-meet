@@ -191,7 +191,7 @@ export default class BaseApp extends Component<*, State> {
         if (process.env.NODE_ENV === 'development') {
             middlewares.push(reduxLogger);
         }
-        let middleware = MiddlewareRegistry.applyMiddleware(middlewares);
+        let middleware = MiddlewareRegistry.applyMiddleware(...middlewares);
 
         // Try to enable Redux DevTools Chrome extension in order to make it
         // available for the purposes of facilitating development.
