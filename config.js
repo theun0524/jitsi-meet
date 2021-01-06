@@ -53,7 +53,12 @@ var config = {
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: false
+        p2pTestMode: false,
+
+        // enable octo
+        octo: {
+            probability: 1
+        }
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -118,7 +123,7 @@ var config = {
     // Sets the preferred target bitrate for the Opus audio codec by setting its
     // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
     // Valid values are in the range 6000 to 510000
-    // opusMaxAverageBitrate: 20000,
+    opusMaxAverageBitrate: 32000,
 
     // Video
 
