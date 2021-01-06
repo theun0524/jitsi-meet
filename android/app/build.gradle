@@ -17,7 +17,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'org.postech.vmeeting'
+        applicationId 'org.postech.vmeeting.seetalk'
         versionCode vcode
         versionName project.appVersion
 
@@ -36,7 +36,7 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        
+
         release {
             Properties properties = new Properties()
             properties.load(project.rootProject.file('signingconfig.properties').newDataInputStream())

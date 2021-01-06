@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.postech.vmeeting;
+package org.postech.vmeeting.seetalk;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

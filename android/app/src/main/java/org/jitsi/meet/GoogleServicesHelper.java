@@ -1,4 +1,4 @@
-package org.postech.vmeeting;
+package org.postech.vmeeting.seetalk;
 
 import android.net.Uri;
 import android.util.Log;
