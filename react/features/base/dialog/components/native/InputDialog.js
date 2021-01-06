@@ -16,6 +16,9 @@ import {
     inputDialog as styles
 } from './styles';
 
+import { BackHandler } from "react-native";
+import { hideDialog } from '../../actions';
+
 type Props = BaseProps & {
 
     /**
@@ -160,6 +163,21 @@ class InputDialog extends BaseDialog<Props, State> {
      */
     _onSubmitValue() {
         return this._onSubmit(this.state.fieldValue);
+    }
+
+    backAction = () => {
+        return this.props.dispatch(hideDialog());
+    };
+    
+    componentDidMount() {
+        this.backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            this.backAction
+        );
+    }
+
+    componentWillUnmount() {
+        this.backHandler.remove();
     }
 }
 

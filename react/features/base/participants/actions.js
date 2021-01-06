@@ -14,6 +14,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
+    RECV_VIDEO_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import {
@@ -473,6 +474,29 @@ export function pinParticipant(id) {
     };
 }
 
+/**
+ * Create an action which signal jvb to receive or not video of a conference participant.
+ *
+ * @param {string|null} id - The ID of the conference participant to pin or null
+ * if none of the conference's participants are to be pinned.
+ * @returns {{
+ *     type: RECV_VIDEO_PARTICIPANT,
+ *     participant: {
+ *         id: string,
+ *         toRecvVideo: boolean
+ *     }
+ * }}
+ */
+export function recvVideoParticipant(participantId, toRecvVideo) {
+    return {
+        type: RECV_VIDEO_PARTICIPANT,
+        participant: {
+            id: participantId,
+            toRecvVideo: toRecvVideo
+        }
+    };
+}
+   
 /**
  * Creates an action which notifies the app that the loadable URL of the avatar of a participant got updated.
  *
