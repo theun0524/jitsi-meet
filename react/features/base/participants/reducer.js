@@ -9,6 +9,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
+    RECV_VIDEO_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
@@ -69,6 +70,7 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PARTICIPANT_ID_CHANGED:
     case PARTICIPANT_UPDATED:
     case PIN_PARTICIPANT:
+    case RECV_VIDEO_PARTICIPANT:
         return state.map(p => _participant(p, action));
 
     case PARTICIPANT_JOINED:
@@ -134,6 +136,7 @@ function _participant(state: Object = {}, action) {
     }
 
     case SET_LOADABLE_AVATAR_URL:
+    case RECV_VIDEO_PARTICIPANT:
     case PARTICIPANT_UPDATED: {
         const { participant } = action; // eslint-disable-line no-shadow
         let { id } = participant;

@@ -137,6 +137,19 @@ export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
 export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
 
 /**
+ * The type of the Redux action which receive/not receive
+ * vieo of conference participant.
+ *
+ * {
+ *     type: RECV_VIDEO_PARTICIPANT,
+ *     participant: {
+ *         id: string
+ *     }
+ * }
+ */
+export const RECV_VIDEO_PARTICIPANT = 'RECV_VIDEO_PARTICIPANT';
+
+/**
  * Action to signal that a hidden participant has joined.
  *
  * {
@@ -170,4 +183,3 @@ export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
  * }
  */
 export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
-
