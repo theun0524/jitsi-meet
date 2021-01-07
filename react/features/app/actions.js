@@ -208,12 +208,13 @@ export function appNavigate(uri: ?string) {
         let roomInfo;
         const { tenant: userTenant, user } = getState()['features/base/jwt'];
 
-        if (!user && params.partnerCode) {
+        if (!user && params.otp) {
             try {
-                const { partnerCode, ...options } = params;
+                const { ...options } = params;
 
                 // 인증이 완료된 후에 다시 현재 URL로 이동하기 위해.
                 options.next = pathname;
+                const siteId = pathname.split('/')[1];
 
                 // apiToken이 없으면 서버에 저장된 토큰을 이용한다.
                 if (!options.apiToken) {
@@ -223,7 +224,7 @@ export function appNavigate(uri: ?string) {
                 // 사용자가 없으면 일단 토큰을 발급받으러 간다.
                 // 원래는 파트너가 제공하는 로그인 페이지로 가야 하지만 제공하는 경우에만 이동하고
                 // 그렇지 않고 직접 방으로 접속하는 경우에는 자동 SSO 로그인을 위해 SSO 완료 URL로 이동한다.
-                window.location.href = `${apiBase}/complete/${partnerCode}?${qs.stringify(options)}`;
+                window.location.href = `${apiBase}/complete/${siteId}?${qs.stringify(options)}`;
                 return;
             } catch (err) {
                 console.error('Failed to get token:', err);
