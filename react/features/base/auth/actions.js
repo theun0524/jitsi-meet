@@ -16,12 +16,11 @@ const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 const JWT_TOKEN_VERSION = process.env.JWT_TOKEN_VERSION;
 
 function getValidAuthToken(state) {
-    const rememberMe = Cookies.get('remember_me');
     const token = navigator.product === 'ReactNative'
         ? tokenLocalStorage.getItem(state)
         : jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
 
-    if (rememberMe && token) {
+    if (token) {
         const { exp, context } = jwtDecode(token);
 
         // 유효한 토큰인 경우만 token을 리턴한다.

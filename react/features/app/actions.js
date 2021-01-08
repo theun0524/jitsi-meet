@@ -45,6 +45,7 @@ import {
     getName
 } from './functions';
 import logger from './logger';
+import { omit, size } from 'lodash';
 
 const apiBase = process.env.VMEETING_API_BASE;
 
@@ -162,6 +163,11 @@ export function appNavigate(uri: ?string) {
             return;
         }
 
+        const ssoAuthKeys = interfaceConfig.SSO_AUTH_KEYS;
+        if (ssoAuthKeys && params[ssoAuthKeys[0]]) {
+            const args = omit(qs.parse(locationURL.search), ssoAuthKeys);
+            locationURL.search = size(args) > 0 ? `?${qs.stringify(args)}` : '';
+        }
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
 
@@ -207,8 +213,9 @@ export function appNavigate(uri: ?string) {
 
         let roomInfo;
         const { tenant: userTenant, user } = getState()['features/base/jwt'];
-
-        if (!user && params.otp) {
+        const pattern = /\/(?<site_id>[^\/]+)\/(?<conf_name>[^\/]+)$/;
+        const matched = window.location.pathname.match(pattern);
+        if (!user && matched && ssoAuthKeys && params[ssoAuthKeys[0]]) {
             try {
                 const { ...options } = params;
 

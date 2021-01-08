@@ -135,11 +135,6 @@ type Props = {
     _tileViewEnabled: boolean,
 
     /**
-     * Whether or not the current user is logged in through a JWT.
-     */
-    _isGuest: boolean,
-
-    /**
      * Whether or not meeting is streaming live.
      */
     _isLiveStreaming: boolean,
@@ -287,48 +282,50 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        const KEYBOARD_SHORTCUTS = [
-            this._shouldShowButton('videoquality') && {
-                character: 'A',
-                exec: this._onShortcutToggleVideoQuality,
-                helpDescription: 'keyboardShortcuts.videoQuality'
-            },
-            this._shouldShowButton('chat') && {
-                character: 'C',
-                exec: this._onShortcutToggleChat,
-                helpDescription: 'keyboardShortcuts.toggleChat'
-            },
-            this._shouldShowButton('desktop') && {
-                character: 'D',
-                exec: this._onShortcutToggleScreenshare,
-                helpDescription: 'keyboardShortcuts.toggleScreensharing'
-            },
-            this._shouldShowButton('raisehand') && {
-                character: 'R',
-                exec: this._onShortcutToggleRaiseHand,
-                helpDescription: 'keyboardShortcuts.raiseHand'
-            },
-            this._shouldShowButton('fullscreen') && {
-                character: 'S',
-                exec: this._onShortcutToggleFullScreen,
-                helpDescription: 'keyboardShortcuts.fullScreen'
-            },
-            this._shouldShowButton('tileview') && {
-                character: 'W',
-                exec: this._onShortcutToggleTileView,
-                helpDescription: 'toolbar.tileViewToggle'
-            }
-        ];
-
-        KEYBOARD_SHORTCUTS.forEach(shortcut => {
-            if (typeof shortcut === 'object') {
-                APP.keyboardshortcut.registerShortcut(
-                    shortcut.character,
-                    null,
-                    shortcut.exec,
-                    shortcut.helpDescription);
-            }
-        });
+        if (interfaceConfig.DISABLE_SHORTCUT) {
+            const KEYBOARD_SHORTCUTS = [
+                this._shouldShowButton('videoquality') && {
+                    character: 'A',
+                    exec: this._onShortcutToggleVideoQuality,
+                    helpDescription: 'keyboardShortcuts.videoQuality'
+                },
+                this._shouldShowButton('chat') && {
+                    character: 'C',
+                    exec: this._onShortcutToggleChat,
+                    helpDescription: 'keyboardShortcuts.toggleChat'
+                },
+                this._shouldShowButton('desktop') && {
+                    character: 'D',
+                    exec: this._onShortcutToggleScreenshare,
+                    helpDescription: 'keyboardShortcuts.toggleScreensharing'
+                },
+                this._shouldShowButton('raisehand') && {
+                    character: 'R',
+                    exec: this._onShortcutToggleRaiseHand,
+                    helpDescription: 'keyboardShortcuts.raiseHand'
+                },
+                this._shouldShowButton('fullscreen') && {
+                    character: 'S',
+                    exec: this._onShortcutToggleFullScreen,
+                    helpDescription: 'keyboardShortcuts.fullScreen'
+                },
+                this._shouldShowButton('tileview') && {
+                    character: 'W',
+                    exec: this._onShortcutToggleTileView,
+                    helpDescription: 'toolbar.tileViewToggle'
+                }
+            ];
+    
+            KEYBOARD_SHORTCUTS.forEach(shortcut => {
+                if (typeof shortcut === 'object') {
+                    APP.keyboardshortcut.registerShortcut(
+                        shortcut.character,
+                        null,
+                        shortcut.exec,
+                        shortcut.helpDescription);
+                }
+            });
+        }
 
         window.addEventListener('resize', this._onResize);
     }
@@ -931,12 +928,9 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean}
      */
     _isDesktopSharingButtonVisible() {
-        const {
-            _desktopSharingEnabled,
-            _desktopSharingDisabledTooltipKey
-        } = this.props;
+        const { _desktopSharingEnabled } = this.props;
 
-        return _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
+        return _desktopSharingEnabled;
     }
 
     /**
@@ -1024,6 +1018,7 @@ class Toolbox extends Component<Props, State> {
             _fullScreen,
             _isLiveStreaming,
             _isRecording,
+            _isStatsVisible,
             _screensharing,
             _sharingVideo,
             t
@@ -1076,7 +1071,7 @@ class Toolbox extends Component<Props, State> {
                 key = 'mute-everyone'
                 showLabel = { true }
                 visible = { this._shouldShowButton('mute-everyone') } />,
-            this._shouldShowButton('stats')
+            this._shouldShowButton('stats') && _isStatsVisible
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
                     icon = { IconPresentation }
@@ -1437,24 +1432,23 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
+    const isGuest = !state['features/base/jwt'].jwt;
 
     let desktopSharingDisabledTooltipKey;
 
     if (enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
         // feature enabled
-        desktopSharingEnabled = getParticipants(state)
-            .find(({ features = {} }) =>
-                String(features['screen-sharing']) === 'true') !== undefined;
+        if (interfaceConfig.HIDE_DESKTOP_SHARING_FOR_GUEST) {
+            desktopSharingEnabled = !isGuest;
+        } else {
+            desktopSharingEnabled = getParticipants(state)
+                .find(({ features = {} }) =>
+                    String(features['screen-sharing']) === 'true') !== undefined;
+        }
 
         // we want to show button and tooltip
-        if (!state['features/base/jwt'].jwt) {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabledForGuest';
-        } else {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabled';
-        }
+        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
 
     // NB: We compute the buttons again here because if URL parameters were used to
@@ -1468,10 +1462,10 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
-        _isGuest: !state['features/base/jwt'].jwt,
         _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
         _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
+        _isStatsVisible: !(interfaceConfig.HIDE_STATS_FOR_GUEST && isGuest),
         _isVpaasMeeting: isVpaasMeeting(state),        
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
