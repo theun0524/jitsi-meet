@@ -207,13 +207,19 @@ export function appNavigate(uri: ?string) {
 
         let roomInfo;
         const { tenant: userTenant, user } = getState()['features/base/jwt'];
-
-        if (!user && params.partnerCode) {
+        const pattern = /\/(?<site_id>[^\/]+)\/(?<conf_name>[^\/]+)$/;
+        const matched = pathname.match(pattern);
+        if (!user && matched && ssoAuthKeys && params[ssoAuthKeys[0]]) {
             try {
-                const { partnerCode, ...options } = params;
+                let { partnerCode, ...options } = params;
 
                 // 인증이 완료된 후에 다시 현재 URL로 이동하기 위해.
                 options.next = pathname;
+
+                // partnerCode가 없는 경우 site_id와 동일한 값을 사용한다.
+                if (!partnerCode) {
+                    partnerCode = matched.groups?.site_id;
+                }
 
                 // apiToken이 없으면 서버에 저장된 토큰을 이용한다.
                 if (!options.apiToken) {
