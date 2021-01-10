@@ -164,7 +164,8 @@ export function appNavigate(uri: ?string) {
         }
 
         const ssoAuthKeys = interfaceConfig.SSO_AUTH_KEYS;
-        if (ssoAuthKeys && params[ssoAuthKeys[0]]) {
+        const pathname = window?.location?.pathname;
+        if (pathname === '/' && ssoAuthKeys && params[ssoAuthKeys[0]]) {
             const args = omit(qs.parse(locationURL.search), ssoAuthKeys);
             locationURL.search = size(args) > 0 ? `?${qs.stringify(args)}` : '';
         }
@@ -176,7 +177,6 @@ export function appNavigate(uri: ?string) {
         }
 
         const willAuthenticateURL = getLocationURL(getState());
-        const pathname = window?.location?.pathname;
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
