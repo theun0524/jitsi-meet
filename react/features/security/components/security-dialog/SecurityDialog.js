@@ -87,7 +87,7 @@ function SecurityDialog({
     }, [ _password ]);
 
     useEffect(() => {
-        if (_roomInfo.scope) {
+        if (_roomInfo?.scope) {
             setPublicScope(true);
         }
         else{
@@ -104,31 +104,30 @@ function SecurityDialog({
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <MessageSection />
-                {
-                    _roomInfo.isHost?
+                { _roomInfo?.isHost ? (
                     <>
-                    <ScopeSection />
-                    {
-                        publicScope?
-                        <LobbySection /> :
-                        <PasswordSection
-                        canEditPassword = { _canEditPassword }
-                        conference = { _conference }
-                        locked = { _locked }
-                        password = { _password }
-                        passwordEditEnabled = { passwordEditEnabled }
-                        passwordNumberOfDigits = { _passwordNumberOfDigits }
-                        setPassword = { setPassword }
-                        setPasswordEditEnabled = { setPasswordEditEnabled } />
-                    } </>: null
-                }
+                        <ScopeSection />
+                        { publicScope
+                            ? <LobbySection /> 
+                            : <PasswordSection
+                                canEditPassword = { _canEditPassword }
+                                conference = { _conference }
+                                locked = { _locked }
+                                password = { _password }
+                                passwordEditEnabled = { passwordEditEnabled }
+                                passwordNumberOfDigits = { _passwordNumberOfDigits }
+                                setPassword = { setPassword }
+                                setPasswordEditEnabled = { setPasswordEditEnabled } />
+                        }
+                    </>
+                ) : null }
 
-                {
-                    _showE2ee ? <>
+                { _showE2ee ? (
+                    <>
                         <div className = 'separator-line' />
                         <E2EESection />
-                    </> : null
-                }
+                    </>
+                ) : null }
 
             </div>
         </Dialog>
@@ -151,13 +150,10 @@ function mapStateToProps(state) {
         password,
         roomInfo
     } = state['features/base/conference'];
-    const {
-        lockRoomGuestEnabled,
-        roomPasswordNumberOfDigits
-    } = state['features/base/config'];
+    const { roomPasswordNumberOfDigits } = state['features/base/config'];
 
     return {
-        _canEditPassword: isLocalParticipantModerator(state, lockRoomGuestEnabled),
+        _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _roomInfo: roomInfo,
         _dialIn: state['features/invite'],

@@ -1359,9 +1359,12 @@ export default {
             options.statisticsId = email;
         }
 
+        if (locationURL) {
+            options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
+        }
+
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
-        options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
         options.createVADProcessor = createRnnoiseProcessorPromise;
 
         // Disable CallStats, if requessted.
@@ -2035,17 +2038,17 @@ export default {
 
                 const { conference, roomInfo } = APP.store.getState()['features/base/conference'];
 
-                if(role === "moderator" && roomInfo.isHost){
-                    if(roomInfo.schedule){
-                        APP.store.dispatch(setStartMutedPolicy(!roomInfo.microphone, !roomInfo.video));
-                        APP.store.dispatch(updateSettings({ startWithAudioMuted: !roomInfo.microphone, startWithVideoMuted: !roomInfo.video }));
-                        APP.store.dispatch(setAudioMuted(!roomInfo.microphone));
-                        APP.store.dispatch(setVideoMuted(!roomInfo.video));
-                        if(!roomInfo.scope && roomInfo.password){
-                            APP.store.dispatch(endRoomLockRequest(conference, roomInfo.password));
-                        }
-                        APP.store.dispatch(toggleLobbyMode(roomInfo.lobby));
+                if (role === "moderator" && roomInfo?.isHost && roomInfo?.schedule) {
+                    APP.store.dispatch(setStartMutedPolicy(!roomInfo.microphone, !roomInfo.video));
+                    APP.store.dispatch(updateSettings({ startWithAudioMuted: !roomInfo.microphone, startWithVideoMuted: !roomInfo.video }));
+                    APP.store.dispatch(setAudioMuted(!roomInfo.microphone));
+                    APP.store.dispatch(setVideoMuted(!roomInfo.video));
+
+                    if (!roomInfo.scope && roomInfo.password) {
+                        APP.store.dispatch(endRoomLockRequest(conference, roomInfo.password));
                     }
+
+                    APP.store.dispatch(toggleLobbyMode(roomInfo.lobby));
                 }
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
@@ -2923,7 +2926,7 @@ export default {
                 const apiBaseUrl = `${locationURL.origin}${AUTH_API_BASE}`;
 
                 try{
-                    resp = await axios.post(`${apiBaseUrl}/conference`, {
+                    resp = await axios.post(`${apiBaseUrl}/conferences`, {
                         name: APP.conference.roomName,
                         end_time: new Date()
                     });

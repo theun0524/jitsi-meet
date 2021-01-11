@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import qs from 'query-string';
 import type { Dispatch } from 'redux';
 
 import { API_ID } from '../../../modules/API/constants';
@@ -25,6 +26,9 @@ import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
+import { setLicenseError } from '../billing-counter/actions';
+import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../billing-counter/constants';
+import { isVpaasMeeting } from '../billing-counter/functions';
 import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
     addHashParamsToURL,
@@ -41,9 +45,9 @@ import {
     getName
 } from './functions';
 import logger from './logger';
-import { setLobbyModeEnabled } from '../lobby/actions';
+import { has, omit, size } from 'lodash';
 
-const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+const apiBase = process.env.VMEETING_API_BASE;
 
 // eslint-disable-next-line require-jsdoc
 function getParams(uri: string) {
@@ -96,7 +100,7 @@ export function appNavigate(uri: ?string) {
         }
 
         location.protocol || (location.protocol = 'https:');
-        const { contextRoot, host, room } = location;
+        const { contextRoot, host, room, tenant } = location;
         const locationURL = new URL(location.toString());
 
         // Disconnect from any current conference.
@@ -159,14 +163,20 @@ export function appNavigate(uri: ?string) {
             return;
         }
 
+        const ssoAuthKeys = interfaceConfig.SSO_AUTH_KEYS;
+        const pathname = window?.location?.pathname;
+        if (pathname === '/' && ssoAuthKeys && params[ssoAuthKeys[0]]) {
+            const args = omit(qs.parse(locationURL.search), ssoAuthKeys);
+            locationURL.search = size(args) > 0 ? `?${qs.stringify(args)}` : '';
+        }
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
 
         if (!room && navigator.product === 'ReactNative') {
             dispatch(setJWT());
         }
-        const willAuthenticateURL = getLocationURL(getState());
 
+        const willAuthenticateURL = getLocationURL(getState());
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
@@ -189,43 +199,99 @@ export function appNavigate(uri: ?string) {
                     dispatch(setJWT(token));
                 }
             }
+        } else if (params.token) {
+            const { token } = params;
+            const { exp } = jwtDecode(token);
+
+            if (Date.now() < exp * 1000) {
+                dispatch(setJWT(token));
+            }
         } else {
             // Load current logged in user
             dispatch(loadCurrentUser());
         }
 
         let roomInfo;
+        const { tenant: userTenant, user } = getState()['features/base/jwt'];
+        const pattern = /\/(?<site_id>[^\/]+)\/(?<conf_name>[^\/]+)$/;
+        const matched = pathname.match(pattern);
+        if (!user && matched && ssoAuthKeys && params[ssoAuthKeys[0]]) {
+            try {
+                let { partnerCode, ...options } = params;
 
-        if (room) {
-            const apiBaseUrl = `${baseURL}${AUTH_API_BASE}`;
-            const apiUrl = `${apiBaseUrl}/conference?name=${room}`;
+                // 인증이 완료된 후에 다시 현재 URL로 이동하기 위해.
+                options.next = pathname;
+
+                // partnerCode가 없는 경우 site_id와 동일한 값을 사용한다.
+                if (!partnerCode) {
+                    partnerCode = matched.groups?.site_id;
+                }
+
+                // apiToken이 없으면 서버에 저장된 토큰을 이용한다.
+                if (!options.apiToken) {
+                    options.apiToken = 'fake-token';
+                }
+
+                // 사용자가 없으면 일단 토큰을 발급받으러 간다.
+                // 원래는 파트너가 제공하는 로그인 페이지로 가야 하지만 제공하는 경우에만 이동하고
+                // 그렇지 않고 직접 방으로 접속하는 경우에는 자동 SSO 로그인을 위해 SSO 완료 URL로 이동한다.
+                window.location.href = `${apiBase}/complete/${partnerCode}?${qs.stringify(options)}`;
+                return;
+            } catch (err) {
+                console.error('Failed to get token:', err);
+            }
+        }
+
+        // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
+        // host가 지정된 경우, host 값이 true인 경우만 방장으로 참석한다.
+        if (room && pathname !== '/' && (!has(params, 'host') || params.host === 'true')) {
+            let apiUrl;
             let resp;
 
-            try {
-                resp = await axios.get(apiUrl);
-                roomInfo = resp.data;
-                roomInfo.isHost = getState()['features/base/jwt'].user.email === roomInfo.mail_owner;
+            if (tenant) {
+                apiUrl = `${apiBase}/sites/${tenant}/conferences`;
+            } else if (!userTenant) {
+                apiUrl = `${apiBase}/conferences`;
+            } else {
+                window.location.replace(`/${userTenant}/${room}`);
+                return;
+            }
 
-                if(roomInfo.isHost){
-                    let resp_b = await axios.post(`${apiBaseUrl}/conference`, {
-                        name: room,
-                        start_time: new Date(),
-                        mail_owner: getState()['features/base/jwt'].user.email
-                    });
+            try {
+                resp = await axios.post(apiUrl, {
+                    name: room,
+                    start_time: new Date(),
+                });
+                roomInfo = resp.data;
+                roomInfo.isHost = true;
+            } catch (err) {
+                console.log('Request is failed.', err.response);
+                const { error } = err.response?.data || {};
+
+                if (error === LICENSE_ERROR_INVALID_LICENSE ||
+                    error === LICENSE_ERROR_MAXED_LICENSE) {
+                    // 라이센스가 유효하지 않습니다.
+                    dispatch(setLicenseError(error));
+                    // 개설 권한이 없는 경우, 게스트로 참석한다.
+                    // 게스트는 회의 조인만 허용한다.
+                } else {
+                    // (error === 'not_moderator')
+                    // (error === 'forbidden')
+                    // Unknown error.
+                    dispatch(setLicenseError(''));
                 }
-            } catch (err) { 
-                try {
-                    resp = await axios.post(`${apiBaseUrl}/conference`, {
-                        name: room,
-                        start_time: new Date(),
-                        mail_owner: getState()['features/base/jwt'].user.email
-                    });
-                    roomInfo = resp.data;
-                    roomInfo.isHost = true;
-                } catch (err2) {
-                    console.log("Error! Not navigate to target, ", err2);
-                    disconnect();
-                }
+                // try {
+                //     resp = await axios.post(`${apiBase}/conferences`, {
+                //         name: room,
+                //         start_time: new Date(),
+                //         mail_owner: getState()['features/base/jwt'].user.email
+                //     });
+                //     roomInfo = resp.data;
+                //     roomInfo.isHost = true;
+                // } catch (err2) {
+                //     console.log("Error! Not navigate to target, ", err2);
+                //     disconnect();
+                // }
             }
         }
 
@@ -386,12 +452,17 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
-            const { isGuest, jwt } = getState()['features/base/jwt'];
+            if (isVpaasMeeting(getState())) {
+                redirectToStaticPage('/');
+                return;
+            }
+
+            const { jwt } = getState()['features/base/jwt'];
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,
             // before navigating to close page
-            window.sessionStorage.setItem('guest', isGuest);
+            window.sessionStorage.setItem('guest', !jwt);
             window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';

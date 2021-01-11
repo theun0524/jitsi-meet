@@ -7,6 +7,7 @@ import type { Dispatch } from 'redux';
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app/actions';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
+import { setLicenseError } from '../../billing-counter/actions';
 import { isCalendarEnabled } from '../../calendar-sync';
 import { isRecentListEnabled } from '../../recent-list/functions';
 
@@ -125,6 +126,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
     componentDidMount() {
         this._mounted = true;
         sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
+        this.props.dispatch(setLicenseError());
     }
 
     /**

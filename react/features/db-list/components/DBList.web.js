@@ -181,19 +181,17 @@ class DBList extends AbstractDBList<Props, State> {
     _loadFromDB: () => void;
     _deleteFromDB: () => void;
 
-
     _updateList() {
-        if(!this.state.setting){
+        if (!this.state.setting) {
             this._loadFromDB();
-        }
-        else{
+        } else {
             const loaded = true;
             const saved = this.state.savedList;
             this.setState({ loaded, saved, saved });
         }
     }
 
-    _loadFromDB(){
+    _loadFromDB() {
         const {
             email,
             baseURL
@@ -201,8 +199,8 @@ class DBList extends AbstractDBList<Props, State> {
 
         const AUTH_API_BASE = process.env.VMEETING_API_BASE;
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-        try{
-            axios.post(`${apiBaseUrl}/conference/get-conference-by-email`, {
+        try {
+            axios.post(`${apiBaseUrl}/conferences/get-conference-by-email`, {
                 mail_owner: email
             }).then(_dbList => {
                 const _dbListData = _dbList.data;
@@ -210,13 +208,12 @@ class DBList extends AbstractDBList<Props, State> {
 
                 this.setState({ setting: nextSetting, _dbList: _dbListData, savedList: _dbListData });
             });
-        }
-        catch(err){    
+        } catch(err) {
             console.log(err);
         }
     }
 
-    _deleteFromDB(){
+    _deleteFromDB() {
         const title = this.state.targetEntry;
         const {
             email,
@@ -226,8 +223,8 @@ class DBList extends AbstractDBList<Props, State> {
         const AUTH_API_BASE = process.env.VMEETING_API_BASE;
         const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
         
-        try{
-            axios.post(`${apiBaseUrl}/conference/delete-conference-by-name`, {
+        try {
+            axios.post(`${apiBaseUrl}/conferences/delete-conference-by-name`, {
                 name: title,
                 mail_owner: email
             }).then(resp => {
@@ -238,8 +235,7 @@ class DBList extends AbstractDBList<Props, State> {
                 this._openDeleteFailModal();
                 this.setState({setting: false});
             });
-        }
-        catch(err){    
+        } catch(err) {    
             console.log(err);
             //Pop-up with Delete Failed Message
             this._openDeleteFailModal();

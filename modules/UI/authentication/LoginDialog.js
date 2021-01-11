@@ -10,6 +10,8 @@ import axios from 'axios';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../../../react/features/base/jwt';
 import { getCurrentUser } from '../../../react/features/base/auth/functions';
+import { getLicenseError } from '../../../react/features/billing-counter/functions';
+import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../../../react/features/billing-counter/constants';
 
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
@@ -241,6 +243,13 @@ export default {
             '[html]dialog.WaitingRoomMsg',
             { room }
         );
+        const msg_errors = {
+            [LICENSE_ERROR_INVALID_LICENSE]:
+                APP.translation.generateTranslationHTML('[html]dialog.InvalidLicense'),
+            [LICENSE_ERROR_MAXED_LICENSE]:
+                APP.translation.generateTranslationHTML('[html]dialog.MaxedLicense'),
+        };
+
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.login'
         );
@@ -250,8 +259,11 @@ export default {
         let buttons;
 
         const user = getCurrentUser(APP.store.getState());
+        const error = getLicenseError();
+        const msgTitleKey = error ? 'dialog.LicenseError' : 'dialog.WaitingForHost';
+        const description = user ? (msg_errors[error] || msg_waiting) : msg;
 
-        if (!user){
+        if (!user && !error) {
             buttons = [
                 { title: buttonTxt,
                 value: 'authNow'},
@@ -267,8 +279,8 @@ export default {
         }
 
         return APP.UI.messageHandler.openDialog(
-            'dialog.WaitingForHost',
-            user? msg_waiting : msg,
+            msgTitleKey,
+            description,
             true,
             buttons,
             (e, submitValue) => {

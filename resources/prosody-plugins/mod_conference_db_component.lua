@@ -35,9 +35,13 @@ function room_destroyed(event)
         return;
     end
 
-    local node, host, resource = jid.split(room.jid);
-
-    local url = "http://vmapi:5000/conference/set-end-time";
+    local node, host, resourse = jid.split(room.jid);
+    local site_id, name = node:match("^%[([^%]]+)%](.+)$");
+    local url = "http://vmapi:5000/";
+    if site_id then
+        url1 = url1 .. "sites/" .. site_id .. "/";
+    end
+    url1 = url1 .. "conferences/set-end-time";
     local reqbody = { name = node };
     local reqbody_string = http.formencode(reqbody);
     log("info", "node is %s", node);

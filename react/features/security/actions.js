@@ -24,26 +24,23 @@ export function toggleSecurityDialog() {
 
 export function toggleScope() {
     return function(dispatch: Dispatch<any>, getState: Function) {
-        const value = getState()['features/base/conference'].roomInfo.scope;
+        const room = getState()['features/base/conference'].roomInfo;
 
-        const baseURL = getState()['features/base/connection'].locationURL;
-        const email = getState()['features/base/jwt'].user.email;
-        const room_name = getState()['features/base/conference'].room;
-
-        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
-        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-
-        try{
-            axios.post(`${apiBaseUrl}/conference/update-conference-scope`, {
-                name: room_name,
-                mail_owner: email,
-                scope: !value
-            }).then(conf => {
-                dispatch(setPublicScopeEnabled(!value));
-            });
-        }
-        catch(err){    
-            console.log(err);
+        if (room) {
+            const baseURL = getState()['features/base/connection'].locationURL;
+    
+            const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+            const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+    
+            try {
+                axios.patch(`${apiBaseUrl}/conferences/${room._id}`, {
+                    scope: !room.scope
+                }).then(conf => {
+                    dispatch(setPublicScopeEnabled(!room.scope));
+                });
+            } catch(err) {    
+                console.log(err);
+            }
         }
     };
 }
