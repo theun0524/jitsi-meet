@@ -45,6 +45,7 @@ import {
     getName
 } from './functions';
 import logger from './logger';
+import { has, omit, size } from 'lodash';
 
 const apiBase = process.env.VMEETING_API_BASE;
 
@@ -242,7 +243,8 @@ export function appNavigate(uri: ?string) {
         }
 
         // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
-        if (room && pathname !== '/') {
+        // host가 지정된 경우, host 값이 true인 경우만 방장으로 참석한다.
+        if (room && pathname !== '/' && (!has(params, 'host') || params.host === 'true')) {
             let apiUrl;
             let resp;
 
