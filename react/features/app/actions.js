@@ -3,6 +3,7 @@
 
 /* global interfaceConfig, process */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import qs from 'query-string';
@@ -48,6 +49,7 @@ import logger from './logger';
 import { has, omit, size } from 'lodash';
 
 const apiBase = process.env.VMEETING_API_BASE;
+const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 
 // eslint-disable-next-line require-jsdoc
 function getParams(uri: string) {
@@ -163,10 +165,12 @@ export function appNavigate(uri: ?string) {
             return;
         }
 
-        const ssoAuthKeys = interfaceConfig.SSO_AUTH_KEYS;
+        const { SSO_AUTH_KEYS } = interfaceConfig;
         const pathname = window?.location?.pathname;
-        if (pathname === '/' && ssoAuthKeys && params[ssoAuthKeys[0]]) {
-            const args = omit(qs.parse(locationURL.search), ssoAuthKeys);
+        const authKey = SSO_AUTH_KEYS && SSO_AUTH_KEYS[0];
+        const authValue = SSO_AUTH_KEYS && params[authKey];
+        if (pathname === '/' && authKey) {
+            const args = omit(qs.parse(locationURL.search), SSO_AUTH_KEYS);
             locationURL.search = size(args) > 0 ? `?${qs.stringify(args)}` : '';
         }
         dispatch(setLocationURL(locationURL));
@@ -207,15 +211,29 @@ export function appNavigate(uri: ?string) {
                 dispatch(setJWT(token));
             }
         } else {
-            // Load current logged in user
-            dispatch(loadCurrentUser());
+            // 새로운 사용자에 대한 SSO 로그인을 수행하기 위해
+            // 전달된 authValue가 저장된 authValue와 다르면 인증키를 저장하고 로그아웃 한다.
+            if (authValue && jitsiLocalStorage.getItem(authKey) !== authValue) {
+                jitsiLocalStorage.setItem(authKey, authValue);
+
+                if (jitsiLocalStorage.getItem(AUTH_JWT_TOKEN)) {
+                    axios.get(`${apiBase}/logout`).then(() => {
+                        // dispatch(setCurrentUser());
+                        jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                        dispatch(setJWT());
+                    });
+                }
+            } else {
+                // Load current logged in user
+                dispatch(loadCurrentUser());
+            }
         }
 
         let roomInfo;
         const { tenant: userTenant, user } = getState()['features/base/jwt'];
         const pattern = /\/(?<site_id>[^\/]+)\/(?<conf_name>[^\/]+)$/;
         const matched = pathname.match(pattern);
-        if (!user && matched && ssoAuthKeys && params[ssoAuthKeys[0]]) {
+        if (!user && matched && authValue) {
             try {
                 let { partnerCode, ...options } = params;
 
