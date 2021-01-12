@@ -1,6 +1,5 @@
 // @flow
 
-import { find, xor } from 'lodash';
 import type { Dispatch } from 'redux';
 
 import {
@@ -17,12 +16,6 @@ import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
-import {
-    getSelectedParticipants,
-    setSelectedParticipants
-} from './functions';
-
-declare var APP: Object;
 
 /**
  * Signals conference to select a participant.
@@ -36,19 +29,11 @@ export function selectParticipant() {
 
         if (conference) {
             const ids = shouldDisplayTileView(state)
-                ? getParticipants(state)
-                    .filter(participant => find(
-                        state['features/base/tracks'],
-                        { mediaType: 'video', participantId: participant.id, muted: false }
-                    ))
-                    .map(participant => participant.id)
+                ? getParticipants(state).map(participant => participant.id)
                 : [ state['features/large-video'].participantId ];
 
             try {
-                if (xor(ids, getSelectedParticipants()).length !== 0) {
-                    conference.selectParticipants(ids);
-                    setSelectedParticipants(ids);
-                }
+                conference.selectParticipants(ids);
             } catch (err) {
                 _handleParticipantError(err);
 
@@ -62,19 +47,34 @@ export function selectParticipant() {
 }
 
 /**
- * Action to select the participant to be displayed in LargeVideo based on a
- * variety of factors: If there is a dominant or pinned speaker, or if there are
- * remote tracks, etc.
+ * Action to select the participant to be displayed in LargeVideo based on the
+ * participant id provided. If a participant id is not provided, the LargeVideo
+ * participant will be selected based on a variety of factors: If there is a
+ * dominant or pinned speaker, or if there are remote tracks, etc.
  *
+ * @param {string} participant - The participant id of the user that needs to be
+ * displayed on the large video.
  * @returns {Function}
  */
-export function selectParticipantInLargeVideo() {
+export function selectParticipantInLargeVideo(participant: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const participantId = _electParticipantInLargeVideo(state);
+        const participantId = participant ?? _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];
+        const screenShares = state['features/video-layout'].screenShares;
+        let latestScreenshareParticipantId;
 
-        if (participantId !== largeVideo.participantId) {
+        if (screenShares && screenShares.length) {
+            latestScreenshareParticipantId = screenShares[screenShares.length - 1];
+        }
+
+        // When trying to auto pin screenshare, always select the endpoint even though it happens to be
+        // the large video participant in redux (for the reasons listed above in the large video selection
+        // logic above). The auto pin screenshare logic kicks in after the track is added
+        // (which updates the large video participant and selects all endpoints because of the auto tile
+        // view mode). If the screenshare endpoint is not among the forwarded endpoints from the bridge,
+        // it needs to be selected again at this point.
+        if (participantId !== largeVideo.participantId || participantId === latestScreenshareParticipantId) {
             dispatch({
                 type: SELECT_LARGE_VIDEO_PARTICIPANT,
                 participantId
