@@ -230,7 +230,7 @@ export function appNavigate(uri: ?string) {
         }
 
         let roomInfo;
-        const { tenant: userTenant, user } = getState()['features/base/jwt'];
+        const { tenant: userTenant, user, jwt } = getState()['features/base/jwt'];
         const pattern = /\/(?<site_id>[^\/]+)\/(?<conf_name>[^\/]+)$/;
         const matched = pathname.match(pattern);
         if (!user && matched && authValue) {
@@ -276,10 +276,11 @@ export function appNavigate(uri: ?string) {
             }
 
             try {
+                const headers = jwt ? { Authorization: `Bearer ${jwt}` } : {};
                 resp = await axios.post(apiUrl, {
                     name: room,
                     start_time: new Date(),
-                });
+                }, { headers });
                 roomInfo = resp.data;
                 roomInfo.isHost = true;
             } catch (err) {
