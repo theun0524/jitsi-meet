@@ -436,8 +436,7 @@
         "toggleFilmstrip": "동영상 표시 또는 숨기기",
         "toggleScreensharing": "카메라와 화면 공유간에 전환",
         "toggleShortcuts": "도움말 메뉴 표시 또는 숨기기",
-        "videoMute": "카메라 시작 또는 중지",
-        "videoQuality": "품질 설정하기"
+        "videoMute": "카메라 시작 또는 중지"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "높은 수요로 인해 스트리밍이 {{limit}} 분으로 제한됩니다. 무제한 스트리밍의 경우 <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>을 사용해보세요.",
