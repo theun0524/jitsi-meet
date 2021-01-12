@@ -162,9 +162,17 @@ var interfaceConfig = {
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     SHOW_DEEP_LINKING_IMAGE: false,
+    SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
     SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
+
+    // HIDE_CONFERENCE_NAME: true,
+    // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
+    // HIDE_STATS_FOR_GUEST: true,
+    // DISABLE_SHORTCUT: true,
+    // DISABLE_GRANT_MODERATOR: true,
+    // DISABLE_PRIVATE_MESSAGE: true,
 
     /*
      * If indicated some of the error dialogs may point to the support URL for
@@ -187,29 +195,12 @@ var interfaceConfig = {
      * - it's impossible to control the placement of buttons
      * - 'desktop' controls the "Share your screen" button
      */
-    // TOOLBAR_BUTTONS: [
-    //     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
-    //     'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-    //     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-    //     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-    //     'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
-    // ],
-
-    // stage labs requirement
-    SSO_AUTH_KEYS: ['otp'],
-    SHOW_JITSI_WATERMARK: false,
-    HIDE_CONFERENCE_NAME: true,
-    HIDE_DESKTOP_SHARING_FOR_GUEST: true,
-    HIDE_STATS_FOR_GUEST: true,
-    DISABLE_SHORTCUT: true,
-    DISABLE_GRANT_MODERATOR: true,
-    DISABLE_PRIVATE_MESSAGE: true,
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'profile',
-        'settings',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
     ],
 
     TOOLBAR_TIMEOUT: 4000,
