@@ -89,6 +89,7 @@ function _sendFollowMeCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
     const state = store.getState();
     const conference = getCurrentConference(state);
+    const { roomInfo } = state['features/base/conference'];
 
     if (!conference) {
         return;
@@ -110,6 +111,8 @@ function _sendFollowMeCommand(
 
         return;
     } else if (!state['features/base/conference'].followMeEnabled) {
+        return;
+    } else if (!state['features/base/jwt'].jwt || !roomInfo || !roomInfo.isHost) {
         return;
     }
 
