@@ -25,6 +25,7 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
+import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
@@ -1426,7 +1427,7 @@ class Toolbox extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     const { conference, locked } = state['features/base/conference'];
-    let { desktopSharingEnabled } = state['features/base/conference'];
+    let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
         callStatsID,
         enableFeaturesBasedOnToken
@@ -1450,13 +1451,9 @@ function _mapStateToProps(state) {
                 String(features['screen-sharing']) === 'true') !== undefined;
 
         // we want to show button and tooltip
-        if (!state['features/base/jwt'].jwt) {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabledForGuest';
-        } else {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabled';
-        }
+        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
+    } else if (desktopSharingEnabled && interfaceConfig.HIDE_DESKTOP_SHARING_FOR_GUEST) {
+        desktopSharingEnabled = Boolean(state['features/base/jwt'].jwt);
     }
 
     // NB: We compute the buttons again here because if URL parameters were used to
