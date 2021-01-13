@@ -283,7 +283,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        if (interfaceConfig.DISABLE_SHORTCUT) {
+        if (!interfaceConfig.DISABLE_SHORTCUT) {
             const KEYBOARD_SHORTCUTS = [
                 this._shouldShowButton('videoquality') && {
                     character: 'A',
