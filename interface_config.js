@@ -162,7 +162,6 @@ var interfaceConfig = {
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     SHOW_DEEP_LINKING_IMAGE: false,
-    SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
     SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
@@ -195,14 +194,31 @@ var interfaceConfig = {
      * - it's impossible to control the placement of buttons
      * - 'desktop' controls the "Share your screen" button
      */
-    TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
-    ],
+    // TOOLBAR_BUTTONS: [
+    //     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+    //     'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+    //     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+    //     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+    //     'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
+    // ],
 
+    // stage labs requirement
+    SSO_AUTH_KEYS: ['otp'],
+    SHOW_JITSI_WATERMARK: false,
+    HIDE_CONFERENCE_NAME: true,
+    HIDE_DESKTOP_SHARING_FOR_GUEST: true,
+    HIDE_STATS_FOR_GUEST: true,
+    DISABLE_SHORTCUT: true,
+    DISABLE_GRANT_MODERATOR: true,
+    DISABLE_PRIVATE_MESSAGE: true,
+    TOOLBAR_BUTTONS: [
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+        'fodeviceselection', 'profile',
+        'settings',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats',
+        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
+    ],
+        
     TOOLBAR_TIMEOUT: 4000,
 
     // Browsers, in addition to those which do not fully support WebRTC, that
@@ -284,6 +300,8 @@ var interfaceConfig = {
      REGISTRATION_WHITELIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 가능하도록
      REGISTRATION_BLACKLIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 불가능하도록
     */
+
+    SSO_AUTH_KEYS: ['otp'],
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
