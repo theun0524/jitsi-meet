@@ -24,7 +24,7 @@ declare var interfaceConfig: Object;
  */
 export function isFilmstripVisible(stateful: Object | Function) {
     return toState(stateful)['features/filmstrip'].visible
-        && !toState(stateful)['features/base/jwt'].isGuest;
+        && Boolean(toState(stateful)['features/base/jwt'].jwt);
 }
 
 /**

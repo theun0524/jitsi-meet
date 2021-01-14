@@ -153,7 +153,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
 function _mapStateToProps(state) {
     return {
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isGuest: Boolean(!state['features/base/jwt'].jwt),
         _participants: keyBy(state['features/base/participants'], 'id'),
     };
 }

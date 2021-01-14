@@ -495,7 +495,7 @@ export default {
     createInitialLocalTracks(options = {}) {
         const errors = {};
         const initialDevices = [ 'audio' ];
-        const requestedAudio = true;
+        let requestedAudio = true;
         let requestedVideo = false;
 
         // Always get a handle on the audio input device so that we have statistics even if the user joins the
@@ -504,6 +504,7 @@ export default {
         // only after that point.
         if (options.startWithAudioMuted) {
             this.muteAudio(true, true);
+            requestedAudio = false;
         }
 
         if (!options.startWithVideoMuted
@@ -742,7 +743,7 @@ export default {
      * @returns {Promise}
      */
     async init({ roomName }) {
-        const { isGuest } = APP.store.getState()['features/base/jwt'];
+        const isGuest = Boolean(!APP.store.getState()['features/base/jwt'].jwt);
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,

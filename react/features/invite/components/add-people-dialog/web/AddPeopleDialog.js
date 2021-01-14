@@ -209,7 +209,7 @@ function mapStateToProps(state) {
         _embedMeetingVisible: !isVpaasMeeting(state),
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isGuest: Boolean(!state['features/base/jwt'].jwt),
         _jwt: state['features/base/jwt'].jwt,
         _liveStreamViewURL:
             currentLiveStreamingSession

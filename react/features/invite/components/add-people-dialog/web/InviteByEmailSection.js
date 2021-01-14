@@ -163,7 +163,7 @@ function InviteByEmailSection({ _isGuest, inviteSubject, inviteText, inviteTextA
 
 function _mapStateToProps(state) {
     return {
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isGuest: Boolean(!state['features/base/jwt'].jwt),
     };
 }
 

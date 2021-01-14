@@ -49,7 +49,7 @@ export function isToolboxVisible(state: Object) {
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
-    const { isGuest } = state['features/base/jwt'];
+    const isGuest = Boolean(!state['features/base/jwt'].jwt);
 
     return Boolean(!isGuest && !iAmSipGateway && (timeoutID || visible || alwaysVisible
                                       || audioSettingsVisible || videoSettingsVisible));

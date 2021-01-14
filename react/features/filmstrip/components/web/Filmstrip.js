@@ -372,7 +372,7 @@ class Filmstrip extends Component<Props> {
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
     const { hovered, visible } = state['features/filmstrip'];
-    const { isGuest } = state['features/base/jwt'];
+    const isGuest = Boolean(!state['features/base/jwt'].jwt);
     const _visible = visible && !isGuest;
     const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight
@@ -394,7 +394,7 @@ function _mapStateToProps(state) {
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _hovered: hovered,
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isGuest: isGuest,
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible
