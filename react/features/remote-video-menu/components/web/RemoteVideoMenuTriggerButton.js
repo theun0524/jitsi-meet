@@ -168,7 +168,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      */
     _renderRemoteVideoMenu() {
         const {
+            _disableGrantModerator,
             _disableKick,
+            _disablePrivateMessage,
             _disableRemoteMute,
             _isModerator,
             initialVolumeValue,
@@ -196,11 +198,13 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 );
             }
 
-            buttons.push(
-                <GrantModeratorButton
-                    key = 'grant-moderator'
-                    participantID = { participantID } />
-            );
+            if (!_disableGrantModerator) {
+                buttons.push(
+                    <GrantModeratorButton
+                        key = 'grant-moderator'
+                        participantID = { participantID } />
+                );
+            }
 
             if (!_disableKick) {
                 buttons.push(
@@ -221,11 +225,13 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             );
         }
 
-        buttons.push(
-            <PrivateMessageMenuButton
-                key = 'privateMessage'
-                participantID = { participantID } />
-        );
+        if (!_disablePrivateMessage) {
+            buttons.push(
+                <PrivateMessageMenuButton
+                    key = 'privateMessage'
+                    participantID = { participantID } />
+            );
+        }
 
         if (onVolumeChange) {
             buttons.push(
@@ -265,7 +271,9 @@ function _mapStateToProps(state) {
 
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
+        _disableGrantModerator: Boolean(interfaceConfig.DISABLE_GRANT_MODERATOR),
         _disableKick: Boolean(disableKick),
+        _disablePrivateMessage: Boolean(interfaceConfig.DISABLE_PRIVATE_MESSAGE),
         _disableRemoteMute: Boolean(disableRemoteMute)
     };
 }

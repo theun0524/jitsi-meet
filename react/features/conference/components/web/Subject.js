@@ -73,8 +73,8 @@ function _mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
 
     return {
-        _showParticipantCount: participantCount > 2 && !state['features/base/jwt'].isGuest,
-        _subject: getConferenceName(state),
+        _showParticipantCount: participantCount > 2 && state['features/base/jwt'].jwt,
+        _subject: interfaceConfig.HIDE_CONFERENCE_NAME ? '' : getConferenceName(state),
         _visible: isToolboxVisible(state) && participantCount > 1
     };
 }

@@ -721,15 +721,18 @@ export function setPreferredVideoQuality(preferredVideoQuality: number) {
  *
  * @param {(string|undefined)} room - The name of the room of the conference to
  * be joined.
+ * @param {(string|undefined)} roomInfo - The info of the room of the conference to
+ * be joined.
  * @returns {{
  *     type: SET_ROOM,
  *     room: string
  * }}
  */
-export function setRoom(room: ?string) {
+export function setRoom(room: ?string, roomInfo: ?Object) {
     return {
         type: SET_ROOM,
-        room
+        room,
+        roomInfo
     };
 }
 

@@ -179,6 +179,13 @@ var interfaceConfig = {
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
     SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
 
+    // HIDE_CONFERENCE_NAME: true,
+    // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
+    // HIDE_STATS_FOR_GUEST: true,
+    // DISABLE_SHORTCUT: true,
+    // DISABLE_GRANT_MODERATOR: true,
+    // DISABLE_PRIVATE_MESSAGE: true,
+
     /*
      * If indicated some of the error dialogs may point to the support URL for
      * help.

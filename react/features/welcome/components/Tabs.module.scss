@@ -5,7 +5,7 @@
 
 .tabContainer {
     font-size: 16px;
-    text-align: left;
+    text-align: center;
     width: 100%;
     max-width: $maxContentWidth;
     background: white;
@@ -22,7 +22,8 @@
 
     .tabButtons {
         font-size: 18px;
-        color: #FFFFFF;
+        color: #000000;
+        border-radius: 6px;
         display: $welcomePageTabButtonsDisplay;
         flex-grow: 0;
         flex-direction: row;

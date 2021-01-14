@@ -71,7 +71,7 @@ class KickButton extends AbstractKickButton {
  * @returns {Object}
  */
 function _mapStateToProps(state: Object) {
-    const shouldHide = interfaceConfig.HIDE_KICK_BUTTON_FOR_GUESTS && state['features/base/jwt'].isGuest;
+    const shouldHide = interfaceConfig.HIDE_KICK_BUTTON_FOR_GUESTS && !state['features/base/jwt'].jwt;
 
     return {
         visible: !shouldHide

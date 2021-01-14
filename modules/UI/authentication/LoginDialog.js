@@ -4,6 +4,17 @@ import { toJid } from '../../../react/features/base/connection/functions';
 import {
     JitsiConnectionErrors
 } from '../../../react/features/base/lib-jitsi-meet';
+import { disconnect } from '../../../react/features/base/connection';
+
+import axios from 'axios';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { setJWT } from '../../../react/features/base/jwt';
+import { getCurrentUser } from '../../../react/features/base/auth/functions';
+import { getLicenseError } from '../../../react/features/billing-counter/functions';
+import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../../../react/features/billing-counter/constants';
+
+const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 
 /**
  * Build html for "password required" dialog.
@@ -238,8 +249,8 @@ export default {
         const buttons = [];
 
         return APP.UI.messageHandler.openDialog(
-            'dialog.WaitingForHost',
-            msg,
+            msgTitleKey,
+            description,
             true,
             buttons,
             (e, submitValue) => {
@@ -248,7 +259,16 @@ export default {
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
-                    onAuthNow();
+                    axios.get(`${AUTH_API_BASE}/logout`).then(() => {
+                        // dispatch(setCurrentUser());
+                        jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                        APP.store.dispatch(setJWT());
+                        onAuthNow();
+                    });
+                }
+                // goHome popup.
+                if (submitValue === 'goHome') {
+                    APP.store.dispatch(disconnect());
                 }
             }
         );

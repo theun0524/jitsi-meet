@@ -326,11 +326,12 @@
 }
 
 .chat-message-group {
-    display: flex;
+    display: block;
     flex-direction: column;
 
     &.local {
         align-items: flex-end;
+        text-align: right;
 
         .chatmessage {
             background-color: $chatLocalMessageBackgroundColor;

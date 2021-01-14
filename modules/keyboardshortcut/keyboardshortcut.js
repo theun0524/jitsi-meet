@@ -39,6 +39,10 @@ let enabled = true;
  */
 const KeyboardShortcut = {
     init() {
+        if (interfaceConfig.DISABLE_SHORTCUT) {
+            return;
+        }
+
         this._initGlobalShortcuts();
 
         window.onkeyup = e => {

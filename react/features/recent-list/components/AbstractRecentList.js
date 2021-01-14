@@ -10,7 +10,7 @@ import {
 } from '../../analytics';
 import { appNavigate } from '../../app/actions';
 import {
-    AbstractPage,
+    AbstractPageWithState,
     Container,
     Text
 } from '../../base/react';
@@ -38,7 +38,7 @@ type Props = {
  * An abstract component for the recent list.
  *
  */
-export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
+export default class AbstractRecentList<P: Props, S: State> extends AbstractPageWithState<P, S> {
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -81,6 +81,24 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
                     className = {s.description}
                     style = { styles.emptyListText }>
                     { t('welcomepage.recentListEmpty') }
+                </Text>
+            </Container>
+        );
+    }
+
+    _getRenderListLoadingComponent: () => React$Node;
+
+    _getRenderListLoadingComponent() {
+        const { t } = this.props;
+
+        return (
+            <Container
+                className = {s.meetingsListEmpty}
+                style = { styles.emptyListContainer }>
+                <Text
+                    className = {s.description}
+                    style = { styles.emptyListText }>
+                    { t('welcomepage.dbListLoading') }
                 </Text>
             </Container>
         );
