@@ -90,6 +90,9 @@ export function isSupportedBrowser() {
  * @returns {boolean}
  */
 export function isSupportedMobileBrowser() {
+    const isKakaoBrowser = Boolean(navigator.userAgent.indexOf("KAKAOTALK") > 0);
+    if (isKakaoBrowser) return false;
+
     return (Platform.OS === 'android' && browser.isChromiumBased())
         || (Platform.OS === 'android' && browser.isFirefox())
         || (Platform.OS === 'ios' && browser.isSafari());

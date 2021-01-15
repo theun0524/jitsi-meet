@@ -19,6 +19,8 @@ import {
     recvVideoParticipant
 } from '../../../react/features/base/participants';
 import { clientResized } from '../../../react/features/base/responsive-ui';
+import { isTestModeEnabled } from '../../../react/features/base/testing';
+import { updateLastTrackVideoMediaEvent } from '../../../react/features/base/tracks';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
@@ -33,20 +35,28 @@ import SmallVideo from './SmallVideo';
 const logger = Logger.getLogger(__filename);
 
 /**
+ * List of container events that we are going to process, will be added as listener to the
+ * container for every event in the list. The latest event will be stored in redux.
+ */
+const containerEvents = [
+    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
+    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
+];
+
+/**
  *
  * @param {*} spanId
+ * @param {*} userId
  */
 function createContainer(spanId, userId) {
     const _container = document.createElement('span');
     var onInViewportChange = (inView, entry) => {
-        console.log('===> inView =', inView);
         APP.store.dispatch(recvVideoParticipant(userId, inView === true));
     }
     ReactDOM.render(
         <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
         _container
     );
-
     // FIXME: (tu-nv) reactDOM render another span element inside current span element,
     // thus we need to strip the outer video tag. There should be a better way to do this
     const container = _container.firstChild;
@@ -342,6 +352,7 @@ export default class RemoteVideo extends SmallVideo {
      */
     setVideoMutedView(isMuted) {
         super.setVideoMutedView(isMuted);
+        logger.log("set video mute called");
 
         // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
@@ -526,6 +537,13 @@ export default class RemoteVideo extends SmallVideo {
             // attached we need to update the menu in order to show the volume
             // slider.
             this.updateRemoteVideoMenu();
+        } else if (isTestModeEnabled(APP.store.getState())) {
+
+            const cb = name => APP.store.dispatch(updateLastTrackVideoMediaEvent(stream, name));
+
+            containerEvents.forEach(event => {
+                streamElement.addEventListener(event, cb.bind(this, event));
+            });
         }
     }
 

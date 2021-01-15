@@ -93,7 +93,21 @@
             align-items: center;
             justify-content: center;
             flex-grow: 0;
-            padding-right: 30px;
+            padding-right: 2em;
+
+            @include media-breakpoint-up(md) {
+                display: flex;
+                padding-right: 5em;
+            }
+        }
+
+        .actionsUpper {
+            display: none;
+            align-items: start;
+            justify-content: center;
+            flex-grow: 0;
+            padding-top: 5px;
+            padding-right: 5px;
 
             @include media-breakpoint-up(md) {
                 display: flex;

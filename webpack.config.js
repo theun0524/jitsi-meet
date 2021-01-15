@@ -57,6 +57,7 @@ const config = {
         hot: true,
         https: true,
         inline: true,
+        watchContentBase: true,
         host: '0.0.0.0',
         sockPath: '/sockjs-web',
         proxy: {
@@ -138,7 +139,7 @@ const config = {
                         sourceMap: isDebug,
                         importLoaders: 2,
                         modules: {
-                            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]', 
+                            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
                         },
                     }
                 },
@@ -237,7 +238,7 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(4 * 1024 * 1024)
+        performance: getPerformanceHints(5 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -337,6 +338,8 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
+    console.log('devServerProxyBypass:', path);
+
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
             || path.startsWith('/images/')

@@ -1,14 +1,15 @@
+/* eslint-disable import/order */
 /* global APP, config, JitsiMeetJS, Promise, process */
 
 import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
-import { setJWT } from '../../../react/features/base/jwt';
+import { getCurrentUser } from '../../../react/features/base/auth/functions';
 import { toJid } from '../../../react/features/base/connection';
+import { setJWT } from '../../../react/features/base/jwt';
 
 // import { JitsiConnectionErrors } from '../../../react/features/base/lib-jitsi-meet';
 import UIUtil from '../util/UIUtil';
-import { getCurrentUser } from '../../../react/features/base/auth/functions';
 
 import LoginDialog from './LoginDialog';
 

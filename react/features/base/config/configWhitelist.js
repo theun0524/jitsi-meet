@@ -86,6 +86,7 @@ export default [
     'disableInviteFunctions',
     'disableLocalVideoFlip',
     'disableNS',
+    'disableProfile',
     'disableRemoteControl',
     'disableRemoteMute',
     'disableRtx',

@@ -16,7 +16,7 @@ WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 all: compile deploy clean
 
 compile:
-	$(WEBPACK) -p
+	node --max-old-space-size=4096 $(WEBPACK) -p
 
 clean:
 	rm -fr $(BUILD_DIR)
@@ -82,6 +82,8 @@ deploy-local:
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
+
+dev-start:
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

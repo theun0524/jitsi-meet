@@ -127,7 +127,9 @@ class Video extends Component<Props> {
         const nextJitsiTrack = nextProps.videoTrack
             && nextProps.videoTrack.jitsiTrack;
 
-        if (currentJitsiTrack !== nextJitsiTrack) {
+        if (currentJitsiTrack !== nextJitsiTrack
+            || this.stream !== nextJitsiTrack?.stream
+        ) {
             this._detachTrack(this.props.videoTrack);
             this._attachTrack(nextProps.videoTrack);
         }
@@ -165,7 +167,7 @@ class Video extends Component<Props> {
         if (!videoTrack || !videoTrack.jitsiTrack) {
             return;
         }
-
+        this.stream = videoTrack.jitsiTrack.stream;
         videoTrack.jitsiTrack.attach(this._videoElement);
     }
 

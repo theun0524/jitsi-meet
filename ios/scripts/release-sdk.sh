@@ -25,7 +25,13 @@ popd
 # Build the SDK
 pushd ${PROJECT_REPO}
 rm -rf ios/sdk/JitsiMeet.framework
-xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release ENABLE_BITCODE=NO clean archive
+xcodebuild \
+    -workspace ios/jitsi-meet.xcworkspace \
+    -scheme JitsiMeet \
+    -destination='generic/platform=iOS' \
+    -configuration Release \
+    ENABLE_BITCODE=NO \
+    clean archive
 if [[ $DO_GIT_TAG == 1 ]]; then
     git tag ios-sdk-${SDK_VERSION}
 fi

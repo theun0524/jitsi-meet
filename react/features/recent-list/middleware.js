@@ -129,9 +129,18 @@ function _setRoom({ dispatch, getState }, next, action) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
     if (!doNotStoreRoom && action.room) {
-        const { locationURL } = getState()['features/base/connection'];
+        let { locationURL } = getState()['features/base/connection'];
 
         if (locationURL) {
+            try {
+                const pattern = /(?<tenant>\/[^\/]+)?(?<room>\/.+)$/;
+                const { groups } = locationURL.pathname.match(pattern);
+                const { user = {} } = getState()['features/base/jwt'];
+                locationURL.pathname = `${groups.tenant || ('/' + (user.tenant || process.env.DEFAULT_SITE_ID))}${groups.room}`;
+            } catch (err) {
+                console.error('_setRoom is failed.', err.message);
+            }
+        
             dispatch(_storeCurrentConference(locationURL));
 
             // Whatever domain the feature recent-list knows about, the app as a

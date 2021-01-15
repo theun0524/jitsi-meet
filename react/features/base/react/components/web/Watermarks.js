@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 
@@ -289,7 +290,6 @@ class Watermarks extends Component<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { isGuest } = state['features/base/jwt'];
     const { customizationReady, logoClickUrl, logoImageUrl } = state['features/dynamic-branding'];
     const { room } = state['features/base/conference'];
 
@@ -303,7 +303,7 @@ function _mapStateToProps(state) {
          */
         _customLogoLink: logoClickUrl,
         _customLogoUrl: logoImageUrl,
-        _isGuest: isGuest,
+        _isGuest: !state['features/base/jwt'].jwt,
         _readyToDisplayJitsiWatermark: customizationReady,
         _welcomePageIsVisible: !room
     };

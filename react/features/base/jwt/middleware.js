@@ -28,11 +28,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_CONFIG:
     case SET_LOCATION_URL:
-        // XXX The JSON Web Token (JWT) is not the only piece of state that we
-        // have decided to store in the feature jwt, there is isGuest as well
-        // which depends on the states of the features base/config and jwt. So
-        // the JSON Web Token comes from the conference/room's URL and isGuest
-        // needs a recalculation upon SET_CONFIG as well.
+        // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
 
     case SET_JWT:
@@ -130,12 +126,6 @@ function _setJWT(store, next, action) {
 
     if (!Object.keys(actionPayload).length) {
         if (jwt) {
-            const {
-                enableUserRolesBasedOnToken
-            } = store.getState()['features/base/config'];
-
-            action.isGuest = !enableUserRolesBasedOnToken;
-
             let jwtPayload;
 
             try {
@@ -231,7 +221,7 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin }) {
+function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin, background }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -253,6 +243,9 @@ function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdm
     }
     if (typeof username === 'string') {
         participant.username = username;
+    }
+    if (typeof background === 'string') {
+        participant.background = background;
     }
 
     return Object.keys(participant).length ? participant : undefined;

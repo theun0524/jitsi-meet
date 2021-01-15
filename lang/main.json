@@ -42,6 +42,11 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "backgroundSelection": {
+        "add": "Add Background Image",
+        "delete": "Delete Background Image",
+        "none": "None"
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",
@@ -194,7 +199,7 @@
         "copied": "Copied",
         "copy": "Copy",
         "dismiss": "Dismiss",
-        "displayNameRequired": "Hi! What’s your name?",
+        "displayNameRequired": "Enter your name",
         "done": "Done",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: recording, live streaming and phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
         "e2eeLabel": "E2EE key",
@@ -205,8 +210,10 @@
         "email": "Email",
         "emailErrInUse": "This email is already in use, try another one.",
         "emailErrInvalid": "Invalid email address.",
-        "enterDisplayName": "Please enter your name here",
+        "enterDisplayName": "Name",
+        "enterOrganizationName": "Organization",
         "error": "Error",
+        "goHome": "Home",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to make this participant a moderator?",
         "grantModeratorTitle": "Grant moderator",
@@ -215,11 +222,13 @@
         "incorrectPassword": "Incorrect username or password",
         "internalError": "Oops! Something went wrong. The following error occurred: {{error}}",
         "internalErrorTitle": "Internal error",
+        "InvalidLicense": "The license is not valid. Please contact your administrator.",
         "kickMessage": "You can contact {{participantDisplayName}} for more details.",
         "kickParticipantButton": "Kick",
         "kickParticipantDialog": "Are you sure you want to kick this participant?",
         "kickParticipantTitle": "Kick this participant?",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
+        "LicenseError": "License Error",
         "liveStreaming": "Live Streaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
         "liveStreamingDisabledForGuestTooltip": "Guests can't start live streaming.",
@@ -232,6 +241,7 @@
         "logout": "Logout",
         "logoutQuestion": "Are you sure you want to logout and stop the conference?",
         "logoutTitle": "Logout",
+        "MaxedLicense": "All licenses are in use. Wait until the other meeting is over and try again.",
         "maxUsersLimitReached": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!",
         "maxUsersLimitReachedTitle": "Maximum participants limit reached",
         "micConstraintFailedError": "Your microphone does not satisfy some of the required constraints.",
@@ -263,6 +273,8 @@
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) not supported",
         "passwordRequired": "$t(lockRoomPasswordUppercase) required",
         "passwordValid": "Awesome password!",
+        "placeholderName": "Name",
+        "placeholderOrganization": "Job Title, Department",
         "popupError": "Your browser is blocking pop-up windows from this site. Please enable pop-ups in your browser's security settings and try again.",
         "popupErrorTitle": "Pop-up blocked",
         "readMore": "more",
@@ -325,9 +337,10 @@
         "usernameExample": "Example: jane.doe",
         "usernameMsg": "You can use letters, numbers & periods.",
         "userPassword": "user password",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference <b>{{room}}</b> is the room someone using and not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> is the room someone using and not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "Waiting for the host ...",
+        "WaitingRoomMsg": "The conference <b>{{room}}</b> is the room someone using and not yet started. Please wait for the host to arrive.",
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen"
     },
@@ -354,7 +367,7 @@
     },
     "footer": {
         "contactUs": "Contact Us",
-        "copyright": "Copyright@2020 Pohang University of Science and Technology. ALL RIGHTS RESERVED.",
+        "copyright": "Copyright@2020 {{provider}}. ALL RIGHTS RESERVED.",
         "privacy": "Privacy Policy",
         "tos": "Terms of Service"
     },
@@ -423,8 +436,7 @@
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
-        "videoMute": "Start or stop your camera",
-        "videoQuality": "Manage call quality"
+        "videoMute": "Start or stop your camera"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Due to high demand your streaming will be limited to {{limit}} min. For unlimited streaming try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -643,10 +655,14 @@
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "dialogDescription": "Choose public/private, lobby mode, E2EE. Some options are only displayed to host.",
         "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
-        "securityOptions": "Security options"
+        "securityOptions": "Security options",
+        "enableDialogText": "Determine public/private conference.",
+        "toggleLabel": "Public Conference"
     },
     "settings": {
+        "background": "Background",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
             "disconnect": "Disconnect",
@@ -706,7 +722,8 @@
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time",
         "joinTime": "Join Time",
-        "leaveTime": "Leave Time"
+        "leaveTime": "Leave Time",
+        "refresh": "Refresh"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -907,8 +924,22 @@
             "video": "Video"
         },
         "calendar": "Calendar",
+        "cancelDelete": "Cancel",
+        "cancelMesasge": "Cancel",
         "connectCalendarButton": "Connect your calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
+        "downloadToExcel": "Download participant stats to Excel",
+        "dbList": "All",
+        "dbListLoading": "Loading..",
+        "deleteDBListElementMessage": "Delete Conference. This action cannot be recovered.",
+        "deleteRecentListElementMessage": "Delete Conference. This action cannot be recovered.",
+        "deleteElement": "Delete",
+        "deleteFailHeading": "Failed to Delete",
+        "deleteFailMessage": "You can't delete ongoing or not existing conference.",
+        "deleteFromDB" : "Delete from my conference",
+        "deleteFromRecent" : "Delete only from recent list",
+        "deleteModalHeading": "Delete Conference",
+        "deleteReservation" : "Delete Reserved Conference",
         "enterRoomTitle": "Start a new meeting",
         "getHelp": "Get help",
         "go": "GO",
@@ -929,7 +960,9 @@
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure and easy video conferencing"
+        "title": "Secure and easy video conferencing",
+        "startNow": "Start Now",
+        "reserve": "Book Conference"
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

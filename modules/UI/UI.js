@@ -475,7 +475,7 @@ UI.notifyMaxUsersLimitReached = function() {
  * Notify user that he was automatically muted when joned the conference.
  */
 UI.notifyInitiallyMuted = function() {
-    messageHandler.participantNotification(
+    !interfaceConfig.DISABLE_MUTED_NOTIFICATION && messageHandler.participantNotification(
         null,
         'notify.mutedTitle',
         'connected',

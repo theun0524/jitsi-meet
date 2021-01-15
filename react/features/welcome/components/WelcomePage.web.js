@@ -15,6 +15,7 @@ import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { NotificationsContainer } from '../../notifications/components';
 import { RecentList } from '../../recent-list';
+import { DBList } from '../../db-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
 
@@ -393,7 +394,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = {s.footer}>
                         <div className = {s.container}>
                             <div className = {s.copyright}>
-                                {t('footer.copyright')}
+                                {t('footer.copyright', { provider: interfaceConfig.PROVIDER_NAME || '(주)케이에듀텍' })}
                             </div>
                             <div className = {s.nav}>
                                 <a href = { `${AUTH_PAGE_BASE}/tos` }>{t('footer.tos')}</a>
@@ -478,10 +479,18 @@ class WelcomePage extends AbstractWelcomePage {
         // if (isMobileBrowser()) {
         //     return null;
         // }
-
-        const { _calendarEnabled, _recentListEnabled, t } = this.props;
+        const { _calendarEnabled, _recentListEnabled, _user, t } = this.props;
 
         const tabs = [];
+
+        const _dbEnabled = true;
+
+        /*if(_user && _dbEnabled){
+            tabs.push({
+                label: t('welcomepage.dbList'),
+                content: <DBList />
+            });
+        }*/
 
         if (_calendarEnabled) {
             tabs.push({

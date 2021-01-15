@@ -98,7 +98,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case RECV_VIDEO_PARTICIPANT:
         return _recvVideoParticipantDebounced(store, next, action);
-    
     case SEND_TONES:
         return _sendTones(store, next, action);
 
@@ -266,7 +265,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished({ dispatch, getState }, next, action) {
+function _connectionEstablished({ dispatch }, next, action) {
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -454,8 +453,8 @@ function _recvVideoParticipantDebounced({ getState }, next, action) {
     const debounceTimeout = config.inViewportDebounceTimeout === 'undefined' ?
                         100 : config.inViewportDebounceTimeout;
 
-                        recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
-                                                            debounceTimeout);
+    recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
+                                                debounceTimeout);
     return next(action);
 }
 
@@ -469,7 +468,7 @@ function _recvVideoParCallback({ getState }, next, action) {
 
     const participants = state['features/base/participants'];
     const recvVideoPars = new Set(participants
-                                    .filter(p => p.toRecvVideo === true || p.pinned === true)
+                                    .filter(p => (p.toRecvVideo === true || p.pinned === true))
                                     .map(p => p.id));
 
     // Because the data is written to redux AFTER this function happen, we need to

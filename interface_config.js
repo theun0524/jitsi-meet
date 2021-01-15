@@ -47,18 +47,18 @@ var interfaceConfig = {
 
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    DEFAULT_LOGO_URL: 'images/watermark2.png?v=2',
+    DEFAULT_LOGO_URL: '/images/watermark2.png?v=2',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Vmeeter',
-    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.png?v=2',
+    DEFAULT_WELCOME_PAGE_LOGO_URL: '/images/watermark.png?v=2',
 
-    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
-
-    DISABLE_FOCUS_INDICATOR: false,
-
-    /**
-     * If true, notifications regarding joining/leaving are no longer displayed.
-     */
-    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+    // improve the end user experience
+    // with lower CPU usage and better audio quality
+    DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+    DISABLE_FOCUS_INDICATOR: true,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+    DISABLE_JOIN_LEAVE_NOTIFICATION_SOUND: false,
+    DISABLE_VIDEO_BACKGROUND: true,
+    DISABLE_MUTED_NOTIFICATION: false,
 
     /**
      * If true, presence status: busy, calling, connected etc. is not displayed.
@@ -81,11 +81,6 @@ var interfaceConfig = {
      */
     DISABLE_TRANSCRIPTION_SUBTITLES: false,
 
-    /**
-     * Whether or not the blurred video background for large video should be
-     * displayed on browsers that can support it.
-     */
-    DISABLE_VIDEO_BACKGROUND: false,
 
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
@@ -146,7 +141,7 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Vmeeting',
+    PROVIDER_NAME: '케이에듀텍',
 
     /**
      * If true, will display recent list
@@ -172,11 +167,18 @@ var interfaceConfig = {
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
     SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
 
+    // HIDE_CONFERENCE_NAME: true,
+    // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
+    // HIDE_STATS_FOR_GUEST: true,
+    // DISABLE_SHORTCUT: true,
+    // DISABLE_GRANT_MODERATOR: true,
+    // DISABLE_PRIVATE_MESSAGE: true,
+
     /*
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto:vmeeting-info@postech.ac.kr',
+    SUPPORT_URL: 'mailto:vmeeting-info@kedutech.kr',
 
     THIRD_PARTY_AUTH_ENABLED: false,
 
@@ -235,7 +237,7 @@ var interfaceConfig = {
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
-    TILE_VIEW_MAX_COLUMNS: 7,
+    TILE_VIEW_MAX_COLUMNS: 4,
 
     /**
      * Specify custom URL for downloading android mobile app.
