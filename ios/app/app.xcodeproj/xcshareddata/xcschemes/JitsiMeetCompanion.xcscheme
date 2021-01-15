@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0BEA5C241F7B8F73000D0AB4"
-               BuildableName = "JitsiMeetCompanion.app"
-               BlueprintName = "JitsiMeetCompanion"
+               BuildableName = "VmeetingCompanion.app"
+               BlueprintName = "VmeetingCompanion"
                ReferencedContainer = "container:app.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Vmeeting.app"
+               BuildableName = "vmeeting.app"
                BlueprintName = "vmeeting"
                ReferencedContainer = "container:app.xcodeproj">
             </BuildableReference>
@@ -57,12 +57,12 @@
       <RemoteRunnable
          runnableDebuggingMode = "2"
          BundleIdentifier = "com.apple.Carousel"
-         RemotePath = "/Jitsi Meet">
+         RemotePath = "/Vmeeting">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0BEA5C241F7B8F73000D0AB4"
-            BuildableName = "JitsiMeetCompanion.app"
-            BlueprintName = "JitsiMeetCompanion"
+            BuildableName = "VmeetingCompanion.app"
+            BlueprintName = "VmeetingCompanion"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </RemoteRunnable>
@@ -76,12 +76,12 @@
       <RemoteRunnable
          runnableDebuggingMode = "2"
          BundleIdentifier = "com.apple.Carousel"
-         RemotePath = "/Jitsi Meet">
+         RemotePath = "/Vmeeting">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0BEA5C241F7B8F73000D0AB4"
-            BuildableName = "JitsiMeetCompanion.app"
-            BlueprintName = "JitsiMeetCompanion"
+            BuildableName = "VmeetingCompanion.app"
+            BlueprintName = "VmeetingCompanion"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </RemoteRunnable>
@@ -89,8 +89,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0BEA5C241F7B8F73000D0AB4"
-            BuildableName = "JitsiMeetCompanion.app"
-            BlueprintName = "JitsiMeetCompanion"
+            BuildableName = "VmeetingCompanion.app"
+            BlueprintName = "VmeetingCompanion"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

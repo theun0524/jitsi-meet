@@ -39,7 +39,6 @@ import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
-import org.devio.rn.splashscreen.SplashScreenModule;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

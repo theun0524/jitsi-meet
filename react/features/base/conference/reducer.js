@@ -26,7 +26,7 @@ import {
 import {
     SET_PUBLIC_SCOPE_ENABLED
 } from '../../security'
-import { VIDEO_QUALITY_LEVELS } from './constants';
+import { VIDEO_QUALITY_LEVELS } from '../../video-quality/constants';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {

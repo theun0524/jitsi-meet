@@ -3,7 +3,6 @@
 import React from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
-import SplashScreen from 'react-native-splash-screen';
 import GeneralNavigator from '../../../navigation/GeneralNavigator';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
