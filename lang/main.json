@@ -328,6 +328,7 @@
         "tokenAuthFailedTitle": "Authentication failed",
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
+        "user": "user",
         "username": "User name",
         "usernameErrInUse": "This user name is already in use, try another one.",
         "usernameErrInvalid": "This user name is not found.",
@@ -641,6 +642,7 @@
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
+        "serviceDescriptionCloud": "Cloud recording",
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
@@ -725,6 +727,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "The meeting needs to use your microphone and camera.",
         "title": "{{app}} needs to use your microphone and camera."
     },
     "suspendedoverlay": {
@@ -894,6 +897,7 @@
         "standardDefinition": "Standard definition"
     },
     "videothumbnail": {
+        "connectionInfo": "Connection Info",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "flip": "Flip",

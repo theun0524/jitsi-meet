@@ -191,7 +191,6 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
-    
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
     if (deploymentInfo) {

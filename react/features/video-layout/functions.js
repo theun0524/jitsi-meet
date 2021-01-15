@@ -93,6 +93,8 @@ export function shouldDisplayTileView(state: Object = {}) {
         return tileViewEnabled;
     }
 
+    const { iAmRecorder } = state['features/base/config'];
+
     // None tile view mode is easier to calculate (no need for many negations), so we do
     // that and negate it only once.
     const shouldDisplayNormalMode = Boolean(
@@ -110,6 +112,9 @@ export function shouldDisplayTileView(state: Object = {}) {
 
         // There is a shared YouTube video in the meeting
         || isYoutubeVideoPlaying(state)
+
+        // We want jibri to use stage view by default
+        || iAmRecorder
     );
 
     return !shouldDisplayNormalMode;

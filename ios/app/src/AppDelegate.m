@@ -21,7 +21,7 @@
 #import "ViewController.h"
 
 @import Firebase;
-@import JitsiMeet;
+@import JitsiMeetSDK;
 
 @implementation AppDelegate
 
@@ -48,6 +48,8 @@
 #endif
     }];
 
+  [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
+
     // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
   if ([FIRUtilities appContainsRealServiceInfoPlist]) {
         NSLog(@"Enabling Firebase");
@@ -58,8 +60,6 @@
 
     ViewController *rootController = (ViewController *)self.window.rootViewController;
     [jitsiMeet showSplashScreen:rootController.view];
-  
-    [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
 }
