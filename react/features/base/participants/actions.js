@@ -20,7 +20,8 @@ import {
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    figureOutMutedWhileDisconnectedStatus
 } from './functions';
 
 /**
@@ -217,12 +218,15 @@ export function muteRemoteParticipant(id) {
  * }}
  */
 export function participantConnectionStatusChanged(id, connectionStatus) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            connectionStatus,
-            id
-        }
+    return (dispatch, getState) => {
+        return {
+            type: PARTICIPANT_UPDATED,
+            participant: {
+                connectionStatus,
+                id,
+                mutedWhileDisconnected: figureOutMutedWhileDisconnectedStatus(getState(), id, connectionStatus)
+            }
+        };
     };
 }
 

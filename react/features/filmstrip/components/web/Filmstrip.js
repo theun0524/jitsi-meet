@@ -44,11 +44,6 @@ type Props = {
     _columns: number,
 
     /**
-     * Whether the UI/UX is filmstrip-only.
-     */
-    _filmstripOnly: boolean,
-
-    /**
      * The width of the filmstrip.
      */
     _filmstripWidth: number,
@@ -143,14 +138,12 @@ class Filmstrip extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        if (!this.props._filmstripOnly) {
-            APP.keyboardshortcut.registerShortcut(
-                'F',
-                'filmstripPopover',
-                this._onShortcutToggleFilmstrip,
-                'keyboardShortcuts.toggleFilmstrip'
-            );
-        }
+        APP.keyboardshortcut.registerShortcut(
+            'F',
+            'filmstripPopover',
+            this._onShortcutToggleFilmstrip,
+            'keyboardShortcuts.toggleFilmstrip'
+        );
     }
 
     /**
@@ -208,7 +201,7 @@ class Filmstrip extends Component<Props> {
         let toolbar = null;
 
         if (!this.props._hideToolbar) {
-            toolbar = this.props._filmstripOnly ? <Toolbar /> : this._renderToggleButton();
+            toolbar = this._renderToggleButton();
         }
 
         return (
@@ -368,9 +361,8 @@ class Filmstrip extends Component<Props> {
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
     const { hovered, visible } = state['features/filmstrip'];
-    const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight
-        = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
+        = state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${reduceHeight ? 'reduce-height' : ''
@@ -382,7 +374,6 @@ function _mapStateToProps(state) {
         _className: className,
         _columns: gridDimensions.columns,
         _currentLayout: getCurrentLayout(state),
-        _filmstripOnly: isFilmstripOnly,
         _filmstripWidth: filmstripWidth,
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),

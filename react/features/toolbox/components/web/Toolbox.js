@@ -81,9 +81,9 @@ import { isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
+import MuteEveryoneButton from '../MuteEveryoneButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
-import MuteEveryoneButton from './MuteEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
@@ -129,6 +129,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether or not the profile is disabled.
+     */
+    _isProfileDisabled: boolean,
 
     /**
      * Whether or not the tile view is enabled.
@@ -1004,7 +1009,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean}
      */
     _isProfileVisible() {
-        return this.props._isProfileDisabled && this._shouldShowButton('profile');
+        return !this.props._isProfileDisabled && this._shouldShowButton('profile');
     }
 
     /**

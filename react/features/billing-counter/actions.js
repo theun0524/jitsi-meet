@@ -2,7 +2,11 @@
 
 import uuid from 'uuid';
 
+<<<<<<< HEAD
 import { SET_BILLING_ID, SET_ENDPOINT_COUNTED, SET_LICENSE_ERROR } from './actionTypes';
+=======
+import { SET_BILLING_ID, SET_ENDPOINT_COUNTED } from './actionTypes';
+>>>>>>> upstream/mobile-20.5
 import { extractVpaasTenantFromPath, getBillingId, sendCountRequest } from './functions';
 
 /**

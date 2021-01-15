@@ -67,6 +67,8 @@ import {
     JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
 import {
+    getStartWithAudioMuted,
+    getStartWithVideoMuted,
     isVideoMutedByUser,
     MEDIA_TYPE,
     setAudioAvailable,
@@ -98,17 +100,15 @@ import {
     destroyLocalTracks,
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
-    isLocalVideoTrackMuted,
+    isLocalCameraTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import {
-    getBackendSafePath,
-    getJitsiMeetGlobalNS
-} from './react/features/base/util';
+import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { getConferenceOptions } from './react/features/conference/functions';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -456,16 +456,6 @@ export default {
     isSharingScreen: false,
 
     /**
-     * Indicates if the desktop sharing functionality has been enabled.
-     * It takes into consideration the status returned by
-     * {@link JitsiMeetJS.isDesktopSharingEnabled()}. The latter can be false
-     * either if the desktop sharing is not supported by the current browser
-     * or if it was disabled through lib-jitsi-meet specific options (check
-     * config.js for listed options).
-     */
-    isDesktopSharingEnabled: false,
-
-    /**
      * The local audio track (if any).
      * FIXME tracks from redux store should be the single source of truth
      * @type {JitsiLocalTrack|null}
@@ -691,14 +681,6 @@ export default {
         con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
         APP.connection = connection = con;
 
-        // Desktop sharing related stuff:
-        this.isDesktopSharingEnabled
-            = JitsiMeetJS.isDesktopSharingEnabled();
-        eventEmitter.emit(JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED, this.isDesktopSharingEnabled);
-
-        APP.store.dispatch(
-            setDesktopSharingEnabled(this.isDesktopSharingEnabled));
-
         this._createRoom(tracks);
         APP.remoteControl.init();
 
@@ -745,10 +727,10 @@ export default {
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
-            startWithAudioMuted: config.startWithAudioMuted
+            startWithAudioMuted: getStartWithAudioMuted(APP.store.getState())
                 || config.startSilent
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
-            startWithVideoMuted: config.startWithVideoMuted
+            startWithVideoMuted: getStartWithVideoMuted(APP.store.getState())
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
         };
 
@@ -823,7 +805,7 @@ export default {
     isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalVideoTrackMuted(
+            ? isLocalCameraTrackMuted(
                 APP.store.getState()['features/base/tracks'])
             : isVideoMutedByUser(APP.store);
     },
@@ -1158,20 +1140,6 @@ export default {
      */
     getParticipantById(id) {
         return room ? room.getParticipantById(id) : null;
-    },
-
-    /**
-     * Get participant connection status for the participant.
-     *
-     * @param {string} id participant's identifier(MUC nickname)
-     *
-     * @returns {ParticipantConnectionStatus|null} the status of the participant
-     * or null if no such participant is found or participant is the local user.
-     */
-    getParticipantConnectionStatus(id) {
-        const participant = this.getParticipantById(id);
-
-        return participant ? participant.getConnectionStatus() : null;
     },
 
     /**
@@ -1639,9 +1607,8 @@ export default {
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
         }
-        if (!this.isDesktopSharingEnabled) {
-            return Promise.reject(
-                'Cannot toggle screen sharing: not supported.');
+        if (!JitsiMeetJS.isDesktopSharingEnabled()) {
+            return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
         if (this.isAudioOnly()) {
@@ -3180,7 +3147,7 @@ export default {
      * @param {boolean} muted - New muted status.
      */
     setVideoMuteStatus(muted) {
-        APP.UI.setVideoMuted(this.getMyUserId(), muted);
+        APP.UI.setVideoMuted(this.getMyUserId());
         APP.API.notifyVideoMutedStatusChanged(muted);
     },
 

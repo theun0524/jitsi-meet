@@ -38,6 +38,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
+import { isVpaasMeeting } from '../billing-counter/functions';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
@@ -412,7 +413,7 @@ export function reloadNow() {
 function addTrackStateToURL(url, stateful) {
     const state = toState(stateful);
     const tracks = state['features/base/tracks'];
-    const isVideoMuted = isLocalVideoTrackMuted(tracks);
+    const isVideoMuted = isLocalCameraTrackMuted(tracks);
     const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
     return addHashParamsToURL(new URL(url), { // use new URL object in order to not pollute the passed parameter.
@@ -474,10 +475,18 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
                 redirectToStaticPage('/');
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/mobile-20.5
                 return;
             }
 
             const { jwt } = getState()['features/base/jwt'];
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/mobile-20.5
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,

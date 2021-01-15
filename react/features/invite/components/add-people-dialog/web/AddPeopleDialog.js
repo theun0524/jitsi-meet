@@ -41,7 +41,6 @@ type Props = {
      * Whether or not embed meeting should be visible.
      */
     _embedMeetingVisible: boolean,
-    
     /**
      * Whether or not invite contacts should be visible.
      */
@@ -86,6 +85,7 @@ type Props = {
 function AddPeopleDialog({
     _conferenceName,
     _dialIn,
+    _embedMeetingVisible,
     _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
@@ -158,7 +158,7 @@ function AddPeopleDialog({
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
-                <EmbedMeetingTrigger />
+                { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL

@@ -4,7 +4,6 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconKick } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import AbstractKickButton, {
     type Props
 } from '../AbstractKickButton';
@@ -42,11 +41,7 @@ class KickButton extends AbstractKickButton {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, visible } = this.props;
-
-        if (!visible) {
-            return null;
-        }
+        const { participantID, t } = this.props;
 
         return (
             <RemoteVideoMenuButton

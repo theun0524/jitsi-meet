@@ -82,7 +82,9 @@ var interfaceConfig = {
     DISABLE_TRANSCRIPTION_SUBTITLES: false,
 
 
-    DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_FOOTER: true,
+    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+    DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
@@ -90,11 +92,6 @@ var interfaceConfig = {
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
     FILM_STRIP_MAX_HEIGHT: 120,
-
-    /**
-     * Whether to only show the filmstrip (and hide the toolbar).
-     */
-    filmStripOnly: false,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
@@ -165,7 +162,6 @@ var interfaceConfig = {
     SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
 
     // HIDE_CONFERENCE_NAME: true,
     // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
@@ -227,11 +223,6 @@ var interfaceConfig = {
      * @type {boolean}
      */
     VIDEO_QUALITY_LABEL_DISABLED: false,
-
-    /**
-     * When enabled, the kick participant button will not be presented for users without a JWT
-     */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
 
     /**
      * How many columns the tile view can expand to. The respected range is
