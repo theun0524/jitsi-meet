@@ -31,6 +31,7 @@ xcodebuild \
     -destination='generic/platform=iOS' \
     -configuration Release \
     ENABLE_BITCODE=NO \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
     clean archive
 if [[ $DO_GIT_TAG == 1 ]]; then
     git tag ios-sdk-${SDK_VERSION}
