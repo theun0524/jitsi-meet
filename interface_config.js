@@ -202,7 +202,7 @@ var interfaceConfig = {
     //     'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
     // ],
 
-    // stage labs requirement
+    // stayge labs requirement
     SSO_AUTH_KEYS: ['otp'],
     SHOW_JITSI_WATERMARK: false,
     HIDE_CONFERENCE_NAME: true,
