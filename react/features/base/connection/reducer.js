@@ -116,7 +116,6 @@ function _connectionFailed(
     }
 
     return assign(state, {
-        connecting: undefined,
         connection: undefined,
         error,
         passwordRequired:

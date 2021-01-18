@@ -166,7 +166,7 @@ export function appNavigate(uri: ?string) {
 
         const SSO_AUTH_KEYS = (navigator.product !== 'ReactNative') &&
             interfaceConfig.SSO_AUTH_KEYS;
-        const pathname = window?.location?.pathname;
+        const pathname = locationURL.pathname;
         const authKey = SSO_AUTH_KEYS && SSO_AUTH_KEYS[0];
         const authValue = SSO_AUTH_KEYS && params[authKey];
         if (pathname === '/' && authKey) {
