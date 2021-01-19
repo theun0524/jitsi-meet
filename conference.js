@@ -43,7 +43,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    setDesktopSharingEnabled
+    setDesktopSharingEnabled,
+    setStartMutedPolicy
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -115,6 +116,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import { toggleLobbyMode } from './react/features/lobby/actions';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -125,6 +127,7 @@ import {
     makePrecallTest
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
+import { endRoomLockRequest } from './react/features/room-lock/actions';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
@@ -2038,6 +2041,21 @@ export default {
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
                 APP.API.notifyUserRoleChanged(id, role);
+
+                const { conference, roomInfo } = APP.store.getState()['features/base/conference'];
+
+                if (role === "moderator" && roomInfo?.isHost && roomInfo?.schedule) {
+                    APP.store.dispatch(setStartMutedPolicy(!roomInfo.microphone, !roomInfo.video));
+                    APP.store.dispatch(updateSettings({ startWithAudioMuted: !roomInfo.microphone, startWithVideoMuted: !roomInfo.video }));
+                    APP.store.dispatch(setAudioMuted(!roomInfo.microphone));
+                    APP.store.dispatch(setVideoMuted(!roomInfo.video));
+
+                    if (!roomInfo.scope && roomInfo.password) {
+                        APP.store.dispatch(endRoomLockRequest(conference, roomInfo.password));
+                    }
+
+                    APP.store.dispatch(toggleLobbyMode(roomInfo.lobby));
+                }                
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
             }

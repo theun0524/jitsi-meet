@@ -726,10 +726,11 @@ export function setPreferredVideoQuality(preferredVideoQuality: number) {
  *     room: string
  * }}
  */
-export function setRoom(room: ?string) {
+export function setRoom(room: ?string, roomInfo: ?Object) {
     return {
         type: SET_ROOM,
-        room
+        room,
+        roomInfo
     };
 }
 
