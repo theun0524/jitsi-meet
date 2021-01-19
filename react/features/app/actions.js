@@ -73,10 +73,10 @@ function getParams(uri: string) {
  */
 export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
+        console.log('appNavigate:', uri, params);
+
         let location = parseURIString(uri);
         const params = getParams(uri);
-
-        console.log(uri, params, 'appNavigate');
 
         // If the specified location (URI) does not identify a host, use the app's
         // default.

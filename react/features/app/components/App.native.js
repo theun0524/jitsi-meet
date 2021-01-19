@@ -3,7 +3,6 @@
 import React from 'react';
 
 import SplashScreen from 'react-native-splash-screen';
-import GeneralNavigator from '../../../navigation/GeneralNavigator';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { updateFlags } from '../../base/flags/actions';
@@ -127,12 +126,10 @@ export class App extends AbstractApp {
      * @override
      */
     _createMainElement(component, props) {
-        const Home = super._createMainElement(component, props);
-
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
-                <GeneralNavigator Home = { Home } />
+                { super._createMainElement(component, props) }
             </DimensionsDetector>
         );
     }
