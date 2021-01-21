@@ -359,7 +359,7 @@ var config = {
     // disableProfile: false,
     
     // Whether or not some features are checked based on token.
-    // enableFeaturesBasedOnToken: false,
+    // enableFeaturesBasedOnToken: true,
 
     // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
     // lockRoomGuestEnabled: false,
