@@ -129,19 +129,18 @@ function _setRoom({ dispatch, getState }, next, action) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
     if (!doNotStoreRoom && action.room) {
-        let { locationURL } = getState()['features/base/connection'];
+        const { locationURL } = getState()['features/base/connection'];
+        const pattern = /(?<tenant>\/[^\/]+)?(?<room>\/.+)$/;
+        const { groups } = locationURL.pathname.match(pattern);
+        const { user = {} } = getState()['features/base/jwt'];
+        const tenant = groups.tenant || user.tenant || process.env.DEFAULT_SITE_ID;
 
-        if (locationURL) {
-            try {
-                const pattern = /(?<tenant>\/[^\/]+)?(?<room>\/.+)$/;
-                const { groups } = locationURL.pathname.match(pattern);
-                const { user = {} } = getState()['features/base/jwt'];
-                locationURL.pathname = `${groups.tenant || ('/' + (user.tenant || process.env.DEFAULT_SITE_ID))}${groups.room}`;
-            } catch (err) {
-                console.error('_setRoom is failed.', err.message);
-            }
-        
-            dispatch(_storeCurrentConference(locationURL));
+        if (locationURL && tenant) {
+            const pathname = `${tenant}${groups.room}`;
+            const newURL = new URL(locationURL.toString());
+            newURL.pathname = pathname[0] !== '/' ? `/${pathname}` : pathname;
+
+            dispatch(_storeCurrentConference(newURL));
 
             // Whatever domain the feature recent-list knows about, the app as a
             // whole should know about.
@@ -149,7 +148,7 @@ function _setRoom({ dispatch, getState }, next, action) {
             // XXX Technically, _storeCurrentConference could be turned into an
             // asynchronous action creator which dispatches both
             // _STORE_CURRENT_CONFERENCE and addKnownDomains but...
-            dispatch(addKnownDomains(locationURL.host));
+            dispatch(addKnownDomains(newURL.host));
         }
     }
 
