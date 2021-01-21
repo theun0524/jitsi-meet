@@ -6,12 +6,13 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import { has, omit, size } from 'lodash';
 import qs from 'query-string';
 import type { Dispatch } from 'redux';
 
 import { API_ID } from '../../../modules/API/constants';
 import tokenLocalStorage from '../../api/tokenLocalStorage';
-import { getLocationURL } from '../../api/url';
+import { getLocationURL, getAuthUrl } from '../../api/url';
 import { loadCurrentUser } from '../base/auth';
 import { setRoom } from '../base/conference';
 import {
@@ -27,9 +28,6 @@ import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
-import { setLicenseError } from '../billing-counter/actions';
-import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../billing-counter/constants';
-import { isVpaasMeeting } from '../billing-counter/functions';
 import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
     addHashParamsToURL,
@@ -38,6 +36,9 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
+import { setLicenseError } from '../billing-counter/actions';
+import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../billing-counter/constants';
+import { isVpaasMeeting } from '../billing-counter/functions';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
@@ -46,10 +47,6 @@ import {
     getName
 } from './functions';
 import logger from './logger';
-import { has, omit, size } from 'lodash';
-
-const apiBase = process.env.VMEETING_API_BASE;
-const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 
 // eslint-disable-next-line require-jsdoc
 function getParams(uri: string) {
@@ -165,8 +162,9 @@ export function appNavigate(uri: ?string) {
             return;
         }
 
-        const { SSO_AUTH_KEYS } = interfaceConfig;
-        const pathname = window?.location?.pathname;
+        const SSO_AUTH_KEYS = (navigator.product !== 'ReactNative') &&
+            interfaceConfig.SSO_AUTH_KEYS;
+        const pathname = locationURL.pathname;
         const authKey = SSO_AUTH_KEYS && SSO_AUTH_KEYS[0];
         const authValue = SSO_AUTH_KEYS && params[authKey];
         if (pathname === '/' && authKey) {
@@ -181,6 +179,7 @@ export function appNavigate(uri: ?string) {
         }
 
         const willAuthenticateURL = getLocationURL(getState());
+        const apiBase = getAuthUrl(getState());
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
@@ -271,7 +270,7 @@ export function appNavigate(uri: ?string) {
             } else if (!userTenant) {
                 apiUrl = `${apiBase}/conferences`;
             } else {
-                window.location.replace(`/${userTenant}/${room}`);
+                dispatch(appNavigate(`/${userTenant}/${room}`));
                 return;
             }
 
