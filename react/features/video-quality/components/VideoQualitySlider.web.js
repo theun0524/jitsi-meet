@@ -6,10 +6,11 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
-import { VIDEO_QUALITY_LEVELS, setPreferredVideoQuality } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
+import { setPreferredVideoQuality } from '../actions';
+import { VIDEO_QUALITY_LEVELS } from '../../base/conference/constants';
 import logger from '../logger';
 
 const {
