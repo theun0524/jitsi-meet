@@ -184,39 +184,23 @@ export function appNavigate(uri: ?string) {
 
             // console.log(savedToken, willAuthenticateURL, 'appnavigate');
             if (savedToken) {
-                const { exp } = jwtDecode(savedToken);
-
-                if (Date.now() < exp * 1000) {
-                    dispatch(setJWT(savedToken));
-                } else {
-                    tokenLocalStorage.removeItemByURL(willAuthenticateURL);
-                }
-            } else if (params.token) {
-                const { token } = params;
-                const { exp } = jwtDecode(token);
-
-                if (Date.now() < exp * 1000) {
-                    tokenLocalStorage.setItemByURL(willAuthenticateURL, token);
-                    dispatch(setJWT(token));
-                }
+                dispatch(setJWT(savedToken));
+            } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
+                tokenLocalStorage.setItemByURL(willAuthenticateURL, token);
+                dispatch(setJWT(params.token));
             }
-        } else if (params.token) {
-            const { token } = params;
-            const { exp } = jwtDecode(token);
-
-            if (Date.now() < exp * 1000) {
-                dispatch(setJWT(token));
-            }
+        } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
+            dispatch(setJWT(params.token));
         } else {
             // 새로운 사용자에 대한 SSO 로그인을 수행하기 위해
             // 전달된 authValue가 저장된 authValue와 다르면 인증키를 저장하고 로그아웃 한다.
             if (authValue && jitsiLocalStorage.getItem(authKey) !== authValue) {
                 jitsiLocalStorage.setItem(authKey, authValue);
 
-                if (jitsiLocalStorage.getItem(AUTH_JWT_TOKEN)) {
+                if (tokenLocalStorage.getItem(getState())) {
                     axios.get(`${apiBase}/logout`).then(() => {
                         // dispatch(setCurrentUser());
-                        jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
+                        tokenLocalStorage.removeItem(getState());
                         dispatch(setJWT());
                     });
                 }

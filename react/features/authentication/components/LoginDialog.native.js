@@ -288,7 +288,6 @@ class LoginDialog extends Component<Props, State> {
         // but authentication is required in order to join the room.
         if (this.props._conference) {
             this.props._setToken(token);
-            this.props.dispatch(setJWT(token));
             this.props.dispatch(reloadNow());
         } else {
             this.props.dispatch(setJWT());
@@ -368,7 +367,9 @@ function _mapStateToProps(state) {
         _progress: progress,
         _styles: ColorSchemeRegistry.get(state, 'LoginDialog'),
         _login: params => api.loginWithLocationURL(params, state),
-        _setToken: token => tokenLocalStorage.setItemByURL(getLocationURL(state), token),
+        _setToken: token => {
+            tokenLocalStorage.setItemByURL(getLocationURL(state), token)
+        },
         _locationURL: getLocationURL(state),
         _loginURL: `${getLocationURL(state)}/auth/page/login`
     };
