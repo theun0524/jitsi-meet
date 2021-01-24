@@ -1,11 +1,11 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
+import tokenLocalStorage from '../../api/tokenLocalStorage';
 import { setJWT } from '../base/jwt/actions';
 import { getLocalVideoTrack } from '../base/tracks';
 import { createBackgroundEffect } from '../stream-effects/background';
 
 const apiBase = process.env.VMEETING_API_BASE;
-const AUTH_JWT_TOKEN = process.env.JWT_APP_ID;
 
 /**
  * Submits the settings related to background selection.
@@ -23,7 +23,7 @@ export function submitBackgroundSelectionTab(newState) {
         axios.patch(`${apiBase}/account`, { background })
         .then(resp => {
             dispatch(setJWT(resp.data));
-            jitsiLocalStorage.setItem(AUTH_JWT_TOKEN, resp.data);
+            tokenLocalStorage.setItem(resp.data, getState());
 
             const localTrack = getLocalVideoTrack(getState()['features/base/tracks']);
 
