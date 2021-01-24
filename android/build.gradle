@@ -1,4 +1,5 @@
 import groovy.json.JsonSlurper
+import org.gradle.util.VersionNumber
 
 // Top-level build file where you can add configuration options common to all
 // sub-projects/modules.
@@ -7,17 +8,11 @@ buildscript {
     repositories {
         google()
         jcenter()
-        repositories {
-            maven { url 'https://maven.fabric.io/public' }
-        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'io.fabric.tools:gradle:1.28.1'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files.
+        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.google.gms:google-services:4.3.4'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
     }
 }
 
@@ -142,10 +137,10 @@ allprojects {
 }
 
 ext {
-    buildToolsVersion = "29.0.3"
-    compileSdkVersion = 29
+    buildToolsVersion = "20.0.3"
+    compileSdkVersion = 30
     minSdkVersion    = 23
-    targetSdkVersion = 29
+    targetSdkVersion = 30
     supportLibVersion = "28.0.0"
 
     // The Maven artifact groupdId of the third-party react-native modules which
