@@ -286,7 +286,6 @@ class LoginDialog extends Component<Props, State> {
         // but authentication is required in order to join the room.
         if (this.props._conference) {
             this.props._setToken(token);
-            this.props.dispatch(setJWT(token));
             this.props.dispatch(reloadNow());
         } else {
             this.props.dispatch(setJWT());
