@@ -237,11 +237,11 @@ export default {
     showAuthRequiredDialog(room, onAuthNow) {
         const msg = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitForHostMsg',
-            { room: encodeURI(room) }
+            { room: decodeURI(room) }
         );
         const msg_waiting = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitingRoomMsg',
-            { room }
+            { room: decodeURI(room) }
         );
         const msg_errors = {
             [LICENSE_ERROR_INVALID_LICENSE]:
