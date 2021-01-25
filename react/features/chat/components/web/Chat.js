@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconClose, IconMenuThumb, IconSearch } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractChat, {
     _mapDispatchToProps,
@@ -15,6 +15,10 @@ import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import { FieldTextStateless } from '@atlaskit/field-text';
+import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
+import { getLocalParticipant } from '../../../base/participants';
+declare var APP: Object;
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -45,6 +49,16 @@ class Chat extends AbstractChat<Props> {
 
         this._isExited = true;
         this._messageContainerRef = React.createRef();
+
+        this.state = {
+            chatHeaderMenuDialogOpen: false,
+
+            //initial assumption => chat enabled for everyone
+            isChatEnabledForEverybody: true,
+
+            // initial message is 'Disable Chat' , because we assume Chat is enabled for everybody
+            enableDisableChatHeaderMenuMessage: 'Disable Chat' 
+        };
 
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
@@ -123,6 +137,27 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
+    toggleChatHeaderMenuDialog = () => {
+        console.log("I am inside toggleChatHeaderMenuDialog");
+        this.setState({ chatHeaderMenuDialogOpen: !this.state.chatHeaderMenuDialogOpen });
+    }
+
+    handleEnableDisableChat = async () => {
+        //STEP:1 Toggle Chat Dialog
+        this.toggleChatHeaderMenuDialog();
+        await this.setState({ isChatEnabledForEverybody: !this.state.isChatEnabledForEverybody});
+
+        //STEP:2 Update the message for PopUp Dialog
+        if(this.state.isChatEnabledForEverybody) {
+            await this.setState({ enableDisableChatHeaderMenuMessage: 'Disable Chat' });
+        }
+        else {
+            await this.setState({ enableDisableChatHeaderMenuMessage: 'Enable Chat' });
+        }
+
+        //STEP:3 Propagate events to XMPP
+    }
+
     /**
      * Instantiates a React Element to display at the top of {@code Chat} to
      * close {@code Chat}.
@@ -133,6 +168,27 @@ class Chat extends AbstractChat<Props> {
     _renderChatHeader() {
         return (
             <div className = 'chat-header'>
+                {/* Portion for rendering the search box */}
+                <div className = 'chat-header-searchbox'>
+                    <FieldTextStateless
+                        compact = { true }
+                        id = 'chatHeaderSearchBox'
+                        autoFocus = { true }
+                        placeholder =  { 'e.g. John Doe' }
+                        shouldFitContainer = { true }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = { this._handleChatSearchInput }
+                        type = 'text'
+                        value = { 'e.g. John Doe' } />
+                    <div className = 'chat-header-search-icon'>
+                        <Icon src = { IconSearch } />
+                    </div>
+                </div>
+
+                {/* Portion for rendering chat control button */}
+                { this._renderChatControlIcon() }
+
+                {/* Portion for rendering the chat close icon */}
                 <div
                     className = 'chat-close'
                     onClick = { this.props._onToggleChat }>
@@ -140,6 +196,46 @@ class Chat extends AbstractChat<Props> {
                 </div>
             </div>
         );
+    }
+
+    _renderChatControlIcon = () => {
+        const popupcontent = (
+            <ul className='chat-control-popup-menu'>
+                <li className='chat-control-popup-menu-item' onClick={ this.handleEnableDisableChat }>
+                    { this.state.enableDisableChatHeaderMenuMessage } 
+                </li>
+            </ul>
+        );
+
+        const localParticipant = getLocalParticipant(APP.store.getState());  
+        let isLocalParticipantAModerator = (localParticipant.role === "moderator");
+        console.log("Is local participant a moderator: ", isLocalParticipantAModerator);
+
+        //we want to only allow moderators to get the chat control button alongside chat message
+        if(isLocalParticipantAModerator) {
+            return(
+                <div className='chat-header-control-button'>
+                    <InlineDialog 
+                        onClose={() => { 
+                            this.setState({chatHeaderMenuDialogOpen: false}); 
+                        }}
+                        content = { popupcontent }
+                        placement = 'bottom'
+                        isOpen = { this.state.chatHeaderMenuDialogOpen } >
+                            <div className='thumb-menu-icon' onClick = { this.toggleChatHeaderMenuDialog }>
+                                <Icon src = { IconMenuThumb } title = 'All Remote-Users Chat Control' />
+                            </div>
+                    </InlineDialog>
+                </div>  
+            );
+        } else {
+            return null;
+        }
+
+    }
+
+    _handleChatSearchInput() {
+        console.log("Inside chat header search");
     }
 
     _renderPanelContent: () => React$Node | null;
