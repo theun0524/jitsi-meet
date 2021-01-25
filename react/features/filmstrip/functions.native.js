@@ -15,6 +15,7 @@ import { toState } from '../base/redux';
 export function isFilmstripVisible(stateful: Object | Function) {
     const state = toState(stateful);
     const { length: participantCount } = state['features/base/participants'];
+    const { hideLocalVideo, hideRemoteVideos } = state['features/base/config'];
 
-    return participantCount > 1;
+    return participantCount > 1 && !(hideLocalVideo && hideRemoteVideos);
 }

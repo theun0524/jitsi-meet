@@ -742,13 +742,16 @@ export default {
      * @returns {Promise}
      */
     async init({ roomName }) {
+        const isGuest = Boolean(!APP.store.getState()['features/base/jwt'].jwt);
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: config.startWithAudioMuted
                 || config.startSilent
+                || (config.chatOnlyGuestEnabled && isGuest)
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
             startWithVideoMuted: config.startWithVideoMuted
+                || (config.chatOnlyGuestEnabled && isGuest)
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
         };
 

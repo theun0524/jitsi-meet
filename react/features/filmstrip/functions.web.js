@@ -23,7 +23,9 @@ declare var interfaceConfig: Object;
  * @returns {boolean}
  */
 export function isFilmstripVisible(stateful: Object | Function) {
-    return toState(stateful)['features/filmstrip'].visible;
+    const { hideLocalVideo, hideRemoteVideos } = toState(stateful)['features/base/config'];
+    return toState(stateful)['features/filmstrip'].visible &&
+        !(hideLocalVideo && hideRemoteVideos);
 }
 
 /**
@@ -45,8 +47,9 @@ export function shouldRemoteVideosBeVisible(state: Object) {
     const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
 
-    return Boolean(
-        participantCount > 2
+    return !state['features/base/config'].hideRemoteVideos &&
+        Boolean(
+            participantCount > 2
 
             // Always show the filmstrip when there is another participant to
             // show and the filmstrip is hovered, or local video is pinned, or

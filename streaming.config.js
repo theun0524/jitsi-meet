@@ -704,8 +704,12 @@ var config = {
         },
     },
 
-    // autoTileViewDisabled: true,
-    // chatOnlyGuestEnabled: true,
+    autoPinEnabled: true,
+    autoTileViewDisabled: true,
+    chatOnlyGuestEnabled: true,
+    waitOnlyGuestEnabled: true,
+    hideLocalVideo: true,
+    hideRemoteVideos: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

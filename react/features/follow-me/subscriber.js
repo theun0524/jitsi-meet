@@ -90,6 +90,8 @@ function _sendFollowMeCommand(
     const state = store.getState();
     const conference = getCurrentConference(state);
     const { roomInfo } = state['features/base/conference'];
+    const { chatOnlyGuestEnabled } = state['features/base/config'];
+    const isGuest = !(Boolean(state['features/base/jwt'].jwt) && roomInfo && roomInfo.isHost);
 
     if (!conference) {
         return;
@@ -112,7 +114,7 @@ function _sendFollowMeCommand(
         return;
     } else if (!state['features/base/conference'].followMeEnabled) {
         return;
-    } else if (!state['features/base/jwt'].jwt || !roomInfo || !roomInfo.isHost) {
+    } else if (chatOnlyGuestEnabled && isGuest) {
         return;
     }
 
