@@ -254,7 +254,12 @@ export function appNavigate(uri: ?string) {
             } else if (!userTenant) {
                 apiUrl = `${apiBase}/conferences`;
             } else {
-                dispatch(appNavigate(`/${userTenant}/${room}`));
+                const { protocol, host, port } = location;
+                if (port) {
+                    dispatch(appNavigate(`${protocol}//${host}:${port}/${userTenant}/${room}`));
+                } else {
+                    dispatch(appNavigate(`${protocol}//${host}/${userTenant}/${room}`));
+                }
                 return;
             }
 
