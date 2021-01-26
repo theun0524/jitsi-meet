@@ -4,8 +4,8 @@
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
-import { has, omit, size } from 'lodash';
+import { has, isEmpty, omit, size } from 'lodash';
+import qs from 'query-string';
 import type { Dispatch } from 'redux';
 
 import { API_ID } from '../../../modules/API/constants';
@@ -181,12 +181,10 @@ export function appNavigate(uri: ?string) {
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
-
-            // console.log(savedToken, willAuthenticateURL, 'appnavigate');
             if (savedToken) {
                 dispatch(setJWT(savedToken));
             } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
-                tokenLocalStorage.setItemByURL(willAuthenticateURL, token);
+                tokenLocalStorage.setItemByURL(willAuthenticateURL, params.token);
                 dispatch(setJWT(params.token));
             }
         } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
@@ -254,6 +252,16 @@ export function appNavigate(uri: ?string) {
             } else {
                 dispatch(appNavigate(`/${userTenant}/${room}`));
                 return;
+            }
+
+            if (authValue) {
+                apiUrl += `?${authKey}=${authValue}`;
+            } else if (navigator.product === 'ReactNative') {
+                delete params.token;
+                const query = qs.stringify(params);
+                if (query) {
+                    apiUrl += `?${query}`;
+                }
             }
 
             try {

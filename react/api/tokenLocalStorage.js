@@ -13,17 +13,17 @@ const JWT_TOKEN_VERSION = navigator.product === 'ReactNative'
 class TokenLocalStorage {
     validateToken(url, token) {
         try {
-            if (url[url.length - 1] === '/') {
+            if (url && url[url.length - 1] === '/') {
                 url = url.substring(0, url.length - 1);
             }
     
-            const token = token || jitsiLocalStorage.getItem(`token/${url}`);
-            if (token) {
-                const { exp, context } = jwtDecode(token);
+            const storedToken = token || jitsiLocalStorage.getItem(`token/${url}`);
+            if (storedToken) {
+                const { exp, context } = jwtDecode(storedToken);
         
                 // 유효한 토큰인 경우만 token을 리턴한다.
                 if (Date.now() < exp * 1000 && context.tv === JWT_TOKEN_VERSION) {
-                    return token;
+                    return storedToken;
                 }
     
                 if (url) {
