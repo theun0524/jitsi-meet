@@ -1,9 +1,18 @@
 /* global $, APP, config */
 
+import axios from 'axios';
+
+import { getLocationURL, getAuthUrl } from '../../../react/api/url';
+import { getCurrentUser } from '../../../react/features/base/auth/functions';
+import { disconnect } from '../../../react/features/base/connection';
 import { toJid } from '../../../react/features/base/connection/functions';
+import { setJWT } from '../../../react/features/base/jwt';
+import { JitsiConnectionErrors } from '../../../react/features/base/lib-jitsi-meet';
 import {
-    JitsiConnectionErrors
-} from '../../../react/features/base/lib-jitsi-meet';
+    LICENSE_ERROR_INVALID_LICENSE,
+    LICENSE_ERROR_MAXED_LICENSE
+} from '../../../react/features/billing-counter/constants';
+import { getLicenseError } from '../../../react/features/billing-counter/functions';
 
 /**
  * Build html for "password required" dialog.
@@ -226,19 +235,50 @@ export default {
     showAuthRequiredDialog(room, onAuthNow) {
         const msg = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitForHostMsg',
-            { room: encodeURI(room) }
+            { room: decodeURI(room) }
         );
+        const msg_waiting = APP.translation.generateTranslationHTML(
+            '[html]dialog.WaitingRoomMsg',
+            { room: decodeURI(room) }
+        );
+        const msg_errors = {
+            [LICENSE_ERROR_INVALID_LICENSE]:
+                APP.translation.generateTranslationHTML('[html]dialog.InvalidLicense'),
+            [LICENSE_ERROR_MAXED_LICENSE]:
+                APP.translation.generateTranslationHTML('[html]dialog.MaxedLicense'),
+        };
+
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.login'
         );
-        const buttons = [ {
-            title: buttonTxt,
-            value: 'authNow'
-        } ];
+        const homeButtonTxt = APP.translation.generateTranslationHTML(
+            'dialog.goHome'
+        );
+        let buttons;
+
+        const user = getCurrentUser(APP.store.getState());
+        const error = getLicenseError();
+        const msgTitleKey = error ? 'dialog.LicenseError' : 'dialog.WaitingForHost';
+        const description = user ? (msg_errors[error] || msg_waiting) : msg;
+
+        if (!user && !error) {
+            buttons = [
+                { title: buttonTxt,
+                value: 'authNow'},
+                { title: homeButtonTxt,
+                  value: 'goHome' }
+                ];
+        }
+        else {
+            buttons = [
+                { title: homeButtonTxt,
+                  value: 'goHome' }
+                ];
+        }
 
         return APP.UI.messageHandler.openDialog(
-            'dialog.WaitingForHost',
-            msg,
+            msgTitleKey,
+            description,
             true,
             buttons,
             (e, submitValue) => {
@@ -247,7 +287,18 @@ export default {
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
-                    onAuthNow();
+                    const state = APP.store.getState();
+                    const apiBase = getAuthUrl();
+                    axios.get(`${apiBase}/logout`).then(() => {
+                        // dispatch(setCurrentUser());
+                        tokenLocalStorage.removeItem(getLocationURL(state));
+                        APP.store.dispatch(setJWT());
+                        onAuthNow();
+                    });
+                }
+                // goHome popup.
+                if (submitValue === 'goHome') {
+                    APP.store.dispatch(disconnect());
                 }
             }
         );

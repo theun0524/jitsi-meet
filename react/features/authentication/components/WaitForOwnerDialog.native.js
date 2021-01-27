@@ -70,7 +70,7 @@ class WaitForOwnerDialog extends Component<Props> {
                 contentKey = {
                     {
                         key: 'dialog.WaitForHostMsgWOk',
-                        params: { room }
+                        params: { room: decodeURI(room) }
                     }
                 }
                 okKey = 'dialog.Ok'
