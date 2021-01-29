@@ -1048,7 +1048,7 @@ class Toolbox extends Component<Props, State> {
                     key = 'livestreaming'
                     showLabel = { true }
                     visible = { _isRecording ? false : undefined } />,
-            this._shouldShowButton('record')
+            this._shouldShowButton('recording')
                 && <RecordButton
                     key = 'record'
                     showLabel = { true }
