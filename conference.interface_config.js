@@ -164,7 +164,6 @@ var interfaceConfig = {
     SHOW_DEEP_LINKING_IMAGE: false,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
 
     // HIDE_CONFERENCE_NAME: true,
     // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
@@ -205,18 +204,19 @@ var interfaceConfig = {
     // stayge labs requirement
     SSO_AUTH_KEYS: ['otp'],
     SHOW_JITSI_WATERMARK: false,
-    HIDE_CONFERENCE_NAME: true,
-    HIDE_DESKTOP_SHARING_FOR_GUEST: true,
+    SHOW_WATERMARK_FOR_GUESTS: false, // if watermark is disabled by default, it can be shown only for guests
+    HIDE_CONFERENCE_NAME: false,
+    HIDE_DESKTOP_SHARING_FOR_GUEST: false,
     HIDE_STATS_FOR_GUEST: true,
     DISABLE_SHORTCUT: true,
-    DISABLE_GRANT_MODERATOR: true,
-    DISABLE_PRIVATE_MESSAGE: true,
+    DISABLE_GRANT_MODERATOR: false,
+    DISABLE_PRIVATE_MESSAGE: false,
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'profile',
-        'settings',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
+        'fodeviceselection', 'profile', 'chat', 'recording',
+        'etherpad', 'settings',
+        'videoquality', 'filmstrip', 'feedback',
+        'tileview', 'download', 'help', 'mute-everyone'
     ],
         
     TOOLBAR_TIMEOUT: 4000,
