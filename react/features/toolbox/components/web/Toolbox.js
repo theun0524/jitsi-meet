@@ -25,6 +25,7 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
+import { isHost } from '../../../base/jwt';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -1442,7 +1443,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
-    const isGuest = !state['features/base/jwt'].jwt;
+    const isGuest = !isHost(state);
 
     let desktopSharingDisabledTooltipKey;
 

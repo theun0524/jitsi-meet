@@ -1,6 +1,7 @@
 // @flow
 
 import { getCurrentConference } from '../base/conference';
+import { isHost } from '../base/jwt';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
@@ -89,9 +90,8 @@ function _sendFollowMeCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
     const state = store.getState();
     const conference = getCurrentConference(state);
-    const { roomInfo } = state['features/base/conference'];
     const { chatOnlyGuestEnabled } = state['features/base/config'];
-    const isGuest = !(Boolean(state['features/base/jwt'].jwt) && roomInfo && roomInfo.isHost);
+    const isGuest = !isHost(state);
 
     if (!conference) {
         return;
