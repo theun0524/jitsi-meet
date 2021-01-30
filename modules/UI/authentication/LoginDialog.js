@@ -294,11 +294,9 @@ export default {
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
-                    const state = APP.store.getState();
                     const apiBase = getAuthUrl();
                     axios.get(`${apiBase}/logout`).then(() => {
-                        // dispatch(setCurrentUser());
-                        tokenLocalStorage.removeItem(getLocationURL(state));
+                        tokenLocalStorage.removeItem(APP.store.getState());
                         APP.store.dispatch(setJWT());
                         onAuthNow();
                     });
