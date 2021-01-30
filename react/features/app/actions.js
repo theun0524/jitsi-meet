@@ -5,8 +5,7 @@
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
-import { has, omit, size } from 'lodash';
+import { has, isEmpty, omit, size } from 'lodash';
 import qs from 'query-string';
 import type { Dispatch } from 'redux';
 
@@ -73,10 +72,10 @@ function getParams(uri: string) {
  */
 export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
+        console.log('appNavigate:', uri, params);
+
         let location = parseURIString(uri);
         const params = getParams(uri);
-
-        console.log(uri, params, 'appNavigate');
 
         // If the specified location (URI) does not identify a host, use the app's
         // default.
@@ -183,15 +182,13 @@ export function appNavigate(uri: ?string) {
         if (locationURL && navigator.product === 'ReactNative') {
             dispatch(setJWT());
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
-
-            // console.log(savedToken, willAuthenticateURL, 'appnavigate');
             if (savedToken) {
                 dispatch(setJWT(savedToken));
-            } else if (params.token) {
-                tokenLocalStorage.setItemByURL(willAuthenticateURL, token);
+            } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
+                tokenLocalStorage.setItemByURL(willAuthenticateURL, params.token);
                 dispatch(setJWT(params.token));
             }
-        } else if (params.token) {
+        } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
             dispatch(setJWT(params.token));
         } else {
             // 새로운 사용자에 대한 SSO 로그인을 수행하기 위해
@@ -254,13 +251,18 @@ export function appNavigate(uri: ?string) {
             } else if (!userTenant) {
                 apiUrl = `${apiBase}/conferences`;
             } else {
-                const { protocol, host, port } = location;
-                if (port) {
-                    dispatch(appNavigate(`${protocol}//${host}:${port}/${userTenant}/${room}`));
-                } else {
-                    dispatch(appNavigate(`${protocol}//${host}/${userTenant}/${room}`));
-                }
+                dispatch(appNavigate(`/${userTenant}/${room}`));
                 return;
+            }
+
+            if (authValue) {
+                apiUrl += `?${authKey}=${authValue}`;
+            } else if (navigator.product === 'ReactNative') {
+                delete params.token;
+                const query = qs.stringify(params);
+                if (query) {
+                    apiUrl += `?${query}`;
+                }
             }
 
             try {

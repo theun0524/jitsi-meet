@@ -115,9 +115,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
-import {
-    toggleLobbyMode
-} from './react/features/lobby/actions';
+import { toggleLobbyMode } from './react/features/lobby/actions';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -128,9 +126,7 @@ import {
     makePrecallTest
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
-import {
-    endRoomLockRequest
-} from './react/features/room-lock/actions';
+import { endRoomLockRequest } from './react/features/room-lock/actions';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';

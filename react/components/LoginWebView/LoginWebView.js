@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-no-bind */
 import React, { useEffect, useState } from 'react';
 import DeviceInfo from 'react-native-device-info';
-import WebView from 'react-native-webview';
+import { WebView } from 'react-native-webview';
 import { useSelector, useStore } from 'react-redux';
 
 import { getLocationURL } from '../../api/url';

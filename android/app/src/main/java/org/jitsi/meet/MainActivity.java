@@ -79,6 +79,12 @@ public class MainActivity extends JitsiMeetActivity {
     //
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        JitsiMeet.showSplashScreen(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected boolean extraInitialize() {
         Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
 

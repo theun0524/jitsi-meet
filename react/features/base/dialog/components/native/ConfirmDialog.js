@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, BackHandler } from 'react-native';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
@@ -11,6 +11,8 @@ import { _abstractMapStateToProps } from '../../functions';
 import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 import { brandedDialog } from './styles';
+
+import { hideDialog } from '../../actions';
 
 type Props = BaseProps & {
 
@@ -70,6 +72,21 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
                 </Text>
             </TouchableOpacity>
         );
+    }
+
+    backAction = () => {
+        return this.props.dispatch(hideDialog());
+    };
+    
+    componentDidMount() {
+        this.backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            this.backAction
+        );
+    }
+
+    componentWillUnmount() {
+        this.backHandler.remove();
     }
 
     /**

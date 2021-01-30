@@ -228,7 +228,6 @@ var config = {
 
     // debounce timeout for sending message to jvb about in viewport endpoints to recv video from
     inViewportDebounceTimeout: 200,
-
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
     // participants gets to or above the number.

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import GeneralNavigator from '../../../navigation/GeneralNavigator';
+import SplashScreen from 'react-native-splash-screen';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { updateFlags } from '../../base/flags/actions';
@@ -85,6 +85,8 @@ export class App extends AbstractApp {
     componentDidMount() {
         super.componentDidMount();
 
+        SplashScreen.hide();
+        
         this._init.then(() => {
             const { dispatch, getState } = this.state.store;
 
@@ -93,7 +95,7 @@ export class App extends AbstractApp {
             dispatch(updateFlags(this.props.flags));
 
             // Check if serverURL is configured externally and not allowed to change.
-            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, false);
+            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
 
             if (!serverURLChangeEnabled) {
                 // As serverURL is provided externally, so we push it to settings.
@@ -124,12 +126,10 @@ export class App extends AbstractApp {
      * @override
      */
     _createMainElement(component, props) {
-        const Home = super._createMainElement(component, props);
-
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
-                <GeneralNavigator Home = { Home } />
+                { super._createMainElement(component, props) }
             </DimensionsDetector>
         );
     }
