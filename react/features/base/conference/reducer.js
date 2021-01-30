@@ -45,8 +45,7 @@ const DEFAULT_STATE = {
     password: undefined,
     passwordRequired: undefined,
     preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
-    roomInfo: undefined,
-    followMeEnabled: true,
+    roomInfo: undefined
 };
 
 /**

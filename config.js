@@ -556,7 +556,7 @@ var config = {
 
     // If true, any checks to handoff to another application will be prevented
     // and instead the app will continue to display in the current browser.
-    disableDeepLinking: true,
+    // disableDeepLinking: false,
 
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
@@ -703,8 +703,12 @@ var config = {
         },
     },
 
+    // autoPinEnabled: true,
     // autoTileViewDisabled: true,
     // chatOnlyGuestEnabled: true,
+    // waitOnlyGuestEnabled: true,
+    // hideLocalVideo: true,
+    // hideRemoteVideos: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
