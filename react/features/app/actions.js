@@ -251,7 +251,7 @@ export function appNavigate(uri: ?string) {
             } else if (!userTenant) {
                 apiUrl = `${apiBase}/conferences`;
             } else {
-                dispatch(appNavigate(`/${userTenant}/${room}`));
+                dispatch(appNavigate(`${protocol}//${host}/${userTenant}/${room}`));
                 return;
             }
 
