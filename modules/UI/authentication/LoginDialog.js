@@ -3,6 +3,7 @@
 import axios from 'axios';
 
 import { getLocationURL, getAuthUrl } from '../../../react/api/url';
+import tokenLocalStorage from '../../../react/api/tokenLocalStorage';
 import { getCurrentUser } from '../../../react/features/base/auth/functions';
 import { disconnect } from '../../../react/features/base/connection';
 import { toJid } from '../../../react/features/base/connection/functions';
