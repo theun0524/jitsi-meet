@@ -212,11 +212,11 @@ var interfaceConfig = {
     DISABLE_GRANT_MODERATOR: true,
     DISABLE_PRIVATE_MESSAGE: true,
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'profile',
-        'settings',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
+        'microphone', 'camera', 'desktop', 'fullscreen',
+        'fodeviceselection', 'profile', 'chat',
+        'etherpad', 'settings',
+        'videoquality', 'filmstrip', 'feedback', 'stats',
+        'download', 'help', 'mute-everyone'
     ],
         
     TOOLBAR_TIMEOUT: 4000,

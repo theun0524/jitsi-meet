@@ -228,6 +228,7 @@ var config = {
 
     // debounce timeout for sending message to jvb about in viewport endpoints to recv video from
     inViewportDebounceTimeout: 200,
+
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
     // participants gets to or above the number.
@@ -703,8 +704,12 @@ var config = {
         },
     },
 
-    // autoTileViewDisabled: true,
-    // chatOnlyGuestEnabled: true,
+    autoPinEnabled: true,
+    autoTileViewDisabled: true,
+    chatOnlyGuestEnabled: true,
+    waitOnlyGuestEnabled: true,
+    hideLocalVideo: true,
+    hideRemoteVideos: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

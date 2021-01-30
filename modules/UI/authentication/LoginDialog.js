@@ -259,7 +259,8 @@ export default {
         const user = getCurrentUser(APP.store.getState());
         const error = getLicenseError();
         const msgTitleKey = error ? 'dialog.LicenseError' : 'dialog.WaitingForHost';
-        const description = user ? (msg_errors[error] || msg_waiting) : msg;
+        let description = user ? (msg_errors[error] || msg_waiting) : msg;
+        const { waitOnlyGuestEnabled } = APP.store.getState()['features/base/config'];
 
         if (!user && !error) {
             buttons = [
@@ -274,6 +275,11 @@ export default {
                 { title: homeButtonTxt,
                   value: 'goHome' }
                 ];
+        }
+
+        if (waitOnlyGuestEnabled) {
+            description = msg_waiting;
+            buttons = [];
         }
 
         return APP.UI.messageHandler.openDialog(

@@ -5,6 +5,7 @@ import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
+    CONFERENCE_JOINED,
     CONFERENCE_WILL_JOIN,
     forEachConference,
     getCurrentConference
@@ -29,6 +30,7 @@ import {
     localParticipantLeft,
     participantLeft,
     participantUpdated,
+    pinParticipant,
     setLoadableAvatarUrl
 } from './actions';
 import {
@@ -69,6 +71,20 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_WILL_JOIN:
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
+        break;
+
+    case CONFERENCE_JOINED:
+        const participant = getLocalParticipant(store.getState());
+        if (typeof APP !== 'undefined' && participant) {
+            const { id, pinned } = participant;
+            const { isHost } = store.getState()['features/base/conference'].roomInfo || {};
+            const { autoPinEnabled } = store.getState()['features/base/config'];
+
+            // 내가 방장이면 자동 PIN이 되도록...
+            if (isHost && !pinned && autoPinEnabled) {
+                store.dispatch(pinParticipant(id));
+            }
+        }
         break;
 
     case DOMINANT_SPEAKER_CHANGED: {

@@ -137,6 +137,7 @@ import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import { createBackgroundEffect } from './react/features/stream-effects/background';
 import axios from 'axios';
+import { isHost } from './react/features/base/jwt';
 
 const logger = Logger.getLogger(__filename);
 const apiBase = process.env.VMEETING_API_BASE;
@@ -738,13 +739,16 @@ export default {
      * @returns {Promise}
      */
     async init({ roomName }) {
+        const isGuest = !isHost(APP.store.getState());
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: config.startWithAudioMuted
                 || config.startSilent
+                || (config.chatOnlyGuestEnabled && isGuest)
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
             startWithVideoMuted: config.startWithVideoMuted
+                || (config.chatOnlyGuestEnabled && isGuest)
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
         };
 

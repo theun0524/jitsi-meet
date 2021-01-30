@@ -25,6 +25,7 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
+import { isHost } from '../../../base/jwt';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -1017,6 +1018,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _feedbackConfigured,
             _fullScreen,
+            _isChatOnly,
             _isLiveStreaming,
             _isRecording,
             _isStatsVisible,
@@ -1030,7 +1032,7 @@ class Toolbox extends Component<Props, State> {
                 && <OverflowMenuProfileItem
                     key = 'profile'
                     onClick = { this._onToolbarToggleProfile } />,
-            this._shouldShowButton('videoquality')
+            this._shouldShowButton('videoquality') && !_isChatOnly
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
                     onClick = { this._onToolbarOpenVideoQuality } />,
@@ -1041,14 +1043,16 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true }
-                visible = { _isRecording ? false : undefined } />,
-            <RecordButton
-                key = 'record'
-                showLabel = { true }
-                visible = { _isLiveStreaming ? false : undefined } />,
+            this._shouldShowButton('livestreaming')
+                && <LiveStreamButton
+                    key = 'livestreaming'
+                    showLabel = { true }
+                    visible = { _isRecording ? false : undefined } />,
+            this._shouldShowButton('recording')
+                && <RecordButton
+                    key = 'record'
+                    showLabel = { true }
+                    visible = { _isLiveStreaming ? false : undefined } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
@@ -1056,22 +1060,25 @@ class Toolbox extends Component<Props, State> {
                     key = 'sharedvideo'
                     onClick = { this._onToolbarToggleSharedVideo }
                     text = { _sharingVideo ? t('toolbar.stopSharedVideo') : t('toolbar.sharedvideo') } />,
-            this._shouldShowButton('etherpad')
+            this._shouldShowButton('etherpad') && !_isChatOnly
                 && <SharedDocumentButton
                     key = 'etherpad'
                     showLabel = { true } />,
-            <VideoBlurButton
-                key = 'videobackgroundblur'
-                showLabel = { true }
-                visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
-            <SettingsButton
-                key = 'settings'
-                showLabel = { true }
-                visible = { this._shouldShowButton('settings') } />,
-            <MuteEveryoneButton
-                key = 'mute-everyone'
-                showLabel = { true }
-                visible = { this._shouldShowButton('mute-everyone') } />,
+            this._shouldShowButton('videobackgroundblur')
+                && <VideoBlurButton
+                    key = 'videobackgroundblur'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+            this._shouldShowButton('settings') && !_isChatOnly
+                && <SettingsButton
+                    key = 'settings'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('settings') } />,
+            this._shouldShowButton('mute-everyone')
+                && <MuteEveryoneButton
+                    key = 'mute-everyone'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('mute-everyone') } />,
             this._shouldShowButton('stats') && _isStatsVisible
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
@@ -1204,7 +1211,8 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderAudioButton() {
-        return this._shouldShowButton('microphone')
+        const { _isChatOnly } = this.props;
+        return this._shouldShowButton('microphone') && !_isChatOnly
             ? <AudioSettingsButton
                 key = 'asb'
                 visible = { true } />
@@ -1217,7 +1225,8 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderVideoButton() {
-        return this._shouldShowButton('camera')
+        const { _isChatOnly } = this.props;
+        return this._shouldShowButton('camera') && !_isChatOnly
             ? <VideoSettingsButton
                 key = 'vsb'
                 visible = { true } />
@@ -1423,6 +1432,7 @@ function _mapStateToProps(state) {
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
         callStatsID,
+        chatOnlyGuestEnabled,
         enableFeaturesBasedOnToken
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
@@ -1433,7 +1443,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
-    const isGuest = !state['features/base/jwt'].jwt;
+    const isGuest = !isHost(state);
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1461,6 +1471,7 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _isChatOnly: isGuest && chatOnlyGuestEnabled,
         _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
         _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
