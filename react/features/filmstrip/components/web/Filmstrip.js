@@ -388,7 +388,7 @@ function _mapStateToProps(state) {
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _hovered: hovered,
-        _localVideoClass: Boolean(state['features/base/config'].hideLocalVideo) ? 'hide' : '',
+        _localVideoClass: Boolean(hideLocalVideo) ? 'hide' : '',
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible

@@ -1,6 +1,7 @@
 // @flow
 
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
+import { SET_PUBLIC_SCOPE_ENABLED } from '../../security';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
@@ -26,10 +27,6 @@ import {
     SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
 } from './actionTypes';
-
-import {
-    SET_PUBLIC_SCOPE_ENABLED
-} from '../../security'
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
@@ -130,9 +127,8 @@ ReducerRegistry.register(
             return set(
                 state,
                 'roomInfo',
-                {...state.roomInfo,
-                scope: action.enabled
-                });
+                { ...state.roomInfo, scope: action.enabled }
+            );
         }
 
         return state;

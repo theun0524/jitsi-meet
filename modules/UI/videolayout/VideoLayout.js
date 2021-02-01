@@ -332,7 +332,7 @@ const VideoLayout = {
      * On audio muted event.
      */
     onAudioMute(id, isMuted) {
-        if (APP.conference.isLocalId(id)) {
+        if (APP.conference.isLocalId(id) && localVideoThumbnail) {
             localVideoThumbnail.showAudioIndicator(isMuted);
         } else {
             const remoteVideo = remoteVideos[id];

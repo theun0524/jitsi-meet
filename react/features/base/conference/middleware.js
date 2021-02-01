@@ -98,7 +98,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case RECV_VIDEO_PARTICIPANT:
         return _recvVideoParticipantDebounced(store, next, action);
-
     case SEND_TONES:
         return _sendTones(store, next, action);
 
@@ -469,7 +468,7 @@ function _recvVideoParCallback({ getState }, next, action) {
 
     const participants = state['features/base/participants'];
     const recvVideoPars = new Set(participants
-                                    .filter(p => (p.toRecvVideo === true || p.pinned === true))
+                                    .filter(p => p.toRecvVideo === true || p.pinned === true)
                                     .map(p => p.id));
 
     // Because the data is written to redux AFTER this function happen, we need to

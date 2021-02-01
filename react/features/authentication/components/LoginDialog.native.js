@@ -282,6 +282,8 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onLoginWithToken(token) {
+        console.log('_onLoginWithToken:', token);
+
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
         if (this.props._conference) {

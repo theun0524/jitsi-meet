@@ -1,4 +1,4 @@
-/* global interfaceConfig */
+/* global APP, interfaceConfig */
 
 import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
@@ -25,7 +25,20 @@ export function generateDeepLinkingURL() {
     // Link.
 
     const appScheme = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
-    const { href } = window.location;
+    const { SSO_AUTH_KEYS } = interfaceConfig;
+    let { origin, pathname, search } = window.location;
+    const params = new URLSearchParams(search);
+    const authKey = SSO_AUTH_KEYS && SSO_AUTH_KEYS[0];
+    const authValue = SSO_AUTH_KEYS && params.get(authKey);
+    const token = APP.store.getState()['features/base/jwt'].jwt;
+    if (token) {
+        search = `?token=${token}`;
+    }
+    if (search && authValue) {
+        search += `&${authKey}=${authValue}`;
+    }
+
+    const href = `${origin}${pathname}${search}`;
     const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
     // Android: use an intent link, custom schemes don't work in all browsers.

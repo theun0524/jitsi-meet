@@ -7,6 +7,9 @@ import { _abstractMapStateToProps } from '../../functions';
 import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 
+import { BackHandler } from "react-native";
+import { hideDialog } from '../../actions';
+
 type Props = BaseProps & {
     t: Function
 }
@@ -22,6 +25,21 @@ class CustomSubmitDialog extends BaseSubmitDialog<Props, *> {
      */
     _renderSubmittable() {
         return this.props.children;
+    }
+
+    backAction = () => {
+        return this.props.dispatch(hideDialog());
+    };
+    
+    componentDidMount() {
+        this.backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            this.backAction
+        );
+    }
+
+    componentWillUnmount() {
+        this.backHandler.remove();
     }
 }
 

@@ -36,7 +36,7 @@
     jitsiMeet.universalLinkDomains = @[@"vmeeting.io", @"devmeet.postech.ac.kr"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-        [builder setFeatureFlag:@"resolution" withValue:@(360)];
+        [builder setFeatureFlag:@"resolution" withValue:@(720)];
         builder.serverURL = [NSURL URLWithString:@"https://vmeeting.io"];
 #if DEBUG
         builder.serverURL = [NSURL URLWithString:@"https://devmeet.postech.ac.kr"];

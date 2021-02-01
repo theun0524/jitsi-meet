@@ -123,7 +123,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 if (c = closing.exec(html)) {
                     r.push(html.substring(prevClosingLastIndex, o.index));
                     r.push(
-                        <Text style = { styles.boldDialogText }>
+                        <Text key={c.index} style = { styles.boldDialogText }>
                             { html.substring(opening.lastIndex, c.index) }
                         </Text>);
                     opening.lastIndex

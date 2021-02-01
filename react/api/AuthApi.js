@@ -2,10 +2,10 @@
 /* eslint-disable require-jsdoc */
 import axios from 'axios';
 
-import { AUTH_API } from '../config';
 import { toState } from '../features/base/redux';
-
 import { getAuthServerURL, getLocationURL } from './url';
+
+const AUTH_API = '/auth/api';
 
 function getAuthAPIURL(stateful) {
     const state = toState(stateful);

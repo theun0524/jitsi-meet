@@ -29,7 +29,7 @@ const DEFAULT_STATE = {
     email: undefined,
     localFlipX: true,
     micDeviceId: undefined,
-    serverURL: undefined,
+    serverURL: 'https://vmeeting.io',
     startAudioOnly: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,

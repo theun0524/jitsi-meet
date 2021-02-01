@@ -13,7 +13,7 @@ const JWT_TOKEN_VERSION = navigator.product === 'ReactNative'
 class TokenLocalStorage {
     validateToken(url, token) {
         try {
-            if (url[url.length - 1] === '/') {
+            if (url && url[url.length - 1] === '/') {
                 url = url.substring(0, url.length - 1);
             }
     
