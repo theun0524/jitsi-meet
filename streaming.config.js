@@ -710,6 +710,7 @@ var config = {
     waitOnlyGuestEnabled: true,
     hideLocalVideo: true,
     hideRemoteVideos: true,
+    autoRecord: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

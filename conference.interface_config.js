@@ -218,7 +218,7 @@ var interfaceConfig = {
         'videoquality', 'filmstrip', 'feedback',
         'tileview', 'download', 'help', 'mute-everyone'
     ],
-        
+
     TOOLBAR_TIMEOUT: 4000,
 
     // Browsers, in addition to those which do not fully support WebRTC, that
