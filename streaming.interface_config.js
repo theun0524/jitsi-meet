@@ -215,8 +215,8 @@ var interfaceConfig = {
         'microphone', 'camera', 'desktop', 'fullscreen',
         'fodeviceselection', 'profile', 'chat',
         'etherpad', 'settings',
-        'videoquality', 'filmstrip', 'feedback', 'stats',
-        'download', 'help', 'mute-everyone'
+        'videoquality', 'filmstrip', 'feedback',
+        'download', 'help'
     ],
         
     TOOLBAR_TIMEOUT: 4000,

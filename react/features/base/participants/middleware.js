@@ -3,6 +3,7 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
+import { getActiveSession } from '../../recording';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_JOINED,
