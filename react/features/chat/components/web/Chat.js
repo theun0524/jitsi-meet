@@ -57,7 +57,7 @@ class Chat extends AbstractChat<Props> {
             isChatEnabledForEverybody: true,
 
             // initial message is 'Disable Chat' , because we assume Chat is enabled for everybody
-            enableDisableChatHeaderMenuMessage: 'Disable Chat' 
+            enableDisableChatHeaderMenuMessage: 'Enable/Disable Chat' 
         };
 
         // Bind event handlers so they are only bound once for every instance.
@@ -209,7 +209,6 @@ class Chat extends AbstractChat<Props> {
 
         const localParticipant = getLocalParticipant(APP.store.getState());  
         let isLocalParticipantAModerator = (localParticipant.role === "moderator");
-        console.log("Is local participant a moderator: ", isLocalParticipantAModerator);
 
         //we want to only allow moderators to get the chat control button alongside chat message
         if(isLocalParticipantAModerator) {

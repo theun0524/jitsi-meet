@@ -10,9 +10,14 @@ import AbstractChatMessage, {
     type Props
 } from '../AbstractChatMessage';
 import PrivateMessageButton from '../PrivateMessageButton';
-import { range } from 'lodash';
 import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant, getParticipantById } from '../../../base/participants';
+import { openDialog } from '../../../base/dialog';
+import { 
+    KickRemoteParticipantDialog,
+    DisableChatForRemoteParticipantDialog,
+    EnableChatForRemoteParticipantDialog
+} from '../../../remote-video-menu/components';
 declare var APP: Object;
 
 /**
@@ -31,8 +36,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
         this.state = {
             chatMessageDialogOpen: false,
             isChatEnabledForParticipant: true,
-            // initial message is 'Disable Chat for User, because we assume Chat is enabled for everybody and participant as well
-            enableDisableChatMenuMessage: 'Disable Chat for User' 
+            // // initial message is 'Disable Chat for User, because we assume Chat is enabled for everybody and participant as well
+            enableDisableChatMenuMessage: 'Enable/Disable Chat for User' 
         };
     }
 
@@ -102,21 +107,33 @@ class ChatMessage extends AbstractChatMessage<Props> {
         this.setState({ chatMessageDialogOpen: !this.state.chatMessageDialogOpen });
     }
 
-    handleEnableDisableChat = async () => {
+    handleEnableDisableChat = async() => {
+        // get the participantID for whom the action is to be dispatched
+        let participantID = this.props.message.id;
+
+        // roles are defined as 'participant', 'moderator', 'visitor' and 'none'
+        // 'participant' and 'moderator' have voice and thus can chat
+        // 'visitor doesn't have voice and thus can't chat
+        let predefinedRole = getParticipantById(APP.store.getState(), participantID).role;
+        console.log("Predefined role is: ", predefinedRole);
+
+        // based on what role the current participant is occupying, we can identify whether chat is enabled or disabled
+        // when the role of participant is a visitor, he has 'no voice', so when the the popup menu item is clicked
+        // it should open the enable chat dialog
+        if(predefinedRole === 'visitor') {
+            // dispatch necessary actions via a dialog box for the participant
+            APP.store.dispatch(openDialog(EnableChatForRemoteParticipantDialog , { participantID }));
+        }
+        // otherwise, it should open the disable chat dialog
+        else {   
+            // dispatch necessary actions via a dialog box for the participant
+            APP.store.dispatch(openDialog(DisableChatForRemoteParticipantDialog, { participantID }));
+        }
+
         // STEP:1 toggleChatMessageDialog
         this.toggleChatMessageDialog()
-        await this.setState({ isChatEnabledForParticipant: !(this.state.isChatEnabledForParticipant) });
+
         
-        // STEP:2 update the message for the popup dialog i.e. enable to disable and vice-versa
-        if(this.state.isChatEnabledForParticipant) {
-            await this.setState({ enableDisableChatMenuMessage: 'Disable Chat for User' });
-        }
-        else {
-            await this.setState({ enableDisableChatMenuMessage: 'Enable Chat for User' });
-        }
-        
-        // STEP:3 propagate events to XMPP for necessary action
-        console.log("Propagating events to XMPP");
     }
 
     handleKickOutUser = () => {
@@ -124,8 +141,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
         // STEP:1 toggleChatMessageDialog box
         this.toggleChatMessageDialog()
 
-        // STEP:2 propagate events to XMPP for necessary action
-        console.log("Propagating events to XMPP");
+        // STEP:2 dispatch events for necessary action
+        let participantID = this.props.message.id;
+        APP.store.dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));
+        
     }
 
     /**
