@@ -1,7 +1,7 @@
 /* global $, APP, interfaceConfig */
 
 import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
-import { remoteVideos } from './VideoLayout';
+
 const Filmstrip = {
     /**
      * Returns the height of filmstrip
