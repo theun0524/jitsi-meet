@@ -509,6 +509,7 @@
         "connectedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 회의에 참석했습니다",
         "connectedTwoMembers": "{{first}}님과 {{second}}님이 회의에 참석했습니다",
         "disconnected": "연결이 끊김",
+        "disconnectedByHost": "방장이 회의를 종료했습니다.",
         "focus": "컨퍼런스 포커스",
         "focusFail": "{{component}}을 사용할 수 없음 - {{ms}} 초 후에 다시 시도하십시오",
         "grantedTo": "{{to}}에게 방장 권한이 부여되었습니다!",

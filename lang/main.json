@@ -509,6 +509,7 @@
         "connectedThreePlusMembers": "{{name}} and {{count}} others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
         "disconnected": "disconnected",
+        "disconnectedByHost": "You have been disconnected by host.",
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
         "grantedTo": "Moderator rights granted to {{to}}!",
