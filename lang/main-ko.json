@@ -104,6 +104,7 @@
     },
     "connectionindicator": {
         "address": "주소:",
+        "audio_ssrc": "오디오 SSRC:",
         "bandwidth": "예상 대역폭:",
         "bitrate": "전송률:",
         "bridgeCount": "서버 개수:",
@@ -131,9 +132,12 @@
         "remoteport": "원격 포트",
         "remoteport_plural": "원격 포트:",
         "resolution": "해상도:",
+        "savelogs": "로그 저장",
+        "participant_id": "참가자 아이디:",
         "status": "연결:",
         "transport": "트랜스포트:",
-        "transport_plural": "트랜스포트:"
+        "transport_plural": "트랜스포트:",
+        "video_ssrc": "비디오 SSRC:"
     },
     "dateUtils": {
         "earlier": "더 이전",
@@ -202,10 +206,7 @@
         "displayNameRequired": "이름을 입력하세요",
         "done": "완료",
         "e2eeDescription": "엔드-투-엔드 암호화는 현재 실험적입니다. 종단 간 암호화를 켜면 녹화, 라이브 스트리밍 및 전화 참여와 같은 서버 측 제공 서비스가 효과적으로 비활성화됩니다. 또한 회의는 삽입 가능한 스트림을 지원하는 브라우저에서 참여하는 사람들에게만 작동합니다.",
-        "e2eeLabel": "E2EE 키",
-        "e2eeNoKey": "없음",
-        "e2eeToggleSet": "키 설정",
-        "e2eeSet": "설정",
+        "e2eeLabel": "암호화 활성화",
         "e2eeWarning": "경고: 이 회의의 모든 참가자가 종단 간 암호화를 지원하는 것은 아닙니다. 활성화하면 그들은 당신을 보거나들을 수 없습니다.",
         "email": "이메일",
         "emailErrInUse": "이메일이 이미 사용 중입니다.",
@@ -745,7 +746,6 @@
             "document": "공유문서 토글하기",
             "download": "앱 다운로드",
             "embedMeeting": "회의 삽입",
-            "e2ee": "종단 간 암호화",
             "feedback": "피드백 남기기",
             "fullScreen": "전체화면 토글하기",
             "grantModerator": "방장 위임",

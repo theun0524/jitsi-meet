@@ -68,6 +68,8 @@
 	<string>Participate in meetings with video.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Participate in meetings with voice.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Local network is used for establishing Peer-to-Peer connections.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>org.jitsi.JitsiMeet.ios.conference</string>
@@ -97,7 +99,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>firebase_crashlytics_collection_enabled</key>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
 	<string>false</string>
 </dict>
 </plist>

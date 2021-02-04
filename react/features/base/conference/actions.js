@@ -43,12 +43,9 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
-    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
-    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY
@@ -584,22 +581,6 @@ export function sendTones(tones: string, duration: number, pause: number) {
 }
 
 /**
- * Sets the flag for indicating if desktop sharing is enabled.
- *
- * @param {boolean} desktopSharingEnabled - True if desktop sharing is enabled.
- * @returns {{
- *     type: SET_DESKTOP_SHARING_ENABLED,
- *     desktopSharingEnabled: boolean
- * }}
- */
-export function setDesktopSharingEnabled(desktopSharingEnabled: boolean) {
-    return {
-        type: SET_DESKTOP_SHARING_ENABLED,
-        desktopSharingEnabled
-    };
-}
-
-/**
  * Enables or disables the Follow Me feature.
  *
  * @param {boolean} enabled - Whether or not Follow Me should be enabled.
@@ -695,24 +676,6 @@ export function setPassword(
             return Promise.reject();
         }
         }
-    };
-}
-
-/**
- * Sets the max frame height the user prefers to send and receive from the
- * remote participants.
- *
- * @param {number} preferredVideoQuality - The max video resolution to send and
- * receive.
- * @returns {{
- *     type: SET_PREFERRED_VIDEO_QUALITY,
- *     preferredVideoQuality: number
- * }}
- */
-export function setPreferredVideoQuality(preferredVideoQuality: number) {
-    return {
-        type: SET_PREFERRED_VIDEO_QUALITY,
-        preferredVideoQuality
     };
 }
 

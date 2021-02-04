@@ -39,6 +39,11 @@ export type Props = {
     displayName?: string,
 
     /**
+     * Whether or not to update the background color of the avatar
+     */
+    dynamicColor?: Boolean,
+
+    /**
      * ID of the element, if any.
      */
     id?: string,
@@ -79,6 +84,15 @@ export const DEFAULT_SIZE = 65;
  * Implements a class to render avatars in the app.
  */
 class Avatar<P: Props> extends PureComponent<P, State> {
+    /**
+     * Default values for {@code Avatar} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        dynamicColor: true
+    };
+
     /**
      * Instantiates a new {@code Component}.
      *
@@ -124,6 +138,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             _loadableAvatarUrl,
             className,
             colorBase,
+            dynamicColor,
             id,
             size,
             status,
@@ -157,7 +172,10 @@ class Avatar<P: Props> extends PureComponent<P, State> {
         const initials = getInitials(_initialsBase);
 
         if (initials) {
-            avatarProps.color = getAvatarColor(colorBase || _initialsBase);
+            if (dynamicColor) {
+                avatarProps.color = getAvatarColor(colorBase || _initialsBase);
+            }
+
             avatarProps.initials = initials;
         }
 

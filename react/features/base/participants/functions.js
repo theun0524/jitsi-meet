@@ -298,7 +298,6 @@ export function isIconUrl(icon: ?string | ?Object) {
  *
  * @param {Object|Function} stateful - Object or function that can be resolved
  * to the Redux state.
- * @param {?boolean} ignoreToken - When true we ignore the token check.
  * @returns {boolean}
  */
 export function isLocalParticipantModerator(stateful: Object | Function) {

@@ -158,7 +158,7 @@ function AddPeopleDialog({
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
-                <EmbedMeetingTrigger />
+                { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL

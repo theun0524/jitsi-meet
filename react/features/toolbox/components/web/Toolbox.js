@@ -26,8 +26,7 @@ import {
     IconShareVideo
 } from '../../../base/icons';
 import { isHost } from '../../../base/jwt';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import JitsiMeetJS, { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,

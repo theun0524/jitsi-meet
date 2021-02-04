@@ -17,6 +17,7 @@ import {
     getParticipantCount
 } from '../participants/functions';
 import { MiddlewareRegistry } from '../redux';
+import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { limitLastN } from './functions';
 import logger from './logger';
@@ -79,7 +80,7 @@ function _updateLastN({ getState }) {
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
-        lastN = 0;
+        lastN = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (audioOnly) {
         const { screenShares } = state['features/video-layout'];
         const tileViewEnabled = shouldDisplayTileView(state);

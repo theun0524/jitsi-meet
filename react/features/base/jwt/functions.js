@@ -16,6 +16,18 @@ export function parseJWTFromURLParams(url: URL = window.location) {
     return parseURLParams(url, true, 'search').jwt;
 }
 
+/**
+ * Returns the user name after decoding the jwt.
+ *
+ * @param {Object} state - The app state.
+ * @returns {string}
+ */
+export function getJwtName(state: Object) {
+    const { user } = state['features/base/jwt'];
+
+    return user?.name || '';
+}
+
 /*
  * 회의 게스트인지 판단하여 결과값을 리턴한다.
  * jwt가 있어도 방장이 아니면 게스트로 판단한다.

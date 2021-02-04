@@ -141,13 +141,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
             if (!visible && !_disabled) {
                 _disabled = true;
                 visible = true;
-
-                // button and tooltip
-                if (!state['features/base/jwt'].jwt) {
-                    _tooltip = 'dialog.liveStreamingDisabledForGuestTooltip';
-                } else {
-                    _tooltip = 'dialog.liveStreamingDisabledTooltip';
-                }
+                _tooltip = 'dialog.liveStreamingDisabledTooltip';
             }
         }
     }

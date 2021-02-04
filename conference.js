@@ -3,7 +3,6 @@
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
-import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 import { openConnection } from './connection';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
@@ -41,8 +40,6 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    setDesktopSharingEnabled,
     setStartMutedPolicy
 } from './react/features/base/conference';
 import {
@@ -86,7 +83,8 @@ import {
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
-    participantUpdated
+    participantUpdated,
+    updateRemoteParticipantFeatures
 } from './react/features/base/participants';
 import {
     getUserSelectedCameraDeviceId,
@@ -98,17 +96,15 @@ import {
     destroyLocalTracks,
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
-    isLocalVideoTrackMuted,
+    isLocalCameraTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import {
-    getBackendSafePath,
-    getJitsiMeetGlobalNS
-} from './react/features/base/util';
+import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { getConferenceOptions } from './react/features/conference/functions.native';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -125,18 +121,15 @@ import {
     isPrejoinPageVisible,
     makePrecallTest
 } from './react/features/prejoin';
-import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { endRoomLockRequest } from './react/features/room-lock/actions';
+import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
-import * as RemoteControlEvents
-    from './service/remotecontrol/RemoteControlEvents';
 import { createBackgroundEffect } from './react/features/stream-effects/background';
-import axios from 'axios';
 import { isHost } from './react/features/base/jwt';
 
 const logger = Logger.getLogger(__filename);
@@ -453,16 +446,6 @@ export default {
     isSharingScreen: false,
 
     /**
-     * Indicates if the desktop sharing functionality has been enabled.
-     * It takes into consideration the status returned by
-     * {@link JitsiMeetJS.isDesktopSharingEnabled()}. The latter can be false
-     * either if the desktop sharing is not supported by the current browser
-     * or if it was disabled through lib-jitsi-meet specific options (check
-     * config.js for listed options).
-     */
-    isDesktopSharingEnabled: false,
-
-    /**
      * The local audio track (if any).
      * FIXME tracks from redux store should be the single source of truth
      * @type {JitsiLocalTrack|null}
@@ -688,16 +671,7 @@ export default {
         con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
         APP.connection = connection = con;
 
-        // Desktop sharing related stuff:
-        this.isDesktopSharingEnabled
-            = JitsiMeetJS.isDesktopSharingEnabled();
-        eventEmitter.emit(JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED, this.isDesktopSharingEnabled);
-
-        APP.store.dispatch(
-            setDesktopSharingEnabled(this.isDesktopSharingEnabled));
-
         this._createRoom(tracks);
-        APP.remoteControl.init();
 
         // if user didn't give access to mic or camera or doesn't have
         // them at all, we mark corresponding toolbar buttons as muted,
@@ -823,7 +797,7 @@ export default {
     isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalVideoTrackMuted(
+            ? isLocalCameraTrackMuted(
                 APP.store.getState()['features/base/tracks'])
             : isVideoMutedByUser(APP.store);
     },
@@ -1340,56 +1314,7 @@ export default {
     },
 
     _getConferenceOptions() {
-        const options = config;
-        const { email, name: nick } = getLocalParticipant(APP.store.getState());
-
-        const state = APP.store.getState();
-        const { locationURL } = state['features/base/connection'];
-        const { tenant } = state['features/base/jwt'];
-
-        if (tenant) {
-            options.siteID = tenant;
-        }
-
-        if (options.enableDisplayNameInStats && nick) {
-            options.statisticsDisplayName = nick;
-        }
-
-        if (options.enableEmailInStats && email) {
-            options.statisticsId = email;
-        }
-
-        if (locationURL) {
-            options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
-        }
-
-        options.applicationName = interfaceConfig.APP_NAME;
-        options.getWiFiStatsMethod = this._getWiFiStatsMethod;
-        options.createVADProcessor = createRnnoiseProcessorPromise;
-
-        // Disable CallStats, if requessted.
-        if (options.disableThirdPartyRequests) {
-            delete options.callStatsID;
-            delete options.callStatsSecret;
-            delete options.getWiFiStatsMethod;
-        }
-
-        return options;
-    },
-
-    /**
-     * Returns the result of getWiFiStats from the global NS or does nothing
-     * (returns empty result).
-     * Fixes a concurrency problem where we need to pass a function when creating
-     * JitsiConference, but that method is added to the context later.
-     *
-     * @returns {Promise}
-     * @private
-     */
-    _getWiFiStatsMethod() {
-        const gloabalNS = getJitsiMeetGlobalNS();
-
-        return gloabalNS.getWiFiStats ? gloabalNS.getWiFiStats() : Promise.resolve('{}');
+        return getConferenceOptions(APP.store.getState());
     },
 
     /**
@@ -1552,11 +1477,6 @@ export default {
     async _turnScreenSharingOff(didHaveVideo) {
         this._untoggleScreenSharing = null;
         this.videoSwitchInProgress = true;
-        const { receiver } = APP.remoteControl;
-
-        if (receiver) {
-            receiver.stop();
-        }
 
         this._stopProxyConnection();
         if (config.enableScreenshotCapture) {
@@ -1639,9 +1559,8 @@ export default {
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
         }
-        if (!this.isDesktopSharingEnabled) {
-            return Promise.reject(
-                'Cannot toggle screen sharing: not supported.');
+        if (!JitsiMeetJS.isDesktopSharingEnabled()) {
+            return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
         if (this.isAudioOnly()) {
@@ -1992,8 +1911,9 @@ export default {
             (authEnabled, authLogin) =>
                 APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
 
-        room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
-            user => APP.UI.onUserFeaturesChanged(user));
+        room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED, user => {
+            APP.store.dispatch(updateRemoteParticipantFeatures(user));
+        });
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
             // The logic shared between RN and web.
             commonUserJoinedHandling(APP.store, room, user);
@@ -2002,6 +1922,7 @@ export default {
                 return;
             }
 
+            APP.store.dispatch(updateRemoteParticipantFeatures(user));
             logger.log(`USER ${id} connnected:`, user);
             APP.UI.addUser(user);
         });
@@ -2186,30 +2107,6 @@ export default {
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
-
-        APP.remoteControl.on(RemoteControlEvents.ACTIVE_CHANGED, isActive => {
-            room.setLocalParticipantProperty(
-                'remoteControlSessionStatus',
-                isActive
-            );
-            APP.UI.setLocalRemoteControlActiveChanged();
-        });
-
-        /* eslint-disable max-params */
-        room.on(
-            JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
-            (participant, name, oldValue, newValue) => {
-                switch (name) {
-                case 'remoteControlSessionStatus':
-                    APP.UI.setRemoteControlActiveStatus(
-                        participant.getId(),
-                        newValue);
-                    break;
-                default:
-
-                // ignore
-                }
-            });
 
         room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
@@ -2556,25 +2453,6 @@ export default {
     },
 
     /**
-    * Adds any room listener.
-    * @param {string} eventName one of the JitsiConferenceEvents
-    * @param {Function} listener the function to be called when the event
-    * occurs
-    */
-    addConferenceListener(eventName, listener) {
-        room.on(eventName, listener);
-    },
-
-    /**
-    * Removes any room listener.
-    * @param {string} eventName one of the JitsiConferenceEvents
-    * @param {Function} listener the listener to be removed.
-    */
-    removeConferenceListener(eventName, listener) {
-        room.off(eventName, listener);
-    },
-
-    /**
      * Updates the list of current devices.
      * @param {boolean} setDeviceListChangeHandler - Whether to add the deviceList change handlers.
      * @private
@@ -2856,7 +2734,7 @@ export default {
      * requested
      */
     hangup(requestFeedback = false) {
-        eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
+        APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
 
@@ -2873,7 +2751,6 @@ export default {
         }
 
         APP.UI.removeAllListeners();
-        APP.remoteControl.removeAllListeners();
 
         let requestFeedbackPromise;
 
@@ -3071,29 +2948,6 @@ export default {
         if (room) {
             APP.UI.changeDisplayName(id, formattedNickname);
         }
-    },
-
-    /**
-     * Returns the desktop sharing source id or undefined if the desktop sharing
-     * is not active at the moment.
-     *
-     * @returns {string|undefined} - The source id. If the track is not desktop
-     * track or the source id is not available, undefined will be returned.
-     */
-    getDesktopSharingSourceId() {
-        return this.localVideo.sourceId;
-    },
-
-    /**
-     * Returns the desktop sharing source type or undefined if the desktop
-     * sharing is not active at the moment.
-     *
-     * @returns {'screen'|'window'|undefined} - The source type. If the track is
-     * not desktop track or the source type is not available, undefined will be
-     * returned.
-     */
-    getDesktopSharingSourceType() {
-        return this.localVideo.sourceType;
     },
 
     /**

@@ -1,0 +1,29 @@
+{
+    "android_package_name": "org.postech.vmeeting",
+    "prefer_related_applications": true,
+    "related_applications": [
+        {
+            "id": "org.postech.vmeeting",
+            "platform": "chromeos_play"
+        }
+    ],
+    "short_name": "Vmeeting",
+    "name": "Vmeeting",
+    "icons": [
+        {
+            "src": "icons/icon192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "icons/icon512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/",
+    "background_color": "#2a3a4b",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#2a3a4b"
+}

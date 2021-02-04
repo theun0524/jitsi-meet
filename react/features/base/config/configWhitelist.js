@@ -16,7 +16,7 @@ export default [
     'analytics.disabled',
     'audioLevelsInterval',
     'autoRecord',
-    'autoRecordToken',
+    'apiLogLevels',
     'avgRtpStatsN',
 
     /**
@@ -102,6 +102,7 @@ export default [
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',
     'enableLipSync',
+    'enableOpusRed',
     'enableRemb',
     'enableScreenshotCapture',
     'enableTalkWhileMuted',
@@ -117,6 +118,7 @@ export default [
     'gatherStats',
     'googleApiApplicationClientID',
     'hiddenDomain',
+    'hideLobbyButton',
     'hosts',
     'iAmRecorder',
     'iAmSipGateway',
@@ -148,8 +150,8 @@ export default [
     'stereo',
     'subject',
     'testing',
-    'useStunTurn',
     'useTurnUdp',
+    'videoQuality.persist',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
 ].concat(extraConfigWhitelist);

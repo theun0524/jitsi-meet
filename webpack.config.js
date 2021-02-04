@@ -126,7 +126,7 @@ const config = {
             // dependencies including lib-jitsi-meet.
 
             loader: 'expose-loader?$!expose-loader?jQuery',
-            test: /\/node_modules\/jquery\/.*\.js$/
+            test: /[/\\]node_modules[/\\]jquery[/\\].*\.js$/
         }, {
             test: reStyle,
             rules: [
@@ -164,7 +164,8 @@ const config = {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
             resolve: {
                 alias: {
-                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`
+                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`,
+                    '../styled/Modal': `${__dirname}/react/features/base/dialog/components/web/ThemedDialog.js`
                 }
             }
         }, {
@@ -190,7 +191,11 @@ const config = {
         // Allow the use of the real filename of the module being executed. By
         // default Webpack does not leak path-related information and provides a
         // value that is a mock (/index.js).
-        __filename: true
+        __filename: true,
+
+        // Provide some empty Node modules (required by olm).
+        crypto: 'empty',
+        fs: 'empty'
     },
     optimization: {
         concatenateModules: minimize,
@@ -218,6 +223,7 @@ const config = {
     ].filter(Boolean),
     resolve: {
         alias: {
+            'focus-visible': 'focus-visible/dist/focus-visible.min.js',
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
         },
         aliasFields: [
@@ -324,7 +330,7 @@ module.exports = [
             library: 'JitsiMeetExternalAPI',
             libraryTarget: 'umd'
         }),
-        performance: getPerformanceHints(30 * 1024)
+        performance: getPerformanceHints(35 * 1024)
     })
 ];
 

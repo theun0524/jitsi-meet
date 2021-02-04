@@ -1,5 +1,6 @@
 // @flow
 
+import InlineMessage from '@atlaskit/inline-message';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -9,10 +10,11 @@ import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
 import { setPreferredVideoQuality } from '../actions';
-import { VIDEO_QUALITY_LEVELS } from '../../base/conference/constants';
+import { VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
 
 const {
+    ULTRA,
     HIGH,
     STANDARD,
     LOW
@@ -56,6 +58,12 @@ type Props = {
     _sendrecvVideoQuality: Number,
 
     /**
+     * Whether or not displaying video is supported in the current
+     * environment. If false, the slider will be disabled.
+     */
+    _videoSupported: Boolean,
+
+    /**
      * Invoked to request toggling of audio only mode.
      */
     dispatch: Dispatch<any>,
@@ -90,6 +98,7 @@ class VideoQualitySlider extends Component<Props> {
         this._enableLowDefinition = this._enableLowDefinition.bind(this);
         this._enableStandardDefinition
             = this._enableStandardDefinition.bind(this);
+        this._enableUltraHighDefinition = this._enableUltraHighDefinition.bind(this);
         this._onSliderChange = this._onSliderChange.bind(this);
 
         /**
@@ -118,9 +127,9 @@ class VideoQualitySlider extends Component<Props> {
                 videoQuality: STANDARD
             },
             {
-                onSelect: this._enableHighDefinition,
+                onSelect: this._enableUltraHighDefinition,
                 textKey: 'videoStatus.highDefinition',
-                videoQuality: HIGH
+                videoQuality: ULTRA
             }
         ];
     }
@@ -132,14 +141,25 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { _videoSupported, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
+        let classNames = 'video-quality-dialog';
+        let warning = null;
+
+        if (!_videoSupported) {
+            classNames += ' video-not-supported';
+            warning = this._renderAudioOnlyLockedMessage();
+        }
+
         return (
-            <div className = { 'video-quality-dialog' }>
+            <div className = { classNames }>
                 <h3 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
                 </h3>
+                <div className = { warning ? '' : 'hide-warning' }>
+                    { warning }
+                </div>
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
                         { /* FIXME: onChange and onMouseUp are both used for
@@ -148,6 +168,7 @@ class VideoQualitySlider extends Component<Props> {
                            */ }
                         <input
                             className = 'video-quality-dialog-slider'
+                            disabled = { !_videoSupported }
                             max = { this._sliderOptions.length - 1 }
                             min = '0'
                             onChange = { this._onSliderChange }
@@ -163,6 +184,24 @@ class VideoQualitySlider extends Component<Props> {
                     </div>
                 </div>
             </div>
+        );
+    }
+
+    /**
+     * Creates a React Element for notifying that the browser is in audio only
+     * and cannot be changed.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderAudioOnlyLockedMessage() {
+        const { t } = this.props;
+
+        return (
+            <InlineMessage
+                title = { t('videoStatus.onlyAudioAvailable') }>
+                { t('videoStatus.onlyAudioSupported') }
+            </InlineMessage>
         );
     }
 
@@ -261,6 +300,21 @@ class VideoQualitySlider extends Component<Props> {
         this._setPreferredVideoQuality(STANDARD);
     }
 
+    _enableUltraHighDefinition: () => void;
+
+    /**
+     * Dispatches an action to receive ultra HD quality video from remote
+     * participants.
+     *
+     * @private
+     * @returns {void}
+     */
+    _enableUltraHighDefinition() {
+        sendAnalytics(createEvent('ultra high'));
+        logger.log('Video quality: ultra high enabled');
+        this._setPreferredVideoQuality(ULTRA);
+    }
+
     /**
      * Matches the current video quality state with corresponding index of the
      * component's slider options.
@@ -279,10 +333,13 @@ class VideoQualitySlider extends Component<Props> {
             return _sliderOptions.indexOf(audioOnlyOption);
         }
 
-        const matchingOption = _sliderOptions.find(
-            ({ videoQuality }) => videoQuality === _sendrecvVideoQuality);
+        for (let i = 0; i < _sliderOptions.length; i++) {
+            if (_sliderOptions[i].videoQuality >= _sendrecvVideoQuality) {
+                return i;
+            }
+        }
 
-        return _sliderOptions.indexOf(matchingOption);
+        return -1;
     }
 
     _onSliderChange: () => void;
@@ -336,16 +393,22 @@ class VideoQualitySlider extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {{
+ *     _audioOnly: boolean,
+ *     _p2p: boolean,
+ *     _sendrecvVideoQuality: number
+ * }}
  */
 function _mapStateToProps(state) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { p2p, preferredVideoQuality } = state['features/base/conference'];
+    const { p2p } = state['features/base/conference'];
+    const { preferredVideoQuality } = state['features/video-quality'];
 
     return {
         _audioOnly: audioOnly,
         _p2p: p2p,
-        _sendrecvVideoQuality: preferredVideoQuality
+        _sendrecvVideoQuality: preferredVideoQuality,
+        _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo()
     };
 }
 

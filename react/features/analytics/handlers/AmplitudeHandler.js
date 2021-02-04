@@ -84,6 +84,11 @@ export default class AmplitudeHandler extends AbstractHandler {
      * @returns {Object}
      */
     getIdentityProps() {
+        // TODO: Remove when web and native Aplitude implementations are unified.
+        if (navigator.product === 'ReactNative') {
+            return {};
+        }
+
         return {
             sessionId: this._getInstance().getSessionId(),
             deviceId: this._getInstance().options.deviceId,

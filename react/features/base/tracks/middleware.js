@@ -157,10 +157,7 @@ MiddlewareRegistry.register(store => next => action => {
             if (isVideoTrack) {
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
-                }
-
-                // Make sure we change the video mute state only for camera tracks.
-                if (jitsiTrack.isLocal() && jitsiTrack.videoType !== 'desktop') {
+                } else if (jitsiTrack.isLocal()) {
                     APP.conference.setVideoMuteStatus(muted);
                 } else {
                     APP.UI.setVideoMuted(participantID, muted);
