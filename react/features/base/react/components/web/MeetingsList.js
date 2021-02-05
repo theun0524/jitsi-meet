@@ -6,6 +6,7 @@ import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter
 } from '../../../i18n';
+import { Icon, IconTrash } from '../../../icons';
 
 import Container from './Container';
 import Text from './Text';
@@ -47,12 +48,7 @@ type Props = {
     /**
      * Handler for deleting an item.
      */
-    onDeleteFromDB?: Function,
-
-    /**
-     * Handler for deleting an item.
-     */
-    onDeleteFromRecent?: Function
+    onItemDelete?: Function
 };
 
 /**
@@ -151,7 +147,7 @@ export default class MeetingsList extends Component<Props> {
         return null;
     }
 
-    _onDeleteFromDB: Object => Function;
+    _onDelete: Object => Function;
 
     /**
      * Returns a function that is used on the onDelete callback.
@@ -160,32 +156,13 @@ export default class MeetingsList extends Component<Props> {
      * @private
      * @returns {Function}
      */
-    _onDeleteFromDB(item) {
-        const { onDeleteFromDB } = this.props;
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
 
         return evt => {
             evt.stopPropagation();
 
-            onDeleteFromDB && onDeleteFromDB(item);
-        };
-    }
-
-    _onDeleteFromRecent: Object => Function;
-
-    /**
-     * Returns a function that is used on the onDelete callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
-    _onDeleteFromRecent(item) {
-        const { onDeleteFromRecent } = this.props;
-
-        return evt => {
-            evt.stopPropagation();
-
-            onDeleteFromRecent && onDeleteFromRecent(item);
+            onItemDelete && onItemDelete(item);
         };
     }
 
@@ -208,7 +185,7 @@ export default class MeetingsList extends Component<Props> {
             url,
             canDelete
         } = meeting;
-        const { hideURL = false, t, onDeleteFromDB, onDeleteFromRecent } = this.props;
+        const { hideURL = false, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `${s.item} ${onPress ? s.withClickHandler : s.withoutClickHandler}`;
@@ -219,15 +196,15 @@ export default class MeetingsList extends Component<Props> {
                 key = { index }
                 onClick = { onPress }>
                 <Container className = {s.leftColumn}>
-                    <Text className = {s.date}>
+                    <Text className = {s.title}>
                         { _toDateString(date) }
                     </Text>
-                    <Text>
+                    <Text className = 'subtitle'>
                         { _toTimeString(time) }
                     </Text>
                 </Container>
-                <Container className = {s.rightColumn}>
-                    <Text className = {s.title}>
+                <Container className = { s.rightColumn }>
+                    <Text className = { s.title }>
                         { title }
                     </Text>
                     {
@@ -238,7 +215,7 @@ export default class MeetingsList extends Component<Props> {
                     }
                     {
                         typeof duration === 'number' ? (
-                            <Text>
+                            <Text className = 'subtitle'>
                                 { getLocalizedDurationFormatter(duration) }
                             </Text>) : null
                     }
@@ -257,14 +234,10 @@ export default class MeetingsList extends Component<Props> {
                 <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 
-                    { // !canDelete && onDeleteFromRecent 
-                        onDeleteFromRecent && <Tooltip content = {t('welcomepage.deleteFromRecent')}>
-                            <div
-                                className = 'delete-from-recent'
-                                onClick = { this._onDeleteFromRecent(meeting) }>
-                                <EditorCloseIcon size="medium" />
-                            </div>
-                        </Tooltip>}
+                    { onItemDelete && <Icon
+                        className = { s.deleteMeeting }
+                        onClick = { this._onDelete(meeting) }
+                        src = { IconTrash } />}
                 </Container>
             </Container>
         );

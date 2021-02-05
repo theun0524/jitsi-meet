@@ -346,7 +346,7 @@ export function getTracksByMediaType(tracks, mediaType) {
 }
 
 /**
- * Checks if the local video track in the given set of tracks is muted.
+ * Checks if the local video camera track in the given set of tracks is muted.
  *
  * @param {Track[]} tracks - List of all tracks.
  * @returns {Track[]}

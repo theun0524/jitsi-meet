@@ -21,7 +21,6 @@ type Props = {
      */
     onLongPress: ?Function,
 
-
     /**
      * Function to be invoked when an Item is pressed. The Item's URL is passed.
      */

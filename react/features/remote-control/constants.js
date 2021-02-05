@@ -3,6 +3,9 @@
  */
 export const REMOTE_CONTROL_MESSAGE_NAME = 'remote-control';
 
+/**
+ * The value for the "var" attribute of feature tag in disco-info packets.
+ */
 export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol';
 
 /**

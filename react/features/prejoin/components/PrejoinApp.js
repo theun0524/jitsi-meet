@@ -7,7 +7,6 @@ import { batch } from 'react-redux';
 import { BaseApp } from '../../../features/base/app';
 import { setConfig } from '../../base/config';
 import { createPrejoinTracks } from '../../base/tracks';
-import { initPrejoin } from '../actions';
 import { getConferenceOptions } from '../../conference/functions';
 import { initPrejoin, makePrecallTest } from '../actions';
 

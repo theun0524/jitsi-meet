@@ -114,9 +114,11 @@ export async function createHandlers({ getState }: { getState: Function }) {
             logger.error('Failed to initialize Amplitude handler', e);
         }
     }
+
     if (matomoEndpoint && matomoSiteID) {
         try {
             const matomo = new MatomoHandler(handlerConstructorOptions);
+
             handlers.push(matomo);
         } catch (e) {
             logger.error('Failed to initialize Matomo handler', e);
@@ -189,7 +191,6 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
-    
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
     if (deploymentInfo) {

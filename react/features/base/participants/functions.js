@@ -1,6 +1,7 @@
 // @flow
 
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
+import type { Store } from 'redux';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
@@ -15,7 +16,6 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 
-declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -23,30 +23,39 @@ declare var interfaceConfig: Object;
  */
 const AVATAR_QUEUE = [];
 const AVATAR_CHECKED_URLS = new Map();
-/* eslint-disable arrow-body-style */
+/* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
-    participant => {
+    (participant, _) => {
         return participant && participant.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
     },
-    participant => {
+    (participant, _) => {
         return participant && participant.avatarURL ? participant.avatarURL : null;
     },
-    participant => {
-        return participant && participant.email ? getGravatarURL(participant.email) : null;
+    (participant, store) => {
+        if (participant && participant.email) {
+            // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
+            const gravatarBaseURL
+                = store.getState()['features/base/config'].gravatarBaseURL ?? 'https://www.gravatar.com/avatar/';
+
+            return getGravatarURL(participant.email, gravatarBaseURL);
+        }
+
+        return null;
     }
 ];
-/* eslint-enable arrow-body-style */
+/* eslint-enable arrow-body-style, no-unused-vars */
 
 /**
  * Resolves the first loadable avatar URL for a participant.
  *
  * @param {Object} participant - The participant to resolve avatars for.
+ * @param {Store} store - Redux store.
  * @returns {Promise}
  */
-export function getFirstLoadableAvatarUrl(participant: Object) {
+export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any, any>) {
     const deferred = createDeferred();
     const fullPromise = deferred.promise
-        .then(() => _getFirstLoadableAvatarUrl(participant))
+        .then(() => _getFirstLoadableAvatarUrl(participant, store))
         .then(src => {
 
             if (AVATAR_QUEUE.length) {
@@ -289,7 +298,7 @@ export function isEveryoneModerator(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isIconUrl(icon: ?string | ?Object) {
-    return Boolean(icon) && typeof icon === 'object';
+    return Boolean(icon) && (typeof icon === 'object' || typeof icon === 'function');
 }
 
 /**
@@ -363,11 +372,12 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
  * Resolves the first loadable avatar URL for a participant.
  *
  * @param {Object} participant - The participant to resolve avatars for.
+ * @param {Store} store - Redux store.
  * @returns {?string}
  */
-async function _getFirstLoadableAvatarUrl(participant) {
+async function _getFirstLoadableAvatarUrl(participant, store) {
     for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
-        const url = AVATAR_CHECKER_FUNCTIONS[i](participant);
+        const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
 
         if (url) {
             if (AVATAR_CHECKED_URLS.has(url)) {

@@ -150,7 +150,6 @@ function _initLogging({ dispatch, getState }, loggingConfig, isTestingEnabled) {
             Logger.addGlobalTransport(transport);
             JitsiMeetJS.addGlobalLogTransport(transport);
         }
-    
         Logger.addGlobalTransport(_logCollector);
         JitsiMeetJS.addGlobalLogTransport(_logCollector);
         dispatch(setLogCollector(_logCollector));

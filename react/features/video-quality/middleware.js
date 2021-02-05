@@ -45,6 +45,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case SET_CONFIG: {
         const state = getState();
         const { videoQuality = {} } = state['features/base/config'];
+        const { persistedPrefferedVideoQuality } = state['features/video-quality-persistent-storage'];
 
         if (videoQuality.persist && typeof persistedPrefferedVideoQuality !== 'undefined') {
             dispatch(setPreferredVideoQuality(persistedPrefferedVideoQuality));

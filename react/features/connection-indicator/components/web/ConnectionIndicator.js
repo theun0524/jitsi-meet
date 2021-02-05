@@ -7,6 +7,7 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
 import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
+import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
@@ -62,6 +63,12 @@ const QUALITY_TO_WIDTH: Array<Object> = [
 type Props = AbstractProps & {
 
     /**
+     * The current condition of the user's connection, matching one of the
+     * enumerated values in the library.
+     */
+    _connectionStatus: string,
+
+    /**
      * Whether or not the component should ignore setting a visibility class for
      * hiding the component when the connection quality is not strong.
      */
@@ -73,10 +80,15 @@ type Props = AbstractProps & {
     audioSsrc: number,
 
     /**
-     * The current condition of the user's connection, matching one of the
-     * enumerated values in the library.
+     * The Redux dispatch function.
      */
-    connectionStatus: string,
+    dispatch: Dispatch<any>,
+
+    /**
+     * Whether or not should display the "Save Logs" link in the local video
+     * stats table.
+     */
+    enableSaveLogs: boolean,
 
     /**
      * The Redux dispatch function.
@@ -200,13 +212,13 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
      * @returns {string}
      */
     _getConnectionColorClass() {
-        const { connectionStatus } = this.props;
+        const { _connectionStatus } = this.props;
         const { percent } = this.state.stats;
         const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
 
-        if (connectionStatus === INACTIVE) {
+        if (_connectionStatus === INACTIVE) {
             return 'status-other';
-        } else if (connectionStatus === INTERRUPTED) {
+        } else if (_connectionStatus === INTERRUPTED) {
             return 'status-lost';
         } else if (typeof percent === 'undefined') {
             return 'status-high';
@@ -224,7 +236,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     _getConnectionStatusTip() {
         let tipKey;
 
-        switch (this.props.connectionStatus) {
+        switch (this.props._connectionStatus) {
         case JitsiParticipantConnectionStatus.INTERRUPTED:
             tipKey = 'connectionindicator.quality.lost';
             break;
@@ -275,12 +287,12 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
      * @returns {string}
      */
     _getVisibilityClass() {
-        const { connectionStatus } = this.props;
+        const { _connectionStatus } = this.props;
 
         return this.state.showIndicator
             || this.props.alwaysVisible
-            || connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED
-            || connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
+            || _connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED
+            || _connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
             ? 'show-connection-indicator' : 'hide-connection-indicator';
     }
 
@@ -304,7 +316,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
      * @returns {ReactElement}
      */
     _renderIcon() {
-        if (this.props.connectionStatus
+        if (this.props._connectionStatus
             === JitsiParticipantConnectionStatus.INACTIVE) {
             return (
                 <span className = 'connection_ninja'>
@@ -319,7 +331,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
         let iconWidth;
         let emptyIconWrapperClassName = 'connection_empty';
 
-        if (this.props.connectionStatus
+        if (this.props._connectionStatus
             === JitsiParticipantConnectionStatus.INTERRUPTED) {
 
             // emptyIconWrapperClassName is used by the torture tests to
@@ -385,6 +397,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 e2eRtt = { e2eRtt }
+                enableSaveLogs = { this.props.enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
@@ -408,24 +421,24 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
  *
  * @param {Function} dispatch - The redux action {@code dispatch} function.
  * @returns {{
-    *     _onSaveLogs: Function,
-    * }}
-    * @private
-    */
-   export function _mapDispatchToProps(dispatch: Dispatch<any>) {
-       return {
-           /**
-            * Saves the conference logs.
-            *
-            * @returns {Function}
-            */
-           _onSaveLogs() {
-               dispatch(saveLogs());
-           }
-       };
-   }
-   
-   
+ *     _onSaveLogs: Function,
+ * }}
+ * @private
+ */
+export function _mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        /**
+         * Saves the conference logs.
+         *
+         * @returns {Function}
+         */
+        _onSaveLogs() {
+            dispatch(saveLogs());
+        }
+    };
+}
+
+
 /**
  * Maps part of the Redux state to the props of this component.
  *
@@ -434,21 +447,30 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
-
+    const { participantId } = ownProps;
     const conference = state['features/base/conference'].conference;
+    const participant
+        = typeof participantId === 'undefined' ? getLocalParticipant(state) : getParticipantById(state, participantId);
+    const props = {
+        _connectionStatus: participant?.connectionStatus,
+        enableSaveLogs: state['features/base/config'].enableSaveLogs
+    };
 
     if (conference) {
         const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.VIDEO, ownProps.participantId);
+            state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
         const firstAudioTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.AUDIO, ownProps.participantId);
+            state['features/base/tracks'], MEDIA_TYPE.AUDIO, participantId);
 
         return {
+            ...props,
             audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
             videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
         };
     }
 
-    return {};
+    return {
+        ...props
+    };
 }
 export default translate(connect(_mapStateToProps, _mapDispatchToProps)(ConnectionIndicator));

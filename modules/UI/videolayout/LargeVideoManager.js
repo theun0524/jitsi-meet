@@ -220,28 +220,16 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar();
 
-            // If the user's connection is disrupted then the avatar will be
-            // displayed in case we have no video image cached. That is if
-            // there was a user switch (image is lost on stream detach) or if
-            // the video was not rendered, before the connection has failed.
-            const wasUsersImageCached
-                = !isUserSwitch && container.wasVideoRendered;
             const isVideoMuted = !stream || stream.isMuted();
             const state = APP.store.getState();
             const participant = getParticipantById(state, id);
-            const connectionStatus
-                = APP.conference.getParticipantConnectionStatus(id);
-            const isVideoRenderable
-                = !isVideoMuted
-                    && (APP.conference.isLocalId(id)
-                        || connectionStatus
-                                === JitsiParticipantConnectionStatus.ACTIVE
-                        || wasUsersImageCached);
+            const connectionStatus = participant?.connectionStatus;
+            const isVideoRenderable = !isVideoMuted
+                && (APP.conference.isLocalId(id) || connectionStatus === JitsiParticipantConnectionStatus.ACTIVE);
             const isAudioOnly = APP.conference.isAudioOnly();
-
             const showAvatar
                 = isVideoContainer
-                && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
+                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
 
             let promise;
 
@@ -512,8 +500,8 @@ export default class LargeVideoManager {
      */
     showRemoteConnectionMessage(show) {
         if (typeof show !== 'boolean') {
-            const connStatus
-                = APP.conference.getParticipantConnectionStatus(this.id);
+            const participant = getParticipantById(APP.store.getState(), this.id);
+            const connStatus = participant?.connectionStatus;
 
             // eslint-disable-next-line no-param-reassign
             show = !APP.conference.isLocalId(this.id)

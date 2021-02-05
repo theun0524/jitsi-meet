@@ -154,10 +154,10 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
  * (instance of) RemoteControlAuthorizationDialog.
  * @private
  * @returns {{
-    *     _displayName: string,
-    *     _isScreenSharing: boolean,
-    *     _sourceId: string,
-    *     _sourceType: string
+ *     _displayName: string,
+ *     _isScreenSharing: boolean,
+ *     _sourceId: string,
+ *     _sourceType: string
  * }}
  */
 function _mapStateToProps(state, ownProps) {

@@ -281,10 +281,10 @@ export function participantJoined(participant) {
  *
  * @param {JitsiParticipant} jitsiParticipant - The ID of the participant.
  * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: Participant
- * }}
- */
+*     type: PARTICIPANT_UPDATED,
+*     participant: Participant
+* }}
+*/
 export function updateRemoteParticipantFeatures(jitsiParticipant) {
     return (dispatch, getState) => {
         if (!jitsiParticipant) {
@@ -317,7 +317,6 @@ export function updateRemoteParticipantFeatures(jitsiParticipant) {
             });
     };
 }
-    
 /**
  * Action to signal that a hidden participant has joined the conference.
  *
@@ -563,3 +562,4 @@ export function setLoadableAvatarUrl(participantId, url) {
         }
     };
 }
+

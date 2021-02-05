@@ -12,8 +12,6 @@ import AbstractKickButton, {
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
-declare var interfaceConfig: Object;
-
 /**
  * Implements a React {@link Component} which displays a button for kicking out
  * a participant from the conference.

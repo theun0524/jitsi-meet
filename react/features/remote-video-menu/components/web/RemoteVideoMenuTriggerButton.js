@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
@@ -10,12 +11,12 @@ import { isRemoteTrackMuted } from '../../../base/tracks';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
+import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 
 import {
     GrantModeratorButton,
     MuteButton,
-    MuteEveryoneElseButton,
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
@@ -60,11 +61,6 @@ type Props = {
     _menuPosition: string,
 
     /**
-     * Whether to display the Popover as a drawer.
-     */
-    _overflowDrawer: boolean,
-
-    /**
      * The current state of the participant's remote control session.
      */
     _remoteControlState: number,
@@ -78,7 +74,12 @@ type Props = {
      * A value between 0 and 1 indicating the volume of the participant's
      * audio element.
      */
-    initialVolumeValue: ?number,
+    initialVolumeValue: number,
+
+    /**
+     * Callback to invoke when the popover has been displayed.
+     */
+    onMenuDisplay: Function,
 
     /**
      * Callback to invoke when changing the level of the participant's
@@ -125,7 +126,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         return (
             <Popover
                 content = { content }
-                overflowDrawer = { this.props._overflowDrawer }
+                onPopoverOpen = { this._onShowRemoteMenu }
                 position = { this.props._menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
@@ -247,7 +248,14 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {{
+ *     _isAudioMuted: boolean,
+ *     _isModerator: boolean,
+ *     _disableKick: boolean,
+ *     _disableRemoteMute: boolean,
+ *     _menuPosition: string,
+ *     _remoteControlState: number
+ * }}
  */
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
@@ -262,10 +270,9 @@ function _mapStateToProps(state, ownProps) {
     const { active, controller } = state['features/remote-control'];
     const { requestedParticipant, controlled } = controller;
     const activeParticipant = requestedParticipant || controlled;
-    const { overflowDrawer } = state['features/toolbox'];
 
     if (_supportsRemoteControl
-        && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
+            && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
         if (requestedParticipant === participantID) {
             _remoteControlState = REMOTE_CONTROL_MENU_STATES.REQUESTING;
         } else if (controlled) {
@@ -280,13 +287,13 @@ function _mapStateToProps(state, ownProps) {
 
     switch (currentLayout) {
     case LAYOUTS.TILE_VIEW:
-        _menuPosition = 'left-start';
+        _menuPosition = 'left top';
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-        _menuPosition = 'left-end';
+        _menuPosition = 'left bottom';
         break;
     default:
-        _menuPosition = 'auto';
+        _menuPosition = 'top center';
     }
 
     return {
@@ -298,7 +305,6 @@ function _mapStateToProps(state, ownProps) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _remoteControlState,
         _menuPosition,
-        _overflowDrawer: overflowDrawer
     };
 }
 

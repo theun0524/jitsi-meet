@@ -72,7 +72,7 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
     render() {
         const { _audioOnly, _videoQuality } = this.props;
         const videoQualityLevel = findNearestQualityLevel(_videoQuality);
-        const icon = _audioOnly || !_videoQuality
+        const icon = _audioOnly || !videoQualityLevel
             ? IconVideoQualityAudioOnly
             : VIDEO_QUALITY_TO_ICON[videoQualityLevel];
 

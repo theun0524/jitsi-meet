@@ -20,6 +20,7 @@ import {
 import { isTestModeEnabled } from '../../../react/features/base/testing';
 import { updateLastTrackVideoMediaEvent } from '../../../react/features/base/tracks';
 import { PresenceLabel } from '../../../react/features/presence-status';
+import { stopController, requestRemoteControl } from '../../../react/features/remote-control';
 import { RemoteVideoMenuTriggerButton } from '../../../react/features/remote-video-menu';
 /* eslint-enable no-unused-vars */
 import UIUtils from '../util/UIUtil';
@@ -195,13 +196,8 @@ export default class RemoteVideo extends SmallVideo {
 
     /**
      * Updates the remote video menu.
-     *
-     * @param isMuted the new muted state to update to
      */
-    updateRemoteVideoMenu(isMuted) {
-        if (typeof isMuted !== 'undefined') {
-            this.isAudioMuted = isMuted;
-        }
+    updateRemoteVideoMenu() {
         this._generatePopupContent();
     }
 
@@ -243,12 +239,12 @@ export default class RemoteVideo extends SmallVideo {
      */
     isVideoPlayable() {
         const participant = getParticipantById(APP.store.getState(), this.id);
-        const { connectionState } = participant || {};
+        const { connectionStatus } = participant || {};
 
         return (
             super.isVideoPlayable()
                 && this._canPlayEventReceived
-                && connectionState === JitsiParticipantConnectionStatus.ACTIVE
+                && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE
         );
     }
 
@@ -275,6 +271,8 @@ export default class RemoteVideo extends SmallVideo {
      * @param {*} stream
      */
     waitForPlayback(streamElement, stream) {
+        $(streamElement).hide();
+
         const webRtcStream = stream.getOriginalStream();
         const isVideo = stream.isVideoTrack();
 
@@ -284,7 +282,12 @@ export default class RemoteVideo extends SmallVideo {
 
         const listener = () => {
             this._canPlayEventReceived = true;
-            this.VideoLayout.remoteVideoActive(streamElement, this.id);
+
+            logger.info(`${this.id} video is now active`, streamElement);
+            if (streamElement) {
+                $(streamElement).show();
+            }
+
             streamElement.removeEventListener('canplay', listener);
 
             // Refresh to show the video
@@ -323,8 +326,6 @@ export default class RemoteVideo extends SmallVideo {
 
         // Put new stream element always in front
         streamElement = UIUtils.prependChild(this.container, streamElement);
-
-        $(streamElement).hide();
 
         this.waitForPlayback(streamElement, stream);
         stream.attach(streamElement);

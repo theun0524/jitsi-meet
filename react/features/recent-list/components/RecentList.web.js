@@ -121,12 +121,10 @@ class RecentList extends AbstractRecentList<Props, State> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
-        this._onDeleteFromDB = this._onDeleteFromDB.bind(this);
-        this._onDeleteFromRecent = this._onDeleteFromRecent.bind(this);
-        this._updateList = this._updateList.bind(this);
+        this._onItemDelete = this._onItemDelete.bind(this);
     }
 
-    _onDeleteFromDB: Object => void;
+    _onItemDelete: Object => void;
 
     /**
      * Deletes a recent entry.
@@ -134,31 +132,8 @@ class RecentList extends AbstractRecentList<Props, State> {
      * @param {Object} entry - The entry to be deleted.
      * @inheritdoc
      */
-    _onDeleteFromDB(entry) {
-        this.setState({ targetEntry: entry });
-        this._openModal();
-    }
-
-    _onDeleteFromRecent: Object => void;
-
-    /**
-     * Deletes a recent entry.
-     *
-     * @param {Object} entry - The entry to be deleted.
-     * @inheritdoc
-     */
-    _onDeleteFromRecent(entry) {
+    _onItemDelete(entry) {
         this.props.dispatch(deleteRecentListEntry(entry));
-        this.setState({ setting: false });
-    }
-
-    componentDidMount(){
-        this.state.setting = false;
-        this._updateInterval = setInterval(this._updateList, 1000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this._updateInterval);
     }
 
     /**
@@ -188,9 +163,7 @@ class RecentList extends AbstractRecentList<Props, State> {
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { recentList }
-                t = { t }
-                onDeleteFromDB = { this._onDeleteFromDB }
-                // onDeleteFromRecent = { this._onDeleteFromRecent }
+                onItemDelete = { this._onItemDelete }
                 onPress = { this._onPress } />
             <ModalTransition>
                 {modalOpen && (

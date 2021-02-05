@@ -88,6 +88,8 @@ export default class JitsiStreamPresenterEffect {
                 'object-fit': 'contain'
             };
         }
+        // autoplay is not enough to start the video on Safari, it's fine to call play() on other platforms as well
+        this._videoElement.play();
 
         // set the style attribute of the div to make it invisible
         videoDiv.style.display = 'none';
@@ -323,6 +325,10 @@ export default class JitsiStreamPresenterEffect {
         this._desktopElement.height = parseInt(height, 10);
         this._desktopElement.autoplay = true;
         this._desktopElement.srcObject = desktopStream;
+
+        // autoplay is not enough to start the video on Safari, it's fine to call play() on other platforms as well
+        this._desktopElement.play();
+
         this._canvas.width = parseInt(width, 10);
         this._canvas.height = parseInt(height, 10);
         this._videoFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Presenter effect worker' });

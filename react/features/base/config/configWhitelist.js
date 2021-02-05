@@ -3,7 +3,7 @@ import extraConfigWhitelist from './extraConfigWhitelist';
 /**
  * The config keys to whitelist, the keys that can be overridden.
  * Currently we can only whitelist the first part of the properties, like
- * 'p2p.useStunTurn' and 'p2p.enabled' we whitelist all p2p options.
+ * 'p2p.enabled' we whitelist all p2p options.
  * The whitelist is used only for config.js.
  *
  * @type Array
@@ -15,7 +15,6 @@ export default [
     'abTesting',
     'analytics.disabled',
     'audioLevelsInterval',
-    'autoRecord',
     'apiLogLevels',
     'avgRtpStatsN',
 
@@ -91,8 +90,8 @@ export default [
     'disableRemoteMute',
     'disableRtx',
     'disableSimulcast',
-    'disableSuspendVideo',
     'disableThirdPartyRequests',
+    'disableTileView',
     'displayJids',
     'doNotStoreRoom',
     'e2eping',
@@ -109,14 +108,19 @@ export default [
     'enableNoAudioDetection',
     'enableNoisyMicDetection',
     'enableTcc',
+    'enableAutomaticUrlCopy',
     'etherpad_base',
     'failICE',
     'feedbackPercentage',
     'fileRecordingsEnabled',
     'firefox_fake_device',
     'forceJVB121Ratio',
+    'forceTurnRelay',
     'gatherStats',
     'googleApiApplicationClientID',
+    'hideConferenceSubject',
+    'hideParticipantsStats',
+    'hideConferenceTimer',
     'hiddenDomain',
     'hideLobbyButton',
     'hosts',
@@ -127,9 +131,8 @@ export default [
     'liveStreamingEnabled',
     'localRecording',
     'maxFullResolutionParticipants',
-    'minParticipants',
-    'nick',
     'openBridgeChannel',
+    'openSharedDocumentOnJoin',
     'opusMaxAverageBitrate',
     'p2p',
     'pcStatsInterval',
@@ -141,7 +144,6 @@ export default [
     'resolution',
     'startAudioMuted',
     'startAudioOnly',
-    'startBitrate',
     'startScreenSharing',
     'startSilent',
     'startVideoMuted',

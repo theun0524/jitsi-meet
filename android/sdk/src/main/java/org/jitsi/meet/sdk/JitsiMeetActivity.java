@@ -108,7 +108,7 @@ public class JitsiMeetActivity extends FragmentActivity
     protected JitsiMeetView getJitsiView() {
         JitsiMeetFragment fragment
             = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-      return fragment == null ? null : fragment.getJitsiView();
+        return fragment != null ? fragment.getJitsiView() : null;
     }
 
     public void join(@Nullable String url) {
@@ -131,10 +131,11 @@ public class JitsiMeetActivity extends FragmentActivity
 
     public void leave() {
         JitsiMeetView view = getJitsiView();
+
         if (view != null) {
             view.leave();
         } else {
-            JitsiMeetLogger.w("Cannnot leave, view is null");
+            JitsiMeetLogger.w("Cannot leave, view is null");
         }
     }
 
@@ -204,7 +205,6 @@ public class JitsiMeetActivity extends FragmentActivity
     @Override
     protected void onUserLeaveHint() {
         JitsiMeetView view = getJitsiView();
-        
         if (view != null) {
             view.enterPictureInPicture();
         }

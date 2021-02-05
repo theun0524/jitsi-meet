@@ -158,6 +158,7 @@ for (let i = 0; i < 26; i++) {
 
 /**
  * Returns key associated with the keyCode from the passed event.
+ *
  * @param {KeyboardEvent} event - The event.
  * @returns {KEYS} - The key on the keyboard.
  */
