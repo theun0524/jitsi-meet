@@ -220,7 +220,7 @@ export default class MeetingsList extends Component<Props> {
                             </Text>) : null
                     }
                 </Container>
-                <Container className = {s.actions}>
+                {/* <Container className = {s.actions}>
                     { //erase false if you want to activate delete button
                         false && canDelete && onDeleteFromDB && <Tooltip content = {t('welcomepage.deleteFromDB')}>
                             <div
@@ -230,7 +230,7 @@ export default class MeetingsList extends Component<Props> {
                             </div>
                         </Tooltip>
                         }
-                </Container>
+                </Container> */}
                 <Container className = {s.actionsUpper}>
                     { elementAfter || null }
 

@@ -20,6 +20,7 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { clientResized } from '../../../react/features/base/responsive-ui';
 import {
     getTrackByMediaTypeAndParticipant,
     isLocalTrackMuted,

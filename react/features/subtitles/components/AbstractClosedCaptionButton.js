@@ -87,11 +87,7 @@ export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { transcribingEnabled } = state['features/base/config'];
     const { isTranscribing } = state['features/transcribing'];
 
-<<<<<<< HEAD
-        // if the participant is moderator, it can enable transcriptions and if
-=======
     // if the participant is moderator, it can enable transcriptions and if
->>>>>>> jitsi-meet_5390
     // transcriptions are already started for the meeting, guests can just show them
     const { visible = Boolean(transcribingEnabled
         && (isLocalParticipantModerator(state) || isTranscribing)) } = ownProps;

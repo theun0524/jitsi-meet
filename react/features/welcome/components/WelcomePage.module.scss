@@ -156,6 +156,7 @@ body {
 
         .bgWrapper {
             display: block;
+            background-color: white;
 
             @include media-breakpoint-up(md) {
                 display: flex;
@@ -244,11 +245,11 @@ body {
     }
 
     .headerTextTitle {
-        color: $welcomePageTitleColor;
+        color: black;
         font-size: 28px;
         font-weight: $welcomePageHeaderTextTitleFontWeight;
         line-height: $welcomePageHeaderTextTitleLineHeight;
-        margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
+        margin-bottom: 1rem;
         opacity: $welcomePageHeaderTextTitleOpacity;
 
         @include media-breakpoint-up(md) {
@@ -258,11 +259,11 @@ body {
 
     .headerTextDescription {
         display: none;
-        color: $welcomePageDescriptionColor;
+        color: black;
         font-size: $welcomePageHeaderTextDescriptionFontSize;
         font-weight: $welcomePageHeaderTextDescriptionFontWeight;
         line-height: $welcomePageHeaderTextDescriptionLineHeight;
-        margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
+        margin-bottom: 20px;
         align-self: $welcomePageHeaderTextDescriptionAlignSelf;
         word-break: keep-all;
 

@@ -55,11 +55,6 @@ type Props = {
      * Whether it's a vpaas meeting or not.
      */
     isVpaas: boolean,
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> jitsi-meet_5390
     /**
      * Invoked to obtain translated strings.
      */

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<<<<<<< HEAD
     <color name="blue">#3173ed</color>
-=======
     <color name="colorPrimary">#17A0DB</color>
     <color name="colorPrimaryDark">#1081B2</color>
->>>>>>> jitsi-meet_5390
 </resources>

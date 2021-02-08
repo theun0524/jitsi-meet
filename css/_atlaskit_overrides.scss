@@ -7,19 +7,6 @@
 }
 
 /**
- * Override button styles
- */
-a.fUcuXK {
-  color: $welcomePageButtonTextColor !important;
-}
-
-.bCXtHB, .gwSNcJ {
-  color: $welcomePageButtonTextColor !important;
-  background: none;
-  border: 1px solid $welcomePageButtonTextColor;
-}
-
-/**
  * Disable the slide-in animation for @atlaskit/flag due to the animation
  * repeating for each queued flag once it becomes the top flag.
  */

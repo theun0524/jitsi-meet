@@ -71,7 +71,7 @@ class OverflowMenuButton extends Component<Props> {
                     content = { children }
                     isOpen = { isOpen }
                     onClose = { this._onCloseDialog }
-                    placement = 'top-end'>
+                    position = 'top right'>
                     <ToolbarButton
                         accessibilityLabel =
                             { t('toolbar.accessibilityLabel.moreActions') }

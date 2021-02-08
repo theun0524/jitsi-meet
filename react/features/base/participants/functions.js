@@ -252,6 +252,28 @@ function _getAllParticipants(stateful) {
 }
 
 /**
+ * Returns array of participants which video muted.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @private
+ * @returns {Participant[]}
+ */
+export function getVideoMutedParticipants(stateful) {
+    const state = toState(stateful);
+    return (
+        Array.isArray(stateful)
+            ? stateful
+            : state['features/base/participants'] || []).filter(p => {
+                const videoTrack
+                    = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, p.id);
+                return !shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false);
+            });
+}
+
+/**
  * Returns the youtube fake participant.
  * At the moment it is considered the youtube participant the only fake participant in the list.
  *

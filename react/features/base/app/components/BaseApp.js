@@ -189,7 +189,7 @@ export default class BaseApp extends Component<*, State> {
         // @see https://github.com/gaearon/redux-thunk.
         const middlewares = [Thunk];
         if (process.env.NODE_ENV === 'development') {
-            middlewares.push(reduxLogger);
+            // middlewares.push(reduxLogger);
         }
         let middleware = MiddlewareRegistry.applyMiddleware(...middlewares);
 

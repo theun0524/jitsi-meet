@@ -123,10 +123,7 @@ function SecurityDialog({
                 ) : null }
 
                 { _showE2ee ? (
-                    <>
-                        <div className = 'separator-line' />
-                        <E2EESection />
-                    </>
+                    <E2EESection />
                 ) : null }
 
             </div>

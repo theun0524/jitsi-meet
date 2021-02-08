@@ -66,7 +66,7 @@ function AudioSettingsPopup({
                     setAudioOutputDevice = { setAudioOutputDevice } /> }
                 isOpen = { isOpen }
                 onClose = { onClose }
-                placement = 'top-start'>
+                position = 'top left'>
                 {children}
             </InlineDialog>
         </div>

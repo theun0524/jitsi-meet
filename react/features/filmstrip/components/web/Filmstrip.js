@@ -18,6 +18,8 @@ import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
+import s from './Filmstrip.module.scss';
+
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -190,7 +192,7 @@ class Filmstrip extends Component<Props> {
             }
         }
 
-        let remoteVideosWrapperClassName = `filmstrip__videos ${s.filmstripVideos}`;
+        let remoteVideosWrapperClassName = `filmstrip__videos`;
 
         if (this.props._hideScrollbar) {
             remoteVideosWrapperClassName += ` ${hideScrollbar}`;

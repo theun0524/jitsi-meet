@@ -33,6 +33,12 @@ const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 
 /**
+ * Maximum number of pixels corresponding to a mobile layout.
+ * @type {number}
+ */
+const WINDOW_WIDTH_THRESHOLD = 425;
+
+/**
  * The Web container rendering the welcome page.
  *
  * @extends AbstractWelcomePage
@@ -222,7 +228,7 @@ class WelcomePage extends AbstractWelcomePage {
     render() {
         const { _moderatedRoomServiceUrl, _user, t } = this.props;
         const { submitting } = this.state;
-        const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL } = interfaceConfig;
+        const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();

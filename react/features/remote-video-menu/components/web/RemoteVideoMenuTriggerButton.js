@@ -111,6 +111,19 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
     _rootElement = null;
 
     /**
+     * Initializes a new {#@code RemoteVideoMenuTriggerButton} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Object) {
+        super(props);
+
+        // Bind event handler so it is only bound once for every instance.
+        this._onShowRemoteMenu = this._onShowRemoteMenu.bind(this);
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -137,6 +150,18 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 </span>
             </Popover>
         );
+    }
+
+    _onShowRemoteMenu: () => void;
+
+    /**
+     * Opens the {@code RemoteVideoMenu}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShowRemoteMenu() {
+        this.props.onMenuDisplay();
     }
 
     /**

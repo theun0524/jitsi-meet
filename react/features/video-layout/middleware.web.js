@@ -83,7 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED:
         if (!action.track.local) {
             VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
-            VideoLayout.moveMutedVideosAndAddNewVideoToTheStartOfDOM(action.track.participantId);
+            VideoLayout.moveMutedRemoteVideoToTheEndofDOM();
         }
 
         break;

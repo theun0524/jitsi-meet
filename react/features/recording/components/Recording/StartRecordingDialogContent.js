@@ -249,11 +249,7 @@ class StartRecordingDialogContent extends Component<Props> {
                 ) : null;
 
         const icon = isVpaas ? ICON_SHARE : JITSI_LOGO;
-<<<<<<< HEAD
-        const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');                
-=======
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
->>>>>>> jitsi-meet_5390
 
         return (
             <Container

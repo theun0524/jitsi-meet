@@ -136,4 +136,20 @@
             display: block
         }
     }
+
+    .deleteMeeting {
+        display: none;
+        margin-right: 16px;
+        position: absolute;
+
+        &> svg {
+            fill: #0074e0;
+        }
+    }
+
+    .item:hover {
+        .delete-meeting {
+            display: block;
+        }
+    }
 }

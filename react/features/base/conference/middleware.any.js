@@ -55,6 +55,11 @@ declare var APP: Object;
 let beforeUnloadHandler;
 
 /**
+ * parameters for RECV_VIDEO_PARTICIPANT action.
+ */
+let recvVideoParCallbackId = null;
+
+/**
  * Implements the middleware of the feature base/conference.
  *
  * @param {Store} store - The redux store.
