@@ -167,13 +167,17 @@
     }
 }
 
-#chat-input {
+.chat-input {
     border-top: 1px solid $chatInputSeparatorColor;
     display: flex;
     padding: 5px 10px;
 
     * {
         background-color: transparent;
+    }
+
+    &.no-display {
+        display: none;
     }
 }
 

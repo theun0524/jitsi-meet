@@ -33,3 +33,64 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
         }));
     };
 }
+
+/**
+ * Notify that a user has been disabled for Chat
+ * 
+ * @param {JitsiParticipant} participant - The {JitsiParticipant} who was disabled for chat
+ */
+export function notifyChatDisabled(participant: Object, _: ?Function) { // eslint-disable-line no-unused-vars
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant._id)
+        };
+
+        dispatch(showNotification({
+            appearance: NOTIFICATION_TYPE.ERROR,
+            hideErrorSupportLink: true,
+            descriptionKey: 'dialog.chatDisabledMessage',
+            descriptionArguments: args,
+            titleKey: 'dialog.chatDisabledTitle',
+            titleArguments: args
+        }));
+    };
+}
+
+export function notifyAdminParticipantChatDisabled(participant: Object, _: ?Function) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant._id)
+        };
+
+        dispatch(showNotification({
+            appearance: NOTIFICATION_TYPE.ERROR,
+            hideErrorSupportLink: true,
+            descriptionKey: 'dialog.notifyAdminChatDisabledMessage',
+            descriptionArguments: args,
+            titleKey: 'dialog.chatDisabledTitle',
+            titleArguments: args
+        }));
+    };
+}
+
+export function notifyAdminParticipantChatEnabled(participant: Object, _: ?Function) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant._id)
+        };
+
+        dispatch(showNotification({
+            appearance: NOTIFICATION_TYPE.ERROR,
+            hideErrorSupportLink: true,
+            descriptionKey: 'dialog.notifyAdminChatEnabledMessage',
+            descriptionArguments: args,
+            titleKey: 'dialog.chatEnabledTitle',
+            titleArguments: args
+        }));
+
+
+    }
+}

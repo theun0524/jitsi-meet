@@ -51,7 +51,10 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    PARTICIPANT_CHAT_DISABLED,
+    NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
+    NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -107,6 +110,18 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.KICKED,
         (...args) => dispatch(kickedOut(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.PARTICIPANT_CHAT_DISABLED,
+        (...args) => dispatch(participantChatDisabled(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
+        (...args) => dispatch(notifyAdminParticipantChatDisabled(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED,
+        (...args) => dispatch(notifyAdminParticipantChatEnabled(conference, ...args)));
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
@@ -501,6 +516,32 @@ export function kickedOut(conference: Object, participant: Object) {
         participant
     };
 }
+
+// start of added portion
+export function participantChatDisabled(conference: Object, participant: Object) {
+    return {
+        type: PARTICIPANT_CHAT_DISABLED,
+        conference,
+        participant
+    };
+}
+
+export function notifyAdminParticipantChatDisabled(conference: Object, participant: Object) {
+    return {
+        type: NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
+        conference, 
+        participant
+    };
+}
+
+export function notifyAdminParticipantChatEnabled(conference: Object, participant: Object) {
+    return {
+        type: NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED,
+        conference,
+        participant
+    };
+}
+// end of added portion
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.

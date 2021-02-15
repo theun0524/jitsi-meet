@@ -24,6 +24,18 @@ declare var APP: Object;
  * React Component for holding the chat feature in a side panel that slides in
  * and out of view.
  */
+
+/**
+ * The type of the React {@code Component} state of {@link Chat}.
+ */
+ type State = {
+    chatHeaderMenuDialogOpen: boolean,
+    isChatEnabledForEverybody: boolean,
+    enableDisableChatHeaderMenuMessage: string,
+    showChatInput: Boolean,
+ }
+
+
 class Chat extends AbstractChat<Props> {
 
     /**
@@ -38,6 +50,18 @@ class Chat extends AbstractChat<Props> {
      */
     _messageContainerRef: Object;
 
+    state = {
+        chatHeaderMenuDialogOpen: false,
+
+        //initial assumption => chat enabled for everyone
+        isChatEnabledForEverybody: true,
+
+        // initial message is 'Disable Chat' , because we assume Chat is enabled for everybody
+        enableDisableChatHeaderMenuMessage: 'Enable/Disable Chat',
+
+        showChatInput: true,
+    };
+    
     /**
      * Initializes a new {@code Chat} instance.
      *
@@ -50,21 +74,14 @@ class Chat extends AbstractChat<Props> {
         this._isExited = true;
         this._messageContainerRef = React.createRef();
 
-        this.state = {
-            chatHeaderMenuDialogOpen: false,
-
-            //initial assumption => chat enabled for everyone
-            isChatEnabledForEverybody: true,
-
-            // initial message is 'Disable Chat' , because we assume Chat is enabled for everybody
-            enableDisableChatHeaderMenuMessage: 'Enable/Disable Chat' 
-        };
-
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChatInputResize = this._onChatInputResize.bind(this);
+
+        // Bind event handlers so they are only bound once for every instance.
+        this._updateChatStatus = this._updateChatStatus.bind(this);
     }
 
     /**
@@ -74,6 +91,7 @@ class Chat extends AbstractChat<Props> {
      */
     componentDidMount() {
         this._scrollMessageContainerToBottom(true);
+        this._updateInterval = setInterval(this._updateChatStatus, 1000);
     }
 
     /**
@@ -116,6 +134,18 @@ class Chat extends AbstractChat<Props> {
         this._messageContainerRef.current.maybeUpdateBottomScroll();
     }
 
+    _updateChatStatus: () => void;
+
+    _updateChatStatus() {
+        let localParticipant = getLocalParticipant(APP.store.getState());
+        let prole = localParticipant.role;
+        if(prole === "visitor") {
+            this.setState({ showChatInput: false});
+        } else {
+            this.setState({ showChatInput: true });
+        }
+    }
+
     /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
@@ -130,15 +160,15 @@ class Chat extends AbstractChat<Props> {
                     messages = { this.props._messages }
                     ref = { this._messageContainerRef } />
                 <MessageRecipient />
-                <ChatInput
-                    onResize = { this._onChatInputResize }
-                    onSend = { this.props._onSendMessage } />
+                { this.state.showChatInput
+                    ? <ChatInput onResize = { this._onChatInputResize } onSend = { this.props._onSendMessage } />
+                    : <> </>
+                }
             </>
         );
     }
 
     toggleChatHeaderMenuDialog = () => {
-        console.log("I am inside toggleChatHeaderMenuDialog");
         this.setState({ chatHeaderMenuDialogOpen: !this.state.chatHeaderMenuDialogOpen });
     }
 

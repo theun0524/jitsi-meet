@@ -11,13 +11,10 @@ import AbstractChatMessage, {
 } from '../AbstractChatMessage';
 import PrivateMessageButton from '../PrivateMessageButton';
 import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
-import { getLocalParticipant, getParticipantById } from '../../../base/participants';
-import { openDialog } from '../../../base/dialog';
-import { 
-    KickRemoteParticipantDialog,
-    DisableChatForRemoteParticipantDialog,
-    EnableChatForRemoteParticipantDialog
-} from '../../../remote-video-menu/components';
+import { getLocalParticipant, getParticipants } from '../../../base/participants';
+
+import ChatMessageKickButton from './ChatMessageKickButton';
+import ChatMessageDisableButton from './ChatMessageDisableButton';
 declare var APP: Object;
 
 /**
@@ -34,10 +31,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
     constructor(props) {
         super(props);
         this.state = {
-            chatMessageDialogOpen: false,
-            isChatEnabledForParticipant: true,
-            // // initial message is 'Disable Chat for User, because we assume Chat is enabled for everybody and participant as well
-            enableDisableChatMenuMessage: 'Enable/Disable Chat for User' 
+            chatMessageDialogOpen: false
         };
     }
 
@@ -107,46 +101,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
         this.setState({ chatMessageDialogOpen: !this.state.chatMessageDialogOpen });
     }
 
-    handleEnableDisableChat = async() => {
-        // get the participantID for whom the action is to be dispatched
-        let participantID = this.props.message.id;
-
-        // roles are defined as 'participant', 'moderator', 'visitor' and 'none'
-        // 'participant' and 'moderator' have voice and thus can chat
-        // 'visitor doesn't have voice and thus can't chat
-        let predefinedRole = getParticipantById(APP.store.getState(), participantID).role;
-        console.log("Predefined role is: ", predefinedRole);
-
-        // based on what role the current participant is occupying, we can identify whether chat is enabled or disabled
-        // when the role of participant is a visitor, he has 'no voice', so when the the popup menu item is clicked
-        // it should open the enable chat dialog
-        if(predefinedRole === 'visitor') {
-            // dispatch necessary actions via a dialog box for the participant
-            APP.store.dispatch(openDialog(EnableChatForRemoteParticipantDialog , { participantID }));
-        }
-        // otherwise, it should open the disable chat dialog
-        else {   
-            // dispatch necessary actions via a dialog box for the participant
-            APP.store.dispatch(openDialog(DisableChatForRemoteParticipantDialog, { participantID }));
-        }
-
-        // STEP:1 toggleChatMessageDialog
-        this.toggleChatMessageDialog()
-
-        
-    }
-
-    handleKickOutUser = () => {
-        
-        // STEP:1 toggleChatMessageDialog box
-        this.toggleChatMessageDialog()
-
-        // STEP:2 dispatch events for necessary action
-        let participantID = this.props.message.id;
-        APP.store.dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));
-        
-    }
-
     /**
      * Render control button on the sender's name on the chat history section
      * 
@@ -155,16 +109,25 @@ class ChatMessage extends AbstractChatMessage<Props> {
     _renderUserControlIcon = () => {
         const popupcontent = (
             <ul className = 'chat-control-popup-menu'>
-                <li className = 'chat-control-popup-menu-item' onClick={ this.handleEnableDisableChat }> { this.state.enableDisableChatMenuMessage } </li>
-                <li className = 'chat-control-popup-menu-item' onClick={ this.handleKickOutUser }> Kick-out User </li>
+                <ChatMessageDisableButton className = 'chat-control-popup-menu-item' key = 'chatcontroldisablebutton' visible = { true } message = { this.props.message } showLabel = { true } />
+                <ChatMessageKickButton className = 'chat-control-popup-menu-item' message = { this.props.message } />
             </ul>
         );
 
+        // in case the participant has been kicked out, we don't want to display the control button
+        const allParticipants = getParticipants(APP.store.getState());
+        const allParticipantsID = allParticipants.map(participant => participant.id);
+
+        const remoteParticipantID = this.props.message.id;
+
+        // use a boolean flag to identify if the participant is still in the meeting
+        const isParticipantStillConnected = allParticipantsID.includes(remoteParticipantID);
+
         const localParticipant = getLocalParticipant(APP.store.getState());  
-        let isLocalParticipantAModerator = (localParticipant.role === "moderator") ;
+        let isLocalParticipantAModerator = (localParticipant.role === "moderator");
         
         //we want to only allow moderators to get the chat control button alongside chat message
-        if(isLocalParticipantAModerator) {
+        if(isLocalParticipantAModerator && isParticipantStillConnected) {
             return(
                 <div className='user-chat-control-button'>
                     <InlineDialog 
@@ -172,7 +135,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             this.setState({chatMessageDialogOpen: false}); 
                         }}
                         content = { popupcontent }
-                        position = 'right'
+                        position = { 'right' }
                         isOpen = { this.state.chatMessageDialogOpen } >
                             <div className='thumb-menu-icon' onClick = { this.toggleChatMessageDialog }>
                                 <Icon size = '1em' src = { IconMenuThumb } title = 'Remote-user chat controls' />
@@ -183,7 +146,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         } else {
             return null;
         }
-        
+
     }
 
     /**

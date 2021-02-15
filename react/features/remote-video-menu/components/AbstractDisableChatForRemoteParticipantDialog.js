@@ -6,8 +6,8 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../analytics';
-import { disableChatForParticipant } from '../../base/participants';
-
+import { disableChatForParticipant, getParticipantById } from '../../base/participants';
+declare var APP: Object;
 type Props = {
 
     /**

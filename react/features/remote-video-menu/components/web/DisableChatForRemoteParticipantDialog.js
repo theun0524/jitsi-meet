@@ -19,7 +19,6 @@ class DisableChatForRemoteParticipantDialog extends AbstractDisableChatForRemote
      * @returns {ReactElement}
      */
     render() {
-        console.log("I am inside DisableChatForRemoteParticipantDialog");
         return (
             <Dialog
                 okKey = 'dialog.disableChatButton'
