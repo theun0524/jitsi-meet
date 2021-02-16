@@ -724,7 +724,9 @@
         "speakerTime": "Speaker Time",
         "joinTime": "Join Time",
         "leaveTime": "Leave Time",
-        "refresh": "Refresh"
+        "refresh": "Refresh",
+        "searchLabel": "Search for Participants",
+        "searchPlaceholder": "e.g. John Doe"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -908,7 +910,9 @@
         "muted": "Muted",
         "remoteControl": "Start / Stop remote control",
         "show": "Show on stage",
-        "videomute": "Participant has stopped the camera"
+        "videomute": "Participant has stopped the camera",
+        "audioconnected": "Participant is connected to audio",
+        "videoconnected": "Participant is connected to video"
     },
     "welcomepage": {
         "accessibilityLabel": {
