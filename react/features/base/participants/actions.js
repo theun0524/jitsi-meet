@@ -13,6 +13,7 @@ import {
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
+    MODERATOR_ROLE_GRANTED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -483,9 +484,28 @@ export function participantKicked(kicker, kicked) {
                     getParticipantDisplayName(getState, kicker.getId())
             },
             titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
+        }, NOTIFICATION_TIMEOUT * 10)); // leave more time for this
     };
 }
+
+// Start of added portion --> Notification when granting moderator role
+export function moderatorRoleGranted(participantId) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: MODERATOR_ROLE_GRANTED,
+            participant: participantId
+        });
+
+        dispatch(showNotification({
+            titleArguments: {
+                participant:
+                    getParticipantDisplayName(getState, participantId)
+            },
+            titleKey: 'notify.grantedModerator'
+        }, NOTIFICATION_TIMEOUT * 10));
+    };
+}
+// End of added portion --> Notification when granting moderator role
 
 /**
  * Create an action which pins a conference participant.

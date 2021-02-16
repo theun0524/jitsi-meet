@@ -86,6 +86,7 @@ import {
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
     participantKicked,
+    moderatorRoleGranted,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -2224,19 +2225,14 @@ export default {
             APP.store.dispatch(participantChatDisabled(room, participant));
         });
 
-        room.on(JitsiConferenceEvents.NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED, participant => {
-            APP.UI.hideStats();
-            APP.store.dispatch(notifyAdminParticipantChatDisabled(room, participant));
-        });
-
         room.on(JitsiConferenceEvents.PARTICIPANT_CHAT_ENABLED, participant => {
             //dispatch actions here
             APP.store.dispatch(participantChatDisabled(room, participant));
         });
 
-        room.on(JitsiConferenceEvents.NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED, participant => {
-            APP.store.dispatch(notifyAdminParticipantChatEnabled(room, participant));
-        })
+        room.on(JitsiConferenceEvents.MODERATOR_ROLE_GRANTED, participant => {
+            APP.store.dispatch(moderatorRoleGranted(participant));
+        });
         // end of added portion
 
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {

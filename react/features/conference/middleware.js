@@ -4,8 +4,6 @@ import {
     CONFERENCE_JOINED,
     KICKED_OUT,
     PARTICIPANT_CHAT_DISABLED,
-    NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
-    NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED,
     conferenceLeft,
     getCurrentConference
 } from '../base/conference';
@@ -20,9 +18,7 @@ import { setToolboxEnabled } from '../toolbox/actions';
 
 import { 
     notifyKickedOut, 
-    notifyChatDisabled,
-    notifyAdminParticipantChatDisabled,
-    notifyAdminParticipantChatEnabled
+    notifyChatDisabled
 } from './actions';
 
 MiddlewareRegistry.register(store => next => action => {
@@ -56,23 +52,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_CHAT_DISABLED: {
         const { dispatch } = store;
+        console.log("Action.participant is: ", action.participant);
         dispatch(notifyChatDisabled(
-            action.participant
-        ));
-        break;
-    }
-
-    case NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED: {
-        const { dispatch } = store;
-        dispatch(notifyAdminParticipantChatDisabled(
-            action.participant
-        ));
-        break;
-    }
-
-    case NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED: {
-        const { dispatch } = store;
-        dispatch(notifyAdminParticipantChatEnabled(
             action.participant
         ));
         break;

@@ -43,7 +43,7 @@ export function notifyChatDisabled(participant: Object, _: ?Function) { // eslin
     return (dispatch: Dispatch<any>, getState: Function) => {
         const args = {
             participantDisplayName:
-                getParticipantDisplayName(getState, participant._id)
+                getParticipantDisplayName(getState, participant)
         };
 
         dispatch(showNotification({
@@ -55,42 +55,4 @@ export function notifyChatDisabled(participant: Object, _: ?Function) { // eslin
             titleArguments: args
         }));
     };
-}
-
-export function notifyAdminParticipantChatDisabled(participant: Object, _: ?Function) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const args = {
-            participantDisplayName:
-                getParticipantDisplayName(getState, participant._id)
-        };
-
-        dispatch(showNotification({
-            appearance: NOTIFICATION_TYPE.ERROR,
-            hideErrorSupportLink: true,
-            descriptionKey: 'dialog.notifyAdminChatDisabledMessage',
-            descriptionArguments: args,
-            titleKey: 'dialog.chatDisabledTitle',
-            titleArguments: args
-        }));
-    };
-}
-
-export function notifyAdminParticipantChatEnabled(participant: Object, _: ?Function) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const args = {
-            participantDisplayName:
-                getParticipantDisplayName(getState, participant._id)
-        };
-
-        dispatch(showNotification({
-            appearance: NOTIFICATION_TYPE.ERROR,
-            hideErrorSupportLink: true,
-            descriptionKey: 'dialog.notifyAdminChatEnabledMessage',
-            descriptionArguments: args,
-            titleKey: 'dialog.chatEnabledTitle',
-            titleArguments: args
-        }));
-
-
-    }
 }

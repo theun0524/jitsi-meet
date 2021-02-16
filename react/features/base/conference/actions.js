@@ -17,6 +17,7 @@ import {
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
+    moderatorRoleGranted,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -52,9 +53,7 @@ import {
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY,
-    PARTICIPANT_CHAT_DISABLED,
-    NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
-    NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED
+    PARTICIPANT_CHAT_DISABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -116,16 +115,15 @@ function _addConferenceListeners(conference, dispatch) {
         (...args) => dispatch(participantChatDisabled(conference, ...args)));
 
     conference.on(
-        JitsiConferenceEvents.NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
-        (...args) => dispatch(notifyAdminParticipantChatDisabled(conference, ...args)));
-
-    conference.on(
-        JitsiConferenceEvents.NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED,
-        (...args) => dispatch(notifyAdminParticipantChatEnabled(conference, ...args)));
-
-    conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
         (kicker, kicked) => dispatch(participantKicked(kicker, kicked)));
+
+    // start of added portion
+    conference.on(
+        JitsiConferenceEvents.MODERATOR_ROLE_GRANTED,
+        (participant) => dispatch(moderatorRoleGranted(participant))
+    );
+    // end of added portion
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -521,22 +519,6 @@ export function kickedOut(conference: Object, participant: Object) {
 export function participantChatDisabled(conference: Object, participant: Object) {
     return {
         type: PARTICIPANT_CHAT_DISABLED,
-        conference,
-        participant
-    };
-}
-
-export function notifyAdminParticipantChatDisabled(conference: Object, participant: Object) {
-    return {
-        type: NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED,
-        conference, 
-        participant
-    };
-}
-
-export function notifyAdminParticipantChatEnabled(conference: Object, participant: Object) {
-    return {
-        type: NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED,
         conference,
         participant
     };
