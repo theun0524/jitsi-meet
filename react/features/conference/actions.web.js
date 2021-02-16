@@ -37,7 +37,7 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
 /**
  * Notify that a user has been disabled for Chat
  * 
- * @param {JitsiParticipant} participant - The {JitsiParticipant} who was disabled for chat
+ * @param {JitsiParticipant} participant - The {JitsiParticipant} ID who was disabled for chat
  */
 export function notifyChatDisabled(participant: Object, _: ?Function) { // eslint-disable-line no-unused-vars
     return (dispatch: Dispatch<any>, getState: Function) => {
@@ -52,6 +52,29 @@ export function notifyChatDisabled(participant: Object, _: ?Function) { // eslin
             descriptionKey: 'dialog.chatDisabledMessage',
             descriptionArguments: args,
             titleKey: 'dialog.chatDisabledTitle',
+            titleArguments: args
+        }));
+    };
+}
+
+/**
+ * Notify that a user has been re-enabled for Chat
+ * 
+ * @param {JitsiParticipant} participant - The {JitsiParticipant} ID who was disabled for chat
+ */
+export function notifyChatEnabled(participant: Object, _: ?Function) { // eslint-disable-line no-unused-vars
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant)
+        };
+
+        dispatch(showNotification({
+            appearance: NOTIFICATION_TYPE.ERROR,
+            hideErrorSupportLink: true,
+            descriptionKey: 'dialog.chatEnabledMessage',
+            descriptionArguments: args,
+            titleKey: 'dialog.chatEnabledTitle',
             titleArguments: args
         }));
     };

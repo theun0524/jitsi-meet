@@ -39,8 +39,7 @@ import {
     dataChannelOpened,
     kickedOut,
     participantChatDisabled,
-    notifyAdminParticipantChatDisabled,
-    notifyAdminParticipantChatEnabled,
+    participantChatEnabled,
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
@@ -2221,13 +2220,12 @@ export default {
 
         // start of added portion
         room.on(JitsiConferenceEvents.PARTICIPANT_CHAT_DISABLED, participant => {
-            APP.UI.hideStats();
             APP.store.dispatch(participantChatDisabled(room, participant));
         });
 
         room.on(JitsiConferenceEvents.PARTICIPANT_CHAT_ENABLED, participant => {
             //dispatch actions here
-            APP.store.dispatch(participantChatDisabled(room, participant));
+            APP.store.dispatch(participantChatEnabled(room, participant));
         });
 
         room.on(JitsiConferenceEvents.MODERATOR_ROLE_GRANTED, participant => {

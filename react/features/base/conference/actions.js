@@ -53,7 +53,8 @@ import {
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY,
-    PARTICIPANT_CHAT_DISABLED
+    PARTICIPANT_CHAT_DISABLED,
+    PARTICIPANT_CHAT_ENABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -113,6 +114,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_CHAT_DISABLED,
         (...args) => dispatch(participantChatDisabled(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.PARTICIPANT_CHAT_ENABLED,
+        (...args) => dispatch(participantChatEnabled(conference, ...args)));
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
@@ -519,6 +524,14 @@ export function kickedOut(conference: Object, participant: Object) {
 export function participantChatDisabled(conference: Object, participant: Object) {
     return {
         type: PARTICIPANT_CHAT_DISABLED,
+        conference,
+        participant
+    };
+}
+
+export function participantChatEnabled(conference: Object, participant: Object) {
+    return {
+        type: PARTICIPANT_CHAT_ENABLED,
         conference,
         participant
     };
