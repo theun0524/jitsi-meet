@@ -56,15 +56,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_CHAT_DISABLED: {
         const { dispatch } = store;
-        console.log("Reached react/features/conference/middleware.js");
-        console.log("Action object is: ", action);
         dispatch(notifyChatDisabled(
-            action.participant,
-            () => {
-                // i don't know what these two dispatch are doing, let me comment in my next iteration
-                dispatch(conferenceLeft(action.conference));
-                dispatch(appNavigate(undefined));
-            }
+            action.participant
         ));
         break;
     }
@@ -72,12 +65,7 @@ MiddlewareRegistry.register(store => next => action => {
     case NOTIFY_ADMIN_PARTICIPANT_CHAT_DISABLED: {
         const { dispatch } = store;
         dispatch(notifyAdminParticipantChatDisabled(
-            action.participant,
-            () => {
-                // i don't know what these two dispatch are doing, let me comment in my next iteration
-                dispatch(conferenceLeft(action.conference));
-                dispatch(appNavigate(undefined));
-            }
+            action.participant
         ));
         break;
     }
@@ -85,12 +73,7 @@ MiddlewareRegistry.register(store => next => action => {
     case NOTIFY_ADMIN_PARTICIPANT_CHAT_ENABLED: {
         const { dispatch } = store;
         dispatch(notifyAdminParticipantChatEnabled(
-            action.participant,
-            () => {
-                // i don't know what these two dispatch are doing, i will remove them in my next iteration
-                dispatch(conferenceLeft(action.conference));
-                dispatch(appNavigate(undefined));
-            }
+            action.participant
         ));
         break;
     }
