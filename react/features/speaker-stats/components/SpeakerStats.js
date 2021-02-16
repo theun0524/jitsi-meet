@@ -261,8 +261,8 @@ class SpeakerStats extends Component<Props, State> {
                     <FieldTextStateless
                         compact = { true }
                         id = 'searchBox'
-                        autoFocus = { true }
-                        label = { this.props.t('speakerStats.searchLabel') } 
+                        // autoFocus = { true }
+                        // label = { this.props.t('speakerStats.searchLabel') } 
                         placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
                         shouldFitContainer = { true }
                         // eslint-disable-next-line react/jsx-no-bind
@@ -270,7 +270,7 @@ class SpeakerStats extends Component<Props, State> {
                         type = 'text'
                         value = { this.state.searchQuery } />
                 </div>
-                <hr/>
+                <hr className = { s.divider } />
 
                 <div className = 'speaker-stats'>
                     <SpeakerStatsLabels />

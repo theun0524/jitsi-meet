@@ -1,0 +1,19 @@
+.speakerNameContainer {
+    display: inline-flex !important;
+    padding: 0 16px 0 0;
+    box-sizing: border-box;
+
+    .name {
+        flex-grow: 1;
+        white-space: nowrap;
+        max-width: calc(100% - 42px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.disabled {
+    :global .jitsi-icon svg {
+        fill: gray;
+    }
+}

@@ -5,6 +5,9 @@ import React, { Component } from 'react';
 import TimeElapsed from './TimeElapsed';
 import { BaseIndicator } from '../../base/react';
 import { IconMicrophone, IconMicDisabled, IconCamera, IconCameraDisabled } from '../../base/icons'
+
+import s from './SpeakerStatsItem.module.scss';
+
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
  */
@@ -77,8 +80,10 @@ class SpeakerStatsItem extends Component<Props> {
                 <div className = 'speaker-stats-item__status'>
                     <span className = { speakerStatusClass } />
                 </div>
-                <div className = 'speaker-stats-item__name'> 
-                    { this.props.displayName } &nbsp; { this.displayAudioStatus(audioMuted) } &nbsp; { this.displayVideoStatus(videoMuted) }
+                <div className = { `speaker-stats-item__name ${s.speakerNameContainer}` }> 
+                    <span className = { s.name }>{ this.props.displayName }</span>
+                    { this.displayAudioStatus(audioMuted) }
+                    { this.displayVideoStatus(videoMuted) }
                 </div>
                 <div className = 'speaker-stats-item__time'>
                     <TimeElapsed
@@ -95,42 +100,46 @@ class SpeakerStatsItem extends Component<Props> {
     }
 
     displayAudioStatus(audioMuted) {
-        let iconClass;
+        let icon;
+        let iconClass = this.props.hasLeft || audioMuted ? s.disabled : '';
         let toolTipMessage;
-        if(audioMuted) {
-            iconClass = IconMicDisabled;
-            toolTipMessage = 'videothumbnail.mute'
+
+        if (audioMuted) {
+            icon = IconMicDisabled;
+            toolTipMessage = 'videothumbnail.mute';
+        } else {
+            icon = IconMicrophone;
+            toolTipMessage = 'videothumbnail.audioconnected';
         }
-        else {
-            iconClass = IconMicrophone;
-            toolTipMessage = 'videothumbnail.audioconnected'
-        }
+
         return(
             <BaseIndicator
-                className = 'audioMuted toolbar-icon'
-                icon = { iconClass }
+                className = { `audioMuted toolbar-icon ${iconClass}` }
+                icon = { icon }
                 iconId = 'mic-disabled'
-                iconSize = { 13 }
+                iconSize = { 14 }
                 tooltipKey = { toolTipMessage }
                 tooltipPosition = { 'top' } />
         );
     }
 
     displayVideoStatus(videoMuted) {
-        let iconClass;
+        let icon;
+        let iconClass = this.props.hasLeft || videoMuted ? s.disabled : '';
         let toolTipMessage;
-        if(videoMuted) {
-            iconClass = IconCameraDisabled;
+
+        if (videoMuted) {
+            icon = IconCameraDisabled;
             toolTipMessage = 'videothumbnail.videomute'
         }
         else {
-            iconClass = IconCamera;
+            icon = IconCamera;
             toolTipMessage = 'videothumbnail.videoconnected'
         }
         return(
             <BaseIndicator
-                className = 'videoMuted toolbar-icon'
-                icon = { iconClass }
+                className = { `videoMuted toolbar-icon ${iconClass}` }
+                icon = { icon }
                 iconId = 'camera-disabled'
                 iconSize = { 16 }
                 tooltipKey = { toolTipMessage }

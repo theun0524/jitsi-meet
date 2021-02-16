@@ -726,7 +726,7 @@
         "leaveTime": "Leave Time",
         "refresh": "Refresh",
         "searchLabel": "Search for Participants",
-        "searchPlaceholder": "e.g. John Doe"
+        "searchPlaceholder": "Search Name"
     },
     "startupoverlay": {
         "policyText": " ",
