@@ -1,11 +1,10 @@
 // @flow
 
+import axios from 'axios';
 import type { Dispatch } from 'redux';
 
 import { toggleDialog } from '../base/dialog';
 import { SecurityDialog } from './components/security-dialog';
-
-import axios from 'axios';
 
 import {
     SET_PUBLIC_SCOPE_ENABLED
