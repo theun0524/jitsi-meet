@@ -2,11 +2,7 @@
 
 import { Component } from 'react';
 
-import {
-    createRemoteVideoMenuButtonEvent,
-    sendAnalytics
-} from '../../analytics';
-import { disableChatForParticipant, getParticipantById } from '../../base/participants';
+import { disableChatForParticipant } from '../../base/participants';
 declare var APP: Object;
 type Props = {
 
@@ -52,12 +48,6 @@ export default class AbstractDisableChatForRemoteParticipantDialog
      */
     _onSubmit() {
         const { dispatch, participantID } = this.props;
-
-        sendAnalytics(createRemoteVideoMenuButtonEvent(
-            'disablechat.button',
-            {
-                'participant_id': participantID
-            }));
 
         dispatch(disableChatForParticipant(participantID));
 

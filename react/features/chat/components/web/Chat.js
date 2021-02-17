@@ -18,6 +18,7 @@ import MessageRecipient from './MessageRecipient';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
 import { getLocalParticipant } from '../../../base/participants';
+import ChatDisableButtonForAll from './ChatDisableButtonForAll';
 declare var APP: Object;
 
 /**
@@ -30,8 +31,6 @@ declare var APP: Object;
  */
  type State = {
     chatHeaderMenuDialogOpen: boolean,
-    isChatEnabledForEverybody: boolean,
-    enableDisableChatHeaderMenuMessage: string,
     showChatInput: Boolean,
  }
 
@@ -52,13 +51,6 @@ class Chat extends AbstractChat<Props> {
 
     state = {
         chatHeaderMenuDialogOpen: false,
-
-        //initial assumption => chat enabled for everyone
-        isChatEnabledForEverybody: true,
-
-        // initial message is 'Disable Chat' , because we assume Chat is enabled for everybody
-        enableDisableChatHeaderMenuMessage: 'Enable/Disable Chat',
-
         showChatInput: true,
     };
     
@@ -172,22 +164,6 @@ class Chat extends AbstractChat<Props> {
         this.setState({ chatHeaderMenuDialogOpen: !this.state.chatHeaderMenuDialogOpen });
     }
 
-    handleEnableDisableChat = async () => {
-        //STEP:1 Toggle Chat Dialog
-        this.toggleChatHeaderMenuDialog();
-        await this.setState({ isChatEnabledForEverybody: !this.state.isChatEnabledForEverybody});
-
-        //STEP:2 Update the message for PopUp Dialog
-        if(this.state.isChatEnabledForEverybody) {
-            await this.setState({ enableDisableChatHeaderMenuMessage: 'Disable Chat' });
-        }
-        else {
-            await this.setState({ enableDisableChatHeaderMenuMessage: 'Enable Chat' });
-        }
-
-        //STEP:3 Propagate events to XMPP
-    }
-
     /**
      * Instantiates a React Element to display at the top of {@code Chat} to
      * close {@code Chat}.
@@ -231,9 +207,7 @@ class Chat extends AbstractChat<Props> {
     _renderChatControlIcon = () => {
         const popupcontent = (
             <ul className='chat-control-popup-menu'>
-                <li className='chat-control-popup-menu-item' onClick={ this.handleEnableDisableChat }>
-                    { this.state.enableDisableChatHeaderMenuMessage } 
-                </li>
+                <ChatDisableButtonForAll className = 'chat-control-popup-menu-item' key = 'allchatcontroldisablebutton' visible = { true } showLabel = { true } /> 
             </ul>
         );
 
@@ -249,7 +223,7 @@ class Chat extends AbstractChat<Props> {
                             this.setState({chatHeaderMenuDialogOpen: false}); 
                         }}
                         content = { popupcontent }
-                        placement = 'bottom'
+                        placement = { 'bottom' }
                         isOpen = { this.state.chatHeaderMenuDialogOpen } >
                             <div className='thumb-menu-icon' onClick = { this.toggleChatHeaderMenuDialog }>
                                 <Icon src = { IconMenuThumb } title = 'All Remote-Users Chat Control' />

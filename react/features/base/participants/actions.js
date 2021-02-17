@@ -7,8 +7,10 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    DISABLE_CHAT_FOR_ALL,
     DISABLE_CHAT_PARTICIPANT,
     ENABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_FOR_ALL,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
@@ -101,6 +103,20 @@ export function disableChatForParticipant(id) {
 }
 
 /**
+ * Create an action for disabling chat for all participants in the conference.
+ *
+ * @param {} - NO params
+ * @returns {{
+    *     type: DISABLE_CHAT_FOR_ALL
+    * }}
+    */
+export function disableChatForAll() {
+    return {
+        type: DISABLE_CHAT_FOR_ALL
+    };
+}
+
+/**
  * Create an action for enabling chat for a participant from the conference.
  *
  * @param {string} id - Participant's ID.
@@ -113,6 +129,20 @@ export function enableChatForParticipant(id) {
     return {
         type: ENABLE_CHAT_PARTICIPANT,
         id
+    };
+}
+
+/**
+ * Create an action for enabling chat for all participant in the conference.
+ *
+ * @param { No params } 
+ * @returns {{
+    *     type: ENABLE_CHAT_FOR_ALL
+    * }}
+    */
+export function enableChatForAll() {
+    return {
+        type: ENABLE_CHAT_FOR_ALL
     };
 }
 

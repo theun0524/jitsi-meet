@@ -14,6 +14,12 @@ export {
 export {
     default as EnableChatForRemoteParticipantDialog
 } from './EnableChatForRemoteParticipantDialog';
+export {
+    default as EnableChatForAllParticipantsDialog
+} from './EnableChatForAllParticipantsDialog';
+export {
+    default as DisableChatForAllParticipantsDialog
+} from './DisableChatForAllParticipantsDialog';
 export { default as MuteButton } from './MuteButton';
 export { default as MuteEveryoneElseButton } from './MuteEveryoneElseButton';
 export { default as MuteEveryoneDialog } from './MuteEveryoneDialog';

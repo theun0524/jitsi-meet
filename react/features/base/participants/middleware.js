@@ -18,7 +18,9 @@ import {
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
     DISABLE_CHAT_PARTICIPANT,
+    DISABLE_CHAT_FOR_ALL,
     ENABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_FOR_ALL,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
@@ -111,10 +113,22 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DISABLE_CHAT_FOR_ALL: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.disableChatForAll();
+        break;
+    }
+
     case ENABLE_CHAT_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
 
-        conference.enableChatForParticipant(action.id); // to be defined in jitsi conference and then forwarded to chatroom
+        conference.enableChatForParticipant(action.id);
+        break;
+    }
+
+    case ENABLE_CHAT_FOR_ALL: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.enableChatForAll();
         break;
     }
 
