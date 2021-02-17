@@ -20,7 +20,7 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import s from './SpeakerStats.module.scss';
-import { FieldTextStateless } from '@atlaskit/field-text';
+import FieldText from '@atlaskit/field-text';
 import { filter } from 'lodash';
 
 declare var interfaceConfig: Object;
@@ -258,9 +258,10 @@ class SpeakerStats extends Component<Props, State> {
                 titleKey = 'speakerStats.speakerStats'>
                 
                 <div className = 'speaker-stats-searchbox'>
-                    <FieldTextStateless
+                    <FieldText
                         compact = { true }
                         id = 'searchBox'
+                        isLabelHidden = { true }
                         // autoFocus = { true }
                         // label = { this.props.t('speakerStats.searchLabel') } 
                         placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
