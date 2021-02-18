@@ -228,6 +228,7 @@ var config = {
 
     // debounce timeout for sending message to jvb about in viewport endpoints to recv video from
     inViewportDebounceTimeout: 200,
+
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
     // participants gets to or above the number.
@@ -556,7 +557,7 @@ var config = {
 
     // If true, any checks to handoff to another application will be prevented
     // and instead the app will continue to display in the current browser.
-    // disableDeepLinking: false,
+    disableDeepLinking: true,
 
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
@@ -703,29 +704,30 @@ var config = {
         },
     },
 
-    // autoPinEnabled: true,
-    // autoTileViewDisabled: true,
-    // chatOnlyGuestEnabled: true,
-    // waitOnlyGuestEnabled: true,
-    // hideLocalVideo: true,
-    // hideRemoteVideos: true,
-    // autoRecord: true,
-    // followMeEnabled: false,
-    // disableGrantModerator: false,
-    // disableDesktopSharing: false,    // true, false, 'guest'
-    // disableShortcut: false,
+    autoPinEnabled: false,
+    autoTileViewDisabled: false,
+    chatOnlyGuestEnabled: false,
+    waitOnlyGuestEnabled: true,
+    hideLocalVideo: false,
+    hideRemoteVideos: false,
+    autoRecord: true,
+    followMeEnabled: true,
+    disableGrantModerator: true,
+    disablePrivateMessage: true,
+    disableDesktopSharing: 'guest',    // true, false, 'guest'
+    disableShortcut: false,
 
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
-    // disableTileView: true,           // true, false, 'guest'
+    disableTileView: 'guest',   // true, false, 'guest'
 
     // Hides the conference subject
-    // hideConferenceSubject: true,
+    hideConferenceSubject: true,
 
     // Hides the conference timer.
     // hideConferenceTimer: true,
 
     // Hides the participants stats
-    // hideParticipantsStats: true,     // true, false, 'guest'
+    hideParticipantsStats: true,
 
     // Sets the conference subject
     // subject: 'Conference Subject',

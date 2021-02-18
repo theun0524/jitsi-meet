@@ -711,6 +711,26 @@ var config = {
     hideLocalVideo: true,
     hideRemoteVideos: true,
     autoRecord: true,
+    followMeEnabled: true,
+    disableGrantModerator: false,
+    disablePrivateMessage: true,
+    disableDesktopSharing: 'guest',    // true, false, 'guest'
+    disableShortcut: true,
+
+    // If true, tile view will not be enabled automatically when the participants count threshold is reached.
+    disableTileView: true,   // true, false, 'guest'
+
+    // Hides the conference subject
+    hideConferenceSubject: true,
+
+    // Hides the conference timer.
+    // hideConferenceTimer: true,
+
+    // Hides the participants stats
+    hideParticipantsStats: true,
+
+    // Sets the conference subject
+    // subject: 'Conference Subject',
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

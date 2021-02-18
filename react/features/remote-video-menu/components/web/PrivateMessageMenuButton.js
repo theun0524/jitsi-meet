@@ -86,10 +86,11 @@ class PrivateMessageMenuButton extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+    const { disablePrivateMessage } = state['features/base/config'];
+
     return {
         ..._abstractMapStateToProps(state, ownProps),
-        _hidden: typeof interfaceConfig !== 'undefined'
-            && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat'))
+        _hidden: Boolean(disablePrivateMessage) || !isButtonEnabled('chat')
     };
 }
 

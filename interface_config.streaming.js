@@ -165,18 +165,11 @@ var interfaceConfig = {
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
 
-    // HIDE_CONFERENCE_NAME: true,
-    // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
-    // HIDE_STATS_FOR_GUEST: true,
-    // DISABLE_SHORTCUT: true,
-    // DISABLE_GRANT_MODERATOR: true,
-    // DISABLE_PRIVATE_MESSAGE: true,
-
     /*
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto:vmeeting-info@kedutech.kr',
+    SUPPORT_URL: 'https://unify21.zendesk.com/hc/en-001',
 
     THIRD_PARTY_AUTH_ENABLED: false,
 
@@ -204,19 +197,12 @@ var interfaceConfig = {
     // stayge labs requirement
     SSO_AUTH_KEYS: ['otp'],
     SHOW_JITSI_WATERMARK: false,
-    SHOW_WATERMARK_FOR_GUESTS: false, // if watermark is disabled by default, it can be shown only for guests
-    HIDE_CONFERENCE_NAME: false,
-    HIDE_DESKTOP_SHARING_FOR_GUEST: false,
-    HIDE_STATS_FOR_GUEST: true,
-    DISABLE_SHORTCUT: true,
-    DISABLE_GRANT_MODERATOR: false,
-    DISABLE_PRIVATE_MESSAGE: false,
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'profile', 'chat', 'recording',
+        'microphone', 'camera', 'desktop', 'fullscreen',
+        'fodeviceselection', 'profile', 'chat',
         'etherpad', 'settings',
         'videoquality', 'filmstrip', 'feedback',
-        'tileview', 'download', 'help', 'mute-everyone'
+        'download', 'help'
     ],
 
     TOOLBAR_TIMEOUT: 4000,
@@ -300,8 +286,6 @@ var interfaceConfig = {
      REGISTRATION_WHITELIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 가능하도록
      REGISTRATION_BLACKLIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 불가능하도록
     */
-
-    SSO_AUTH_KEYS: ['otp'],
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

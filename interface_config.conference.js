@@ -164,20 +164,12 @@ var interfaceConfig = {
     SHOW_DEEP_LINKING_IMAGE: false,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
-
-    // HIDE_CONFERENCE_NAME: true,
-    // HIDE_DESKTOP_SHARING_FOR_GUEST: true,
-    // HIDE_STATS_FOR_GUEST: true,
-    // DISABLE_SHORTCUT: true,
-    // DISABLE_GRANT_MODERATOR: true,
-    // DISABLE_PRIVATE_MESSAGE: true,
 
     /*
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto:vmeeting-info@kedutech.kr',
+    SUPPORT_URL: 'https://unify21.zendesk.com/hc/en-001',
 
     THIRD_PARTY_AUTH_ENABLED: false,
 
@@ -205,20 +197,14 @@ var interfaceConfig = {
     // stayge labs requirement
     SSO_AUTH_KEYS: ['otp'],
     SHOW_JITSI_WATERMARK: false,
-    HIDE_CONFERENCE_NAME: true,
-    HIDE_DESKTOP_SHARING_FOR_GUEST: true,
-    HIDE_STATS_FOR_GUEST: true,
-    DISABLE_SHORTCUT: true,
-    DISABLE_GRANT_MODERATOR: true,
-    DISABLE_PRIVATE_MESSAGE: true,
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'desktop', 'fullscreen',
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'profile', 'chat',
         'etherpad', 'settings',
         'videoquality', 'filmstrip', 'feedback',
-        'download', 'help'
+        'tileview', 'download', 'help', 'mute-everyone'
     ],
-        
+
     TOOLBAR_TIMEOUT: 4000,
 
     // Browsers, in addition to those which do not fully support WebRTC, that
