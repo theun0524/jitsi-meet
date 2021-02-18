@@ -3,6 +3,7 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
+import { getActiveSession } from '../../recording';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_JOINED,
@@ -10,7 +11,10 @@ import {
     forEachConference,
     getCurrentConference
 } from '../conference';
-import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import {
+    JitsiConferenceEvents,
+    JitsiRecordingConstants
+} from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
@@ -74,15 +78,30 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONFERENCE_JOINED:
-        const participant = getLocalParticipant(store.getState());
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
         if (typeof APP !== 'undefined' && participant) {
             const { id, pinned } = participant;
-            const { isHost } = store.getState()['features/base/conference'].roomInfo || {};
-            const { autoPinEnabled } = store.getState()['features/base/config'];
+            const { isHost } = state['features/base/conference'].roomInfo || {};
+            const { autoPinEnabled, autoRecord } = state['features/base/config'];
 
             // 내가 방장이면 자동 PIN이 되도록...
             if (isHost && !pinned && autoPinEnabled) {
                 store.dispatch(pinParticipant(id));
+            }
+
+            // 내가 방장이면 자동으로 레코딩이 시작되도록...
+            const isRecordingRunning = Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
+            const conference = getCurrentConference(state);
+            if (conference && isHost && !isRecordingRunning && autoRecord) {
+                conference.startRecording({
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData: JSON.stringify({
+                        'file_recording_metadata': {
+                            'share': true
+                        }
+                    })
+                });
             }
         }
         break;

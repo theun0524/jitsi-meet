@@ -39,7 +39,9 @@ let enabled = true;
  */
 const KeyboardShortcut = {
     init() {
-        if (interfaceConfig.DISABLE_SHORTCUT) {
+        const { disableShortcut } = APP.store.getState()['features/base/config'];
+
+        if (disableShortcut) {
             return;
         }
 

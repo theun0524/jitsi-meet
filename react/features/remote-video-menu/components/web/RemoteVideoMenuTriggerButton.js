@@ -266,14 +266,19 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
-    const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
+    const {
+        disableGrantModerator,
+        disablePrivateMessage,
+        disableRemoteMute,
+        remoteVideoMenu = {},
+    } = state['features/base/config'];
     const { disableKick } = remoteVideoMenu;
 
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
-        _disableGrantModerator: Boolean(interfaceConfig.DISABLE_GRANT_MODERATOR),
+        _disableGrantModerator: Boolean(disableGrantModerator),
         _disableKick: Boolean(disableKick),
-        _disablePrivateMessage: Boolean(interfaceConfig.DISABLE_PRIVATE_MESSAGE),
+        _disablePrivateMessage: Boolean(disablePrivateMessage),
         _disableRemoteMute: Boolean(disableRemoteMute)
     };
 }

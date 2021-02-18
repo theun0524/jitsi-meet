@@ -169,7 +169,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto:vmeeting-info@kedutech.kr',
+    SUPPORT_URL: 'https://unify21.zendesk.com/hc/en-001',
 
     THIRD_PARTY_AUTH_ENABLED: false,
 
@@ -199,12 +199,12 @@ var interfaceConfig = {
     SHOW_JITSI_WATERMARK: false,
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'profile',
+        'fodeviceselection', 'profile', 'chat',
         'etherpad', 'settings',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
+        'videoquality', 'filmstrip', 'feedback',
+        'tileview', 'download', 'help', 'mute-everyone'
     ],
-        
+
     TOOLBAR_TIMEOUT: 4000,
 
     // Browsers, in addition to those which do not fully support WebRTC, that
@@ -286,8 +286,6 @@ var interfaceConfig = {
      REGISTRATION_WHITELIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 가능하도록
      REGISTRATION_BLACKLIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 불가능하도록
     */
-
-    // SSO_AUTH_KEYS: ['otp'],
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
