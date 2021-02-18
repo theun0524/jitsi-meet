@@ -4,7 +4,8 @@ import { openDialog } from '../../base/dialog';
 import { IconMessage } from '../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import {
-    isLocalParticipantModerator
+    isLocalParticipantModerator,
+    getParticipants
 } from '../../base/participants';
 import { EnableChatForAllParticipantsDialog, DisableChatForAllParticipantsDialog } from '.';
 
@@ -72,11 +73,17 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const isModerator = isLocalParticipantModerator(state);
     visible = isModerator;
     
-    // will have to add logic to check roles of all participants and based on that make a flag
-    // let participantID = ownProps.message.id;
-    // let userRole = getParticipantById(APP.store.getState(), participantID).role;
+    const allParticipants = getParticipants(APP.store.getState());
+    const allParticipantsRole = allParticipants.map(participant => participant.role);
+    let participantCount = 0;
+    allParticipantsRole.forEach((participantRole => {
+        if(participantRole === "participant") {
+            participantCount = participantCount + 1;
+        }
+    }));
+
     return {
-        _isChatForAllDisabled: Boolean(false),
+        _isChatForAllDisabled: Boolean(participantCount == 0),
         visible
     };
 }
