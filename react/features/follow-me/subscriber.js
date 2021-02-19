@@ -90,7 +90,7 @@ function _sendFollowMeCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
     const state = store.getState();
     const conference = getCurrentConference(state);
-    const { chatOnlyGuestEnabled } = state['features/base/config'];
+    const { chatOnlyGuestEnabled, followMeEnabled } = state['features/base/config'];
     const isGuest = !isHost(state);
 
     if (!conference) {
@@ -112,6 +112,8 @@ function _sendFollowMeCommand(
         );
 
         return;
+    } else if (typeof followMeEnabled !== 'undefined') {
+        if (!followMeEnabled) return;
     } else if (!state['features/base/conference'].followMeEnabled) {
         return;
     } else if (chatOnlyGuestEnabled && isGuest) {

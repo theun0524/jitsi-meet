@@ -711,7 +711,7 @@ var config = {
     hideLocalVideo: false,
     hideRemoteVideos: false,
     autoRecord: true,
-    followMeEnabled: false,
+    // followMeEnabled: false,
     disableGrantModerator: false,
     disablePrivateMessage: false,
     disableDesktopSharing: false,    // true, false, 'guest'
