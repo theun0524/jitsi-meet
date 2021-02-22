@@ -247,13 +247,12 @@
     
         .chat-control-popup-menu-item {
             align-items: center;
-            color: $overflowMenuItemColor;
+            color: white;
             cursor: pointer;
             display: flex;
-            font-size: 14px;
+            font-size: 9pt;
             height: 22px;
             padding: 5px 12px;
-            font-weight: bold;
             white-space: nowrap;
     
             div {
@@ -263,8 +262,7 @@
             }
     
             &:hover {
-                background-color: $overflowMenuItemHoverBG;
-                color: $overflowMenuItemHoverColor;
+                background-color: rgba(62,73,90,255);
             }
     
             &.unclickable {

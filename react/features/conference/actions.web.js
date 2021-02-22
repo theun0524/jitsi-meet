@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { getParticipantDisplayName } from '../base/participants';
 import {
+    NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
     showNotification
 } from '../notifications';
@@ -47,13 +48,9 @@ export function notifyChatDisabled(participant: Object, _: ?Function) { // eslin
         };
 
         dispatch(showNotification({
-            appearance: NOTIFICATION_TYPE.ERROR,
-            hideErrorSupportLink: true,
-            descriptionKey: 'dialog.chatDisabledMessage',
-            descriptionArguments: args,
-            titleKey: 'dialog.chatDisabledTitle',
-            titleArguments: args
-        }));
+            titleKey: 'dialog.chatDisabledMessage',
+            titleArguments: args,
+        }, NOTIFICATION_TIMEOUT * 10));
     };
 }
 
@@ -70,12 +67,8 @@ export function notifyChatEnabled(participant: Object, _: ?Function) { // eslint
         };
 
         dispatch(showNotification({
-            appearance: NOTIFICATION_TYPE.ERROR,
-            hideErrorSupportLink: true,
-            descriptionKey: 'dialog.chatEnabledMessage',
-            descriptionArguments: args,
-            titleKey: 'dialog.chatEnabledTitle',
+            titleKey: 'dialog.chatEnabledMessage',
             titleArguments: args
-        }));
+        }, NOTIFICATION_TIMEOUT * 10));
     };
 }

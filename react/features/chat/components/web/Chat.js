@@ -207,7 +207,9 @@ class Chat extends AbstractChat<Props> {
     _renderChatControlIcon = () => {
         const popupcontent = (
             <ul className='chat-control-popup-menu'>
-                <ChatDisableButtonForAll className = 'chat-control-popup-menu-item' key = 'allchatcontroldisablebutton' visible = { true } showLabel = { true } /> 
+                <span className = 'chat-control-popup-menu-item'>
+                    <ChatDisableButtonForAll key = 'allchatcontroldisablebutton' visible = { true } showLabel = { true } /> 
+                </span>
             </ul>
         );
 

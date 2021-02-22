@@ -531,7 +531,7 @@ export function moderatorRoleGranted(participantId) {
                 participant:
                     getParticipantDisplayName(getState, participantId)
             },
-            titleKey: 'notify.grantedModerator'
+            titleKey: 'notify.grantedTo'
         }, NOTIFICATION_TIMEOUT * 10));
     };
 }

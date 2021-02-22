@@ -109,8 +109,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
     _renderUserControlIcon = () => {
         const popupcontent = (
             <ul className = 'chat-control-popup-menu'>
-                <ChatMessageDisableButton className = 'chat-control-popup-menu-item' key = 'chatcontroldisablebutton' visible = { true } message = { this.props.message } showLabel = { true } />
-                <ChatMessageKickButton className = 'chat-control-popup-menu-item' message = { this.props.message } />
+                <span className = 'chat-control-popup-menu-item'>
+                    <ChatMessageDisableButton key = 'chatcontroldisablebutton' visible = { true } message = { this.props.message } showLabel = { true } />
+                </span>
+                <ChatMessageKickButton message = { this.props.message } />
             </ul>
         );
 
