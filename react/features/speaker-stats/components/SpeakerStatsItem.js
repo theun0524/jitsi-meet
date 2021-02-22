@@ -1,12 +1,22 @@
 /* @flow */
 
+import moment from 'moment';
 import React, { Component } from 'react';
 
-import TimeElapsed from './TimeElapsed';
+import { translate } from '../../base/i18n';
 import { BaseIndicator } from '../../base/react';
-import { IconMicrophone, IconMicDisabled, IconCamera, IconCameraDisabled } from '../../base/icons'
+import {
+    IconMicrophone,
+    IconMicDisabled,
+    IconCamera,
+    IconCameraDisabled,
+    IconShareDesktop
+} from '../../base/icons'
 
 import s from './SpeakerStatsItem.module.scss';
+import { formatDuration, formatTime } from '../../base/util/formatDateTime';
+
+declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
@@ -19,34 +29,39 @@ type Props = {
     displayName: string,
 
     /**
-     * The total milliseconds the participant has been dominant speaker.
-     */
-    dominantSpeakerTime: number,
-
-    /**
      * True if the participant is no longer in the meeting.
      */
     hasLeft: boolean,
 
     /**
-     * True if the participant is currently the dominant speaker.
+     * The join time.
      */
-    isDominantSpeaker: boolean,
+    joinTime: string,
 
     /**
-     * The participants' join/leave time.
+     * The leave time.
      */
-    participantLog: Object,
+    leaveTime: string,
 
     /**
-     * True if the participant's video is muted.
+     * The duration time.
+     */
+    duration: string,
+
+    /**
+     * True if video is muted.
      */
     videoMuted: boolean,
 
     /**
-     * True if the participant's audio is muted.
+     * True if audio is muted.
      */
-    audioMuted: boolean
+    audioMuted: boolean,
+
+    /**
+     * True if speaker is presenter.
+     */
+    isPresenter: boolean
 };
 
 /**
@@ -62,38 +77,46 @@ class SpeakerStatsItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const hasLeftClass = this.props.hasLeft ? 'status-user-left' : '';
+        const {
+            joinTime,
+            leaveTime,
+            duration,
+            isPresenter,
+            videoMuted,
+            audioMuted,
+            local,
+            name,
+            hasLeft,
+            t
+        } = this.props;
+
+        const hasLeftClass = hasLeft ? 'status-user-left' : '';
         const rowDisplayClass = `speaker-stats-item ${hasLeftClass}`;
 
-        const dotClass = this.props.isDominantSpeaker
-            ? 'status-active' : 'status-inactive';
-        const speakerStatusClass = `speaker-stats-item__status-dot ${dotClass}`;
+        let displayName;
+        if (local) {
+            const me = t('me');
+            displayName = name ? `${name} (${me})` : me;
+        } else {
+            displayName = name || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        }
 
-        //prosody(lua) gives time in seconds (not in milliseconds)
-        const joinTime = this.props.participantLog && this.props.participantLog.joinTime? this.hhmmss(new Date(this.props.participantLog.joinTime)) : '';
-        const leaveTime = this.props.participantLog && this.props.participantLog.leaveTime? this.hhmmss(new Date(this.props.participantLog.leaveTime)) : '';
-
-        const videoMuted = this.props.videoMuted;
-        const audioMuted = this.props.audioMuted;
         return (
             <div className = { rowDisplayClass }>
-                <div className = 'speaker-stats-item__status'>
-                    <span className = { speakerStatusClass } />
-                </div>
-                <div className = { `speaker-stats-item__name ${s.speakerNameContainer}` }> 
-                    <span className = { s.name }>{ this.props.displayName }</span>
+                <div className = { `speaker-stats-item__name ${s.nameContainer}` }> 
+                    <span className = { s.name }>{ displayName }</span>
+                    { this.displayPresenterStatus(isPresenter) }
                     { this.displayAudioStatus(audioMuted) }
                     { this.displayVideoStatus(videoMuted) }
                 </div>
-                <div className = 'speaker-stats-item__time'>
-                    <TimeElapsed
-                        time = { this.props.dominantSpeakerTime } />
+                <div className = { `speaker-stats-item__s_time ${s.joinTime}` }>
+                    { formatTime(joinTime) }
                 </div>
-                <div className = 'speaker-stats-item__s_time'>
-                    { joinTime }
+                <div className = { `speaker-stats-item__l_time ${s.leaveTime}` }>
+                    { formatTime(leaveTime) } 
                 </div>
-                <div className = 'speaker-stats-item__l_time'>
-                    { leaveTime } 
+                <div className = { s.duration }>
+                    { formatDuration(duration) }
                 </div>
             </div>
         );
@@ -146,17 +169,21 @@ class SpeakerStatsItem extends Component<Props> {
                 tooltipPosition = { 'top' } />
         );
     }
-    
-    hhmmss(hms) {
-        var hh = hms.getHours();
-        var mm = hms.getMinutes();
-        var ss = hms.getSeconds();
 
-        return [(hh>9 ? '' : '0') + hh, ':',
-                (mm>9 ? '' : '0') + mm, ':',
-                (ss>9 ? '' : '0') + ss,
-                ].join('');
+    displayPresenterStatus(isPresenter) {
+        let iconClass = this.props.hasLeft || !isPresenter ? s.disabled : '';
+        let toolTipMessage = isPresenter ? 'videothumbnail.presenter' : '';
+
+        return(
+            <BaseIndicator
+                className = { `videoMuted toolbar-icon ${iconClass}` }
+                icon = { IconShareDesktop }
+                iconId = 'share-desktop'
+                iconSize = { 16 }
+                tooltipKey = { toolTipMessage }
+                tooltipPosition = { 'top' } />
+        );
     }
 }
 
-export default SpeakerStatsItem;
+export default translate(SpeakerStatsItem);

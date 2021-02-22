@@ -12,12 +12,14 @@ import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/fea
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantCount,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
 import { clientResized } from '../../../react/features/base/responsive-ui';
+import { getTrackByMediaTypeAndParticipant, isLocalVideoTrackDesktop } from '../../../react/features/base/tracks';
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
@@ -25,6 +27,7 @@ import {
     RaisedHandIndicator,
     StatusIndicators
 } from '../../../react/features/filmstrip';
+import { speakerStatsUpdated } from '../../../react/features/speaker-stats';
 import {
     LAYOUTS,
     getCurrentLayout,
@@ -234,6 +237,11 @@ export default class SmallVideo {
     showAudioIndicator(isMuted) {
         this.isAudioMuted = isMuted;
         this.updateStatusBar();
+
+        APP.store.dispatch(speakerStatsUpdated({
+            nick: this.id,
+            audioMuted: isMuted,
+        }));
     }
 
     /**
@@ -247,6 +255,14 @@ export default class SmallVideo {
         this.isVideoMuted = isMuted;
         this.updateView();
         this.updateStatusBar();
+
+        const tracks = APP.store.getState()['features/base/tracks'];
+        const videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, this.id);
+        APP.store.dispatch(speakerStatsUpdated({
+            nick: this.id,
+            videoMuted: isMuted,
+            isPresenter: Boolean(videoTrack?.videoType === VIDEO_TYPE.DESKTOP)
+        }));
     }
 
     /**

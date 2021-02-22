@@ -4,8 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
-import Tooltip from '@atlaskit/tooltip';
-import RefreshIcon from '@atlaskit/icon/glyph/refresh';
+import s from './SpeakerStatsItem.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
@@ -35,18 +34,17 @@ class SpeakerStatsLabels extends Component<Props> {
 
         return (
             <div className = 'speaker-stats-item__labels'>
-                <div className = 'speaker-stats-item__status' />
-                <div className = 'speaker-stats-item__name'>
+                <div className = { `speaker-stats-item__name ${s.nameContainer}` }>
                     { t('speakerStats.name') }
                 </div>
-                <div className = 'speaker-stats-item__time'>
-                    { t('speakerStats.speakerTime') }
-                </div>
-                <div className = 'speaker-stats-item__s_time'>
+                <div className = { `speaker-stats-item__s_time ${s.joinTime}` }>
                     { t('speakerStats.joinTime') }
                 </div>
-                <div className = 'speaker-stats-item__l_time'>
+                <div className = { `speaker-stats-item__l_time ${s.leaveTime}` }>
                     { t('speakerStats.leaveTime') }
+                </div>
+                <div className = { s.duration }>
+                    { t('speakerStats.duration') }
                 </div>
             </div>
         );

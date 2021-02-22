@@ -1,7 +1,8 @@
-.speakerNameContainer {
+.nameContainer {
     display: inline-flex !important;
     padding: 0 16px 0 0;
     box-sizing: border-box;
+    width: 40% !important;
 
     .name {
         flex-grow: 1;
@@ -16,4 +17,22 @@
     :global .jitsi-icon svg {
         fill: gray;
     }
+}
+
+.joinTime {
+    width: 20% !important;
+}
+
+.leaveTime {
+    width: 20% !important;
+}
+
+.duration {
+    display: inline-block;
+    margin: 5px 0;
+    vertical-align: middle;
+    width: 20% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

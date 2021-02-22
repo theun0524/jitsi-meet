@@ -716,13 +716,15 @@
     },
     "speaker": "스피커",
     "speakerStats": {
+        "duration": "접속 시간",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "이름",
+        "search": "검색",
         "seconds": "{{count}}s",
         "speakerStats": "접속자 통계",
         "speakerTime": "오디오 시간", 
-        "joinTime": "접속 시간",
+        "joinTime": "시작 시간",
         "leaveTime": "종료 시간",
         "refresh": "새로고침",
         "searchLabel": "검색",
@@ -914,7 +916,8 @@
         "show": "화면에 표시",
         "videomute": "참가자 카메라가 중지됨",
         "audioconnected": "마이크 사용",
-        "videoconnected": "카메라 사용"
+        "videoconnected": "카메라 사용",
+        "presenter": "화면 공유 중"
     },
     "welcomepage": {
         "accessibilityLabel": {

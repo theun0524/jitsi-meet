@@ -716,9 +716,11 @@
     },
     "speaker": "Speaker",
     "speakerStats": {
+        "duration": "Duration",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Name",
+        "search": "Search",
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time",
@@ -912,7 +914,8 @@
         "show": "Show on stage",
         "videomute": "Participant has stopped the camera",
         "audioconnected": "Participant is connected to audio",
-        "videoconnected": "Participant is connected to video"
+        "videoconnected": "Participant is connected to video",
+        "presenter": "Participant is sharing the desktop"
     },
     "welcomepage": {
         "accessibilityLabel": {

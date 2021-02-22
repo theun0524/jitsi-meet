@@ -241,7 +241,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                             super._onChange({ startVideoMuted: checked })
                     } />
                 <Checkbox
-                    isChecked = { followMeEnabled && !followMeActive }
+                    isChecked = { followMeEnabled }
                     isDisabled = { followMeActive }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
