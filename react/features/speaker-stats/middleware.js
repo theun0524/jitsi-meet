@@ -54,7 +54,7 @@ function _participantJoined(state, action) {
     const { conference } = state['features/base/conference'];
     const stats = state['features/speaker-stats'];
 
-    if (!conference) return;
+    if (!conference) return stats;
 
     const participant = conference.participants[id] || {};
     const tracks = participant.tracks;
@@ -83,6 +83,8 @@ function _participantLeft(state, { participant }) {
     const stats = state['features/speaker-stats'];
 
     const item = stats[participant.id];
+    if (!item) return stats;
+
     item.leaveTime = (new Date()).toJSON();
     item.duration = (item.duration || 0) + getDuration(item);
     // console.error('participantLeft:', item);

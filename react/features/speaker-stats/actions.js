@@ -1,15 +1,13 @@
 // @flow
 
 import axios from 'axios';
-import { data } from 'jquery';
-import { max, min, sortBy } from 'lodash';
+import { each, max, min } from 'lodash';
 import moment from 'moment';
 import type { Dispatch } from 'redux';
 
 import { getAuthUrl } from '../../api/url';
-import { getCurrentConference } from '../base/conference/functions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media';
-import { getTrackByMediaTypeAndParticipant, isLocalVideoTrackDesktop, isLocalVideoTrackMuted } from '../base/tracks';
+import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 
 import { 
     SPEAKER_STATS_LOADED,
@@ -40,7 +38,7 @@ export function getOverlap(log1, log2) {
 export function mergeSpeakerStats(stats, callback) {
     const data = [];
 
-    stats.forEach(item => {
+    each(stats, item => {
         callback && callback(item);
     
         // 참석자 stats_id가 없으면 걍 추가
