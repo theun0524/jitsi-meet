@@ -21,7 +21,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import s from './SpeakerStats.module.scss';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
-import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
+import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -246,15 +246,23 @@ function _mapStateToProps(state) {
 
     return {
         stats: map(stats.items, item => {
-            const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, item.nick);
-            const videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, item.nick);
+            const { id, local } = onMap[item.stats_id] || {};
 
-            return onMap[item.stats_id] ? {
-                ...item,
-                audioMuted: audioTrack?.muted,
-                videoMuted: videoTrack?.muted,
-                isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
-            } : item;
+            if (id) {
+                const videoTrack = local
+                    ? getLocalVideoTrack(tracks)
+                    : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+
+                return {
+                    ...item,
+                    audioMuted: local
+                        ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
+                        : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, id),
+                    videoMuted: !videoTrack || videoTrack.muted,
+                    isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
+                }
+            }
+            return item;
         })
     };
 }

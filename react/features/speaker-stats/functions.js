@@ -41,6 +41,17 @@ export function mergeStats(state) {
             return;
         }
 
+        // ---======>
+        if (!found.leaveTime && !item.leaveTime) {
+            // add log
+            data.push(item);
+            return;
+        }
+
+        if (!found.children) {
+            found.children = [ { ...found, name: '', email: '' } ];
+        }
+
         // --- ----
         // --=-----
         // --====--
@@ -59,24 +70,12 @@ export function mergeStats(state) {
             found.leaveTime = '';
             found.nick = item.nick;
         }
-        // ---======>
-        else if (!found.leaveTime && !item.leaveTime) {
-            // add log
-            data.push(item);
-            return;
-        }
         // ---====-->
         else {
             // drop log
         }
 
-        if (!found.children) {
-            found.children = [ { ...found, name: '', email: '' } ];
-        }
-
-        item.name = '';
-        item.email = '';
-        found.children.push(item);
+        found.children.push({ ...item, name: '', email: '' });
     });
 
     return data;

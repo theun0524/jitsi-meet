@@ -40,7 +40,7 @@ function _participantJoined(store, action) {
 
     if (!conference || !participant) return;
 
-    console.error('_participantJoined:', action);
+    // console.error('_participantJoined:', action);
     dispatch(speakerStatsAdded({
         nick: id,
         local: Boolean(local),

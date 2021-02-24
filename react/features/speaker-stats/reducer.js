@@ -34,7 +34,7 @@ ReducerRegistry.register(
 function makeStats(type, data) {
     const items = mergeStats(data);
 
-    console.error('makeStats:', type, data, items);
+    // console.error('makeStats:', type, data, items);
     return { data, items };
 }
 
