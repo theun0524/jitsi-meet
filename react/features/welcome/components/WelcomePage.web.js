@@ -222,7 +222,7 @@ class WelcomePage extends AbstractWelcomePage {
                         key = 'adminConsole'
                         appearance = 'subtle'
                         className = {`${s.button} ${s.desktop}`}
-                        href = { `${AUTH_PAGE_BASE}/admin` }>
+                        href = { `${AUTH_PAGE_BASE}/admin/rooms` }>
                         { t('welcomepage.adminConsole') }
                     </Button>
                 );
