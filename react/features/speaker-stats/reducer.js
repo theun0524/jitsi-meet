@@ -1,12 +1,13 @@
 // @flow
 
-import { keyBy } from 'lodash';
-import { ReducerRegistry, set, assign } from '../base/redux';
+import { findIndex } from 'lodash';
+import { ReducerRegistry, assign } from '../base/redux';
+import { mergeStats } from './functions';
 
 import {
     SPEAKER_STATS_LOADED,
     SPEAKER_STATS_UPDATED,
-    SPEAKER_STATS_REMOVED,
+    SPEAKER_STATS_ADDED,
 } from './actionTypes';
 
 /**
@@ -15,13 +16,13 @@ import {
  */
 ReducerRegistry.register(
     'features/speaker-stats',
-    (state = {}, action) => {
+    (state = { data: [], items: [] }, action) => {
         switch (action.type) {
         case SPEAKER_STATS_LOADED:
             return _speakerStatsLoaded(state, action);
 
-        case SPEAKER_STATS_REMOVED:
-            return _speakerStatsRemoved(state, action);
+        case SPEAKER_STATS_ADDED:
+            return _speakerStatsAdded(state, action);
 
         case SPEAKER_STATS_UPDATED:
             return _speakerStatsUpdated(state, action);
@@ -30,22 +31,34 @@ ReducerRegistry.register(
         return state;
     });
 
-function _speakerStatsLoaded(state, { stats }) {
-    return keyBy(stats, 'nick');
+function makeStats(type, data) {
+    const items = mergeStats(data);
+
+    console.error('makeStats:', type, data, items);
+    return { data, items };
 }
 
-function _speakerStatsRemoved(state, { item }) {
-    if (!item) return state;
-
-    return set(state, item.nick);
+function _speakerStatsLoaded(state, { type, data }) {
+    return makeStats(type, [...data]);
 }
 
-function _speakerStatsUpdated(state, { item }) {
-    if (!item || !item.nick) return state;
+function _speakerStatsAdded(state, { type, item }) {
+    if (!item?.nick) return state;
 
-    const found = state[item.nick];
-    if (!found) {
-        return item.joinTime ? set(state, item.nick, item) : state;
-    }
-    return set(state, item.nick, assign(found, item));
+    const data = [...state.data, item];
+    return makeStats(type, data);
+}
+
+function _speakerStatsUpdated(state, { type, item }) {
+    if (!item?.nick) return state;
+
+    const found = findIndex(state.data, { nick: item.nick });
+    if (found < 0) return state;
+
+    const data = [
+        ...state.data.slice(0, found),
+        assign(state.data[found], item),
+        ...state.data.slice(found+1)
+    ];
+    return makeStats(type, data);
 }

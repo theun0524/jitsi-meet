@@ -8,7 +8,7 @@ import {
 } from '@atlaskit/modal-dialog';
 import Spinner from '@atlaskit/spinner';
 import Tooltip from '@atlaskit/tooltip';
-import { filter, map, sortBy } from 'lodash';
+import { filter, keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
@@ -20,6 +20,8 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import s from './SpeakerStats.module.scss';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
+import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -78,6 +80,8 @@ class SpeakerStats extends Component<Props, State> {
 
         this._onRefresh = this._onRefresh.bind(this);
         this._customHeader = this._customHeader.bind(this);
+        this.filterParticipants = this.filterParticipants.bind(this);
+        this.handleSearchInput = this.handleSearchInput.bind(this);
     }
 
     /**
@@ -153,10 +157,12 @@ class SpeakerStats extends Component<Props, State> {
      * @param {String} filterText the string from search input, based upon which to filter result
      */
     filterParticipants = filterText => {
+        const { stats } = this.props;
         filterText = filterText.toLowerCase();
         this.setState({
-            searchResult: filter(stats, ({ displayName }) =>
-                displayName && displayName.toLowerCase().include(filterText))
+            searchResult: filter(stats, ({ name }) =>
+                name && name.toLowerCase().includes(filterText)
+            )
         });
     }
 
@@ -230,8 +236,26 @@ class SpeakerStats extends Component<Props, State> {
  * @returns Object
  */
 function _mapStateToProps(state) {
+    const { conference } = state['features/base/conference'];
+    const participants = state['features/base/participants'];
+    const tracks = state['features/base/tracks'];
+    const onMap = keyBy(participants, ({ id, local }) => local
+        ? conference?._statsCurrentId
+        : conference?.participants[id]?._statsID);
+    const stats = state['features/speaker-stats'];
+
     return {
-        stats: sortBy(state['features/speaker-stats'], 'joinTime')
+        stats: map(stats.items, item => {
+            const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, item.nick);
+            const videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, item.nick);
+
+            return onMap[item.stats_id] ? {
+                ...item,
+                audioMuted: audioTrack?.muted,
+                videoMuted: videoTrack?.muted,
+                isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
+            } : item;
+        })
     };
 }
 
