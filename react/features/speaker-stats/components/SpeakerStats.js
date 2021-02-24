@@ -21,7 +21,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import s from './SpeakerStats.module.scss';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
-import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
+import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isLocalVideoTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -259,7 +259,9 @@ function _mapStateToProps(state) {
                     audioMuted: local
                         ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
                         : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, id),
-                    videoMuted: !videoTrack || videoTrack.muted,
+                    videoMuted: local
+                        ? isLocalVideoTrackMuted(tracks)
+                        : !videoTrack || videoTrack.muted,
                     isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
                 }
             }

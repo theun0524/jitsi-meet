@@ -154,6 +154,11 @@ MiddlewareRegistry.register(store => next => action => {
             const participantID = jitsiTrack.getParticipantId();
             const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
 
+            // exception handle
+            if (!participantID) {
+                return result;
+            }
+
             if (isVideoTrack) {
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);

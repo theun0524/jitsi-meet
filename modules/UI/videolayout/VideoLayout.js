@@ -397,7 +397,9 @@ const VideoLayout = {
         // remove the local video container from DOM
         let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
         const localTVC = document.getElementById('localVideoTileViewContainer');
-        allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
+        if (localTVC) {
+            allVideosContainers.removeChild(localTVC);
+        }
 
         // append the muted video to the end of DOM
         if(id != 0) {

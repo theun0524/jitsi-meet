@@ -63,8 +63,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         // move muted videos to the end of DOM, default id=0, no parameter passed
-        VideoLayout.moveMutedRemoteVideoToTheEndofDOM();
-
+        // VideoLayout.moveMutedRemoteVideoToTheEndofDOM();
         break;
     }
 
