@@ -255,6 +255,7 @@ function _mapStateToProps(state) {
 
                 return {
                     ...item,
+                    local,
                     audioMuted: local
                         ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
                         : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, id),
