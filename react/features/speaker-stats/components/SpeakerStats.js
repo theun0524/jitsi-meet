@@ -236,30 +236,26 @@ class SpeakerStats extends Component<Props, State> {
  * @returns Object
  */
 function _mapStateToProps(state) {
-    const { conference } = state['features/base/conference'];
-    const participants = state['features/base/participants'];
     const tracks = state['features/base/tracks'];
-    const onMap = keyBy(participants, ({ id, local }) => local
-        ? conference?._statsCurrentId
-        : conference?.participants[id]?._statsID);
+    const participants = keyBy(state['features/base/participants'], 'id');
     const stats = state['features/speaker-stats'];
 
     return {
         stats: map(stats.items, item => {
-            const { id, local } = onMap[item.stats_id] || {};
+            const p = participants[item.nick];
 
-            if (id) {
-                const videoTrack = local
+            if (p) {
+                const videoTrack = p.local
                     ? getLocalVideoTrack(tracks)
                     : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, item.nick);
 
                 return {
                     ...item,
-                    local,
-                    audioMuted: local
+                    local: p.local,
+                    audioMuted: p.local
                         ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
                         : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, item.nick),
-                    videoMuted: local
+                    videoMuted: p.local
                         ? isLocalVideoTrackMuted(tracks)
                         : !videoTrack || videoTrack.muted,
                     isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
