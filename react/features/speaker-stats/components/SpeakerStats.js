@@ -251,14 +251,14 @@ function _mapStateToProps(state) {
             if (id) {
                 const videoTrack = local
                     ? getLocalVideoTrack(tracks)
-                    : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+                    : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, item.nick);
 
                 return {
                     ...item,
                     local,
                     audioMuted: local
                         ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
-                        : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, id),
+                        : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, item.nick),
                     videoMuted: local
                         ? isLocalVideoTrackMuted(tracks)
                         : !videoTrack || videoTrack.muted,
