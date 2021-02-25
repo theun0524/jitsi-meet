@@ -61,13 +61,13 @@ StateListenerRegistry.register(
     /* listener */ _sendFollowMeCommand);
 
 /**
- * Private selector for returning state from redux that should be respected by
+ * selector for returning state from redux that should be respected by
  * other participants while follow me is enabled.
  *
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function _getFollowMeState(state) {
+export function getFollowMeState(state) {
     const pinnedParticipant = getPinnedParticipant(state);
 
     return {
@@ -122,6 +122,6 @@ function _sendFollowMeCommand(
 
     conference.sendCommand(
         FOLLOW_ME_COMMAND,
-        { attributes: _getFollowMeState(state) }
+        { attributes: getFollowMeState(state) }
     );
 }
