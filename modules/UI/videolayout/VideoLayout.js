@@ -7,7 +7,8 @@ import {
     getLocalParticipant as getLocalParticipantFromStore,
     getPinnedParticipant,
     getParticipantById,
-    pinParticipant
+    pinParticipant,
+    getParticipantCount
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
@@ -358,10 +359,125 @@ const VideoLayout = {
             if (remoteVideo) {
                 remoteVideo.setVideoMutedView(value);
             }
+            this.moveMutedRemoteVideoToTheEndofDOM(id);
         }
 
         // large video will show avatar instead of muted stream
         this._updateLargeVideoIfDisplayed(id, true);
+    },
+
+    /**
+     * When someone mutes their video, the video being rendered as remote video in other participants
+     * will be moved to the end using DOM manipulation
+     * 
+     * Core Logic
+     *  i. Get the muted participants thumbnail id
+     *  ii. Remove the local video container first from the DOM
+     *  iii. Append a muted video to the end of DOM
+     *  iv. Identify the position to insert local thumbnail and insert it
+     */
+    moveMutedRemoteVideoToTheEndofDOM(id = 0) {
+        // default parameter id=0 for moving all muted remote videos to end of DOM
+        // when parameter id has a value, we mute only that participant and move to end of DOM
+        
+        // when there is only one participant, the console will log error when 
+        // we try to remove elements from filmstrip remote container
+        // so we dont want to execute this function if there is only one participant
+        if(getParticipantCount(APP.store.getState()) == 1) {
+            return;
+        }
+
+        //create an array to store mutedParticipantsList
+        let mutedParticipantsList = [];
+
+        // get the video muted participant's span element thumbnail from DOM
+        const mutedParticipantID = 'participant_'.concat(id);
+        const mutedParticipantThumbnail = document.getElementById(mutedParticipantID);
+        
+        // remove the local video container from DOM
+        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
+        const localTVC = document.getElementById('localVideoTileViewContainer');
+        if (localTVC) {
+            allVideosContainers.removeChild(localTVC);
+        }
+
+        // append the muted video to the end of DOM
+        if(id != 0) {
+            allVideosContainers.appendChild(mutedParticipantThumbnail);
+        }
+        
+        // identify the position as to where to insert local video thumbnail
+        // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
+        let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
+        let mutedThumbnailsCount = 0;
+        const allChildNodes = allVideosContainers.childNodes;
+        allChildNodes.forEach((child) => {
+            let participantID = child.id;
+            let i = participantID.split("_")[1];
+            let rv = remoteVideos[i];
+            if (rv.isVideoMuted) {
+                mutedThumbnailsCount = mutedThumbnailsCount + 1;
+                mutedParticipantsList.push(participantID);
+            }
+        });
+
+        if(id == 0) {
+            // loop through the array and append muted videos to the end of DOM
+            mutedParticipantsList.forEach((mutedParticipantId) => {
+                const mutedParticipantThumbnail = document.getElementById(mutedParticipantId);
+                allVideosContainers.appendChild(mutedParticipantThumbnail);
+            });
+        }
+
+        const pos = totalRemoteThumbnailsCount - mutedThumbnailsCount;
+        allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
+    },
+
+    moveMutedVideosAndAddNewVideoToTheStartOfDOM(newParticipantId) {
+        // create a javascript variable to store the HTML element for new participant and insert before first thumbnail
+        const newParticipantThumbnail = document.getElementById('participant_'.concat(newParticipantId)); 
+
+        // get all participant thumbnail videos
+        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
+
+        // insert the new participant thumbnail before the first participant
+        allVideosContainers.insertBefore(newParticipantThumbnail, allVideosContainers.firstChild);
+
+        // remove local participant thumbnail videos
+        const localTVC = document.getElementById('localVideoTileViewContainer');
+        allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
+
+        // get total thumbnails in the current conference
+        let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
+        
+        // determine which particpants are (video) muted and store their participantId in an array
+        let mutedParticipantsIdArr = [];
+        let mutedThumbnailsCount = 0;
+        const allChildNodes = allVideosContainers.childNodes;
+        allChildNodes.forEach((child) => {
+            let participantId = child.id;
+            let i = participantId.split("_")[1];
+            let rv = remoteVideos[i];
+            if (rv.isVideoMuted) {
+                mutedThumbnailsCount = mutedThumbnailsCount + 1;
+                mutedParticipantsIdArr.push(participantId);
+            }
+        });
+
+        // loop through the array and append muted videos to the end of DOM
+        mutedParticipantsIdArr.forEach((mutedParticipantId) => {
+            const mutedParticipantThumbnail = document.getElementById(mutedParticipantId);
+            allVideosContainers.appendChild(mutedParticipantThumbnail);
+        });
+
+        // position before to put local video container
+        const pos = totalRemoteThumbnailsCount - mutedThumbnailsCount;
+        if(mutedThumbnailsCount > 0) {
+            allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
+        } else {
+            allVideosContainers.appendChild(localTVC);
+        }
+        
     },
 
     /**
@@ -829,5 +945,5 @@ const VideoLayout = {
         VideoLayout.resizeVideoArea();
     }
 };
-
+export { remoteVideos };
 export default VideoLayout;

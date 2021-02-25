@@ -213,7 +213,7 @@ const KeyboardShortcut = {
             this.registerShortcut('T', null, () => {
                 sendAnalytics(createShortcutEvent('speaker.stats'));
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
-                    conference: APP.conference
+                    conference: APP.store.getState()['features/base/conference'].conference
                 }));
             }, 'keyboardShortcuts.showSpeakerStats');
         }

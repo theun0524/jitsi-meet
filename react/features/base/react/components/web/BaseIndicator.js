@@ -6,6 +6,8 @@ import React, { Component } from 'react';
 import { translate } from '../../../i18n';
 import { Icon } from '../../../icons';
 
+import s from './BaseIndicator.module.scss';
+
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
  */
@@ -102,7 +104,7 @@ class BaseIndicator extends Component<Props> {
         }
 
         return (
-            <div className = 'indicator-container'>
+            <div className = {`indicator-container ${s.indicatorContainer}`}>
                 <Tooltip
                     content = { t(tooltipKey) }
                     position = { tooltipPosition }>

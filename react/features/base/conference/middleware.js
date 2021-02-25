@@ -1,5 +1,7 @@
 // @flow
 
+import axios from 'axios';
+
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -31,6 +33,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SEND_TONES,
+    SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
 } from './actionTypes';
@@ -98,8 +101,12 @@ MiddlewareRegistry.register(store => next => action => {
 
     case RECV_VIDEO_PARTICIPANT:
         return _recvVideoParticipantDebounced(store, next, action);
+
     case SEND_TONES:
         return _sendTones(store, next, action);
+
+    case SET_PASSWORD:
+        return _setPassword(store, next, action);
 
     case SET_ROOM:
         return _setRoom(store, next, action);
@@ -504,6 +511,41 @@ function _sendTones({ getState }, next, action) {
         const { duration, tones, pause } = action;
 
         conference.sendTones(tones, duration, pause);
+    }
+
+    return next(action);
+}
+
+/**
+ * Reduces a specific Redux action SET_PASSWORD of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_PASSWORD to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setPassword({ getState }, next, action) {
+    const state = getState();
+    const { conference, method, password } = action;
+
+    switch (method) {
+    case conference.lock: {
+        const room = state['features/base/conference'].roomInfo;
+
+        if (room && password) {
+            const baseURL = getState()['features/base/connection'].locationURL;
+
+            const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+            const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+
+            try {
+                axios.patch(`${apiBaseUrl}/conferences/${room._id}`, { password });
+            } catch(err) {    
+                console.log(err);
+            }
+        }
+    }
     }
 
     return next(action);

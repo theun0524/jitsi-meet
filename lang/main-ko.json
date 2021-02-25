@@ -509,6 +509,7 @@
         "connectedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 회의에 참석했습니다",
         "connectedTwoMembers": "{{first}}님과 {{second}}님이 회의에 참석했습니다",
         "disconnected": "연결이 끊김",
+        "disconnectedByHost": "방장이 회의를 종료했습니다.",
         "focus": "컨퍼런스 포커스",
         "focusFail": "{{component}}을 사용할 수 없음 - {{ms}} 초 후에 다시 시도하십시오",
         "grantedTo": "{{to}}에게 방장 권한이 부여되었습니다!",
@@ -715,15 +716,19 @@
     },
     "speaker": "스피커",
     "speakerStats": {
+        "duration": "접속 시간",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "이름",
+        "search": "검색",
         "seconds": "{{count}}s",
         "speakerStats": "접속자 통계",
         "speakerTime": "오디오 시간", 
-        "joinTime": "접속 시간",
+        "joinTime": "시작 시간",
         "leaveTime": "종료 시간",
-        "refresh": "새로고침"
+        "refresh": "새로고침",
+        "searchLabel": "검색",
+        "searchPlaceholder": "이름 검색"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -909,7 +914,10 @@
         "muted": "음소거됨",
         "remoteControl": "원격 제어 시작 / 종료",
         "show": "화면에 표시",
-        "videomute": "참가자 카메라가 중지됨"
+        "videomute": "참가자 카메라가 중지됨",
+        "audioconnected": "마이크 사용",
+        "videoconnected": "카메라 사용",
+        "presenter": "화면 공유 중"
     },
     "welcomepage": {
         "accessibilityLabel": {
