@@ -13,7 +13,7 @@ import PrivateMessageButton from '../PrivateMessageButton';
 import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
 import { getLocalParticipant, getParticipants } from '../../../base/participants';
 
-import ChatMessageKickButton from './ChatMessageKickButton';
+import ChatMessageBanButton from './ChatMessageBanButton';
 import ChatMessageDisableButton from './ChatMessageDisableButton';
 declare var APP: Object;
 
@@ -108,11 +108,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     _renderUserControlIcon = () => {
         const popupcontent = (
-            <ul className = 'chat-control-popup-menu'>
-                <span className = 'chat-control-popup-menu-item'>
-                    <ChatMessageDisableButton key = 'chatcontroldisablebutton' visible = { true } message = { this.props.message } showLabel = { true } />
-                </span>
-                <ChatMessageKickButton message = { this.props.message } />
+            <ul className = 'overflow-menu'>
+                <ChatMessageDisableButton className='overflow-menu-item' key = 'chatcontroldisablebutton' visible = { true } message = { this.props.message } showLabel = { true } />
+                <ChatMessageBanButton className='overflow-menu-item' message = { this.props.message } visible = { true } message = { this.props.message } showLabel = { true } />
             </ul>
         );
 
@@ -137,7 +135,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             this.setState({chatMessageDialogOpen: false}); 
                         }}
                         content = { popupcontent }
-                        position = { 'right' }
+                        placement = { 'bottom' }
                         isOpen = { this.state.chatMessageDialogOpen } >
                             <div className='thumb-menu-icon' onClick = { this.toggleChatMessageDialog }>
                                 <Icon size = '1em' src = { IconMenuThumb } title = 'Remote-user chat controls' />

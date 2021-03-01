@@ -32,6 +32,7 @@ declare var APP: Object;
  type State = {
     chatHeaderMenuDialogOpen: boolean,
     showChatInput: Boolean,
+    searchQuery: String,
  }
 
 
@@ -52,6 +53,7 @@ class Chat extends AbstractChat<Props> {
     state = {
         chatHeaderMenuDialogOpen: false,
         showChatInput: true,
+        searchQuery: '',
     };
     
     /**
@@ -180,13 +182,12 @@ class Chat extends AbstractChat<Props> {
                         compact = { true }
                         id = 'chatHeaderSearchBox'
                         autoFocus = { true }
-                        placeholder =  { 'e.g. John Doe' }
+                        placeholder =  { 'Search for chat messages' }
                         shouldFitContainer = { true }
                         // eslint-disable-next-line react/jsx-no-bind
-                        onChange = { this._handleChatSearchInput }
-                        type = 'text'
-                        value = { 'e.g. John Doe' } />
-                    <div className = 'chat-header-search-icon'>
+                        onChange = { this._updateChatSearchInput }
+                        type = 'text' />
+                    <div className = 'chat-header-search-icon' onClick= { this._handleChatSearchInput } >
                         <Icon src = { IconSearch } />
                     </div>
                 </div>
@@ -206,10 +207,8 @@ class Chat extends AbstractChat<Props> {
 
     _renderChatControlIcon = () => {
         const popupcontent = (
-            <ul className='chat-control-popup-menu'>
-                <span className = 'chat-control-popup-menu-item'>
+            <ul className='overflow-menu'>
                     <ChatDisableButtonForAll key = 'allchatcontroldisablebutton' visible = { true } showLabel = { true } /> 
-                </span>
             </ul>
         );
 
@@ -225,7 +224,7 @@ class Chat extends AbstractChat<Props> {
                             this.setState({chatHeaderMenuDialogOpen: false}); 
                         }}
                         content = { popupcontent }
-                        placement = { 'bottom' }
+                        placement = { 'auto' }
                         isOpen = { this.state.chatHeaderMenuDialogOpen } >
                             <div className='thumb-menu-icon' onClick = { this.toggleChatHeaderMenuDialog }>
                                 <Icon src = { IconMenuThumb } title = 'All Remote-Users Chat Control' />
@@ -239,8 +238,44 @@ class Chat extends AbstractChat<Props> {
 
     }
 
-    _handleChatSearchInput() {
-        console.log("Inside chat header search");
+    _updateChatSearchInput = async(event) => {
+        this.setState({ searchQuery: event.target.value });
+        
+        // invoke the function that scrolls to chatMessage and highlights it
+    }
+
+    _handleChatSearchInput = () => {
+        this._scrollChatMessageAndHighlightResult(this.state.searchQuery);
+    }
+
+    _scrollChatMessageAndHighlightResult = (searchText) => {
+        // perform DOM operations to find the text and highlight it
+        var usrmsgs = document.getElementsByClassName('usermessage');
+        if(usrmsgs.length > 0) {
+            // get the inner text 
+            for( let usrmsg of usrmsgs) {
+                console.log("User message is: ", usrmsg);
+                if(usrmsg.innerText.includes(searchText)) {
+                    var individualWordsArray = usrmsg.innerText.match(/(\w+)\W/g);
+                    console.log("Individual Words array are: ", individualWordsArray);
+
+                    usrmsg.innerHTML = usrmsg.innerHTML.replace(
+                        searchText,
+                        '<span class="highlight-search-text">' + searchText + '</span>'
+                    );
+                    // individualWordsArray.forEach((word) => {
+                    //     if(word.includes(searchText)) {
+                            
+                    //     }
+                    // });
+                }
+            }
+        }
+        // $('#usermessageId').html($('#usermessageId').html().replace(searchText, newStyle));
+        // console.log("Search result length is: ", $('#searchResult').length);
+        // $('html,body').animate({ scrollTop: $('#searchResult').offset().top});
+        // document.getElementById('searchResult').style.backgroundColor = "black";
+        
     }
 
     _renderPanelContent: () => React$Node | null;

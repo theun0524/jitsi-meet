@@ -15,6 +15,9 @@ export {
     default as EnableChatForRemoteParticipantDialog
 } from './EnableChatForRemoteParticipantDialog';
 export {
+    default as BanRemoteParticipantDialog
+} from './BanRemoteParticipantDialog';
+export {
     default as EnableChatForAllParticipantsDialog
 } from './EnableChatForAllParticipantsDialog';
 export {
