@@ -7,10 +7,11 @@ import {
     ACTION_UNPINNED,
     createOfferAnswerFailedEvent,
     createPinnedEvent,
+    createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
 import { openDisplayNamePrompt } from '../../display-name';
-import { showErrorNotification } from '../../notifications';
+import { saveErrorNotification, showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
@@ -50,6 +51,8 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
+import { appNavigate } from '../../app/actions';
+import { disconnect } from '../connection';
 
 declare var APP: Object;
 
@@ -164,11 +167,25 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
     // Handle specific failure reasons.
     switch (error.name) {
+    case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
     case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
+        sendAnalytics(createToolbarEvent('hangup'));
+
+        // FIXME: these should be unified.
+        if (navigator.product === 'ReactNative') {
+            dispatch(appNavigate(undefined));
+        } else {
+            dispatch(disconnect(false));
+        }
+
+        // connection.disconnect();
+        // APP.UI.notifyMaxUsersLimitReached();
+
+        console.error('_conferenceFailed:', error);
         const [ reason ] = error.params;
 
-        dispatch(showErrorNotification({
-            description: reason,
+        dispatch(saveErrorNotification({
+            descriptionKey: `dialog.${reason || error.name}`,
             titleKey: 'dialog.sessTerminated'
         }));
 

@@ -1,5 +1,6 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import throttle from 'lodash/throttle';
 import type { Dispatch } from 'redux';
 
@@ -55,6 +56,50 @@ export function setNotificationsEnabled(enabled: boolean) {
         type: SET_NOTIFICATIONS_ENABLED,
         enabled
     };
+}
+
+/**
+ * Saves an error notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @returns {Object}
+ */
+export function saveErrorNotification(props: Object) {
+    return saveNotification({
+        ...props,
+        appearance: NOTIFICATION_TYPE.ERROR
+    });
+}
+
+/**
+ * Saves a notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @param {number} timeout - How long the notification should display before
+ * automatically being hidden.
+ * @returns {Function}
+ */
+export function saveNotification(props: Object = {}, timeout: ?number) {
+    return () => {
+        jitsiLocalStorage.setItem('saved_notification', JSON.stringify({
+            props,
+            timeout,
+            uid: window.Date.now()
+        }));
+    };    
+}
+
+/**
+ * Saves a warning notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @returns {Object}
+ */
+export function saveWarningNotification(props: Object) {
+    return saveNotification({
+        ...props,
+        appearance: NOTIFICATION_TYPE.WARNING
+    });
 }
 
 /**
