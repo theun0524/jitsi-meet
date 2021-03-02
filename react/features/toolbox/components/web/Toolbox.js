@@ -1492,7 +1492,11 @@ function _mapStateToProps(state) {
         _isVpaasMeeting: isVpaasMeeting(state),        
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
-        _tileViewVisible: !(disableTileView === true || (disableTileView === 'guest' && isGuest)),
+        _tileViewVisible: !(
+            disableTileView === true ||
+            (disableTileView === 'guest' && isGuest) ||
+            state['features/etherpad']?.editing
+        ),
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _locked: locked,
