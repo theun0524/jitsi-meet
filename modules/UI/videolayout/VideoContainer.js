@@ -565,12 +565,13 @@ export class VideoContainer extends LargeContainer {
      * TODO: refactor this since Temasys is no longer supported.
      */
     show() {
-        return new Promise(resolve => {
-            const followMe = APP.store.getState()['features/follow-me'].state || {};
-            if (this._isHidden && followMe.sharedDocumentVisible) {
-                resolve();
-            }
+        const followMe = APP.store.getState()['features/follow-me'].state || {};
 
+        if (followMe.sharedDocumentVisible === 'true') {
+            return this.hide();
+        }
+
+        return new Promise(resolve => {
             this.$wrapperParent.css('visibility', 'visible').fadeTo(
                 FADE_DURATION_MS,
                 1,
