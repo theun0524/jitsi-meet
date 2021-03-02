@@ -1067,6 +1067,7 @@ class Toolbox extends Component<Props, State> {
             this._shouldShowButton('etherpad') && !_isChatOnly
                 && <SharedDocumentButton
                     key = 'etherpad'
+                    closeOverflowMenu = { () => this._onSetOverflowVisible(false) }
                     showLabel = { true } />,
             this._shouldShowButton('videobackgroundblur')
                 && <VideoBlurButton

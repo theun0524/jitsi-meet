@@ -566,6 +566,11 @@ export class VideoContainer extends LargeContainer {
      */
     show() {
         return new Promise(resolve => {
+            const followMe = APP.store.getState()['features/follow-me'].state || {};
+            if (this._isHidden && followMe.sharedDocumentVisible) {
+                resolve();
+            }
+
             this.$wrapperParent.css('visibility', 'visible').fadeTo(
                 FADE_DURATION_MS,
                 1,

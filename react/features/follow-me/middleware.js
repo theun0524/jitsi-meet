@@ -75,14 +75,17 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const conference = getCurrentConference(state);
 
-        if (isLocalParticipantModerator(state) && (
+        if (!action.participant.local &&
+            isLocalParticipantModerator(state) && (
             state['features/base/config'].followMeEnabled ||
             state['features/base/conference'].followMeEnabled    
         )) {
-            conference.sendCommand(
-                FOLLOW_ME_COMMAND,
-                { attributes: getFollowMeState(state) }
-            );
+            setTimeout(() => {
+                conference.sendCommand(
+                    FOLLOW_ME_COMMAND,
+                    { attributes: getFollowMeState(state) }
+                );
+            }, 3000);
         }
         break;
     }
