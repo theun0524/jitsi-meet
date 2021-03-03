@@ -109,15 +109,15 @@ class SpeakerStatsItem extends Component<Props> {
         }
 
         return (
-            <div className = { rowDisplayClass }>
+            <div className = { `${rowDisplayClass} ${s.itemContainer}` }>
                 <div className = { `speaker-stats-item__name ${s.nameContainer}` }> 
                     <span className = { s.name }>{ displayName }</span>
-                    <div className = { s.indicatorContainer }>
-                        { this.displayModeratorStatus(isModerator) }
-                        { this.displayPresenterStatus(isPresenter) }
-                        { this.displayAudioStatus(audioMuted) }
-                        { this.displayVideoStatus(videoMuted) }
-                    </div>
+                </div>
+                <div className = { s.statusContainer }>
+                    { this.displayModeratorStatus(isModerator) }
+                    { this.displayPresenterStatus(isPresenter) }
+                    { this.displayAudioStatus(audioMuted) }
+                    { this.displayVideoStatus(videoMuted) }
                 </div>
                 <div className = { `speaker-stats-item__s_time ${s.joinTime}` }>
                     { formatTime(joinTime) }
@@ -139,7 +139,7 @@ class SpeakerStatsItem extends Component<Props> {
 
         if (audioMuted) {
             icon = IconMicDisabled;
-            toolTipMessage = 'videothumbnail.mute';
+            toolTipMessage = 'videothumbnail.muted';
         } else {
             icon = IconMicrophone;
             toolTipMessage = 'videothumbnail.audioconnected';
@@ -163,7 +163,7 @@ class SpeakerStatsItem extends Component<Props> {
 
         if (videoMuted) {
             icon = IconCameraDisabled;
-            toolTipMessage = 'videothumbnail.videomute'
+            toolTipMessage = 'videothumbnail.videomuted'
         }
         else {
             icon = IconCamera;
@@ -181,13 +181,15 @@ class SpeakerStatsItem extends Component<Props> {
     }
 
     displayModeratorStatus(isModerator) {
+        let toolTipMessage = isModerator ? 'videothumbnail.moderator' : '';
+
         return (
             <BaseIndicator
                 className = { isModerator ? '' : s.disabled }
                 icon = { IconCrown }
                 iconId = 'crown'
                 iconSize = { 16 }
-                tooltipKey = 'videothumbnail.moderator'
+                tooltipKey = { toolTipMessage }
                 tooltipPosition = 'top' />
         );
     }

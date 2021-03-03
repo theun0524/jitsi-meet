@@ -1,8 +1,19 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../css/variables';
+
+.itemContainer {
+    display: flex;
+    align-items: center;
+    margin: 0 5px;
+}
+
 .nameContainer {
     display: inline-flex !important;
     padding: 0 16px 0 0;
     box-sizing: border-box;
-    width: 40% !important;
+    width: 35% !important;
 
     .name {
         flex-grow: 1;
@@ -10,10 +21,11 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+}
 
-    .indicatorContainer {
-        display: flex;
-    }
+.statusContainer {
+    display: inline-flex;
+    width: 20% !important;
 }
 
 .disabled {
@@ -23,18 +35,18 @@
 }
 
 .joinTime {
-    width: 20% !important;
+    width: 15% !important;
 }
 
 .leaveTime {
-    width: 20% !important;
+    width: 15% !important;
 }
 
 .duration {
     display: inline-block;
     margin: 5px 0;
     vertical-align: middle;
-    width: 20% !important;
+    width: 15% !important;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

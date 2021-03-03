@@ -728,6 +728,7 @@
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time",
+        "status": "Status",
         "joinTime": "Join Time",
         "leaveTime": "Leave Time",
         "refresh": "Refresh",
@@ -917,6 +918,7 @@
         "remoteControl": "Start / Stop remote control",
         "show": "Show on stage",
         "videomute": "Participant has stopped the camera",
+        "videomuted": "Camera stopped",
         "audioconnected": "Participant is connected to audio",
         "videoconnected": "Participant is connected to video",
         "presenter": "Participant is sharing the desktop"

@@ -67,7 +67,11 @@ function _participantUpdated(store, { participant }) {
         { nick: participant.id }
     );
 
-    if (participant.name && participant.name !== found.name) {
+    if (!found || !participant?.name) {
+        return;
+    }
+
+    if (participant.name !== found.name) {
         dispatch(speakerStatsUpdated({
             nick: participant.id,
             name: participant.name,

@@ -23,6 +23,7 @@ import s from './SpeakerStats.module.scss';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
 import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isLocalVideoTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
 import { PARTICIPANT_ROLE } from '../../base/participants';
+import { Icon, IconSearch } from '../../base/icons';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -76,10 +77,12 @@ class SpeakerStats extends Component<Props, State> {
         this.state = {
             loading: false,
             searchQuery: '',
-            searchResult: [] //initialize the initialy state variable as an empty array
+            searchResult: [], //initialize the initialy state variable as an empty array
+            showSearch: false,
         };
 
         this._onRefresh = this._onRefresh.bind(this);
+        this._onToggleSearch = this._onToggleSearch.bind(this);
         this._customHeader = this._customHeader.bind(this);
         this.filterParticipants = this.filterParticipants.bind(this);
         this.handleSearchInput = this.handleSearchInput.bind(this);
@@ -106,10 +109,10 @@ class SpeakerStats extends Component<Props, State> {
     _onRefresh: () => void;
 
     /**
-     * Deletes a recent entry.
+     * Refresh a recent entry.
      *
-     * @param {Object} entry - The entry to be deleted.
      * @inheritdoc
+     * @returns {void}
      */
     _onRefresh() {
         const { conference, dispatch } = this.props;
@@ -120,9 +123,21 @@ class SpeakerStats extends Component<Props, State> {
         });
     }
 
+    _onToggleSearch: () => void;
+
+    /**
+     * Toggle a search input.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    _onToggleSearch() {
+        this.setState({ showSearch: !this.state.showSearch });
+    }
+
     _customHeader = (props: HeaderComponentProps) => {
         const { t } = this.props;
-        const { loading } = this.state;
+        const { loading, showSearch } = this.state;
 
         return (
             <ModalHeader {...props}>
@@ -131,9 +146,11 @@ class SpeakerStats extends Component<Props, State> {
                         { t('speakerStats.speakerStats') }
                     </span>
                     { !loading && (
-                        <div className = { s.button } onClick = { this._onRefresh }>
-                            <Tooltip content = { t('speakerStats.refresh') } position = 'top'>
-                                <RefreshIcon size = 'small' />
+                        <div
+                            className = { `${s.button} ${showSearch ? s.pressed : ''}` }
+                            onClick = { this._onToggleSearch }>
+                            <Tooltip content = { t('speakerStats.search') } position = 'top'>
+                                <Icon size = { 24 } src = { IconSearch } />
                             </Tooltip>
                         </div>
                     )}
@@ -141,7 +158,7 @@ class SpeakerStats extends Component<Props, State> {
             </ModalHeader>
         );
     };
-      
+
     /**
      * Function to handle search inputs
      * @param {Object} event from search input box
@@ -203,22 +220,25 @@ class SpeakerStats extends Component<Props, State> {
                 width = { 'large' }
                 titleKey = 'speakerStats.speakerStats'>
                 
-                <div className = 'speaker-stats-searchbox'>
-                    <FieldText
-                        compact = { true }
-                        id = 'searchBox'
-                        isLabelHidden = { true }
-                        placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
-                        shouldFitContainer = { true }
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = { this.handleSearchInput }
-                        type = 'text'
-                        value = { this.state.searchQuery } />
-                </div>
+                { this.state.showSearch && (
+                    <div className = 'speaker-stats-searchbox'>
+                        <FieldText
+                            autoFocus = { true }
+                            compact = { true }
+                            id = 'searchBox'
+                            isLabelHidden = { true }
+                            placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
+                            shouldFitContainer = { true }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onChange = { this.handleSearchInput }
+                            type = 'text'
+                            value = { this.state.searchQuery } />
+                    </div>
+                )}
 
                 <hr className = { s.divider } />
 
-                <div className = 'speaker-stats'>
+                <div className = { `speaker-stats ${s.container}` }>
                     <SpeakerStatsLabels />
                     { this.state.loading
                         ? <Spinner appearance = 'invert' />
