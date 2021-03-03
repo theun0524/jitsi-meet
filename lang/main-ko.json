@@ -489,7 +489,7 @@
         "label": "LOR",
         "labelToolTip": "로컬 녹화가 진행 중입니다.",
         "localRecording": "로컬 녹화",
-        "me": "본인",
+        "me": "나",
         "messages": {
             "engaged": "로컬 녹화가 시작되었습니다.",
             "finished": "녹화 세션 {{token}}이 완료되었습니다. 녹화된 파일을 방장에게 보내주세요.",
@@ -507,7 +507,7 @@
     },
     "lockRoomPassword": "패스워드",
     "lockRoomPasswordUppercase": "패스워드",
-    "me": "본인",
+    "me": "나",
     "notify": {
         "connectedOneMember": "{{name}}님이 회의에 참석했습니다",
         "connectedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 회의에 참석했습니다",
@@ -521,7 +521,7 @@
         "invitedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 초대되었습니다",
         "invitedTwoMembers": "{{first}}님과 {{second}}님이 초대되었습니다",
         "kickParticipant": "{{kicker}}님이 {{kicked}}님을 내보냈습니다",
-        "me": "본인",
+        "me": "나",
         "moderator": "방장 권한이 부여되었습니다!",
         "muted": "음소거로 대화가 시작되었습니다",
         "mutedTitle": "음소거 상태입니다!",

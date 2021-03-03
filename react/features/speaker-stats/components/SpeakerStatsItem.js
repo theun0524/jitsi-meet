@@ -6,10 +6,11 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 import { BaseIndicator } from '../../base/react';
 import {
-    IconMicrophone,
-    IconMicDisabled,
     IconCamera,
     IconCameraDisabled,
+    IconCrown,
+    IconMicDisabled,
+    IconMicrophone,
     IconShareDesktop
 } from '../../base/icons'
 
@@ -59,6 +60,11 @@ type Props = {
     audioMuted: boolean,
 
     /**
+     * True if speaker is moderator.
+     */
+    isModerator: boolean,
+
+    /**
      * True if speaker is presenter.
      */
     isPresenter: boolean
@@ -81,6 +87,7 @@ class SpeakerStatsItem extends Component<Props> {
             joinTime,
             leaveTime,
             duration,
+            isModerator,
             isPresenter,
             videoMuted,
             audioMuted,
@@ -105,9 +112,12 @@ class SpeakerStatsItem extends Component<Props> {
             <div className = { rowDisplayClass }>
                 <div className = { `speaker-stats-item__name ${s.nameContainer}` }> 
                     <span className = { s.name }>{ displayName }</span>
-                    { this.displayPresenterStatus(isPresenter) }
-                    { this.displayAudioStatus(audioMuted) }
-                    { this.displayVideoStatus(videoMuted) }
+                    <div className = { s.indicatorContainer }>
+                        { this.displayModeratorStatus(isModerator) }
+                        { this.displayPresenterStatus(isPresenter) }
+                        { this.displayAudioStatus(audioMuted) }
+                        { this.displayVideoStatus(videoMuted) }
+                    </div>
                 </div>
                 <div className = { `speaker-stats-item__s_time ${s.joinTime}` }>
                     { formatTime(joinTime) }
@@ -140,7 +150,7 @@ class SpeakerStatsItem extends Component<Props> {
                 className = { `audioMuted toolbar-icon ${iconClass}` }
                 icon = { icon }
                 iconId = 'mic-disabled'
-                iconSize = { 14 }
+                iconSize = { 16 }
                 tooltipKey = { toolTipMessage }
                 tooltipPosition = { 'top' } />
         );
@@ -167,6 +177,18 @@ class SpeakerStatsItem extends Component<Props> {
                 iconSize = { 16 }
                 tooltipKey = { toolTipMessage }
                 tooltipPosition = { 'top' } />
+        );
+    }
+
+    displayModeratorStatus(isModerator) {
+        return (
+            <BaseIndicator
+                className = { isModerator ? '' : s.disabled }
+                icon = { IconCrown }
+                iconId = 'crown'
+                iconSize = { 16 }
+                tooltipKey = 'videothumbnail.moderator'
+                tooltipPosition = 'top' />
         );
     }
 

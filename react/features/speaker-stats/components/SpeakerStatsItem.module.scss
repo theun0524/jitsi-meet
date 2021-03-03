@@ -7,9 +7,12 @@
     .name {
         flex-grow: 1;
         white-space: nowrap;
-        max-width: calc(100% - 42px);
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .indicatorContainer {
+        display: flex;
     }
 }
 
