@@ -239,43 +239,78 @@ class Chat extends AbstractChat<Props> {
     }
 
     _updateChatSearchInput = async(event) => {
-        this.setState({ searchQuery: event.target.value });
+        await this.setState({ searchQuery: event.target.value });
         
         // invoke the function that scrolls to chatMessage and highlights it
+        this._clearHighlightText();
+
+        // invoke a chat search function when 'enter' key is pressed as well
+        document.addEventListener('keypress', (ev) => {
+            if(ev.key === "Enter") {
+                this._handleChatSearchInput();
+            }
+        })
+
+        
     }
 
     _handleChatSearchInput = () => {
-        this._scrollChatMessageAndHighlightResult(this.state.searchQuery);
+
+        // clear highlights for pre-existing search term
+        this._clearHighlightText();
+
+        // call the function for highlighting search text
+        this.highlightTextinUserMessages(this.state.searchQuery, "highlight-search-text");
+        
     }
 
-    _scrollChatMessageAndHighlightResult = (searchText) => {
-        // perform DOM operations to find the text and highlight it
+    _clearHighlightText = () => {
+        // logic to clear highlighted text
+        var highlightedTexts = document.querySelectorAll("[class^='highlight-search-text']")
+        highlightedTexts.forEach((el) => { 
+            el.replaceWith(document.createTextNode(el.textContent)) 
+        })
+        
+        // reconstruct original chat messages
+        // when we used cleared highlight texts above, the conent was replaced with broken strings
+        // so we unified again with original text
         var usrmsgs = document.getElementsByClassName('usermessage');
         if(usrmsgs.length > 0) {
-            // get the inner text 
-            for( let usrmsg of usrmsgs) {
-                console.log("User message is: ", usrmsg);
-                if(usrmsg.innerText.includes(searchText)) {
-                    var individualWordsArray = usrmsg.innerText.match(/(\w+)\W/g);
-                    console.log("Individual Words array are: ", individualWordsArray);
-
-                    usrmsg.innerHTML = usrmsg.innerHTML.replace(
-                        searchText,
-                        '<span class="highlight-search-text">' + searchText + '</span>'
-                    );
-                    // individualWordsArray.forEach((word) => {
-                    //     if(word.includes(searchText)) {
-                            
-                    //     }
-                    // });
-                }
+            for(let usrmsg of usrmsgs) {
+                usrmsg.textContent = usrmsg.innerText;
             }
         }
-        // $('#usermessageId').html($('#usermessageId').html().replace(searchText, newStyle));
-        // console.log("Search result length is: ", $('#searchResult').length);
-        // $('html,body').animate({ scrollTop: $('#searchResult').offset().top});
-        // document.getElementById('searchResult').style.backgroundColor = "black";
-        
+
+    }
+
+    highlightTextinUserMessages = (term, hlClass, usrmsgs = document.getElementById('chatconversation')) => {
+        if(!term) {
+            console.log("Search term is empty");
+        }
+        hlClass = hlClass || "highlight-search-text";
+        term = term instanceof Array ? term.join("|") : term;
+        const highlighter = a => `<span class="${hlClass}">${a}</span>`;
+        const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+        const children = usrmsgs.childNodes;
+        for (let i=0; i < children.length; i += 1) {
+            
+            // we only want to search for usermessage
+            if(children[i].className === "display-name") {
+                continue;
+            }
+
+            if(children[i].childNodes.length) {
+                this.highlightTextinUserMessages.call(null, term, hlClass, children[i]);
+            }
+
+            let node = children[i];
+            let re = RegExp(`(${term})`, "gi");
+
+            if(node.nodeType === Node.TEXT_NODE && re.test(node.data)) {
+                node.data = node.data.replace(re, highlighter);
+                toHtml(node.parentElement);
+            }
+        }
     }
 
     _renderPanelContent: () => React$Node | null;
