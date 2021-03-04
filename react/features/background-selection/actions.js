@@ -4,6 +4,7 @@ import tokenLocalStorage from '../../api/tokenLocalStorage';
 import { setJWT } from '../base/jwt/actions';
 import { getLocalVideoTrack } from '../base/tracks';
 import { createBackgroundEffect } from '../stream-effects/background';
+import { createBackgroundEffectV2 } from '../stream-effects/background-v2';
 
 const apiBase = process.env.VMEETING_API_BASE;
 
@@ -32,7 +33,7 @@ export function submitBackgroundSelectionTab(newState) {
                 if (background) {
                     const backgroundImageUrl = `${apiBase}/backgrounds/${background}/hd`;
     
-                    createBackgroundEffect(backgroundImageUrl).then(effect => {
+                    createBackgroundEffectV2(backgroundImageUrl).then(effect => {
                         localTrack.jitsiTrack.setEffect(effect);
                     })
                 } else {

@@ -136,6 +136,7 @@ import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import { createBackgroundEffect } from './react/features/stream-effects/background';
+import { createBackgroundEffectV2 } from './react/features/stream-effects/background-v2';
 import axios from 'axios';
 import { isHost } from './react/features/base/jwt';
 
@@ -1404,7 +1405,7 @@ export default {
                     // return;
 
                     return id 
-                        ? createBackgroundEffect(`${apiBase}/backgrounds/${id}/hd`)
+                        ? createBackgroundEffectV2(`${apiBase}/backgrounds/${id}/hd`)
                             .then(backgroundEffectInstance => {
                                 console.log('background Effect:', backgroundEffectInstance);
                                 newTrack.setEffect(backgroundEffectInstance);

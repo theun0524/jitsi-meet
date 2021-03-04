@@ -15,6 +15,7 @@ import { translate } from '../../base/i18n/functions';
 import { Icon } from '../../base/icons';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { createBackgroundEffect } from '../../stream-effects/background';
+import { createBackgroundEffectV2 } from '../../stream-effects/background-v2';
 import logger from '../logger';
 
 import VideoInputPreview from './VideoInputPreview';
@@ -394,7 +395,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
     }
 
     async _createBackgroundEffect(backgroundImageUrl) {
-        const effect = await createBackgroundEffect(backgroundImageUrl);
+        const effect = await createBackgroundEffectV2(backgroundImageUrl);
 
         return effect;
     }
