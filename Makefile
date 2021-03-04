@@ -76,7 +76,6 @@ deploy-rnnoise-binary:
 deploy-tflite-binary:
 	cp \
 		$(TFLITE_WASM_DIR)/tflite/tflite.wasm \
-		$(TFLITE_WASM_DIR)/tflite/tflite-simd.wasm \
 		$(TFLITE_WASM_DIR)/models/bg_segmentation.tflite \
 		$(DEPLOY_DIR)
 
