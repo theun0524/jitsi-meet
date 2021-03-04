@@ -1,6 +1,7 @@
 // @flow
 
 import { getCurrentConference } from '../base/conference';
+import { isHost } from '../base/jwt';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
@@ -60,13 +61,13 @@ StateListenerRegistry.register(
     /* listener */ _sendFollowMeCommand);
 
 /**
- * Private selector for returning state from redux that should be respected by
+ * selector for returning state from redux that should be respected by
  * other participants while follow me is enabled.
  *
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function _getFollowMeState(state) {
+export function getFollowMeState(state) {
     const pinnedParticipant = getPinnedParticipant(state);
 
     return {
@@ -89,6 +90,8 @@ function _sendFollowMeCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
     const state = store.getState();
     const conference = getCurrentConference(state);
+    const { chatOnlyGuestEnabled, followMeEnabled } = state['features/base/config'];
+    const isGuest = !isHost(state);
 
     if (!conference) {
         return;
@@ -109,12 +112,16 @@ function _sendFollowMeCommand(
         );
 
         return;
+    } else if (typeof followMeEnabled !== 'undefined') {
+        if (!followMeEnabled) return;
     } else if (!state['features/base/conference'].followMeEnabled) {
+        return;
+    } else if (chatOnlyGuestEnabled && isGuest) {
         return;
     }
 
     conference.sendCommand(
         FOLLOW_ME_COMMAND,
-        { attributes: _getFollowMeState(state) }
+        { attributes: getFollowMeState(state) }
     );
 }

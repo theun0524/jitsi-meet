@@ -80,6 +80,8 @@ export default class JitsiStreamPresenterEffect {
         this._videoElement.autoplay = true;
         this._videoElement.srcObject = videoStream;
 
+        this._videoElement.play();
+
         // Set the background element properties
         if (!pipMode && backgroundImageUrl) {
             this._backgroundElement.src = backgroundImageUrl;

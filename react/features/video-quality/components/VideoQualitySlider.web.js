@@ -7,7 +7,7 @@ import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
-import { setPreferredVideoQuality } from '../actions';
+import { setPreferredVideoQuality } from '../../base/conference/actions';
 import { VIDEO_QUALITY_LEVELS } from '../../base/conference/constants';
 import logger from '../logger';
 

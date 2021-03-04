@@ -1,5 +1,6 @@
 /* @flow */
 
+import { toState } from '../redux';
 import { parseURLParams } from '../util';
 
 /**
@@ -13,4 +14,16 @@ import { parseURLParams } from '../util';
  */
 export function parseJWTFromURLParams(url: URL = window.location) {
     return parseURLParams(url, true, 'search').jwt;
+}
+
+/*
+ * 회의 게스트인지 판단하여 결과값을 리턴한다.
+ * jwt가 있어도 방장이 아니면 게스트로 판단한다.
+ */
+export function isHost(stateful) {
+    const state = toState(stateful);
+    const { roomInfo } = state['features/base/conference'];
+
+    return Boolean(state['features/base/jwt'].jwt) &&
+        ( roomInfo && roomInfo.isHost );
 }

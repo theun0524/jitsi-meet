@@ -220,7 +220,7 @@ class Filmstrip extends Component<Props> {
                     className={this.props._videosClassName}
                     id='remoteVideos'>
                     <div
-                        className='filmstrip__videos'
+                        className={`filmstrip__videos ${this.props._localVideoClass}`}
                         id='filmstripLocalVideo'
                         onMouseOut={this._onMouseOut}
                         onMouseOver={this._onMouseOver}>
@@ -343,9 +343,9 @@ class Filmstrip extends Component<Props> {
      */
     _renderToggleButton() {
         const icon = this.props._visible ? IconMenuDown : IconMenuUp;
-        const { t } = this.props;
+        const { _hideFilmstrip, t } = this.props;
 
-        return (
+        return !_hideFilmstrip && (
             <div className='filmstrip__toolbar'>
                 <button
                     aria-label={t('toolbar.accessibilityLabel.toggleFilmstrip')}
@@ -366,7 +366,7 @@ class Filmstrip extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { iAmSipGateway } = state['features/base/config'];
+    const { iAmSipGateway, hideLocalVideo, hideRemoteVideos } = state['features/base/config'];
     const { hovered, visible } = state['features/filmstrip'];
     const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight
@@ -384,9 +384,11 @@ function _mapStateToProps(state) {
         _currentLayout: getCurrentLayout(state),
         _filmstripOnly: isFilmstripOnly,
         _filmstripWidth: filmstripWidth,
+        _hideFilmstrip: Boolean(hideRemoteVideos && hideLocalVideo),
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _hovered: hovered,
+        _localVideoClass: Boolean(hideLocalVideo) ? 'hide' : '',
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible

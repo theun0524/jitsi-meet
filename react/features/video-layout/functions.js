@@ -108,6 +108,9 @@ export function shouldDisplayTileView(state: Object = {}) {
         // We pinned a participant
         || getPinnedParticipant(state)
 
+        // prevent auto tileview
+        || state['features/base/config'].autoTileViewDisabled
+
         // It's a 1-on-1 meeting
         || participantCount < 3
 

@@ -4,6 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconKick } from '../../../base/icons';
+import { isHost } from '../../../base/jwt';
 import { connect } from '../../../base/redux';
 import AbstractKickButton, {
     type Props
@@ -71,7 +72,7 @@ class KickButton extends AbstractKickButton {
  * @returns {Object}
  */
 function _mapStateToProps(state: Object) {
-    const shouldHide = interfaceConfig.HIDE_KICK_BUTTON_FOR_GUESTS && !state['features/base/jwt'].jwt;
+    const shouldHide = interfaceConfig.HIDE_KICK_BUTTON_FOR_GUESTS && !isHost(state);
 
     return {
         visible: !shouldHide

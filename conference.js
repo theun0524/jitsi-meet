@@ -115,9 +115,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
-import {
-    toggleLobbyMode
-} from './react/features/lobby/actions';
+import { toggleLobbyMode } from './react/features/lobby/actions';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -128,9 +126,7 @@ import {
     makePrecallTest
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
-import {
-    endRoomLockRequest
-} from './react/features/room-lock/actions';
+import { endRoomLockRequest } from './react/features/room-lock/actions';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
@@ -141,6 +137,7 @@ import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import { createBackgroundEffect } from './react/features/stream-effects/background';
 import axios from 'axios';
+import { isHost } from './react/features/base/jwt';
 
 const logger = Logger.getLogger(__filename);
 const apiBase = process.env.VMEETING_API_BASE;
@@ -359,11 +356,6 @@ class ConferenceConnector {
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
-            break;
-
-        case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
-            connection.disconnect();
-            APP.UI.notifyMaxUsersLimitReached();
             break;
 
         case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
@@ -742,13 +734,16 @@ export default {
      * @returns {Promise}
      */
     async init({ roomName }) {
+        const isGuest = !isHost(APP.store.getState());
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: config.startWithAudioMuted
                 || config.startSilent
+                || (config.chatOnlyGuestEnabled && isGuest)
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
             startWithVideoMuted: config.startWithVideoMuted
+                || (config.chatOnlyGuestEnabled && isGuest)
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
         };
 

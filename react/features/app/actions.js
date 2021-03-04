@@ -75,7 +75,7 @@ export function appNavigate(uri: ?string) {
         let location = parseURIString(uri);
         const params = getParams(uri);
 
-        console.log(uri, params, 'appNavigate');
+        console.log('appNavigate:', uri, params);
 
         // If the specified location (URI) does not identify a host, use the app's
         // default.
@@ -184,11 +184,11 @@ export function appNavigate(uri: ?string) {
             const savedToken = tokenLocalStorage.getItemByURL(willAuthenticateURL);
             if (savedToken) {
                 dispatch(setJWT(savedToken));
-            } else if (params.token) {
+            } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
                 tokenLocalStorage.setItemByURL(willAuthenticateURL, params.token);
                 dispatch(setJWT(params.token));
             }
-        } else if (params.token) {
+        } else if (params.token && tokenLocalStorage.validateToken(null, params.token)) {
             dispatch(setJWT(params.token));
         } else {
             // 새로운 사용자에 대한 SSO 로그인을 수행하기 위해
@@ -251,12 +251,7 @@ export function appNavigate(uri: ?string) {
             } else if (!userTenant) {
                 apiUrl = `${apiBase}/conferences`;
             } else {
-                const { protocol, host, port } = location;
-                if (port) {
-                    dispatch(appNavigate(`${protocol}//${host}:${port}/${userTenant}/${room}`));
-                } else {
-                    dispatch(appNavigate(`${protocol}//${host}/${userTenant}/${room}`));
-                }
+                dispatch(appNavigate(`${protocol}//${host}/${userTenant}/${room}`));
                 return;
             }
 

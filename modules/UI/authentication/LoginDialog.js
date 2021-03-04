@@ -3,6 +3,7 @@
 import axios from 'axios';
 
 import { getLocationURL, getAuthUrl } from '../../../react/api/url';
+import tokenLocalStorage from '../../../react/api/tokenLocalStorage';
 import { getCurrentUser } from '../../../react/features/base/auth/functions';
 import { disconnect } from '../../../react/features/base/connection';
 import { toJid } from '../../../react/features/base/connection/functions';
@@ -259,7 +260,8 @@ export default {
         const user = getCurrentUser(APP.store.getState());
         const error = getLicenseError();
         const msgTitleKey = error ? 'dialog.LicenseError' : 'dialog.WaitingForHost';
-        const description = user ? (msg_errors[error] || msg_waiting) : msg;
+        let description = user ? (msg_errors[error] || msg_waiting) : msg;
+        const { waitOnlyGuestEnabled } = APP.store.getState()['features/base/config'];
 
         if (!user && !error) {
             buttons = [
@@ -276,6 +278,11 @@ export default {
                 ];
         }
 
+        if (waitOnlyGuestEnabled) {
+            description = msg_waiting;
+            buttons = [];
+        }
+
         return APP.UI.messageHandler.openDialog(
             msgTitleKey,
             description,
@@ -287,11 +294,9 @@ export default {
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
-                    const state = APP.store.getState();
                     const apiBase = getAuthUrl();
                     axios.get(`${apiBase}/logout`).then(() => {
-                        // dispatch(setCurrentUser());
-                        tokenLocalStorage.removeItem(getLocationURL(state));
+                        tokenLocalStorage.removeItem(APP.store.getState());
                         APP.store.dispatch(setJWT());
                         onAuthNow();
                     });

@@ -1,5 +1,6 @@
 // @flow
 
+import FieldText from '@atlaskit/field-text';
 import RefreshIcon from '@atlaskit/icon/glyph/refresh';
 import {
     HeaderComponentProps,
@@ -7,21 +8,22 @@ import {
 } from '@atlaskit/modal-dialog';
 import Spinner from '@atlaskit/spinner';
 import Tooltip from '@atlaskit/tooltip';
-import axios from 'axios';
-import { keyBy } from 'lodash';
+import { filter, keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { loadSpeakerStats } from '../actions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import s from './SpeakerStats.module.scss';
-
-declare var interfaceConfig: Object;
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
+import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isLocalVideoTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
+import { PARTICIPANT_ROLE } from '../../base/participants';
+import { Icon, IconSearch } from '../../base/icons';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -29,18 +31,9 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
-     * The display name for the local participant obtained from the redux store.
-     */
-    _localDisplayName: string,
-
-    /**
      * The JitsiConference from which stats will be pulled.
      */
     conference: Object,
-
-    baseURL: Object,
-
-    participants: Object,
 
     /**
      * The function to translate human-readable text.
@@ -53,19 +46,17 @@ type Props = {
  */
 type State = {
 
-    /**
-     * The stats summary provided by the JitsiConference.
-     */
-    stats: Object,
-
-    /**
-     * The participant logs provided by the JitsiConference.
-     */
-    logs: Object,
-
     loading: Boolean,
 
-    participants: Object
+    /**
+     * The search query inserted by the user
+     */
+    searchQuery: String,
+
+    /**
+     * An array of items object containing search results to be returned
+     */
+    searchResult: Array
 };
 
 /**
@@ -74,8 +65,6 @@ type State = {
  * @extends Component
  */
 class SpeakerStats extends Component<Props, State> {
-    _updateInterval: IntervalID;
-
     /**
      * Initializes a new SpeakerStats instance.
      *
@@ -86,15 +75,17 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: this.props.conference.getSpeakerStats(),
-            logs: {},
-            loading: false
+            loading: false,
+            searchQuery: '',
+            searchResult: [], //initialize the initialy state variable as an empty array
+            showSearch: false,
         };
 
-        // Bind event handlers so they are only bound once per instance.
-        this._updateStats = this._updateStats.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
+        this._onToggleSearch = this._onToggleSearch.bind(this);
         this._customHeader = this._customHeader.bind(this);
+        this.filterParticipants = this.filterParticipants.bind(this);
+        this.handleSearchInput = this.handleSearchInput.bind(this);
     }
 
     /**
@@ -103,9 +94,7 @@ class SpeakerStats extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._loadStatsFromDB();
-
-        this._updateInterval = setInterval(this._updateStats, 1000);
+        this._onRefresh();
     }
 
     /**
@@ -115,25 +104,40 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {void}
      */
     componentWillUnmount() {
-        clearInterval(this._updateInterval);
     }
 
     _onRefresh: () => void;
 
     /**
-     * Deletes a recent entry.
+     * Refresh a recent entry.
      *
-     * @param {Object} entry - The entry to be deleted.
      * @inheritdoc
+     * @returns {void}
      */
     _onRefresh() {
+        const { conference, dispatch } = this.props;
+        
         this.setState({ loading: true });
-        this._loadStatsFromDB();
+        dispatch(loadSpeakerStats(conference.room.meetingId)).then(() => {
+            this.setState({ loading: false });
+        });
+    }
+
+    _onToggleSearch: () => void;
+
+    /**
+     * Toggle a search input.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    _onToggleSearch() {
+        this.setState({ showSearch: !this.state.showSearch });
     }
 
     _customHeader = (props: HeaderComponentProps) => {
         const { t } = this.props;
-        const { loading } = this.state;
+        const { loading, showSearch } = this.state;
 
         return (
             <ModalHeader {...props}>
@@ -142,9 +146,11 @@ class SpeakerStats extends Component<Props, State> {
                         { t('speakerStats.speakerStats') }
                     </span>
                     { !loading && (
-                        <div className = { s.button } onClick = { this._onRefresh }>
-                            <Tooltip content = { t('speakerStats.refresh') } position = 'top'>
-                                <RefreshIcon size = 'small' />
+                        <div
+                            className = { `${s.button} ${showSearch ? s.pressed : ''}` }
+                            onClick = { this._onToggleSearch }>
+                            <Tooltip content = { t('speakerStats.search') } position = 'top'>
+                                <Icon size = { 24 } src = { IconSearch } />
                             </Tooltip>
                         </div>
                     )}
@@ -152,7 +158,32 @@ class SpeakerStats extends Component<Props, State> {
             </ModalHeader>
         );
     };
-      
+
+    /**
+     * Function to handle search inputs
+     * @param {Object} event from search input box
+     */
+    handleSearchInput = event => {
+        this.setState(
+            { searchQuery: event.target.value },
+            () => this.filterParticipants(this.state.searchQuery)
+        );
+    }
+
+    /**
+     * Core function that filters participants based on the search input
+     * @param {String} filterText the string from search input, based upon which to filter result
+     */
+    filterParticipants = filterText => {
+        const { stats } = this.props;
+        filterText = filterText.toLowerCase();
+        this.setState({
+            searchResult: filter(stats, ({ name }) =>
+                name && name.toLowerCase().includes(filterText)
+            )
+        });
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -160,102 +191,61 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const userIds = Object.keys(this.state.stats);
-        const items = userIds.map(userId => this._createStatsItem(userId));
+        const { searchQuery, searchResult } = this.state;
+        const { stats } = this.props;
+        let items = [];
+
+        if (searchQuery) {
+            items = map(searchResult, item => (
+                <SpeakerStatsItem
+                    hasLeft = { Boolean(item.leaveTime) }
+                    key = { item.nick }
+                    { ...item } />
+            ));
+        } else {
+            //first created items, when there has been no search text or search result
+            items = map(stats, item => (
+                <SpeakerStatsItem
+                    hasLeft = { Boolean(item.leaveTime) }
+                    key = { item.nick }
+                    { ...item } />
+            ));
+        }
 
         return (
             <Dialog
                 cancelKey = { 'dialog.close' }
                 customHeader = { this._customHeader }
-                submitDisabled = { true }>
-                <div className = 'speaker-stats'>
+                submitDisabled = { true }
+                width = { 'large' }
+                titleKey = 'speakerStats.speakerStats'>
+                
+                { this.state.showSearch && (
+                    <div className = 'speaker-stats-searchbox'>
+                        <FieldText
+                            autoFocus = { true }
+                            compact = { true }
+                            id = 'searchBox'
+                            isLabelHidden = { true }
+                            placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
+                            shouldFitContainer = { true }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onChange = { this.handleSearchInput }
+                            type = 'text'
+                            value = { this.state.searchQuery } />
+                    </div>
+                )}
+
+                <hr className = { s.divider } />
+
+                <div className = { `speaker-stats ${s.container}` }>
                     <SpeakerStatsLabels />
-                    { this.state.loading ? <Spinner appearance = 'invert' /> : items }
+                    { this.state.loading
+                        ? <Spinner appearance = 'invert' />
+                        : items }
                 </div>
             </Dialog>
         );
-    }
-
-    /**
-     * Create a SpeakerStatsItem instance for the passed in user id.
-     *
-     * @param {string} userId -  User id used to look up the associated
-     * speaker stats from the jitsi library.
-     * @returns {SpeakerStatsItem|null}
-     * @private
-     */
-    _createStatsItem(userId) {
-        const statsModel = this.state.stats[userId];
-        const logModel = this.state.logs[userId];
-
-        if (!statsModel || !logModel) {
-            return null;
-        }
-
-        const isDominantSpeaker = statsModel.isDominantSpeaker();
-        const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
-        const hasLeft = statsModel.hasLeft();
-
-        const participantLog = logModel;
-
-        let displayName;
-
-        if (statsModel.isLocalStats()) {
-            const { t } = this.props;
-            const meString = t('me');
-
-            displayName = this.props._localDisplayName;
-            displayName
-                = displayName ? `${displayName} (${meString})` : meString;
-        } else {
-            displayName
-                = this.state.stats[userId].getDisplayName()
-                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-        }
-
-        return (
-            <SpeakerStatsItem
-                displayName = { displayName }
-                dominantSpeakerTime = { dominantSpeakerTime }
-                hasLeft = { hasLeft }
-                isDominantSpeaker = { isDominantSpeaker }
-                participantLog = { participantLog }
-                key = { userId } />
-        );
-    }
-
-    _updateStats: () => void;
-
-    /**
-     * Update the internal state with the latest speaker stats.
-     *
-     * @returns {void}
-     * @private
-     */
-    _updateStats() {
-        const stats = this.props.conference.getSpeakerStats();
-
-        this.setState({ ...this.state, stats: stats });
-    }
-
-    _loadStatsFromDB: () => void;
-
-    _loadStatsFromDB(){
-        const { conference, baseURL } = this.props;
-        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
-        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-
-        const apiUrl = `${apiBaseUrl}/plog?meeting_id=${conference.room.meetingId}`;
-
-        try{
-            axios.get(apiUrl).then(logs => {
-                console.log(this.state.stats, logs);
-                this.setState({ logs: keyBy(logs.data, 'nick'), loading: false });
-            });
-        }
-        catch(err){    
-            console.log(err);
-        }
     }
 }
 
@@ -264,23 +254,37 @@ class SpeakerStats extends Component<Props, State> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {{
- *     _localDisplayName: ?string
- * }}
+ * @returns Object
  */
 function _mapStateToProps(state) {
-    const localParticipant = getLocalParticipant(state);
+    const tracks = state['features/base/tracks'];
+    const participants = keyBy(state['features/base/participants'], 'id');
+    const stats = state['features/speaker-stats'];
 
     return {
-        /**
-         * The local display name.
-         *
-         * @private
-         * @type {string|undefined}
-         */
-        _localDisplayName: localParticipant && localParticipant.name,
-        baseURL: state['features/base/connection'].locationURL,
-        participants: state['features/base/participants']
+        stats: map(stats.items, item => {
+            const p = participants[item.nick];
+
+            if (p) {
+                const videoTrack = p.local
+                    ? getLocalVideoTrack(tracks)
+                    : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, item.nick);
+
+                return {
+                    ...item,
+                    local: p.local,
+                    audioMuted: p.local
+                        ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
+                        : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, item.nick),
+                    videoMuted: p.local
+                        ? isLocalVideoTrackMuted(tracks)
+                        : !videoTrack || videoTrack.muted,
+                    isModerator: p.role === PARTICIPANT_ROLE.MODERATOR,
+                    isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
+                }
+            }
+            return item;
+        })
     };
 }
 

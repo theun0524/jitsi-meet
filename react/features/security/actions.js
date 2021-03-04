@@ -1,11 +1,10 @@
 // @flow
 
+import axios from 'axios';
 import type { Dispatch } from 'redux';
 
 import { toggleDialog } from '../base/dialog';
 import { SecurityDialog } from './components/security-dialog';
-
-import axios from 'axios';
 
 import {
     SET_PUBLIC_SCOPE_ENABLED
@@ -28,10 +27,10 @@ export function toggleScope() {
 
         if (room) {
             const baseURL = getState()['features/base/connection'].locationURL;
-    
+
             const AUTH_API_BASE = process.env.VMEETING_API_BASE;
             const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
-    
+
             try {
                 axios.patch(`${apiBaseUrl}/conferences/${room._id}`, {
                     scope: !room.scope

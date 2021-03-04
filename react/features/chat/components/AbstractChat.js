@@ -108,6 +108,6 @@ export function _mapStateToProps(state: Object) {
     return {
         _isOpen: isOpen,
         _messages: messages,
-        _showNamePrompt: !_localParticipant.name
+        _showNamePrompt: !_localParticipant?.name
     };
 }

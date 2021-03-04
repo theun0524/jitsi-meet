@@ -34,8 +34,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="false"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <service
@@ -46,7 +45,9 @@
             </intent-filter>
         </service>
 
-        <service android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService" />
+        <service
+            android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
+            android:foregroundServiceType="mediaProjection" />
     </application>
 
 </manifest>

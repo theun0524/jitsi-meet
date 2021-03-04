@@ -2,8 +2,10 @@
 
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
+import InView from 'react-native-component-inview';
 
 import { Container, Platform } from '../../../base/react';
+import { recvVideoParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isFilmstripVisible } from '../../functions';
@@ -77,6 +79,7 @@ class Filmstrip extends Component<Props> {
         // do not have much of a choice but to continue rendering LocalThumbnail
         // as any other remote Thumbnail on Android.
         this._separateLocalThumbnail = Platform.OS !== 'android';
+        this._visibles = new Set();
     }
 
     /**
@@ -117,9 +120,12 @@ class Filmstrip extends Component<Props> {
 
                         this._sort(_participants, isNarrowAspectRatio)
                             .map(p => (
-                                <Thumbnail
+                                <InView
+                                    collapsable = { false }
                                     key = { p.id }
-                                    participant = { p } />))
+                                    onChange = { visible => this._checkVisible(p.id, visible) }>
+                                    <Thumbnail participant = { p } />
+                                </InView>))
 
                     }
                     {
@@ -162,6 +168,23 @@ class Filmstrip extends Component<Props> {
         }
 
         return sortedParticipants;
+    }
+
+    /**
+     * Handle thumbnail entered in viewport
+     */
+    _checkVisible(userId, visible) {
+        if ((visible && !this._visibles.has(userId))
+            || (!visible && this._visibles.has(userId))) {
+            if (visible) {
+                this._visibles.add(userId);
+            } else {
+                this._visibles.delete(userid);
+            }
+            
+            console.log('_checkVisible:', userId, visible);
+            this.props.dispatch(recvVideoParticipant(userId, visible));
+        }
     }
 }
 

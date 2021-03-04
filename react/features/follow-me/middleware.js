@@ -1,9 +1,12 @@
 // @flow
 
+import { getCurrentConference } from '../base/conference';
 import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
     getParticipantById,
     getPinnedParticipant,
+    isLocalParticipantModerator,
+    PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     pinParticipant
 } from '../base/participants';
@@ -20,6 +23,7 @@ import { isFollowMeActive } from './functions';
 import logger from './logger';
 
 import './subscriber';
+import { getFollowMeState } from './subscriber';
 
 declare var APP: Object;
 
@@ -65,6 +69,24 @@ MiddlewareRegistry.register(store => next => action => {
             FOLLOW_ME_COMMAND, ({ attributes }, id) => {
                 _onFollowMeCommand(attributes, id, store);
             });
+        break;
+    }
+    case PARTICIPANT_JOINED: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (!action.participant.local &&
+            isLocalParticipantModerator(state) && (
+            state['features/base/config'].followMeEnabled ||
+            state['features/base/conference'].followMeEnabled    
+        )) {
+            setTimeout(() => {
+                conference.sendCommand(
+                    FOLLOW_ME_COMMAND,
+                    { attributes: getFollowMeState(state) }
+                );
+            }, 3000);
+        }
         break;
     }
     case PARTICIPANT_LEFT:
@@ -125,6 +147,11 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         return;
     }
 
+    const documentManager = APP.UI.getSharedDocumentManager();
+    if (!documentManager) {
+        return;
+    }
+
     const oldState = state['features/follow-me'].state || {};
 
     store.dispatch(setFollowMeState(attributes));
@@ -144,7 +171,6 @@ function _onFollowMeCommand(attributes = {}, id, store) {
     if (typeof APP !== 'undefined'
         && oldState.sharedDocumentVisible !== attributes.sharedDocumentVisible) {
         const isEtherpadVisible = attributes.sharedDocumentVisible === 'true';
-        const documentManager = APP.UI.getSharedDocumentManager();
 
         if (documentManager
                 && isEtherpadVisible !== state['features/etherpad'].editing) {

@@ -496,7 +496,6 @@ export function recvVideoParticipant(participantId, toRecvVideo) {
         }
     };
 }
-
 /**
  * Creates an action which notifies the app that the loadable URL of the avatar of a participant got updated.
  *

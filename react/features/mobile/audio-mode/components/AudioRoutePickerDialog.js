@@ -17,6 +17,8 @@ import {
 import { connect } from '../../../base/redux';
 import { ColorPalette, type StyleType } from '../../../base/styles';
 
+import { BackHandler } from "react-native";
+
 import styles from './styles';
 
 const { AudioMode } = NativeModules;
@@ -321,6 +323,21 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 { content }
             </BottomSheet>
         );
+    }
+
+    backAction = () => {
+        return this.props.dispatch(hideDialog());
+    };
+    
+    componentDidMount() {
+        this.backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            this.backAction
+        );
+    }
+
+    componentWillUnmount() {
+        this.backHandler.remove();
     }
 }
 

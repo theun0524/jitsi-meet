@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { getName } from '../../app/functions';
+import { speakerStatsLoaded } from '../../speaker-stats';
 import { endpointMessageReceived } from '../../subtitles';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
@@ -447,6 +448,8 @@ export function createConference() {
         sendLocalParticipant(state, conference);
 
         conference.join(password);
+
+        dispatch(speakerStatsLoaded([]));
     };
 }
 

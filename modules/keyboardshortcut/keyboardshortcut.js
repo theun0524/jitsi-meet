@@ -39,7 +39,9 @@ let enabled = true;
  */
 const KeyboardShortcut = {
     init() {
-        if (interfaceConfig.DISABLE_SHORTCUT) {
+        const { disableShortcut } = APP.store.getState()['features/base/config'];
+
+        if (disableShortcut) {
             return;
         }
 
@@ -211,7 +213,7 @@ const KeyboardShortcut = {
             this.registerShortcut('T', null, () => {
                 sendAnalytics(createShortcutEvent('speaker.stats'));
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
-                    conference: APP.conference
+                    conference: APP.store.getState()['features/base/conference'].conference
                 }));
             }, 'keyboardShortcuts.showSpeakerStats');
         }

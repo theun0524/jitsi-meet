@@ -1,14 +1,17 @@
 // @flow
 
+import axios from 'axios';
+
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
     createOfferAnswerFailedEvent,
     createPinnedEvent,
+    createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
 import { openDisplayNamePrompt } from '../../display-name';
-import { showErrorNotification } from '../../notifications';
+import { saveErrorNotification, showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
@@ -31,6 +34,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SEND_TONES,
+    SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
 } from './actionTypes';
@@ -47,6 +51,8 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
+import { appNavigate } from '../../app/actions';
+import { disconnect } from '../connection';
 
 declare var APP: Object;
 
@@ -101,6 +107,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SEND_TONES:
         return _sendTones(store, next, action);
+
+    case SET_PASSWORD:
+        return _setPassword(store, next, action);
 
     case SET_ROOM:
         return _setRoom(store, next, action);
@@ -158,11 +167,25 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
     // Handle specific failure reasons.
     switch (error.name) {
+    case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
     case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
+        sendAnalytics(createToolbarEvent('hangup'));
+
+        // FIXME: these should be unified.
+        if (navigator.product === 'ReactNative') {
+            dispatch(appNavigate(undefined));
+        } else {
+            dispatch(disconnect(false));
+        }
+
+        // connection.disconnect();
+        // APP.UI.notifyMaxUsersLimitReached();
+
+        console.error('_conferenceFailed:', error);
         const [ reason ] = error.params;
 
-        dispatch(showErrorNotification({
-            description: reason,
+        dispatch(saveErrorNotification({
+            descriptionKey: `dialog.${reason || error.name}`,
             titleKey: 'dialog.sessTerminated'
         }));
 
@@ -469,7 +492,7 @@ function _recvVideoParCallback({ getState }, next, action) {
 
     const participants = state['features/base/participants'];
     const recvVideoPars = new Set(participants
-                                    .filter(p => (p.toRecvVideo === true || p.pinned === true))
+                                    .filter(p => p.toRecvVideo === true || p.pinned === true)
                                     .map(p => p.id));
 
     // Because the data is written to redux AFTER this function happen, we need to
@@ -505,6 +528,41 @@ function _sendTones({ getState }, next, action) {
         const { duration, tones, pause } = action;
 
         conference.sendTones(tones, duration, pause);
+    }
+
+    return next(action);
+}
+
+/**
+ * Reduces a specific Redux action SET_PASSWORD of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_PASSWORD to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setPassword({ getState }, next, action) {
+    const state = getState();
+    const { conference, method, password } = action;
+
+    switch (method) {
+    case conference.lock: {
+        const room = state['features/base/conference'].roomInfo;
+
+        if (room && password) {
+            const baseURL = getState()['features/base/connection'].locationURL;
+
+            const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+            const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+
+            try {
+                axios.patch(`${apiBaseUrl}/conferences/${room._id}`, { password });
+            } catch(err) {    
+                console.log(err);
+            }
+        }
+    }
     }
 
     return next(action);

@@ -61,6 +61,9 @@ MiddlewareRegistry.register(store => next => action => {
                 action.participant.id,
                 action.participant.connectionStatus);
         }
+
+        // move muted videos to the end of DOM, default id=0, no parameter passed
+        // VideoLayout.moveMutedRemoteVideoToTheEndofDOM();
         break;
     }
 
@@ -79,6 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED:
         if (!action.track.local) {
             VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
+            VideoLayout.moveMutedVideosAndAddNewVideoToTheStartOfDOM(action.track.participantId);
         }
 
         break;

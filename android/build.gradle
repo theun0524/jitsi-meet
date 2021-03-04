@@ -16,12 +16,38 @@ buildscript {
     }
 }
 
+ext {
+    buildToolsVersion = "30.0.3"
+    compileSdkVersion = 30
+    minSdkVersion    = 23
+    targetSdkVersion = 30
+    supportLibVersion = "28.0.0"
+
+    // The Maven artifact groupdId of the third-party react-native modules which
+    // Jitsi Meet SDK for Android depends on and which are not available in
+    // third-party Maven repositories so we have to deploy to a Maven repository
+    // of ours.
+    moduleGroupId = 'com.facebook.react'
+
+    // Maven repo where artifacts will be published
+    mavenRepo = System.env.MVN_REPO ?: ""
+    mavenUser = System.env.MVN_USER ?: ""
+    mavenPassword = System.env.MVN_PASSWORD ?: ""
+
+    // Libre build
+    libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
+
+    googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
+}
+
 allprojects {
     repositories {
         google()
         jcenter()
         // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
+        // Android JSC is installed from npm.
+        maven { url("$rootDir/../node_modules/jsc-android/dist") }
     }
 
     // Make sure we use the react-native version in node_modules and not the one

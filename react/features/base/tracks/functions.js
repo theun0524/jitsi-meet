@@ -1,7 +1,7 @@
 /* global APP */
 
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, setAudioMuted } from '../media';
+import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
@@ -381,6 +381,18 @@ export function isLocalTrackMuted(tracks, mediaType) {
     const track = getLocalTrack(tracks, mediaType);
 
     return !track || track.muted;
+}
+
+/**
+ * Checks if the local video track is of type DESKtOP.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isLocalVideoTrackDesktop(state) {
+    const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
+
+    return videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
 }
 
 /**

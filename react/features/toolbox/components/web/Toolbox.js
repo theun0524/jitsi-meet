@@ -25,6 +25,7 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
+import { isHost } from '../../../base/jwt';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -283,52 +284,56 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        if (!interfaceConfig.DISABLE_SHORTCUT) {
-            const KEYBOARD_SHORTCUTS = [
-                this._shouldShowButton('videoquality') && {
-                    character: 'A',
-                    exec: this._onShortcutToggleVideoQuality,
-                    helpDescription: 'toolbar.callQuality'
-                },
-                this._shouldShowButton('chat') && {
-                    character: 'C',
-                    exec: this._onShortcutToggleChat,
-                    helpDescription: 'keyboardShortcuts.toggleChat'
-                },
-                this._shouldShowButton('desktop') && {
-                    character: 'D',
-                    exec: this._onShortcutToggleScreenshare,
-                    helpDescription: 'keyboardShortcuts.toggleScreensharing'
-                },
-                this._shouldShowButton('raisehand') && {
-                    character: 'R',
-                    exec: this._onShortcutToggleRaiseHand,
-                    helpDescription: 'keyboardShortcuts.raiseHand'
-                },
-                this._shouldShowButton('fullscreen') && {
-                    character: 'S',
-                    exec: this._onShortcutToggleFullScreen,
-                    helpDescription: 'keyboardShortcuts.fullScreen'
-                },
-                this._shouldShowButton('tileview') && {
-                    character: 'W',
-                    exec: this._onShortcutToggleTileView,
-                    helpDescription: 'toolbar.tileViewToggle'
-                }
-            ];
-    
-            KEYBOARD_SHORTCUTS.forEach(shortcut => {
-                if (typeof shortcut === 'object') {
-                    APP.keyboardshortcut.registerShortcut(
-                        shortcut.character,
-                        null,
-                        shortcut.exec,
-                        shortcut.helpDescription);
-                }
-            });
-        }
+        const { disableShortcut } = APP.store.getState()['features/base/config'];
 
         window.addEventListener('resize', this._onResize);
+
+        if (disableShortcut) {
+            return;
+        }
+
+        const KEYBOARD_SHORTCUTS = [
+            this._shouldShowButton('videoquality') && {
+                character: 'A',
+                exec: this._onShortcutToggleVideoQuality,
+                helpDescription: 'toolbar.callQuality'
+            },
+            this._shouldShowButton('chat') && {
+                character: 'C',
+                exec: this._onShortcutToggleChat,
+                helpDescription: 'keyboardShortcuts.toggleChat'
+            },
+            this._shouldShowButton('desktop') && {
+                character: 'D',
+                exec: this._onShortcutToggleScreenshare,
+                helpDescription: 'keyboardShortcuts.toggleScreensharing'
+            },
+            this._shouldShowButton('raisehand') && {
+                character: 'R',
+                exec: this._onShortcutToggleRaiseHand,
+                helpDescription: 'keyboardShortcuts.raiseHand'
+            },
+            this._shouldShowButton('fullscreen') && {
+                character: 'S',
+                exec: this._onShortcutToggleFullScreen,
+                helpDescription: 'keyboardShortcuts.fullScreen'
+            },
+            this._shouldShowButton('tileview') && {
+                character: 'W',
+                exec: this._onShortcutToggleTileView,
+                helpDescription: 'toolbar.tileViewToggle'
+            }
+        ];
+
+        KEYBOARD_SHORTCUTS.forEach(shortcut => {
+            if (typeof shortcut === 'object') {
+                APP.keyboardshortcut.registerShortcut(
+                    shortcut.character,
+                    null,
+                    shortcut.exec,
+                    shortcut.helpDescription);
+            }
+        });
     }
 
     /**
@@ -1017,6 +1022,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _feedbackConfigured,
             _fullScreen,
+            _isChatOnly,
             _isLiveStreaming,
             _isRecording,
             _isStatsVisible,
@@ -1030,7 +1036,7 @@ class Toolbox extends Component<Props, State> {
                 && <OverflowMenuProfileItem
                     key = 'profile'
                     onClick = { this._onToolbarToggleProfile } />,
-            this._shouldShowButton('videoquality')
+            this._shouldShowButton('videoquality') && !_isChatOnly
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
                     onClick = { this._onToolbarOpenVideoQuality } />,
@@ -1041,14 +1047,16 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true }
-                visible = { _isRecording ? false : undefined } />,
-            <RecordButton
-                key = 'record'
-                showLabel = { true }
-                visible = { _isLiveStreaming ? false : undefined } />,
+            this._shouldShowButton('livestreaming')
+                && <LiveStreamButton
+                    key = 'livestreaming'
+                    showLabel = { true }
+                    visible = { _isRecording ? false : undefined } />,
+            this._shouldShowButton('recording')
+                && <RecordButton
+                    key = 'record'
+                    showLabel = { true }
+                    visible = { _isLiveStreaming ? false : undefined } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
@@ -1056,22 +1064,26 @@ class Toolbox extends Component<Props, State> {
                     key = 'sharedvideo'
                     onClick = { this._onToolbarToggleSharedVideo }
                     text = { _sharingVideo ? t('toolbar.stopSharedVideo') : t('toolbar.sharedvideo') } />,
-            this._shouldShowButton('etherpad')
+            this._shouldShowButton('etherpad') && !_isChatOnly
                 && <SharedDocumentButton
                     key = 'etherpad'
+                    closeOverflowMenu = { () => this._onSetOverflowVisible(false) }
                     showLabel = { true } />,
-            <VideoBlurButton
-                key = 'videobackgroundblur'
-                showLabel = { true }
-                visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
-            <SettingsButton
-                key = 'settings'
-                showLabel = { true }
-                visible = { this._shouldShowButton('settings') } />,
-            <MuteEveryoneButton
-                key = 'mute-everyone'
-                showLabel = { true }
-                visible = { this._shouldShowButton('mute-everyone') } />,
+            this._shouldShowButton('videobackgroundblur')
+                && <VideoBlurButton
+                    key = 'videobackgroundblur'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+            this._shouldShowButton('settings') && !_isChatOnly
+                && <SettingsButton
+                    key = 'settings'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('settings') } />,
+            this._shouldShowButton('mute-everyone')
+                && <MuteEveryoneButton
+                    key = 'mute-everyone'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('mute-everyone') } />,
             this._shouldShowButton('stats') && _isStatsVisible
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
@@ -1204,7 +1216,8 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderAudioButton() {
-        return this._shouldShowButton('microphone')
+        const { _isChatOnly } = this.props;
+        return this._shouldShowButton('microphone') && !_isChatOnly
             ? <AudioSettingsButton
                 key = 'asb'
                 visible = { true } />
@@ -1217,7 +1230,8 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderVideoButton() {
-        return this._shouldShowButton('camera')
+        const { _isChatOnly } = this.props;
+        return this._shouldShowButton('camera') && !_isChatOnly
             ? <VideoSettingsButton
                 key = 'vsb'
                 visible = { true } />
@@ -1234,6 +1248,7 @@ class Toolbox extends Component<Props, State> {
             _chatOpen,
             _overflowMenuVisible,
             _raisedHand,
+            _tileViewVisible,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -1291,7 +1306,7 @@ class Toolbox extends Component<Props, State> {
             buttonsRight.push('security');
         }
 
-        if (this._shouldShowButton('tileview')) {
+        if (this._shouldShowButton('tileview') && _tileViewVisible) {
             buttonsRight.push('tileview');
         }
         if (this._shouldShowButton('localrecording')) {
@@ -1370,7 +1385,7 @@ class Toolbox extends Component<Props, State> {
                                 this._onToolbarOpenLocalRecordingInfoDialog
                             } />
                     }
-                    { buttonsRight.indexOf('tileview') !== -1
+                    { buttonsRight.indexOf('tileview') !== -1 && _tileViewVisible
                         && <TileViewButton /> }
                     { buttonsRight.indexOf('invite') !== -1
                         && <ToolbarButton
@@ -1423,8 +1438,13 @@ function _mapStateToProps(state) {
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
         callStatsID,
-        enableFeaturesBasedOnToken
+        chatOnlyGuestEnabled,
+        enableFeaturesBasedOnToken,
+        disableDesktopSharing,
+        disableTileView,
+        hideParticipantsStats,
     } = state['features/base/config'];
+
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
         fullScreen,
@@ -1433,7 +1453,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
-    const isGuest = !state['features/base/jwt'].jwt;
+    const isGuest = !isHost(state);
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1446,8 +1466,11 @@ function _mapStateToProps(state) {
 
         // we want to show button and tooltip
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
-    } else if (desktopSharingEnabled && interfaceConfig.HIDE_DESKTOP_SHARING_FOR_GUEST) {
-        desktopSharingEnabled = !isGuest;
+    } else if (desktopSharingEnabled && Boolean(disableDesktopSharing)) {
+        desktopSharingEnabled = !(
+            disableDesktopSharing === true ||
+            (disableDesktopSharing === 'guest' && isGuest)
+        );
     }
 
     // NB: We compute the buttons again here because if URL parameters were used to
@@ -1461,13 +1484,19 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _isChatOnly: isGuest && chatOnlyGuestEnabled,
         _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
         _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
-        _isStatsVisible: !(interfaceConfig.HIDE_STATS_FOR_GUEST && isGuest),
+        _isStatsVisible: !(hideParticipantsStats === true || (hideParticipantsStats === 'guest' && isGuest)),
         _isVpaasMeeting: isVpaasMeeting(state),        
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
+        _tileViewVisible: !(
+            disableTileView === true ||
+            (disableTileView === 'guest' && isGuest) ||
+            state['features/etherpad']?.editing
+        ),
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _locked: locked,
