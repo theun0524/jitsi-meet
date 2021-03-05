@@ -572,7 +572,6 @@ export class VideoContainer extends LargeContainer {
         }
 
         return new Promise(resolve => {
-            const followMe = APP.store.getState()['features/follow-me'].state || {};
             if (this._isHidden && followMe.sharedDocumentVisible) {
                 resolve();
             }
