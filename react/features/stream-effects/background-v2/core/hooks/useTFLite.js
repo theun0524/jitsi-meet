@@ -1,3 +1,6 @@
+//Source code from https://github.com/Volcomix/virtual-background
+//modified to Typescript to Javscript
+
 import React, { useEffect, useState } from 'react';
 import createTFLiteModule from '../../tflite/tflite';
 

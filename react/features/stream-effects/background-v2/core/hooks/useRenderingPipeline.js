@@ -1,3 +1,6 @@
+//Source code from https://github.com/Volcomix/virtual-background
+//modified to Typescript to Javscript
+
 import { useEffect, useRef, useState } from 'react';
 import buildCanvas2dPipeline from '../../pipeline/canvas2d/canvas2dPipeline';
 //import { buildWebGL2Pipeline } from '../../pipeline/webgl2/webgl2Pipeline';

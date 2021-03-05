@@ -1,3 +1,5 @@
+//Source code from https://github.com/Volcomix/virtual-background
+//modified to Typescript to Javscript
 
 export default class buildCanvas2dPipeline{
     render: Function;
