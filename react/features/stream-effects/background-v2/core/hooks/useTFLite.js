@@ -25,8 +25,8 @@ export default async function useTFLite() {
     //console.log('Model buffer memory offset:', modelBufferOffset);
     //console.log('Loading model buffer...');
     newSelectedTFLite.HEAPU8.set(new Uint8Array(model), modelBufferOffset);
-    /*console.log('_loadModel result:', newSelectedTFLite._loadModel(model.byteLength));
-    console.log('Input memory offset:', newSelectedTFLite._getInputMemoryOffset());
+    console.log('_loadModel result:', newSelectedTFLite._loadModel(model.byteLength));
+    /*console.log('Input memory offset:', newSelectedTFLite._getInputMemoryOffset());
     console.log('Input height:', newSelectedTFLite._getInputHeight());
     console.log('Input width:', newSelectedTFLite._getInputWidth());
     console.log('Input channels:', newSelectedTFLite._getInputChannelCount());
