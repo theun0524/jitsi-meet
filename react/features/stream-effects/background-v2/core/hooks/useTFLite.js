@@ -36,7 +36,6 @@ export default async function useTFLite() {
     console.log('Output channels:', newSelectedTFLite._getOutputChannelCount());*/
 
     const currentTFLite = await newSelectedTFLite;
-    console.log(currentTFLite);
 
     return currentTFLite;
   }
