@@ -3,6 +3,12 @@
 @import '~bootstrap/scss/variables';
 @import '../../../../css/variables';
 
+.container {
+    margin: 0 !important;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
 .titleContainer {
     font-size: 20px;
     font-weight: 500;
@@ -20,11 +26,15 @@
         &:hover {
             background: $overflowMenuItemHoverBG;
         }
+
+        &.pressed {
+            background: $overflowMenuItemHoverBG;
+        }
     }
 }
 
 .divider {
     border-color: rgba(255,255,255,0.3);
     border-width: 1px 0 0 0;
-    margin: 10px 0;
+    margin: -5px 0 10px 0;
 }

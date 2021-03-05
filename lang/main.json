@@ -185,6 +185,9 @@
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "Cancel": "Cancel",
         "close": "Close",
+        "conference": {
+            "max_users": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!"
+        },
         "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in {{seconds}} sec...",
         "conferenceDisconnectTitle": "You have been disconnected.",
         "conferenceReloadMsg": "We're trying to fix this. Reconnecting in {{seconds}} sec...",
@@ -201,6 +204,7 @@
         "dismiss": "Dismiss",
         "displayNameRequired": "Enter your name",
         "done": "Done",
+        "duration_expired": "Conference duration has expired.",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: recording, live streaming and phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
         "e2eeLabel": "E2EE key",
         "e2eeNoKey": "None",
@@ -308,7 +312,7 @@
         "sendPrivateMessageOk": "Send privately",
         "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
-        "sessTerminated": "Call terminated",
+        "sessTerminated": "Conference terminated",
         "Share": "Share",
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "shareVideoTitle": "Share a video",
@@ -724,6 +728,7 @@
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time",
+        "status": "Status",
         "joinTime": "Join Time",
         "leaveTime": "Leave Time",
         "refresh": "Refresh",
@@ -913,6 +918,7 @@
         "remoteControl": "Start / Stop remote control",
         "show": "Show on stage",
         "videomute": "Participant has stopped the camera",
+        "videomuted": "Camera stopped",
         "audioconnected": "Participant is connected to audio",
         "videoconnected": "Participant is connected to video",
         "presenter": "Participant is sharing the desktop"

@@ -358,11 +358,6 @@ class ConferenceConnector {
             room.leave().then(() => connection.disconnect());
             break;
 
-        case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
-            connection.disconnect();
-            APP.UI.notifyMaxUsersLimitReached();
-            break;
-
         case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
             APP.store.dispatch(reloadWithStoredParams());
             break;
@@ -491,8 +486,8 @@ export default {
      */
     createInitialLocalTracks(options = {}) {
         const errors = {};
-        const initialDevices = [ 'audio' ];
-        const requestedAudio = true;
+        const initialDevices = [];
+        let requestedAudio = false;
         let requestedVideo = false;
 
         // Always get a handle on the audio input device so that we have statistics even if the user joins the
@@ -501,6 +496,9 @@ export default {
         // only after that point.
         if (options.startWithAudioMuted) {
             this.muteAudio(true, true);
+        } else {
+            initialDevices.push('audio');
+            requestedAudio = true;
         }
 
         if (!options.startWithVideoMuted

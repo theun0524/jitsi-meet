@@ -134,7 +134,7 @@ export function configureInitialDevices() {
  * @returns {Function}
  */
 export function getAvailableDevices() {
-    return dispatch => new Promise(resolve => {
+    return (dispatch, getState) => new Promise(resolve => {
         const { mediaDevices } = JitsiMeetJS;
 
         if (mediaDevices.isDeviceListAvailable()
@@ -143,6 +143,11 @@ export function getAvailableDevices() {
                 dispatch(updateDeviceList(devices));
 
                 resolve(devices);
+
+                setAudioOutputDeviceId(
+                    getUserSelectedOutputDeviceId(getState()),
+                    dispatch
+                );
             });
         } else {
             resolve([]);

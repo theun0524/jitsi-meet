@@ -1,3 +1,7 @@
 .indicatorContainer {
-    padding: 0 0 0 6px;
+    display: flex;
+    width: 20px;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: 4px;
 }

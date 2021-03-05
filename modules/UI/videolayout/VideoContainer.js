@@ -572,6 +572,10 @@ export class VideoContainer extends LargeContainer {
         }
 
         return new Promise(resolve => {
+            if (this._isHidden && followMe.sharedDocumentVisible) {
+                resolve();
+            }
+
             this.$wrapperParent.css('visibility', 'visible').fadeTo(
                 FADE_DURATION_MS,
                 1,

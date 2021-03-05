@@ -2,6 +2,7 @@
 
 import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
 import React from 'react';
 
@@ -22,6 +23,7 @@ import { openSettingsDialog } from '../../settings/actions';
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import s from './WelcomePage.module.scss';
+import { showNotification } from '../../notifications';
 
 /**
  * The pattern used to validate room name.
@@ -153,6 +155,19 @@ class WelcomePage extends AbstractWelcomePage {
             this._additionalToolbarContentRef.appendChild(
                 this._additionalToolbarContentTemplate.content.cloneNode(true)
             );
+        }
+
+        const savedNotification = jitsiLocalStorage.getItem('saved_notification');
+        if (savedNotification) {
+            jitsiLocalStorage.removeItem('saved_notification');
+            const notification = JSON.parse(savedNotification);
+            this.props.dispatch(showNotification({
+                ...notification.props,
+                isNewStyle: true,
+                hideErrorSupportLink: true,
+                timeout: notification.timeout,
+                uid: notification.uid,
+            }));
         }
     }
 
