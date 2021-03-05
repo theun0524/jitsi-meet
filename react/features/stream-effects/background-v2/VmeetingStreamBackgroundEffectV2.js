@@ -34,8 +34,9 @@ export default class VmeetingStreamBackgroundEffect {
      * @class
      * @param {TFLite} tflite - TFLite model.
      */
-    constructor(tflite, backgroundImageUrl) {
+    constructor(tflite, backgroundImageUrl, useLite) {
         this._tflite = tflite;
+        this._useLite = useLite;
 
         // Bind event handler so it is only bound once for every instance.
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
@@ -86,7 +87,8 @@ export default class VmeetingStreamBackgroundEffect {
             this._videoElement,
             this._tflite,
             this._backgroundElement,
-            this._canvas
+            this._canvas,
+            this._useLite
           );
         //console.log(this._tflite._getModelBufferMemoryOffset());
         if (pipeline) {

@@ -3,8 +3,9 @@
 
 import React, { useEffect, useState } from 'react';
 import createTFLiteModule from '../../tflite/tflite';
+import createTFLiteSIMDModule from '../../tflite/tflite-simd';
 
-export default async function useTFLite() {
+export default async function useTFLite(useLite) {
 
   try {
     const MyModule = await createTFLiteModule();
@@ -19,7 +20,7 @@ export default async function useTFLite() {
     if (!newSelectedTFLite) {
         throw new Error(`TFLite backend unavailable`);
     }
-    const modelFileName = 'bg_segmentation';
+    const modelFileName = useLite? 'bg_segmentation_lite' : 'bg_segmentation';
     //console.log('Loading meet model:', modelFileName);
     const modelResponse = await fetch(`/libs/${modelFileName}.tflite`);
     const model = await modelResponse.arrayBuffer();

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import buildCanvas2dPipeline from '../../pipeline/canvas2d/canvas2dPipeline';
 //import { buildWebGL2Pipeline } from '../../pipeline/webgl2/webgl2Pipeline';
 
-export default async function useRenderingPipeline(sourcePlayback, tflite, _backgroundImageRef, _canvasRef) {
+export default async function useRenderingPipeline(sourcePlayback, tflite, _backgroundImageRef, _canvasRef, useLite) {
     let pipeline = null;
     let backgroundImageRef = _backgroundImageRef;
     let canvasRef = _canvasRef;
@@ -13,7 +13,7 @@ export default async function useRenderingPipeline(sourcePlayback, tflite, _back
     let shouldRender = true;
     let renderRequestId;
     //const newPipeline = buildWebGL2Pipeline(sourcePlayback, backgroundImageRef, canvasRef, tflite);
-    const newPipeline = new buildCanvas2dPipeline(sourcePlayback, backgroundImageRef, canvasRef, tflite);
+    const newPipeline = new buildCanvas2dPipeline(sourcePlayback, backgroundImageRef, canvasRef, tflite, useLite);
 
     async function render() {
         if (!shouldRender) {

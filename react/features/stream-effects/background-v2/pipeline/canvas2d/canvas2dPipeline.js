@@ -5,15 +5,15 @@ export default class buildCanvas2dPipeline{
     render: Function;
     cleanUp: Function;
 
-    constructor(sourcePlayback, background, canvas, tflite){
+    constructor(sourcePlayback, background, canvas, tflite, useLite){
         this.sourcePlayback = sourcePlayback;
         this.background = background;
         this.canvas = canvas;
         this.tflite = tflite;
 
         this.ctx = canvas.getContext('2d');
-        this.segmentationWidth = 256;
-        this.segmentationHeight = 144;
+        this.segmentationWidth = useLite? 160 : 256;
+        this.segmentationHeight = useLite? 96 : 144;
         this.segmentationPixelCount = this.segmentationWidth * this.segmentationHeight;
         this.segmentationMask = new ImageData(this.segmentationWidth, this.segmentationHeight);
         this.segmentationMaskCanvas = document.createElement('canvas');
