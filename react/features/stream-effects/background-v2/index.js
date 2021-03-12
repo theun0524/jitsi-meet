@@ -11,17 +11,6 @@ const models = {
     'model144': 'libs/bg_segmentation.tflite'
 };
 
-const segmentationDimensions = {
-    'model96': {
-        'height': 96,
-        'width': 160
-    },
-    'model144': {
-        'height': 144,
-        'width': 256
-    }
-};
-
 /**
  * Creates a new instance of VmeetingStreamBackgroundEffect. This loads the bodyPix model that is used to
  * extract person segmentation.
@@ -37,6 +26,7 @@ export async function createBackgroundEffectV2(backgroundImageUrl) {
 
     if (wasmCheck.feature.simd) {
         tflite = await createTFLiteSIMDModule();
+        console.log('Background Effect uses SIMD');
     } else {
         tflite = await createTFLiteModule();
     }
@@ -55,8 +45,6 @@ export async function createBackgroundEffectV2(backgroundImageUrl) {
     tflite.HEAPU8.set(new Uint8Array(model), modelBufferOffset);
 
     tflite._loadModel(model.byteLength);
-
-    //const options = wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96;
 
     return new VmeetingStreamBackgroundEffectV2(tflite, backgroundImageUrl, !wasmCheck.feature.simd);
 }

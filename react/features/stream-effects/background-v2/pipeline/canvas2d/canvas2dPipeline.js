@@ -1,6 +1,17 @@
 //Source code from https://github.com/Volcomix/virtual-background
 //modified to Typescript to Javscript
 
+const segmentationDimensions = {
+    'model96': {
+        'height': 96,
+        'width': 160
+    },
+    'model144': {
+        'height': 144,
+        'width': 256
+    }
+};
+
 export default class buildCanvas2dPipeline{
     render: Function;
     cleanUp: Function;
@@ -12,8 +23,8 @@ export default class buildCanvas2dPipeline{
         this.tflite = tflite;
 
         this.ctx = canvas.getContext('2d');
-        this.segmentationWidth = useLite? 160 : 256;
-        this.segmentationHeight = useLite? 96 : 144;
+        this.segmentationWidth = useLite? segmentationDimensions.model96.width : segmentationDimensions.model144.width;
+        this.segmentationHeight = useLite? segmentationDimensions.model96.height : segmentationDimensions.model144.height;
         this.segmentationPixelCount = this.segmentationWidth * this.segmentationHeight;
         this.segmentationMask = new ImageData(this.segmentationWidth, this.segmentationHeight);
         this.segmentationMaskCanvas = document.createElement('canvas');
