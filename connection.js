@@ -72,6 +72,23 @@ function checkForAttachParametersAndConnect(id, password, connection) {
     }
 }
 
+function getUserCredentials(state) {
+    let credentials = '';
+
+    try {
+        const { jwt = '', user = {} } = state['features/base/jwt'];
+        const { isHost } = state['features/base/conference'].roomInfo || {};
+        
+        if (user.isAdmin || isHost) {
+            credentials = jwt;
+        }
+    } catch (e) {
+        console.error('getUserCredentials is failed:', e);
+    }
+
+    return credentials;
+}
+
 /**
  * Try to open connection using provided credentials.
  * @param {string} [id]
@@ -82,8 +99,6 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  */
 function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
-    const { jwt } = APP.store.getState()['features/base/jwt'];
-    const { roomInfo } = APP.store.getState()['features/base/conference'];
 
     // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
     // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
@@ -97,7 +112,7 @@ function connect(id, password, roomName) {
 
     const connection = new JitsiMeetJS.JitsiConnection(
         'vmeeting_app_id',
-        roomInfo && (roomInfo.isHost || roomInfo.start) ? jwt : '',
+        getUserCredentials(APP.store.getState()),
         connectionConfig
     );
 
