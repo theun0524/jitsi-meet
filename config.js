@@ -730,7 +730,7 @@ var config = {
     // Sets the conference subject
     // subject: 'Conference Subject',
 
-    enableChatControl: true,
+    // enableChatControl: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
