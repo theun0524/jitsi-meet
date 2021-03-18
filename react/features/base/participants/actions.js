@@ -7,10 +7,15 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    DISABLE_CHAT_FOR_ALL,
+    DISABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_FOR_ALL,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
+    MODERATOR_ROLE_GRANTED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -78,6 +83,66 @@ export function kickParticipant(id) {
     return {
         type: KICK_PARTICIPANT,
         id
+    };
+}
+
+/**
+ * Create an action for disabling chat for a participant from the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+    *     type: DISABLE_CHAT_PARTICIPANT,
+    *     id: string
+    * }}
+    */
+export function disableChatForParticipant(id) {
+    return {
+        type: DISABLE_CHAT_PARTICIPANT,
+        id
+    };
+}
+
+/**
+ * Create an action for disabling chat for all participants in the conference.
+ *
+ * @param {} - NO params
+ * @returns {{
+    *     type: DISABLE_CHAT_FOR_ALL
+    * }}
+    */
+export function disableChatForAll() {
+    return {
+        type: DISABLE_CHAT_FOR_ALL
+    };
+}
+
+/**
+ * Create an action for enabling chat for a participant from the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+    *     type: ENABLE_CHAT_PARTICIPANT,
+    *     id: string
+    * }}
+    */
+export function enableChatForParticipant(id) {
+    return {
+        type: ENABLE_CHAT_PARTICIPANT,
+        id
+    };
+}
+
+/**
+ * Create an action for enabling chat for all participant in the conference.
+ *
+ * @param { No params } 
+ * @returns {{
+    *     type: ENABLE_CHAT_FOR_ALL
+    * }}
+    */
+export function enableChatForAll() {
+    return {
+        type: ENABLE_CHAT_FOR_ALL
     };
 }
 
@@ -449,9 +514,27 @@ export function participantKicked(kicker, kicked) {
                     getParticipantDisplayName(getState, kicker.getId())
             },
             titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
+        }, NOTIFICATION_TIMEOUT * 10)); // leave more time for this
     };
 }
+
+// Start of added portion --> Notification when granting moderator role
+export function moderatorRoleGranted(participantId) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: MODERATOR_ROLE_GRANTED,
+            participant: participantId
+        });
+
+        dispatch(showNotification({
+            titleArguments: {
+                to: getParticipantDisplayName(getState, participantId)
+            },
+            titleKey: 'notify.grantedTo',
+        }, NOTIFICATION_TIMEOUT * 10));
+    };
+}
+// End of added portion --> Notification when granting moderator role
 
 /**
  * Create an action which pins a conference participant.

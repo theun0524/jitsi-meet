@@ -8,6 +8,7 @@ import { BaseIndicator } from '../../base/react';
 import {
     IconCamera,
     IconCameraDisabled,
+    IconChat,
     IconCrown,
     IconMicDisabled,
     IconMicrophone,
@@ -94,6 +95,7 @@ class SpeakerStatsItem extends Component<Props> {
             local,
             name,
             hasLeft,
+            chat,
             t
         } = this.props;
 
@@ -118,6 +120,7 @@ class SpeakerStatsItem extends Component<Props> {
                     { this.displayPresenterStatus(isPresenter) }
                     { this.displayAudioStatus(audioMuted) }
                     { this.displayVideoStatus(videoMuted) }
+                    { this.displayChatStatus(chat) }
                 </div>
                 <div className = { `speaker-stats-item__s_time ${s.joinTime}` }>
                     { formatTime(joinTime) }
@@ -206,6 +209,20 @@ class SpeakerStatsItem extends Component<Props> {
                 iconSize = { 16 }
                 tooltipKey = { toolTipMessage }
                 tooltipPosition = { 'top' } />
+        );
+    }
+
+    displayChatStatus(chatEnabled) {
+        let toolTipMessage = chatEnabled ? 'dialog.chatEnabledTitle' : 'dialog.chatDisabledTitle';
+
+        return (
+            <BaseIndicator
+                className = { chatEnabled ? '' : s.disabled }
+                icon = { IconChat }
+                iconId = 'chat'
+                iconSize = { 16 }
+                tooltipKey = { toolTipMessage }
+                tooltipPosition = 'top' />
         );
     }
 }

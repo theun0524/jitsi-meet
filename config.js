@@ -90,7 +90,7 @@ var config = {
     // Audio
 
     // Disable measuring of audio levels.
-    disableAudioLevels: true,
+    disableAudioLevels: false,
 
     // audioLevelsInterval: 200,
 
@@ -729,6 +729,8 @@ var config = {
 
     // Sets the conference subject
     // subject: 'Conference Subject',
+
+    enableChatControl: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

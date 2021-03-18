@@ -254,3 +254,9 @@ export const SET_SIP_GATEWAY_ENABLED = 'SET_SIP_GATEWAY_ENABLED';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+// start of added portion
+export const PARTICIPANT_CHAT_DISABLED = 'PARTICIPANT_CHAT_DISABLED';
+
+export const PARTICIPANT_CHAT_ENABLED = 'PARTICIPANT_CHAT_ENABLED';
+// end of added portion

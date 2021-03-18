@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { getParticipantDisplayName } from '../base/participants';
 import {
+    NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
     showNotification
 } from '../notifications';
@@ -31,5 +32,43 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
             titleKey: 'dialog.kickTitle',
             titleArguments: args
         }));
+    };
+}
+
+/**
+ * Notify that a user has been disabled for Chat
+ * 
+ * @param {JitsiParticipant} participant - The {JitsiParticipant} ID who was disabled for chat
+ */
+export function notifyChatDisabled(participant: Object, _: ?Function) { // eslint-disable-line no-unused-vars
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant)
+        };
+
+        dispatch(showNotification({
+            titleKey: 'dialog.chatDisabledMessage',
+            titleArguments: args,
+        }, NOTIFICATION_TIMEOUT * 10));
+    };
+}
+
+/**
+ * Notify that a user has been re-enabled for Chat
+ * 
+ * @param {JitsiParticipant} participant - The {JitsiParticipant} ID who was disabled for chat
+ */
+export function notifyChatEnabled(participant: Object, _: ?Function) { // eslint-disable-line no-unused-vars
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant)
+        };
+
+        dispatch(showNotification({
+            titleKey: 'dialog.chatEnabledMessage',
+            titleArguments: args
+        }, NOTIFICATION_TIMEOUT * 10));
     };
 }

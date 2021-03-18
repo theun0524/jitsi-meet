@@ -22,6 +22,10 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    DISABLE_CHAT_PARTICIPANT,
+    DISABLE_CHAT_FOR_ALL,
+    ENABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_FOR_ALL,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
@@ -125,21 +129,42 @@ MiddlewareRegistry.register(store => next => action => {
 
     case GRANT_MODERATOR: {
         const { conference } = store.getState()['features/base/conference'];
-
         conference.grantOwner(action.id);
         break;
     }
 
     case KICK_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
-
         conference.kickParticipant(action.id);
+        break;
+    }
+
+    case DISABLE_CHAT_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.disableChatForParticipant(action.id);
+        break;
+    }
+
+    case DISABLE_CHAT_FOR_ALL: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.disableChatForAll();
+        break;
+    }
+
+    case ENABLE_CHAT_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.enableChatForParticipant(action.id);
+        break;
+    }
+
+    case ENABLE_CHAT_FOR_ALL: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.enableChatForAll();
         break;
     }
 
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
-
         conference.muteParticipant(action.id);
         break;
     }
@@ -149,18 +174,15 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_DISPLAY_NAME_CHANGED: {
         if (typeof APP !== 'undefined') {
             const participant = getLocalParticipant(store.getState());
-
             if (participant && participant.id === action.id) {
                 APP.UI.emitEvent(UIEvents.NICKNAME_CHANGED, action.name);
             }
         }
-
         break;
     }
 
     case PARTICIPANT_JOINED: {
         _maybePlaySounds(store, action);
-
         return _participantJoinedOrUpdated(store, next, action);
     }
 

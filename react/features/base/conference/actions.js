@@ -18,6 +18,7 @@ import {
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
+    moderatorRoleGranted,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -52,7 +53,9 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    PARTICIPANT_CHAT_DISABLED,
+    PARTICIPANT_CHAT_ENABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -80,6 +83,8 @@ declare var APP: Object;
  * @returns {void}
  */
 function _addConferenceListeners(conference, dispatch) {
+    const config = state['features/base/config'];
+
     // A simple logger for conference errors received through
     // the listener. These errors are not handled now, but logged.
     conference.on(JitsiConferenceEvents.CONFERENCE_ERROR,
@@ -109,9 +114,26 @@ function _addConferenceListeners(conference, dispatch) {
         JitsiConferenceEvents.KICKED,
         (...args) => dispatch(kickedOut(conference, ...args)));
 
+    if (config.enableChatControl) {
+        conference.on(
+            JitsiConferenceEvents.PARTICIPANT_CHAT_DISABLED,
+            (...args) => dispatch(participantChatDisabled(conference, ...args)));
+    
+        conference.on(
+            JitsiConferenceEvents.PARTICIPANT_CHAT_ENABLED,
+            (...args) => dispatch(participantChatEnabled(conference, ...args)));
+    }
+
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
         (kicker, kicked) => dispatch(participantKicked(kicker, kicked)));
+
+    // start of added portion
+    conference.on(
+        JitsiConferenceEvents.MODERATOR_ROLE_GRANTED,
+        (participant) => dispatch(moderatorRoleGranted(participant))
+    );
+    // end of added portion
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -504,6 +526,24 @@ export function kickedOut(conference: Object, participant: Object) {
         participant
     };
 }
+
+// start of added portion
+export function participantChatDisabled(conference: Object, participant: String) {
+    return {
+        type: PARTICIPANT_CHAT_DISABLED,
+        conference,
+        participant
+    };
+}
+
+export function participantChatEnabled(conference: Object, participant: String) {
+    return {
+        type: PARTICIPANT_CHAT_ENABLED,
+        conference,
+        participant
+    };
+}
+// end of added portion
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.
