@@ -2,7 +2,7 @@
 
 import * as wasmCheck from 'wasm-check';
 
-import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
+import VmeetingStreamBackgroundEffectV2 from './VmeetingStreamBackgroundEffectV2';
 import createTFLiteModule from '../background-v2/tflite/tflite';
 import createTFLiteSIMDModule from '../background-v2/tflite/tflite-simd';
 
@@ -11,31 +11,22 @@ const models = {
     'model144': 'libs/bg_segmentation.tflite'
 };
 
-const segmentationDimensions = {
-    'model96': {
-        'height': 96,
-        'width': 160
-    },
-    'model144': {
-        'height': 144,
-        'width': 256
-    }
-};
-
 /**
- * Creates a new instance of JitsiStreamBlurEffect. This loads the bodyPix model that is used to
+ * Creates a new instance of VmeetingStreamBackgroundEffect. This loads the bodyPix model that is used to
  * extract person segmentation.
  *
- * @returns {Promise<JitsiStreamBlurEffect>}
+ * @returns {Promise<VmeetingStreamBackgroundEffect>}
  */
-export async function createBlurEffect() {
+export async function createBackgroundEffectV2(backgroundImageUrl) {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
-        throw new Error('JitsiStreamBlurEffect not supported!');
+        throw new Error('VmeetingStreamBackgroundEffectV2 not supported!');
     }
+
     let tflite;
 
     if (wasmCheck.feature.simd) {
         tflite = await createTFLiteSIMDModule();
+        console.log('Background Effect uses SIMD');
     } else {
         tflite = await createTFLiteModule();
     }
@@ -55,7 +46,5 @@ export async function createBlurEffect() {
 
     tflite._loadModel(model.byteLength);
 
-    const options = wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96;
-
-    return new JitsiStreamBlurEffect(tflite, options);
+    return new VmeetingStreamBackgroundEffectV2(tflite, backgroundImageUrl, !wasmCheck.feature.simd);
 }
