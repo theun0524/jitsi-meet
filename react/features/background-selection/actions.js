@@ -3,7 +3,6 @@ import axios from 'axios';
 import tokenLocalStorage from '../../api/tokenLocalStorage';
 import { setJWT } from '../base/jwt/actions';
 import { getLocalVideoTrack } from '../base/tracks';
-import { createBackgroundEffect } from '../stream-effects/background';
 import { createBackgroundEffectV2 } from '../stream-effects/background-v2';
 
 const apiBase = process.env.VMEETING_API_BASE;
@@ -19,15 +18,9 @@ export function submitBackgroundSelectionTab(newState) {
         const { user } = getState()['features/base/jwt'];
         const { selectedBackgroundId: background } = newState;
         const { conference } = getState()['features/base/conference'];
-
-        console.log('submitBackgroundSelectionTab:', newState);
-        axios.patch(`${apiBase}/account`, { background })
-        .then(resp => {
-            dispatch(setJWT(resp.data));
-            tokenLocalStorage.setItem(resp.data, getState());
-
+        const applyBackgroundEffect = () => {
             const localTrack = getLocalVideoTrack(getState()['features/base/tracks']);
-
+    
             if (conference && localTrack && localTrack.jitsiTrack) {
                 console.log('submitBackgroundSelectionTab:', localTrack);
                 if (background) {
@@ -40,6 +33,19 @@ export function submitBackgroundSelectionTab(newState) {
                     localTrack.jitsiTrack.setEffect(undefined);
                 }
             }
-        })
+        };
+
+        console.log('submitBackgroundSelectionTab:', newState);
+        if (user) {
+            axios.patch(`${apiBase}/account`, { background })
+            .then(resp => {
+                dispatch(setJWT(resp.data));
+                tokenLocalStorage.setItem(resp.data, getState());
+                applyBackgroundEffect();
+            })
+        } else {
+            jitsiLocalStorage.setItem('background', background);
+            applyBackgroundEffect();
+        }
     };
 }

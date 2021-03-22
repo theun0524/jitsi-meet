@@ -1,5 +1,6 @@
 // @flow
 
+import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 import { SET_CONFIG } from '../config';
@@ -151,6 +152,11 @@ function _setJWT(store, next, action) {
                     user && _overwriteLocalParticipant(
                         store, { ...user,
                             features: context.features });
+
+                    axios.interceptors.request.use(function(config) {
+                        config.headers.Authorization = `Bearer ${jwt}`;
+                        return config;
+                    });
                 }
             }
         } else if (typeof APP === 'undefined') {

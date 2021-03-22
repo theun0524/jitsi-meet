@@ -143,7 +143,7 @@ function _mapStateToProps(state) {
     const _user = state['features/base/jwt'].user;
     const _jwt = state['features/base/jwt'].jwt;
     const showBackgroundSettings
-        = configuredTabs.includes('background') && !!_user;
+        = configuredTabs.includes('background');
     const tabs = [];
 
     if (showDeviceSettings) {

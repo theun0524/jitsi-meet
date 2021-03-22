@@ -1,5 +1,6 @@
 /* global APP, JitsiMeetJS, config, interfaceConfig */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
@@ -138,9 +139,7 @@ import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
-import { createBackgroundEffect } from './react/features/stream-effects/background';
 import { createBackgroundEffectV2 } from './react/features/stream-effects/background-v2';
-import axios from 'axios';
 import { isHost } from './react/features/base/jwt';
 
 const logger = Logger.getLogger(__filename);
@@ -1403,7 +1402,8 @@ export default {
                 const state = APP.store.getState();
 
                 const startBackgroundEffect = track => {
-                    const id = state['features/base/jwt'].user?.background;
+                    const id = state['features/base/jwt'].user?.background ||
+                        jitsiLocalStorage.getItem('background');
                     console.log('startBackgroundEffect:', id);
                     // return;
 

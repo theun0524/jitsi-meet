@@ -4,6 +4,7 @@ import AddIcon from '@atlaskit/icon/glyph/add';
 import CrossCircleIcon from '@atlaskit/icon/glyph/cross-circle';
 import Spinner from '@atlaskit/spinner';
 import Tooltip from '@atlaskit/tooltip';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
 import { each, reject } from 'lodash';
 import React from 'react';
@@ -14,7 +15,6 @@ import AbstractDialogTab, {
 import { translate } from '../../base/i18n/functions';
 import { Icon } from '../../base/icons';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
-import { createBackgroundEffect } from '../../stream-effects/background';
 import { createBackgroundEffectV2 } from '../../stream-effects/background-v2';
 import logger from '../logger';
 
@@ -92,7 +92,9 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
             backgrounds: [],
             previewVideoTrack: null,
             previewVideoTrackError: null,
-            selected: props._user.background || 'none',
+            selected: props._user?.background ||
+                jitsiLocalStorage.getItem('background') ||
+                'none',
             loading: false,
         };
         this._unMounted = true;
@@ -142,7 +144,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { t } = this.props;
+        const { _user, t } = this.props;
         const { loading } = this.state;
 
         return (
@@ -156,27 +158,29 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
                     </div>
                 </div>
                 <div className = { `${s.column} ${s.selectors} `}>
-                    <div className = { s.toolbar }>
-                        <div
-                            className = { s.button }
-                            onClick = { this._triggerFileUpload }>
-                            <Tooltip
-                                content = { t('backgroundSelection.add') }
-                                position = 'top'>
-                                { !loading
-                                ? <AddIcon size = 'small' />
-                                : <Spinner size = 'small' /> }
-                            </Tooltip>
+                    { _user && (
+                        <div className = { s.toolbar }>
+                            <div
+                                className = { s.button }
+                                onClick = { this._triggerFileUpload }>
+                                <Tooltip
+                                    content = { t('backgroundSelection.add') }
+                                    position = 'top'>
+                                    { !loading
+                                    ? <AddIcon size = 'small' />
+                                    : <Spinner size = 'small' /> }
+                                </Tooltip>
+                            </div>
+                            <input
+                                accept = 'image/*'
+                                multiple = { true }
+                                name = 'image-uploader'
+                                onChange = { this._onUploadBackgroundImage }
+                                onClick = { this._onUploadClick }
+                                ref = { el => this.imageUploader = el }
+                                type = 'file' />
                         </div>
-                        <input
-                            accept = 'image/*'
-                            multiple = { true }
-                            name = 'image-uploader'
-                            onChange = { this._onUploadBackgroundImage }
-                            onClick = { this._onUploadClick }
-                            ref = { el => this.imageUploader = el }
-                            type = 'file' />
-                    </div>
+                    )}
                     <div className = { s.backgroundSelectors }>
                         { this._renderSelectors() }
                     </div>
@@ -364,9 +368,9 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
             });
             axios.post(`${apiBase}/backgrounds`, form)
             .then(resp => {
-                console.log('onUploadBackgroundImage:', resp.data.docs);
+                console.log('onUploadBackgroundImage:', resp.data);
                 this.setState({
-                    backgrounds: resp.data?.docs,
+                    backgrounds: resp.data,
                     loading: false,
                 });
             });
