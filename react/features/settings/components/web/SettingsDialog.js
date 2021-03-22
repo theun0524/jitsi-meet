@@ -23,6 +23,7 @@ import { getUserSelectedCameraDeviceId } from '../../../base/settings';
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
+import { isMobileBrowser } from '../../../base/environment/utils';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -143,7 +144,7 @@ function _mapStateToProps(state) {
     const _user = state['features/base/jwt'].user;
     const _jwt = state['features/base/jwt'].jwt;
     const showBackgroundSettings
-        = configuredTabs.includes('background');
+        = configuredTabs.includes('background') && !isMobileBrowser();
     const tabs = [];
 
     if (showDeviceSettings) {

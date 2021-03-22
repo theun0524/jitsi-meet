@@ -141,6 +141,7 @@ import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import { createBackgroundEffectV2 } from './react/features/stream-effects/background-v2';
 import { isHost } from './react/features/base/jwt';
+import { isMobileBrowser } from './react/features/base/environment/utils';
 
 const logger = Logger.getLogger(__filename);
 const apiBase = process.env.VMEETING_API_BASE;
@@ -1407,7 +1408,7 @@ export default {
                     console.log('startBackgroundEffect:', id);
                     // return;
 
-                    return id 
+                    return (id && !isMobileBrowser())
                         ? createBackgroundEffectV2(`${apiBase}/backgrounds/${id}/hd`)
                             .then(backgroundEffectInstance => {
                                 console.log('background Effect:', backgroundEffectInstance);
