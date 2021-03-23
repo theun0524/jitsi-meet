@@ -173,7 +173,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
                             </div>
                             <input
                                 accept = 'image/*'
-                                multiple = { true }
+                                // multiple = { true }
                                 name = 'image-uploader'
                                 onChange = { this._onUploadBackgroundImage }
                                 onClick = { this._onUploadClick }
@@ -258,19 +258,19 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSelector(props) {
-        const { id, isPublic } = props;
+        const { _id, isPublic } = props;
         const { selected } = this.state;
         const { t } = this.props;
 
         return (
             <div
-                key = { id }
-                id = { id }
-                className = { `${s.backgroundSelector} ${ selected === id ? s.selected : '' }` }
+                key = { _id }
+                id = { _id }
+                className = { `${s.backgroundSelector} ${ selected === _id ? s.selected : '' }` }
                 onClick = { this._onSelect }>
-                { id === 'none'
+                { _id === 'none'
                 ? <span>{this.props.t('backgroundSelection.none')}</span>
-                : <img src = { `${apiBase}/backgrounds/${id}/ld` } /> }
+                : <img src = { `${apiBase}/backgrounds/${_id}/ld` } /> }
                 { !isPublic && (
                     <div
                         className = { `${s.button} ${s.close}` }
@@ -294,7 +294,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
      */
     _renderSelectors() {
         const { backgrounds } = this.state;
-        return [{ id: 'none', isPublic: true }, ...backgrounds].map(item => this._renderSelector(item));
+        return [{ _id: 'none', isPublic: true }, ...backgrounds].map(item => this._renderSelector(item));
     }
 
     _onDeleteBackgroundImage: (Object) => void;
@@ -307,18 +307,22 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
      * @returns {void}
      */
     _onDeleteBackgroundImage(event) {
+        event.stopPropagation();
+
         try {
             const id = event.currentTarget.parentElement.id;
 
             this.setState({ loading: true });
             if (this.state.selected === id) {
                 this.setState({ selected: 'none' });
+                super._onChange({ selectedBackgroundId: '' });
+                this._setBackgroundEffect('none');
             }
 
             axios.delete(`${apiBase}/backgrounds/${id}`)
             .then(resp => {
                 this.setState({
-                    backgrounds: reject(this.state.backgrounds, { id }),
+                    backgrounds: reject(this.state.backgrounds, { _id: id }),
                     loading: false,
                 });
             });
