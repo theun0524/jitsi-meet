@@ -15,6 +15,7 @@ import {
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../react/features/base/media';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -80,7 +81,10 @@ function initCommands() {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
         },
-        'mute-everyone': () => {
+        // 'mute-everyone': () => {
+        'mute-everyone': mediatype => {
+            const muteMediaType = mediatype ? mediaType : MEDIA_TYPE.AUDIO;
+
             sendAnalytics(createApiEvent('muted-everyone'));
             const participants = APP.store.getState()['features/base/participants'];
             const localIds = participants
@@ -88,7 +92,8 @@ function initCommands() {
                 .filter(participant => participant.role === 'moderator')
                 .map(participant => participant.id);
 
-            APP.store.dispatch(muteAllParticipants(localIds));
+            // APP.store.dispatch(muteAllParticipants(localIds));
+            APP.store.dispatch(muteAllParticipants(localIds, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));

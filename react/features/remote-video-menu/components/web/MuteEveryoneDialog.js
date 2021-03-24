@@ -5,6 +5,7 @@ import React from 'react';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { MEDIA_TYPE } from '../../../base/media';
 import { muteAllParticipants } from '../../actions';
 import AbstractMuteRemoteParticipantDialog, {
     type Props as AbstractProps
@@ -87,7 +88,7 @@ class MuteEveryoneDialog extends AbstractMuteRemoteParticipantDialog<Props> {
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude));
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
 
         return true;
     }

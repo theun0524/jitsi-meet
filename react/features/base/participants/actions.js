@@ -17,6 +17,11 @@ import {
     RECV_VIDEO_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
+
+import {
+    DISCO_REMOTE_CONTROL_FEATURE
+} from './constants';
+
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
@@ -190,15 +195,18 @@ export function localParticipantRoleChanged(role) {
  * Create an action for muting another participant in the conference.
  *
  * @param {string} id - Participant's ID.
+ * @param {MEDIA_TYPE} mediaType - The media to mute.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     id: string,
+ *     mediaType: MEDIA_TYPE
  * }}
  */
-export function muteRemoteParticipant(id) {
+export function muteRemoteParticipant(id, mediaType) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
-        id
+        id,
+        mediaType
     };
 }
 
@@ -406,17 +414,20 @@ export function participantUpdated(participant = {}) {
  * Action to signal that a participant has muted us.
  *
  * @param {JitsiParticipant} participant - Information about participant.
+ * @param {JitsiLocalTrack} track - Information about the track that has been muted.
  * @returns {Promise}
  */
-export function participantMutedUs(participant) {
+export function participantMutedUs(participant, track) {
     return (dispatch, getState) => {
         if (!participant) {
             return;
         }
 
+        const isAudio = track.isAudioTrack();
+
         dispatch(showNotification({
-            descriptionKey: 'notify.mutedRemotelyDescription',
-            titleKey: 'notify.mutedRemotelyTitle',
+            descriptionKey: isAudio ? 'notify.mutedRemotelyDescription' : 'notify.videoMutedRemotelyDescription',
+            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())

@@ -5,12 +5,14 @@ import React, { Component } from 'react';
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
+import MuteEveryoneElsesVideoButton from './MuteEveryoneElsesVideoButton';
 import { connect } from '../../../base/redux';
 
 import {
     GrantModeratorButton,
     MuteButton,
     MuteEveryoneElseButton,
+    MuteVideoButton,
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
@@ -51,7 +53,7 @@ type Props = {
     /**
      * Whether or not the participant is currently muted.
      */
-    isAudioMuted: boolean,
+    // isAudioMuted: boolean,
 
     /**
      * Callback to invoke when the popover has been displayed.
@@ -174,7 +176,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disableRemoteMute,
             _isModerator,
             initialVolumeValue,
-            isAudioMuted,
+            // isAudioMuted,
             onRemoteControlToggle,
             onVolumeChange,
             remoteControlState,
@@ -187,13 +189,23 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             if (!_disableRemoteMute) {
                 buttons.push(
                     <MuteButton
-                        isAudioMuted = { isAudioMuted }
+                        // isAudioMuted = { isAudioMuted }
                         key = 'mute'
                         participantID = { participantID } />
                 );
                 buttons.push(
                     <MuteEveryoneElseButton
                         key = 'mute-others'
+                        participantID = { participantID } />
+                );
+                buttons.push(
+                    <MuteVideoButton
+                        key = 'mute-video'
+                        participantID = { participantID } />
+                );
+                buttons.push(
+                    <MuteEveryoneElsesVideoButton
+                        key = 'mute-others-video'
                         participantID = { participantID } />
                 );
             }
