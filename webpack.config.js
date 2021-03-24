@@ -329,6 +329,20 @@ module.exports = [
     })
 ];
 
+if (process.env.NODE_ENV === 'development') {
+    module.exports.push(
+        Object.assign({}, config, {
+            entry: {
+                'lib-jitsi-meet': './lib-jitsi-meet/index.js'
+            },
+            output: Object.assign({}, config.output, {
+                library: 'JitsiMeetJS',
+                libraryTarget: 'umd'
+            })
+        }),
+    );
+}
+
 /**
  * Determines whether a specific (HTTP) request is to bypass the proxy of
  * webpack-dev-server (i.e. is to be handled by the proxy target) and, if not,

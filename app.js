@@ -37,14 +37,6 @@ window.APP = {
     UI
 };
 
-// for using lib-jitsi-meet HMR(Hot Module Replacement) functionality
-if (process.env.NODE_ENV === 'development') {
-    import('./lib-jitsi-meet').then(JitsiMeetJS => {
-        // console.log('DEBUG: lib-jitsi-meet is loaded');
-        window.JitsiMeetJS = JitsiMeetJS;
-    });
-}
-
 // TODO The execution of the mobile app starts from react/index.native.js.
 // Similarly, the execution of the Web app should start from react/index.web.js
 // for the sake of consistency and ease of understanding. Temporarily though
