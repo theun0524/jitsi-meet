@@ -936,7 +936,7 @@
     "videothumbnail": {
         "domute": "음소거",
         "domuteOthers": "모두 음소거",
-        "flip": "플립",
+        "flip": "수평 뒤집기",
         "grantModerator": "방장 위임",
         "kick": "내보내기",
         "moderator": "방장",

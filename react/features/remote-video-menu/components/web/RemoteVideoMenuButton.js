@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import { Icon } from '../../../base/icons';
 
+import s from './RemoteVideoMenuButton.module.scss';
+
 /**
  * The type of the React {@code Component} props of
  * {@link RemoteVideoMenuButton}.
@@ -58,7 +60,7 @@ export default class RemoteVideoMenuButton extends Component<Props> {
             onClick
         } = this.props;
 
-        const linkClassName = `popupmenu__link ${displayClass || ''}`;
+        const linkClassName = `popupmenu__link ${displayClass || ''} ${s.menuContainer}`;
 
         return (
             <li className = 'popupmenu__item'>
@@ -67,7 +69,7 @@ export default class RemoteVideoMenuButton extends Component<Props> {
                     id = { id }
                     onClick = { onClick }>
                     <span className = 'popupmenu__icon'>
-                        <Icon src = { icon } />
+                        <Icon src = { icon } size = { 16 } />
                     </span>
                     <span className = 'popupmenu__text'>
                         { buttonText }

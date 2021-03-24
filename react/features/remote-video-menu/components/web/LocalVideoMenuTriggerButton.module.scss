@@ -1,0 +1,10 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../../css/variables';
+
+.popoverContainer {
+    > div > div:last-child > div:first-child {
+        top: 30px !important;
+    }
+}

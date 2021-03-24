@@ -1,16 +1,21 @@
 /* global $, config, interfaceConfig, APP */
 
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import Logger from 'jitsi-meet-logger';
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
+
+import { i18next } from '../../../react/features/base/i18n';
 
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VideoTrack } from '../../../react/features/base/media';
 import { updateSettings } from '../../../react/features/base/settings';
 import { getLocalVideoTrack } from '../../../react/features/base/tracks';
-import { shouldDisplayTileView } from '../../../react/features/video-layout';
+import LocalVideoMenuTriggerButton from '../../../react/features/remote-video-menu/components/web/LocalVideoMenuTriggerButton';
+import { getCurrentLayout, LAYOUTS, shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
 
@@ -40,9 +45,6 @@ export default class LocalVideo extends SmallVideo {
 
         this.localVideoId = null;
         this.bindHoverHandler();
-        if (!config.disableLocalVideoFlip) {
-            this._buildContextMenu();
-        }
         this.emitter = emitter;
         this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left top' : 'top center';
 
@@ -55,6 +57,7 @@ export default class LocalVideo extends SmallVideo {
 
         // Set default display name.
         this.updateDisplayName();
+        this.updateVideoMenu();
 
         // Initialize the avatar display with an avatar url selected from the redux
         // state. Redux stores the local user with a hardcoded participant id of
@@ -83,7 +86,8 @@ export default class LocalVideo extends SmallVideo {
             <div class = 'videocontainer__toptoolbar'></div>
             <div class = 'videocontainer__hoverOverlay'></div>
             <div class = 'displayNameContainer'></div>
-            <div class = 'avatar-container'></div>`;
+            <div class = 'avatar-container'></div>
+            <span class = 'remotevideomenu'></span>`;
 
         return containerSpan;
     }
@@ -108,6 +112,66 @@ export default class LocalVideo extends SmallVideo {
             elementID: 'localDisplayName',
             participantID: this.id
         });
+    }
+
+    /**
+     * Updates the video menu.
+     */
+     updateVideoMenu() {
+        if (!config.disableLocalVideoFlip) {
+            this._generatePopupContent();
+        }
+    }
+
+    /**
+     * Generates the popup menu content.
+     *
+     * @returns {Element|*} the constructed element, containing popup menu items
+     * @private
+     */
+     _generatePopupContent() {
+        if (interfaceConfig.filmStripOnly) {
+            return;
+        }
+
+        const videoMenuContainer
+            = this.container.querySelector('.remotevideomenu');
+
+        if (!videoMenuContainer) {
+            return;
+        }
+
+        const currentLayout = getCurrentLayout(APP.store.getState());
+        let menuPosition;
+
+        if (currentLayout === LAYOUTS.TILE_VIEW) {
+            menuPosition = 'left bottom';
+        } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+            menuPosition = 'left bottom';
+        } else {
+            menuPosition = 'top center';
+        }
+
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <AtlasKitThemeProvider mode = 'dark'>
+                        <LocalVideoMenuTriggerButton
+                            menuPosition = { menuPosition }
+                            onMenuDisplay = {this._onLocalVideoMenuDisplay.bind(this)}
+                            onFlipXChanged = {this._onFlipXChanged.bind(this)} />
+                    </AtlasKitThemeProvider>
+                </I18nextProvider>
+            </Provider>,
+            videoMenuContainer);
+    }
+
+    _onLocalVideoMenuDisplay() {
+        this.updateVideoMenu();
+    }
+
+    _onFlipXChanged(val) {
+        this.setFlipX(val);
     }
 
     /**

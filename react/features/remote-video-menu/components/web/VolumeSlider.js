@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import { Icon, IconVolume } from '../../../base/icons';
 
+import s from './RemoteVideoMenuButton.module.scss';
+
 /**
  * Used to modify initialValue, which is expected to be a decimal value between
  * 0 and 1, and converts it to a number representable by an input slider, which
@@ -74,7 +76,7 @@ class VolumeSlider extends Component<Props, State> {
     render() {
         return (
             <li className = 'popupmenu__item'>
-                <div className = 'popupmenu__contents'>
+                <div className = { `popupmenu__contents ${s.menuContainer}` }>
                     <span className = 'popupmenu__icon'>
                         <Icon src = { IconVolume } />
                     </span>
