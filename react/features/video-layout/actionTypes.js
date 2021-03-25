@@ -30,3 +30,13 @@ export const SET_TILE_VIEW = 'SET_TILE_VIEW';
  * }}
  */
 export const SET_TILE_VIEW_ORDER = 'SET_TILE_VIEW_ORDER';
+
+/**
+ * The type of the action which save the ordered video thumbnails for tile view
+ * 
+ * @return {{
+ *     type: ORDERED_TILE_VIEW,
+ *     order: Object
+ * }}
+ */
+export const ORDERED_TILE_VIEW = 'ORDERED_TILE_VIEW';

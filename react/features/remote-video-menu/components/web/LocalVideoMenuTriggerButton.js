@@ -4,13 +4,17 @@ import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux';
+import { shouldDisplayTileView } from '../../../video-layout';
 
 import {
     RemoteVideoMenu,
 } from '.';
 import FlipVideoButton from './FlipVideoButton';
 
-import s from './LocalVideoMenuTriggerButton.module.scss';
+import MoveToFirstButton from './MoveToFirstButton';
+import MoveToLastButton from './MoveToLastButton';
+import { getLocalParticipant } from '../../../base/participants';
 
 /**
  * The type of the React {@code Component} props of
@@ -82,9 +86,8 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
 
         return (
             <Popover
-                className = { s.popoverContainer }
                 content = { content }
-                onPopoverOpen = { this._onShowRemoteMenu }
+                onPopoverOpen = { this._onShowLocalMenu }
                 position = { this.props.menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
@@ -117,6 +120,12 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderLocalVideoMenu() {
+        const {
+            _shouldDisplayTileView,
+            isFirst,
+            isLast,
+            participantID
+        } = this.props;
         const buttons = [];
 
         buttons.push(
@@ -124,6 +133,23 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                 key = 'flipvideo'
                 onFlipXChanged = { this.props.onFlipXChanged } />
         );
+
+        if (_shouldDisplayTileView) {
+            if (!isFirst) {
+                buttons.push(
+                    <MoveToFirstButton
+                        key = 'moveToFirst'
+                        participantID = { participantID } />
+                );
+            }
+            if (!isLast) {
+                buttons.push(
+                    <MoveToLastButton
+                        key = 'moveToLast'
+                        participantID = { participantID } />
+                );
+            }
+        }
 
         if (buttons.length > 0) {
             return (
@@ -137,4 +163,25 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
     }
 }
 
-export default LocalVideoMenuTriggerButton;
+/**
+ * Maps (parts of) the Redux state to the associated {@code LocalVideoMenuTriggerButton}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
+ * @private
+ * @returns {Object}
+ */
+function _mapStateToProps(state) {
+    const participant = getLocalParticipant(state);
+    const { ordered } = state['features/video-layout'];
+    const found = ordered?.indexOf(participant?.id);
+
+    return {
+        isFirst: ordered && found === 0,
+        isLast: ordered && found === ordered.length - 1,
+        participantID: participant?.id,
+        _shouldDisplayTileView: shouldDisplayTileView(state)
+    };
+}
+
+export default connect(_mapStateToProps)(LocalVideoMenuTriggerButton);

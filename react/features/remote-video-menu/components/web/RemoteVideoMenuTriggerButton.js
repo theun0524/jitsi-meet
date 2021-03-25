@@ -6,6 +6,7 @@ import { Icon, IconMenuThumb } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
+import { shouldDisplayTileView } from '../../../video-layout';
 
 import {
     GrantModeratorButton,
@@ -17,6 +18,8 @@ import {
     RemoteVideoMenu,
     VolumeSlider
 } from './';
+import MoveToFirstButton from './MoveToFirstButton';
+import MoveToLastButton from './MoveToLastButton';
 
 declare var $: Object;
 declare var interfaceConfig: Object;
@@ -173,8 +176,11 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disablePrivateMessage,
             _disableRemoteMute,
             _isModerator,
+            _shouldDisplayTileView,
             initialVolumeValue,
             isAudioMuted,
+            isFirst,
+            isLast,
             onRemoteControlToggle,
             onVolumeChange,
             remoteControlState,
@@ -233,6 +239,23 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             );
         }
 
+        if (_shouldDisplayTileView) {
+            if (!isFirst) {
+                buttons.push(
+                    <MoveToFirstButton
+                        key = 'moveToFirst'
+                        participantID = { participantID } />
+                );
+            }
+            if (!isLast) {
+                buttons.push(
+                    <MoveToLastButton
+                        key = 'moveToLast'
+                        participantID = { participantID } />
+                );
+            }
+        }
+
         if (onVolumeChange) {
             buttons.push(
                 <VolumeSlider
@@ -260,11 +283,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {{
- *     _isModerator: boolean
- * }}
+ * @returns {Object}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const participant = getLocalParticipant(state);
     const {
         disableGrantModerator,
@@ -273,13 +294,19 @@ function _mapStateToProps(state) {
         remoteVideoMenu = {},
     } = state['features/base/config'];
     const { disableKick } = remoteVideoMenu;
+    const { ordered } = state['features/video-layout'];
+    const found = ordered?.indexOf(ownProps.participantID);
 
+    console.log('RemoteVideoMenuTriggerButton:', found, ordered?.length);
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableGrantModerator: Boolean(disableGrantModerator),
         _disableKick: Boolean(disableKick),
         _disablePrivateMessage: Boolean(disablePrivateMessage),
-        _disableRemoteMute: Boolean(disableRemoteMute)
+        _disableRemoteMute: Boolean(disableRemoteMute),
+        _shouldDisplayTileView: shouldDisplayTileView(state),
+        isFirst: ordered && found === 0,
+        isLast: ordered && found === ordered.length - 1,
     };
 }
 

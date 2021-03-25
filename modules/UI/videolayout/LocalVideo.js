@@ -145,9 +145,9 @@ export default class LocalVideo extends SmallVideo {
         let menuPosition;
 
         if (currentLayout === LAYOUTS.TILE_VIEW) {
-            menuPosition = 'left bottom';
+            menuPosition = 'left middle';
         } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            menuPosition = 'left bottom';
+            menuPosition = 'left middle';
         } else {
             menuPosition = 'top center';
         }

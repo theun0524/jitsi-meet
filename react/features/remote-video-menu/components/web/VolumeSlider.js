@@ -65,6 +65,7 @@ class VolumeSlider extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onVolumeChange = this._onVolumeChange.bind(this);
+        this._clickHandler = this._clickHandler.bind(this);
     }
 
     /**
@@ -75,7 +76,7 @@ class VolumeSlider extends Component<Props, State> {
      */
     render() {
         return (
-            <li className = 'popupmenu__item'>
+            <li className = 'popupmenu__item' onClick = { this._clickHandler }>
                 <div className = { `popupmenu__contents ${s.menuContainer}` }>
                     <span className = 'popupmenu__icon'>
                         <Icon src = { IconVolume } />
@@ -92,6 +93,12 @@ class VolumeSlider extends Component<Props, State> {
                 </div>
             </li>
         );
+    }
+
+    _clickHandler: (Object) => void;
+
+    _clickHandler(event) {
+        event.stopPropagation();
     }
 
     _onVolumeChange: (Object) => void;

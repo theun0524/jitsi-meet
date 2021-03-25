@@ -14,6 +14,7 @@ import {
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import { orderedTileView } from '../../../react/features/video-layout';
 import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
@@ -71,12 +72,16 @@ function getLocalParticipant() {
     return getLocalParticipantFromStore(APP.store.getState());
 }
 
+export function getVideoId(node) {
+    return node.id === 'localVideoTileViewContainer'
+        ? localVideoThumbnail.id
+        : node.id.split('_')[1];
+}
+
 const orderBy = {
     displayName: (state, ...data) =>
         concat(...map(data, part => sortBy(part, node => {
-            const id = node.id === 'localVideoTileViewContainer'
-                ? localVideoThumbnail.id
-                : node.id.split('_')[1];
+            const id = getVideoId(node);
             return getParticipantDisplayName(state, id);
         }))),
 
@@ -446,6 +451,10 @@ const VideoLayout = {
             ordered.forEach(node => {
                 videosContainer.appendChild(node);
             });
+
+            APP.store.dispatch(orderedTileView(
+                map(videosContainer.childNodes, getVideoId)
+            ));
         }
     },
 
