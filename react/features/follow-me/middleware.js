@@ -158,18 +158,18 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
 
     // XMPP will translate all booleans to strings, so explicitly check against
     // the string form of the boolean {@code true}.
-    if (oldState.filmstripVisible !== attributes.filmstripVisible) {
+    if (oldState?.filmstripVisible !== attributes.filmstripVisible) {
         store.dispatch(setFilmstripVisible(attributes.filmstripVisible === 'true'));
     }
 
-    if (oldState.tileViewEnabled !== attributes.tileViewEnabled) {
+    if (oldState?.tileViewEnabled !== attributes.tileViewEnabled) {
         store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
     }
 
     // For now gate etherpad checks behind a web-app check to be extra safe
     // against calling a web-app global.
     if (typeof APP !== 'undefined'
-        && oldState.sharedDocumentVisible !== attributes.sharedDocumentVisible) {
+        && oldState?.sharedDocumentVisible !== attributes.sharedDocumentVisible) {
         const isEtherpadVisible = attributes.sharedDocumentVisible === 'true';
 
         if (documentManager
@@ -183,7 +183,7 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
 
     if (typeof idOfParticipantToPin !== 'undefined'
             && (!pinnedParticipant || idOfParticipantToPin !== pinnedParticipant.id)
-            && oldState.nextOnStage !== attributes.nextOnStage) {
+            && oldState?.nextOnStage !== attributes.nextOnStage) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
     } else if (typeof idOfParticipantToPin === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));

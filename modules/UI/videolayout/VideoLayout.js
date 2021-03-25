@@ -1,7 +1,7 @@
 /* global APP, $, interfaceConfig  */
 
 import Logger from 'jitsi-meet-logger';
-import { concat, map, sortBy } from 'lodash';
+import { concat, filter, map, sortBy } from 'lodash';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -14,7 +14,7 @@ import {
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
-import { orderedTileView } from '../../../react/features/video-layout';
+import { orderedTileView, setTileViewOrder } from '../../../react/features/video-layout';
 import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
@@ -414,12 +414,19 @@ const VideoLayout = {
         const nodes = videosContainer.childNodes;
         let ordered;
 
+        $(videosContainer).sortable({
+            stop: () => {
+                APP.store.dispatch(setTileViewOrder(
+                    map(videosContainer.childNodes, getVideoId)
+                ));
+            }
+        });
         // reorder videos by order settings
         if (Array.isArray(order)) {
-            ordered = map(order, id =>
+            ordered = filter(map(order, id =>
                 id === localVideoThumbnail.id
                     ? localVideo
-                    : document.getElementById(`participant_${id}`));
+                    : document.getElementById(`participant_${id}`)));
         } else {
             let data = [];
 

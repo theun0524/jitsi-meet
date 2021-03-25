@@ -297,7 +297,6 @@ function _mapStateToProps(state, ownProps) {
     const { ordered } = state['features/video-layout'];
     const found = ordered?.indexOf(ownProps.participantID);
 
-    console.log('RemoteVideoMenuTriggerButton:', found, ordered?.length);
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableGrantModerator: Boolean(disableGrantModerator),
