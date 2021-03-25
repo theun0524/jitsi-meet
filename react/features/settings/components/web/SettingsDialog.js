@@ -1,5 +1,6 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { Component } from 'react';
 
 import {
@@ -191,6 +192,7 @@ function _mapStateToProps(state) {
             label: 'settings.background',
             props: {
                 selectedVideoInputId: getUserSelectedCameraDeviceId(state),
+                selectedBackgroundId: _user?.background || jitsiLocalStorage.getItem('background') || '',
                 _user,
                 _jwt,
             },

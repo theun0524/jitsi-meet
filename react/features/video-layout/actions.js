@@ -4,7 +4,8 @@ import type { Dispatch } from 'redux';
 
 import {
     SCREEN_SHARE_PARTICIPANTS_UPDATED,
-    SET_TILE_VIEW
+    SET_TILE_VIEW,
+    SET_TILE_VIEW_ORDER
 } from './actionTypes';
 import { shouldDisplayTileView } from './functions';
 
@@ -54,5 +55,18 @@ export function toggleTileView() {
         const tileViewActive = shouldDisplayTileView(getState());
 
         dispatch(setTileView(!tileViewActive));
+    };
+}
+
+/**
+ * Creates a (redux) action which signals to reorder the video thumbnails
+ * for tile view.
+ *
+ * @returns {Function}
+ */
+ export function setTileViewOrder(order) {
+    return {
+        type: SET_TILE_VIEW_ORDER,
+        order
     };
 }

@@ -20,3 +20,13 @@ export const SCREEN_SHARE_PARTICIPANTS_UPDATED
  * }}
  */
 export const SET_TILE_VIEW = 'SET_TILE_VIEW';
+
+/**
+ * The type of the action which reorder the video thumbnails for tile view
+ * 
+ * @return {{
+ *     type: SET_TILE_VIEW_ORDER,
+ *     order: Object
+ * }}
+ */
+export const SET_TILE_VIEW_ORDER = 'SET_TILE_VIEW_ORDER';

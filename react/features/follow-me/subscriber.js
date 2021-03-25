@@ -61,6 +61,13 @@ StateListenerRegistry.register(
     /* listener */ _sendFollowMeCommand);
 
 /**
+ * Subscribes to changes to the tile view order setting.
+ */
+ StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].order,
+    /* listener */ _sendFollowMeCommand);
+
+/**
  * selector for returning state from redux that should be respected by
  * other participants while follow me is enabled.
  *
@@ -122,6 +129,9 @@ function _sendFollowMeCommand(
 
     conference.sendCommand(
         FOLLOW_ME_COMMAND,
-        { attributes: getFollowMeState(state) }
+        {
+            attributes: getFollowMeState(state),
+            value: JSON.stringify(state['features/video-layout'].order)
+        }
     );
 }

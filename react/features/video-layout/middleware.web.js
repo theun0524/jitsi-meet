@@ -13,6 +13,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
+import { SET_TILE_VIEW_ORDER } from './actionTypes.js';
 
 import './middleware.any';
 
@@ -63,7 +64,9 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         // move muted videos to the end of DOM, default id=0, no parameter passed
-        // VideoLayout.moveMutedRemoteVideoToTheEndofDOM();
+        if (typeof action.participant.name !== 'undefined') {
+            VideoLayout.reorderVideos();
+        }
         break;
     }
 
@@ -79,18 +82,21 @@ MiddlewareRegistry.register(store => next => action => {
         VideoLayout.resizeVideoArea();
         break;
 
+    case SET_TILE_VIEW_ORDER:
+        VideoLayout.reorderVideos();
+        break;
+
     case TRACK_ADDED:
         if (!action.track.local) {
             VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
-            VideoLayout.moveMutedVideosAndAddNewVideoToTheStartOfDOM(action.track.participantId);
+            VideoLayout.reorderVideos();
         }
-
         break;
+
     case TRACK_REMOVED:
         if (!action.track.local) {
             VideoLayout.onRemoteStreamRemoved(action.track.jitsiTrack);
         }
-
         break;
     }
 

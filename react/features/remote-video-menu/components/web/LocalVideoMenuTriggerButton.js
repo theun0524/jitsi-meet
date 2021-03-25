@@ -121,6 +121,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
 
         buttons.push(
             <FlipVideoButton
+                key = 'flipvideo'
                 onFlipXChanged = { this.props.onFlipXChanged } />
         );
 

@@ -12,7 +12,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
-import { setTileView } from '../video-layout';
+import { setTileView, setTileViewOrder } from '../video-layout';
 
 import {
     setFollowMeModerator,
@@ -66,8 +66,8 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = action;
 
         conference.addCommandListener(
-            FOLLOW_ME_COMMAND, ({ attributes }, id) => {
-                _onFollowMeCommand(attributes, id, store);
+            FOLLOW_ME_COMMAND, ({ attributes, value }, id) => {
+                _onFollowMeCommand(attributes, value, id, store);
             });
         break;
     }
@@ -112,7 +112,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _onFollowMeCommand(attributes = {}, id, store) {
+function _onFollowMeCommand(attributes = {}, value, id, store) {
     const state = store.getState();
 
     // We require to know who issued the command because (1) only a
@@ -152,7 +152,7 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         return;
     }
 
-    const oldState = state['features/follow-me'].state || {};
+    const { state: oldState, value: oldValue } = state['features/follow-me'] || {};
 
     store.dispatch(setFollowMeState(attributes));
 
@@ -187,6 +187,10 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
     } else if (typeof idOfParticipantToPin === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
+    }
+
+    if (oldValue !== value) {
+        store.dispatch(setTileViewOrder(JSON.parse(value)));
     }
 }
 

@@ -103,10 +103,6 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
         this._onUploadBackgroundImage = this._onUploadBackgroundImage.bind(this);
         this._triggerFileUpload = this._triggerFileUpload.bind(this);
         this.imageUploader = '';
-
-        super._onChange({
-            selectedBackgroundId: this.state.selected === 'none' ? '' : this.state.selected
-        });
     }
 
     /**

@@ -1,6 +1,7 @@
 /* global APP, $, interfaceConfig  */
 
 import Logger from 'jitsi-meet-logger';
+import { concat, map, sortBy } from 'lodash';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -8,7 +9,8 @@ import {
     getPinnedParticipant,
     getParticipantById,
     pinParticipant,
-    getParticipantCount
+    getParticipantCount,
+    getParticipantDisplayName
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
@@ -19,7 +21,7 @@ import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 import LargeVideoManager from './LargeVideoManager';
 import LocalVideo from './LocalVideo';
 import RemoteVideo from './RemoteVideo';
-import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
+import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
 const logger = Logger.getLogger(__filename);
 
@@ -68,6 +70,17 @@ function getAllThumbnails() {
 function getLocalParticipant() {
     return getLocalParticipantFromStore(APP.store.getState());
 }
+
+const orderBy = {
+    displayName: (state, ...data) =>
+        concat(...map(data, part => sortBy(part, node => {
+            const id = node.id === 'localVideoTileViewContainer'
+                ? localVideoThumbnail.id
+                : node.id.split('_')[1];
+            return getParticipantDisplayName(state, id);
+        }))),
+
+};
 
 const VideoLayout = {
     init(emitter) {
@@ -359,7 +372,7 @@ const VideoLayout = {
             if (remoteVideo) {
                 remoteVideo.setVideoMutedView(value);
             }
-            this.moveMutedRemoteVideoToTheEndofDOM(id);
+            this.reorderVideos();
         }
 
         // large video will show avatar instead of muted stream
@@ -376,108 +389,64 @@ const VideoLayout = {
      *  iii. Append a muted video to the end of DOM
      *  iv. Identify the position to insert local thumbnail and insert it
      */
-    moveMutedRemoteVideoToTheEndofDOM(id = 0) {
+    reorderVideos() {
+        const state = APP.store.getState();
+        const { order } = state['features/video-layout'];
+
         // default parameter id=0 for moving all muted remote videos to end of DOM
         // when parameter id has a value, we mute only that participant and move to end of DOM
-        
+
         // when there is only one participant, the console will log error when 
         // we try to remove elements from filmstrip remote container
         // so we dont want to execute this function if there is only one participant
-        if(getParticipantCount(APP.store.getState()) == 1) {
+        if (getParticipantCount(state) === 1 || !order) {
             return;
         }
 
-        //create an array to store mutedParticipantsList
-        let mutedParticipantsList = [];
-
-        // get the video muted participant's span element thumbnail from DOM
-        const mutedParticipantID = 'participant_'.concat(id);
-        const mutedParticipantThumbnail = document.getElementById(mutedParticipantID);
-        
         // remove the local video container from DOM
-        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
-        const localTVC = document.getElementById('localVideoTileViewContainer');
-        if (localTVC) {
-            allVideosContainers.removeChild(localTVC);
-        }
+        const videosContainer = document.getElementById('filmstripRemoteVideosContainer');
+        const localVideo = document.getElementById('localVideoTileViewContainer');
+        const nodes = videosContainer.childNodes;
+        let ordered;
 
-        // append the muted video to the end of DOM
-        if(id != 0) {
-            allVideosContainers.appendChild(mutedParticipantThumbnail);
-        }
-        
-        // identify the position as to where to insert local video thumbnail
-        // we want to insert local video thumbnail in between unmuted remote videos and muted remote videos
-        let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
-        let mutedThumbnailsCount = 0;
-        const allChildNodes = allVideosContainers.childNodes;
-        allChildNodes.forEach((child) => {
-            let participantID = child.id;
-            let i = participantID.split("_")[1];
-            let rv = remoteVideos[i];
-            if (rv.isVideoMuted) {
-                mutedThumbnailsCount = mutedThumbnailsCount + 1;
-                mutedParticipantsList.push(participantID);
+        // reorder videos by order settings
+        if (Array.isArray(order)) {
+            ordered = map(order, id =>
+                id === localVideoThumbnail.id
+                    ? localVideo
+                    : document.getElementById(`participant_${id}`));
+        } else {
+            let data = [];
+
+            if (order.videoMuted) {
+                // split videoMuted order
+                data.push([]);
+                data.push([]);
+
+                nodes.forEach(node => {
+                    if (node === localVideo) {
+                        data[localVideoThumbnail.isVideoMuted ? 1 : 0].push(node);
+                    } else { // remoteVideo
+                        const id = node.id.split('_')[1];
+                        data[remoteVideos[id].isVideoMuted ? 1 : 0].push(node);
+                    }
+                });
+            } else {
+                data.push(nodes);
             }
-        });
 
-        if(id == 0) {
-            // loop through the array and append muted videos to the end of DOM
-            mutedParticipantsList.forEach((mutedParticipantId) => {
-                const mutedParticipantThumbnail = document.getElementById(mutedParticipantId);
-                allVideosContainers.appendChild(mutedParticipantThumbnail);
+            if (orderBy[order.by]) {
+                ordered = orderBy[order.by](state, ...data);
+            }
+        }
+
+        if (ordered) {
+            // remove videoContainer innerHTML
+            videosContainer.innerHTML = '';
+            ordered.forEach(node => {
+                videosContainer.appendChild(node);
             });
         }
-
-        const pos = totalRemoteThumbnailsCount - mutedThumbnailsCount;
-        allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
-    },
-
-    moveMutedVideosAndAddNewVideoToTheStartOfDOM(newParticipantId) {
-        // create a javascript variable to store the HTML element for new participant and insert before first thumbnail
-        const newParticipantThumbnail = document.getElementById('participant_'.concat(newParticipantId)); 
-
-        // get all participant thumbnail videos
-        let allVideosContainers = document.getElementById('filmstripRemoteVideosContainer');
-
-        // insert the new participant thumbnail before the first participant
-        allVideosContainers.insertBefore(newParticipantThumbnail, allVideosContainers.firstChild);
-
-        // remove local participant thumbnail videos
-        const localTVC = document.getElementById('localVideoTileViewContainer');
-        allVideosContainers.removeChild(document.getElementById('localVideoTileViewContainer'));
-
-        // get total thumbnails in the current conference
-        let totalRemoteThumbnailsCount  = allVideosContainers.childElementCount;
-        
-        // determine which particpants are (video) muted and store their participantId in an array
-        let mutedParticipantsIdArr = [];
-        let mutedThumbnailsCount = 0;
-        const allChildNodes = allVideosContainers.childNodes;
-        allChildNodes.forEach((child) => {
-            let participantId = child.id;
-            let i = participantId.split("_")[1];
-            let rv = remoteVideos[i];
-            if (rv.isVideoMuted) {
-                mutedThumbnailsCount = mutedThumbnailsCount + 1;
-                mutedParticipantsIdArr.push(participantId);
-            }
-        });
-
-        // loop through the array and append muted videos to the end of DOM
-        mutedParticipantsIdArr.forEach((mutedParticipantId) => {
-            const mutedParticipantThumbnail = document.getElementById(mutedParticipantId);
-            allVideosContainers.appendChild(mutedParticipantThumbnail);
-        });
-
-        // position before to put local video container
-        const pos = totalRemoteThumbnailsCount - mutedThumbnailsCount;
-        if(mutedThumbnailsCount > 0) {
-            allVideosContainers.insertBefore(localTVC, allChildNodes[pos]);
-        } else {
-            allVideosContainers.appendChild(localTVC);
-        }
-        
     },
 
     /**

@@ -22,7 +22,6 @@ export function submitBackgroundSelectionTab(newState) {
             const localTrack = getLocalVideoTrack(getState()['features/base/tracks']);
     
             if (conference && localTrack && localTrack.jitsiTrack) {
-                console.log('submitBackgroundSelectionTab:', localTrack);
                 if (background) {
                     const backgroundImageUrl = `${apiBase}/backgrounds/${background}/hd`;
     
@@ -36,6 +35,12 @@ export function submitBackgroundSelectionTab(newState) {
         };
 
         console.log('submitBackgroundSelectionTab:', newState);
+        const oldBackground = user
+            ? user.background
+            : jitsiLocalStorage.getItem('background');
+
+        if (oldBackground === background) return;
+
         if (user) {
             axios.patch(`${apiBase}/account`, { background })
             .then(resp => {
