@@ -1,6 +1,6 @@
 /* @flow */
 
-import _ from 'lodash';
+import { debounce, map } from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -13,15 +13,17 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout, LAYOUTS, setTileViewOrder } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import Toolbar from './Toolbar';
 import s from './Filmstrip.module.scss';
+import { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
+declare var $: Object;
 
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
@@ -124,7 +126,7 @@ class Filmstrip extends Component<Props> {
         // also works around an issue where mouseout and then a mouseover event
         // is fired when hovering over remote thumbnails, which are not yet in
         // react.
-        this._notifyOfHoveredStateUpdate = _.debounce(this._notifyOfHoveredStateUpdate, 100);
+        this._notifyOfHoveredStateUpdate = debounce(this._notifyOfHoveredStateUpdate, 100);
 
         // Cache the current hovered state for _updateHoveredState to always
         // send the last known hovered state.
@@ -135,6 +137,7 @@ class Filmstrip extends Component<Props> {
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
         this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
+        this._videosContainer = React.createRef();
     }
 
     /**
@@ -143,6 +146,7 @@ class Filmstrip extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
+        this.$videosContainer = $(this._videosContainer.current);
         if (!this.props._filmstripOnly) {
             APP.keyboardshortcut.registerShortcut(
                 'F',
@@ -160,6 +164,26 @@ class Filmstrip extends Component<Props> {
      */
     componentWillUnmount() {
         APP.keyboardshortcut.unregisterShortcut('F');
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps._currentLayout !== this.props._currentLayout) {
+            this._changeSortable();
+        }
+    }
+
+    _changeSortable() {
+        if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
+            this.$videosContainer.sortable({
+                stop: () => {
+                    this.props.dispatch(setTileViewOrder(
+                        map(this.$videosContainer.children(), getVideoId)
+                    ));
+                }
+            });
+        } else {
+            this.$videosContainer.sortable('disable');
+        }
     }
 
     /**
@@ -239,6 +263,7 @@ class Filmstrip extends Component<Props> {
                             id='filmstripRemoteVideosContainer'
                             onMouseOut={this._onMouseOut}
                             onMouseOver={this._onMouseOver}
+                            ref={this._videosContainer}
                             style={filmstripRemoteVideosContainerStyle}>
                             <div id='localVideoTileViewContainer' />
                         </div>

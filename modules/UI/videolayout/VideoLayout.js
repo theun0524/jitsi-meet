@@ -414,13 +414,6 @@ const VideoLayout = {
         const nodes = videosContainer.childNodes;
         let ordered;
 
-        $(videosContainer).sortable({
-            stop: () => {
-                APP.store.dispatch(setTileViewOrder(
-                    map(videosContainer.childNodes, getVideoId)
-                ));
-            }
-        });
         // reorder videos by order settings
         if (Array.isArray(order)) {
             ordered = filter(map(order, id =>
