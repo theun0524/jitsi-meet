@@ -28,9 +28,6 @@ class MuteRemoteParticipantDialog extends AbstractMuteRemoteParticipantDialog {
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.muteParticipantTitle'
                 width = 'small'>
-                <div>
-                    { this.props.t('dialog.muteParticipantBody') }
-                </div>
             </Dialog>
         );
     }

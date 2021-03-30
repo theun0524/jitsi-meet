@@ -78,7 +78,17 @@ export const ENABLE_CHAT_FOR_ALL = 'ENABLE_CHAT_FOR_ALL';
  *     id: string
  * }
  */
-export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
+ export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
+
+/**
+ * Create an action for toggle mute a remote participant.
+ *
+ * {
+ *     type: TOGGLE_MUTE_REMOTE_PARTICIPANT,
+ *     id: string
+ * }
+ */
+export const TOGGLE_MUTE_REMOTE_PARTICIPANT = 'TOGGLE_MUTE_REMOTE_PARTICIPANT';
 
 /**
  * Create an action for when the local participant's display name is updated.

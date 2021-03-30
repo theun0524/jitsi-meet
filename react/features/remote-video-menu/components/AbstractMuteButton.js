@@ -11,6 +11,7 @@ import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/com
 import { isRemoteTrackMuted } from '../../base/tracks';
 
 import { MuteRemoteParticipantDialog } from '.';
+import { toggleMuteRemote } from '../actions';
 
 export type Props = AbstractButtonProps & {
 
@@ -53,7 +54,7 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, participantID } = this.props;
+        const { _audioTrackMuted, dispatch, participantID } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'mute.button',
@@ -61,7 +62,11 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
+        if (_audioTrackMuted) {
+            dispatch(toggleMuteRemote(participantID));
+        } else {
+            dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
+        }
     }
 
     /**

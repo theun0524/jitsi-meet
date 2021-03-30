@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled } from '../../../base/icons';
+import { IconMicDisabled, IconMicrophone } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteButton, {
     _mapStateToProps,
@@ -43,18 +43,20 @@ class MuteButton extends AbstractMuteButton {
     render() {
         const { _audioTrackMuted, participantID, t } = this.props;
         const muteConfig = _audioTrackMuted ? {
-            translationKey: 'videothumbnail.muted',
-            muteClassName: 'mutelink disabled'
+            buttonText: 'videothumbnail.dounmute',
+            muteClassName: 'mutelink',
+            icon: IconMicDisabled,
         } : {
-            translationKey: 'videothumbnail.domute',
-            muteClassName: 'mutelink'
+            buttonText: 'videothumbnail.domute',
+            muteClassName: 'mutelink',
+            icon: IconMicrophone
         };
 
         return (
             <RemoteVideoMenuButton
-                buttonText = { t(muteConfig.translationKey) }
+                buttonText = { t(muteConfig.buttonText) }
                 displayClass = { muteConfig.muteClassName }
-                icon = { IconMicDisabled }
+                icon = { muteConfig.icon }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />

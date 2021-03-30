@@ -20,7 +20,8 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RECV_VIDEO_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    TOGGLE_MUTE_REMOTE_PARTICIPANT
 } from './actionTypes';
 import {
     getLocalParticipant,
@@ -268,6 +269,22 @@ export function muteRemoteParticipant(id) {
 }
 
 /**
+ * Create an action for toggle mute another participant in the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+ *     type: TOGGLE_MUTE_REMOTE_PARTICIPANT,
+ *     id: string
+ * }}
+ */
+export function toggleMuteRemoteParticipant(id) {
+    return {
+        type: TOGGLE_MUTE_REMOTE_PARTICIPANT,
+        id
+    };
+}
+
+/**
  * Action to update a participant's connection status.
  *
  * @param {string} id - Participant's ID.
@@ -473,15 +490,20 @@ export function participantUpdated(participant = {}) {
  * @param {JitsiParticipant} participant - Information about participant.
  * @returns {Promise}
  */
-export function participantMutedUs(participant) {
+export function participantMutedUs(track, participant) {
     return (dispatch, getState) => {
         if (!participant) {
             return;
         }
 
-        dispatch(showNotification({
-            descriptionKey: 'notify.mutedRemotelyDescription',
+        const notification = track.isMuted() ? {
             titleKey: 'notify.mutedRemotelyTitle',
+        } : {
+            titleKey: 'notify.unmutedRemotelyTitle',
+        };
+
+        dispatch(showNotification({
+            ...notification,
             titleArguments: {
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())

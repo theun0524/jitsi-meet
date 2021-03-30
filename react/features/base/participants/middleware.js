@@ -30,7 +30,8 @@ import {
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
+    PARTICIPANT_UPDATED,
+    TOGGLE_MUTE_REMOTE_PARTICIPANT
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -166,6 +167,12 @@ MiddlewareRegistry.register(store => next => action => {
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
         conference.muteParticipant(action.id);
+        break;
+    }
+
+    case TOGGLE_MUTE_REMOTE_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.toggleMuteParticipant(action.id);
         break;
     }
 
