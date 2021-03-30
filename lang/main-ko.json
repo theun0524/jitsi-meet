@@ -196,7 +196,7 @@
         "chatEnabledTitle": "채팅이 허용됨",
         "close": "닫기",
         "conference": {
-            "max_users": "최대 참가자 수 제한에 도달했습니다. 회의가 꽉 찼습니다. 회의 방장에게 연락하거나 나중에 다시 시도하십시오!"
+            "max_users": "회의 참석 가능인원이 꽉 찼습니다. 회의 방장에게 연락하거나 나중에 다시 시도하십시오!"
         },
         "conferenceDisconnectMsg": "네트워크 연결을 확인하고 있습니다. {{seconds}} 초 내에 다시 연결중입니다…",
         "conferenceDisconnectTitle": "연결이 끊어졌습니다.",

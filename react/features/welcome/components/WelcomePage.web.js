@@ -6,7 +6,6 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
 import React from 'react';
 
-import { isMobileBrowser } from '../../base/environment/utils';
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
@@ -16,14 +15,13 @@ import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { NotificationsContainer } from '../../notifications/components';
 import { RecentList } from '../../recent-list';
-import { DBList } from '../../db-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import s from './WelcomePage.module.scss';
-import { showNotification } from '../../notifications';
+import { showSweetAlert } from '../../notifications';
 
 /**
  * The pattern used to validate room name.
@@ -70,6 +68,7 @@ class WelcomePage extends AbstractWelcomePage {
             generateRoomnames:
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
             selectedTab: 0,
+            savedNotification: jitsiLocalStorage.getItem('saved_notification'),
             submitting: false
         };
 
@@ -156,19 +155,6 @@ class WelcomePage extends AbstractWelcomePage {
                 this._additionalToolbarContentTemplate.content.cloneNode(true)
             );
         }
-
-        const savedNotification = jitsiLocalStorage.getItem('saved_notification');
-        if (savedNotification) {
-            jitsiLocalStorage.removeItem('saved_notification');
-            const notification = JSON.parse(savedNotification);
-            this.props.dispatch(showNotification({
-                ...notification.props,
-                isNewStyle: true,
-                hideErrorSupportLink: true,
-                timeout: notification.timeout,
-                uid: notification.uid,
-            }));
-        }
     }
 
     /**
@@ -181,6 +167,26 @@ class WelcomePage extends AbstractWelcomePage {
         super.componentWillUnmount();
 
         document.body.classList.remove('welcome-page');
+    }
+
+    componentDidUpdate() {
+        const { savedNotification } = this.state;
+        const { t, tReady } = this.props;
+
+        if (savedNotification && tReady) {
+            this.setState({ savedNotification: null });
+            jitsiLocalStorage.removeItem('saved_notification');
+
+            try {
+                const notification = JSON.parse(savedNotification);
+                showSweetAlert({
+                    ...notification.props,
+                    customClass: { htmlContainer: s.popupMessage }
+                }, t);
+            } catch (err) {
+                console.error(err);
+            }
+        }
     }
 
     /**
