@@ -111,6 +111,7 @@
     "rtcstats": "github:jitsi/rtcstats#v6.2.0",
     "string-template": "1.0.0",
     "styled-components": "3.4.9",
+    "sweetalert2": "10.15.7",
     "util": "0.12.1",
     "uuid": "3.1.0",
     "wasm-check": "^2.0.1",
