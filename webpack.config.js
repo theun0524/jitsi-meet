@@ -230,7 +230,8 @@ const config = {
             // Webpack defaults:
             '.js',
             '.json'
-        ]
+        ],
+        symlinks: true,
     }
 };
 

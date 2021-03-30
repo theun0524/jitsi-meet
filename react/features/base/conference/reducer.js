@@ -13,6 +13,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
+    CONFERENCE_TIME_REMAINED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
@@ -63,6 +64,9 @@ ReducerRegistry.register(
 
         case CONFERENCE_SUBJECT_CHANGED:
             return set(state, 'subject', action.subject);
+
+        case CONFERENCE_TIME_REMAINED:
+            return set(state, 'conferenceTimeRemained', action.timeRemained);
 
         case CONFERENCE_TIMESTAMP_CHANGED:
             return set(state, 'conferenceTimestamp', action.conferenceTimestamp);

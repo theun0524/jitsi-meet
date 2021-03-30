@@ -55,7 +55,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY,
     PARTICIPANT_CHAT_DISABLED,
-    PARTICIPANT_CHAT_ENABLED
+    PARTICIPANT_CHAT_ENABLED,
+    CONFERENCE_TIME_REMAINED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -342,6 +343,13 @@ export function conferenceSubjectChanged(subject: string) {
     return {
         type: CONFERENCE_SUBJECT_CHANGED,
         subject
+    };
+}
+
+export function conferenceTimeRemained(timeRemained: number) {
+    return {
+        type: CONFERENCE_TIME_REMAINED,
+        timeRemained
     };
 }
 

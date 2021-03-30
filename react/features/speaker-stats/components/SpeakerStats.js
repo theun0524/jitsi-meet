@@ -1,7 +1,6 @@
 // @flow
 
 import FieldText from '@atlaskit/field-text';
-import RefreshIcon from '@atlaskit/icon/glyph/refresh';
 import {
     HeaderComponentProps,
     ModalHeader

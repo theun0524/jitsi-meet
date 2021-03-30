@@ -52,6 +52,8 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
  */
 export const CONFERENCE_SUBJECT_CHANGED = 'CONFERENCE_SUBJECT_CHANGED';
 
+export const CONFERENCE_TIME_REMAINED = 'CONFERENCE_TIME_REMAINED';
+
 /**
 * The type of (redux) action, which indicates conference UTC timestamp changes.
 *

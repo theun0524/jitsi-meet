@@ -46,7 +46,8 @@ import {
     p2pStatusChanged,
     sendLocalParticipant,
     setDesktopSharingEnabled,
-    setStartMutedPolicy
+    setStartMutedPolicy,
+    conferenceTimeRemained
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -2097,6 +2098,9 @@ export default {
 
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
             subject => APP.store.dispatch(conferenceSubjectChanged(subject)));
+
+        room.on(JitsiConferenceEvents.TIME_REMAINED,
+            timeRemained => APP.store.dispatch(conferenceTimeRemained(timeRemained)));
 
         room.on(
             JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,

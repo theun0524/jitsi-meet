@@ -8,6 +8,8 @@ import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { SpeakerStats } from '../../../speaker-stats';
 
+import s from './ParticipantsCount.module.scss';
+
 /**
  * The type of the React {@code Component} props of {@link ParticipantsCount}.
  */
@@ -71,7 +73,7 @@ class ParticipantsCount extends PureComponent<Props> {
     render() {
         return (
             <div
-                className = 'participants-count'
+                className = { `participants-count ${s.container}` }
                 onClick = { this._onClick }>
                 <span className = 'participants-count-number'>
                     {this.props.count}

@@ -191,6 +191,13 @@ export function getConferenceTimestamp(stateful: Function | Object): number {
     return conferenceTimestamp;
 }
 
+export function getConferenceTimeRemained(stateful: Function | Object): number {
+    const state = toState(stateful);
+    const { conferenceTimeRemained } = state['features/base/conference'];
+
+    return conferenceTimeRemained;
+}
+
 /**
  * Returns the current {@code JitsiConference} which is joining or joined and is
  * not leaving. Please note the contrast with merely reading the

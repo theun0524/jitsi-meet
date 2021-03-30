@@ -1,11 +1,13 @@
 // @flow
 
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import { renderConferenceTimer } from '../';
-import { getConferenceTimestamp } from '../../base/conference/functions';
-import { getLocalizedDurationFormatter } from '../../base/i18n';
+import { getConferenceTimestamp, getConferenceTimeRemained } from '../../base/conference/functions';
+import { getLocalizedDurationFormatter, translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+
+import s from './ConferenceTimer.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
@@ -47,6 +49,8 @@ class ConferenceTimer extends Component<Props, State> {
      */
     _interval;
 
+    _timeRemained;
+
     /**
      * Initializes a new {@code ConferenceTimer} instance.
      *
@@ -81,6 +85,13 @@ class ConferenceTimer extends Component<Props, State> {
         this._stopTimer();
     }
 
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps._timeRemained !== this.props._timeRemained) {
+            this._stopTimer();
+            this._startTimer();
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -89,10 +100,20 @@ class ConferenceTimer extends Component<Props, State> {
      */
     render() {
         const { timerValue } = this.state;
-        const { _startTimestamp } = this.props;
+        const { _startTimestamp, _timeRemained, t } = this.props;
 
-        if (!_startTimestamp) {
+        if (!_startTimestamp && !_timeRemained) {
             return null;
+        }
+
+        if (_timeRemained) {
+            return (
+                <div className = { s.timeRemainedContainer }>
+                    { t('dialog.conferenceTimeRemaining', {
+                        seconds: getLocalizedDurationFormatter(timerValue * 1000)
+                    }) }
+                </div>
+            )
         }
 
         return renderConferenceTimer(timerValue);
@@ -125,6 +146,14 @@ class ConferenceTimer extends Component<Props, State> {
         });
     }
 
+    _setStateTimeRemained(value) {
+        if (!value) {
+            return;
+        }
+
+        this.setState({ timerValue: value });
+    }
+
     /**
      * Start conference timer.
      *
@@ -132,11 +161,18 @@ class ConferenceTimer extends Component<Props, State> {
      */
     _startTimer() {
         if (!this._interval) {
-            this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
-
-            this._interval = setInterval(() => {
+            if (!this.props._timeRemained) {
                 this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
-            }, 1000);
+
+                this._interval = setInterval(() => {
+                    this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
+                }, 1000);
+            } else {
+                this._setStateTimeRemained(this.props._timeRemained);
+                this._interval = setInterval(() => {
+                    this._setStateTimeRemained(this.state.timerValue - 1);
+                }, 1000);
+            }
         }
     }
 
@@ -148,6 +184,7 @@ class ConferenceTimer extends Component<Props, State> {
     _stopTimer() {
         if (this._interval) {
             clearInterval(this._interval);
+            this._interval = null;
         }
 
         this.setState({
@@ -169,8 +206,9 @@ class ConferenceTimer extends Component<Props, State> {
 export function _mapStateToProps(state: Object) {
 
     return {
-        _startTimestamp: getConferenceTimestamp(state)
+        _startTimestamp: getConferenceTimestamp(state),
+        _timeRemained: getConferenceTimeRemained(state)
     };
 }
 
-export default connect(_mapStateToProps)(ConferenceTimer);
+export default translate(connect(_mapStateToProps)(ConferenceTimer));
