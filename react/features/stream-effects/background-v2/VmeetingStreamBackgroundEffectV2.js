@@ -1,58 +1,69 @@
 // @flow
-
-import { flip } from 'lodash';
-import useRenderingPipeline from './core/hooks/useRenderingPipeline';
 import {
-    CLEAR_INTERVAL,
-    INTERVAL_TIMEOUT,
-    SET_INTERVAL,
+    CLEAR_TIMEOUT,
+    TIMEOUT_TICK,
+    SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
 
 /**
  * Represents a modified MediaStream that adds blur to video background.
- * <tt>VmeetingStreamBackgroundEffect</tt> does the processing of the original
+ * <tt>JitsiStreamBlurEffect</tt> does the processing of the original
  * video stream.
  */
-export default class VmeetingStreamBackgroundEffect {
-    _tflite;
-    _videoElement: HTMLVideoElement;
-    _backgroundElement: HTMLImageElement;
-    _onVideoFrameTimer: Function;
-    _videoFrameTimerWorker: Worker;
-    _videoInProgress: boolean;
-    _canvas: HTMLCanvasElement;
+export default class VmeetingStreamBackgroundEffectV2 {
+    _model: Object;
+    _options: Object;
+    _segmentationPixelCount: number;
+    _inputVideoElement: HTMLVideoElement;
+    _onMaskFrameTimer: Function;
+    _maskFrameTimerWorker: Worker;
+    _outputCanvasElement: HTMLCanvasElement;
+    _outputCanvasCtx: Object;
+    _segmentationMaskCtx: Object;
+    _segmentationMask: Object;
+    _segmentationMaskCanvas: Object;
     _renderMask: Function;
-    _segmentationData: Object;
     isEnabled: Function;
     startEffect: Function;
     stopEffect: Function;
+    beginFrame: Function;
+    addFrameEvent: Function;
+    endFrame: Function;
 
     /**
      * Represents a modified video MediaStream track.
      *
      * @class
-     * @param {TFLite} tflite - TFLite model.
+     * @param {Object} model - Meet model.
+     * @param {Object} options - Segmentation dimensions.
      */
-    constructor(tflite, backgroundImageUrl, useLite) {
-        this._tflite = tflite;
-        this._useLite = useLite;
+    constructor(model: Object, backgroundImageUrl: String, options: Object) {
+        this._model = model;
+        this._options = options;
+        this._segmentationPixelCount = this._options.width * this._options.height;
 
         // Bind event handler so it is only bound once for every instance.
-        this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
-        this._backgroundImageUrl = backgroundImageUrl;
+        this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 
-        this._container = document.createElement('div');
-        this._canvas = document.createElement('canvas');  
-        this._ctx = this._canvas.getContext('2d');
-        this._videoElement = document.createElement('video');
-        this._backgroundElement = document.createElement('img');
+        // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
+        this._outputCanvasElement = document.createElement('canvas');
+        this._outputCanvasElement.getContext('2d');
+        this._inputVideoElement = document.createElement('video');
 
-        this._container.appendChild(this._videoElement);
-        this._container.appendChild(this._backgroundElement);
-        if (document.body !== null) {
-            document.body.appendChild(this._container);
-        }
+        this._virtualImage = document.createElement('img');
+        this._virtualImage.crossOrigin = 'anonymous';
+        this._virtualImage.src = backgroundImageUrl;
+
+        this.fps = 0;
+        this.durations = []; //[0]: resizing, [1]: inference, [2]: postProcessing
+        this.previousTime = 0;
+        this.beginTime = 0;
+        this.eventCount = 0;
+        this.frameCount = 0;
+        this.frameDurations = [];
+
+        this.cumData=[];
     }
 
     /**
@@ -62,45 +73,126 @@ export default class VmeetingStreamBackgroundEffect {
      * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-    async _onVideoFrameTimer(response: Object) {
-        if (response.data.id === INTERVAL_TIMEOUT) {
-            if (!this._videoInProgress) {
-                await this._renderVideo();
-            }
+    async _onMaskFrameTimer(response: Object) {
+        if (response.data.id === TIMEOUT_TICK) {
+            await this._renderMask();
         }
     }
 
     /**
-     * Loop function to render the video with virtual background.
+     * Represents the run post processing.
+     *
+     * @returns {void}
+     */
+    runPostProcessing() {
+        this._outputCanvasCtx.globalCompositeOperation = 'copy';
+        this._outputCanvasCtx.filter = 'blur(4px)';
+
+        this._outputCanvasCtx.drawImage(
+            this._segmentationMaskCanvas,
+            0,
+            0,
+            this._options.width,
+            this._options.height,
+            0,
+            0,
+            this._inputVideoElement.width,
+            this._inputVideoElement.height
+        );
+
+        this._outputCanvasCtx.globalCompositeOperation = 'source-in';
+        this._outputCanvasCtx.filter = 'none';
+
+        this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
+
+        this._outputCanvasCtx.drawImage(
+            this._virtualImage,
+            0,
+            0,
+            this._inputVideoElement.width,
+            this._inputVideoElement.height
+        );
+    }
+
+    /**
+     * Represents the run Tensorflow Interference.
+     *
+     * @returns {void}
+     */
+    runInference() {
+        this._model._runInference();
+        const outputMemoryOffset = this._model._getOutputMemoryOffset() / 4;
+
+        for (let i = 0; i < this._segmentationPixelCount; i++) {
+            const background = this._model.HEAPF32[outputMemoryOffset + (i * 2)];
+            const person = this._model.HEAPF32[outputMemoryOffset + (i * 2) + 1];
+            const shift = Math.max(background, person);
+            const backgroundExp = Math.exp(background - shift);
+            const personExp = Math.exp(person - shift);
+
+            // Sets only the alpha component of each pixel.
+            this._segmentationMask.data[(i * 4) + 3] = (255 * personExp) / (backgroundExp + personExp);
+        }
+        this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
+    }
+
+    /**
+     * Loop function to render the background mask.
      *
      * @private
      * @returns {void}
      */
-    async _renderVideo() {
-        this._videoInProgress = true;
+    _renderMask() {
+        this.beginFrame();
 
-        const {
-            pipeline,
-            backgroundImageRef,
-            canvasRef,
-          } = useRenderingPipeline(
-            this._videoElement,
-            this._tflite,
-            this._backgroundElement,
-            this._canvas,
-            this._useLite
-          );
-        //console.log(this._tflite._getModelBufferMemoryOffset());
-        if (pipeline) {
-            pipeline.updatePostProcessingConfig({
-                smoothSegmentationMask: true,
-                jointBilateralFilter: { sigmaSpace: 1, sigmaColor: 0.1 },
-                coverage: [0.5, 0.75],
-                lightWrapping: 0.3,
-                blendMode: 'screen',
-              })
+        this.resizeSource();
+
+        this.addFrameEvent();
+        this.runInference();
+        this.addFrameEvent();
+
+        this.runPostProcessing();
+
+        this.endFrame();
+
+        this._maskFrameTimerWorker.postMessage({
+            id: SET_TIMEOUT,
+            timeMs: 1000 / 30
+        });
+    }
+
+    /**
+     * Represents the resize source process.
+     *
+     * @returns {void}
+     */
+    resizeSource() {
+        this._segmentationMaskCtx.drawImage(
+            this._inputVideoElement,
+            0,
+            0,
+            this._inputVideoElement.width,
+            this._inputVideoElement.height,
+            0,
+            0,
+            this._options.width,
+            this._options.height
+        );
+
+        const imageData = this._segmentationMaskCtx.getImageData(
+            0,
+            0,
+            this._options.width,
+            this._options.height
+        );
+        const inputMemoryOffset = this._model._getInputMemoryOffset() / 4;
+
+        for (let i = 0; i < this._segmentationPixelCount; i++) {
+            this._model.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255;
         }
-        this._videoInProgress = false;
     }
 
     /**
@@ -121,37 +213,32 @@ export default class VmeetingStreamBackgroundEffect {
      * @returns {MediaStream} - The stream with the applied effect.
      */
     startEffect(stream: MediaStream) {
-        this._videoFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Background effect worker' });
-        this._videoFrameTimerWorker.onmessage = this._onVideoFrameTimer;
-
+        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
+        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
 
-        this._backgroundElement.src = this._backgroundImageUrl;
-        this._backgroundElement.style.objectFit = 'cover';
-
-
-        // set the style attribute of the div to make it invisible
-        this._container.style.display = 'none';
-
-        this._canvas.width = parseInt(width, 10);
-        this._canvas.height = parseInt(height, 10);
-        //this._canvas.ref = this._canvasRef;
-        this._backgroundElement.width = parseInt(width, 10);
-        this._backgroundElement.height = parseInt(height, 10);
-        this._videoElement.width = parseInt(width, 10);
-        this._videoElement.height = parseInt(height, 10);
-        this._videoElement.autoplay = true;
-        this._videoElement.srcObject = stream;
-        this._videoElement.onloadeddata = () => {
-            this._videoFrameTimerWorker.postMessage({
-                id: SET_INTERVAL,
-                timeMs: 1000 / parseInt(frameRate, 10)
+        this._segmentationMask = new ImageData(this._options.width, this._options.height);
+        this._segmentationMaskCanvas = document.createElement('canvas');
+        this._segmentationMaskCanvas.width = this._options.width;
+        this._segmentationMaskCanvas.height = this._options.height;
+        this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d');
+        this._outputCanvasElement.width = parseInt(width, 10);
+        this._outputCanvasElement.height = parseInt(height, 10);
+        this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
+        this._inputVideoElement.width = parseInt(width, 10);
+        this._inputVideoElement.height = parseInt(height, 10);
+        this._inputVideoElement.autoplay = true;
+        this._inputVideoElement.srcObject = stream;
+        this._inputVideoElement.onloadeddata = () => {
+            this._maskFrameTimerWorker.postMessage({
+                id: SET_TIMEOUT,
+                timeMs: 1000 / 30
             });
         };
 
-        return this._canvas.captureStream(parseInt(frameRate, 10));
+        return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
     }
 
     /**
@@ -160,11 +247,38 @@ export default class VmeetingStreamBackgroundEffect {
      * @returns {void}
      */
     stopEffect() {
-        this._videoFrameTimerWorker.postMessage({
-            id: CLEAR_INTERVAL
+        this._maskFrameTimerWorker.postMessage({
+            id: CLEAR_TIMEOUT
         });
 
-        this._videoFrameTimerWorker.terminate();
-        document.body.removeChild(this._container);
+        this._maskFrameTimerWorker.terminate();
     }
+
+
+    beginFrame() {
+        this.beginTime = Date.now();
+    }
+
+    addFrameEvent() {
+        const time = Date.now();
+        this.frameDurations[this.eventCount] = time - this.beginTime;
+        this.beginTime = time;
+        this.eventCount++;
+    }
+
+    endFrame() {
+        const time = Date.now();
+        this.frameDurations[this.eventCount] = time - this.beginTime;
+        this.frameCount++;
+        if (time >= this.previousTime + 1000) {
+            this.fps = (this.frameCount * 1000) / (time - this.previousTime);
+            this.durations = this.frameDurations;
+            this.previousTime = time;
+            this.frameCount = 0;
+            //console.log(`FPS: ${this.fps}, Inference: ${this.durations[1]}`);
+            this.cumData.push({fps: this.fps, inferenceTime: this.durations[1]});
+        }
+        this.eventCount = 0;
+    }
+  
 }

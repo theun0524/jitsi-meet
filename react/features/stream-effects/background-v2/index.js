@@ -3,12 +3,23 @@
 import * as wasmCheck from 'wasm-check';
 
 import VmeetingStreamBackgroundEffectV2 from './VmeetingStreamBackgroundEffectV2';
-import createTFLiteModule from '../background-v2/tflite/tflite';
-import createTFLiteSIMDModule from '../background-v2/tflite/tflite-simd';
+import createTFLiteModule from './tflite/tflite';
+import createTFLiteSIMDModule from './tflite/tflite-simd';
 
 const models = {
     'model96': 'libs/bg_segmentation_lite.tflite',
     'model144': 'libs/bg_segmentation.tflite'
+};
+
+const segmentationDimensions = {
+    'model96': {
+        'height': 96,
+        'width': 160
+    },
+    'model144': {
+        'height': 144,
+        'width': 256
+    }
 };
 
 /**
@@ -46,5 +57,7 @@ export async function createBackgroundEffectV2(backgroundImageUrl) {
 
     tflite._loadModel(model.byteLength);
 
-    return new VmeetingStreamBackgroundEffectV2(tflite, backgroundImageUrl, !wasmCheck.feature.simd);
+    const options = wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96;
+
+    return new VmeetingStreamBackgroundEffectV2(tflite, backgroundImageUrl, options);
 }
