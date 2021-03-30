@@ -265,9 +265,14 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             });
             attributes.type = RECORDING_TYPES.DROPBOX;
         } else {
+            let recorder_user = APP.store.getState()['features/base/jwt'].user;
             appData = JSON.stringify({
                 'file_recording_metadata': {
-                    'share': this.state.sharingEnabled
+                    'share': this.state.sharingEnabled,
+                    'recorder_identity': {
+                        'email': recorder_user.email,
+                        'name': recorder_user.name,
+                    }
                 }
             });
             attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
