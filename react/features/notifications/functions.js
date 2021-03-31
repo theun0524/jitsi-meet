@@ -3,6 +3,7 @@
 import Swal from 'sweetalert2';
 import { toState } from '../base/redux';
 import { NOTIFICATION_TYPE } from './constants';
+import { i18next } from '../base/i18n';
 
 declare var interfaceConfig: Object;
 
@@ -29,7 +30,7 @@ export function joinLeaveNotificationsDisabled() {
     return Boolean(typeof interfaceConfig !== 'undefined' && interfaceConfig?.DISABLE_JOIN_LEAVE_NOTIFICATIONS);
 }
 
-export function showSweetAlert(props, t) {
+export function showSweetAlert(props) {
     const {
         appearance,
         descriptionKey : text,
@@ -40,24 +41,28 @@ export function showSweetAlert(props, t) {
 
     switch (appearance) {
     case NOTIFICATION_TYPE.ERROR: {
-        confirmButtonText = t('dialog.dismiss');
+        confirmButtonText = 'dialog.dismiss';
         break;
     }
     case NOTIFICATION_TYPE.WARNING: {
-        confirmButtonText = t('dialog.OK');
+        confirmButtonText = 'dialog.OK';
         break;
     }
     default: {
-        confirmButtonText = t('dialog.confirm');
+        confirmButtonText = 'dialog.confirm';
         break;
     }
     }
 
     Swal.fire({
-        title: t(title),
-        text: t(text),
+        title: i18next.t(title),
+        text: i18next.t(text),
         icon: appearance,
-        confirmButtonText,
+        confirmButtonText: i18next.t(confirmButtonText),
         customClass
     });
+}
+
+export function showConfirmDialog(props) {
+    return Swal.fire(props);
 }

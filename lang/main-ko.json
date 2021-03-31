@@ -564,6 +564,7 @@
         "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='static/recommendedBrowsers.html' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
         "suboptimalExperienceTitle": "브라우저 경고",
         "unmute": "음소거 해제",
+        "unmuteByHost": "방장이 음소거 해제를 원합니다.",
         "unmutedRemotelyTitle": "{{participantDisplayName}}님에 의해 음소거가 해제 되었습니다!",
         "newDeviceCameraTitle": "새로운 카메라 감지",
         "newDeviceAudioTitle": "새로운 오디오 장치 감지",

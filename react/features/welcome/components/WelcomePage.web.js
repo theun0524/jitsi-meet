@@ -182,7 +182,7 @@ class WelcomePage extends AbstractWelcomePage {
                 showSweetAlert({
                     ...notification.props,
                     customClass: { htmlContainer: s.popupMessage }
-                }, t);
+                });
             } catch (err) {
                 console.error(err);
             }

@@ -121,7 +121,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { toggleLobbyMode } from './react/features/lobby/actions';
-import { showNotification } from './react/features/notifications';
+import { showConfirmDialog, showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
@@ -143,6 +143,7 @@ import * as RemoteControlEvents
 import { createBackgroundEffectV2 } from './react/features/stream-effects/background-v2';
 import { isHost } from './react/features/base/jwt';
 import { isMobileBrowser } from './react/features/base/environment/utils';
+import { i18next } from './react/features/base/i18n';
 
 const logger = Logger.getLogger(__filename);
 const apiBase = process.env.VMEETING_API_BASE;
@@ -2088,6 +2089,57 @@ export default {
             }
 
             APP.UI.setAudioLevel(id, newLvl);
+        });
+
+        room.on(JitsiConferenceEvents.AUDIO_MUTED_BY_FOCUS, (actor, mute) => {
+            if (mute === this.isLocalAudioMuted()) {
+                // NO-OP
+                return;
+            }
+
+            const doMute = (mute) => {
+                // TODO: Add a way to differentiate between commands which caused
+                // us to mute and those that did not change our state (i.e. we were
+                // already muted).
+                // sendAnalytics(createRemotelyMutedEvent());
+
+                const { conference } = APP.store.getState()['features/base/conference'];
+
+                conference.mutedByFocusActor = actor;
+
+                // set isMutedByFocus when setAudioMute Promise ends
+                conference.rtc.setAudioMute(mute).then(
+                    () => {
+                        conference.isMutedByFocus = true;
+                        conference.mutedByFocusActor = null;
+                    })
+                    .catch(
+                        error => {
+                            conference.mutedByFocusActor = null;
+                            logger.warn(
+                                'Error while audio muting due to focus request', error);
+                        });
+            };
+
+            if (mute) {
+                doMute(mute);
+            } else {
+                // ask unmute for privacy
+                showConfirmDialog({
+                    cancelButtonText: i18next.t('dialog.Cancel'),
+                    confirmButtonText: i18next.t('videothumbnail.dounmute'),
+                    showCancelButton: true,
+                    title: i18next.t('notify.unmuteByHost')
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        doMute(mute);
+                    }
+                });
+            }
+        });
+
+        room.on(JitsiConferenceEvents.VIDEO_MUTED_BY_FOCUS, (actor, mute) => {
+
         });
 
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
