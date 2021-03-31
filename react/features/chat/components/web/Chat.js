@@ -45,6 +45,8 @@ declare var APP: Object;
     searchQuery: String,
     showSearch: Boolean,
     showChatMenu: Boolean,
+    searchResultIndex: Integer,
+    searchResultCount: Integer,
  }
 
 
@@ -68,6 +70,8 @@ class Chat extends AbstractChat<Props> {
         searchQuery: '',
         showSearch: false,
         showChatMenu: false,
+        searchResultIndex: -1, // initial value to assign while searching a value;
+        searchResultCount: 0, //how many results found for a search query
     };
     
     /**
@@ -362,6 +366,9 @@ class Chat extends AbstractChat<Props> {
 
         // call the function for highlighting search text
         this.highlightTextinUserMessages(this.state.searchQuery, "highlight-search-text");
+        
+        // count the occurences of search query
+        this.countSearchOccurences();
     }
 
     _clearHighlightText = () => {
@@ -380,10 +387,12 @@ class Chat extends AbstractChat<Props> {
                 usrmsg.textContent = usrmsg.innerText;
             }
         }
+        
+        // reset the original search result count to 0 and search index to -1
 
     }
 
-    highlightTextinUserMessages = (term, hlClass, usrmsgs = document.getElementById('chatconversation')) => {
+    highlightTextinUserMessages = (term, hlClass, usrmsgs = document.getElementsByClassName('usermessage')) => {
         if(!term) {
             console.log("Search term is empty");
         }
@@ -391,26 +400,52 @@ class Chat extends AbstractChat<Props> {
         term = term instanceof Array ? term.join("|") : term;
         const highlighter = a => `<span class="${hlClass}">${a}</span>`;
         const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-        const children = usrmsgs.childNodes;
-        for (let i=0; i < children.length; i += 1) {
-            
-            // we only want to search for usermessage
-            if(children[i].className === "display-name") {
-                continue;
-            }
-
-            if(children[i].childNodes.length) {
-                this.highlightTextinUserMessages.call(null, term, hlClass, children[i]);
-            }
-
-            let node = children[i];
+        
+        for (let i=0; i < usrmsgs.length; i += 1) {
+            //loop for each individual chat message
+            let node = usrmsgs[i];
             let re = RegExp(`(${term})`, "gi");
 
-            if(node.nodeType === Node.TEXT_NODE && re.test(node.data)) {
-                node.data = node.data.replace(re, highlighter);
-                toHtml(node.parentElement);
+            // replace the inner text with highlighted portion
+            node.innerHTML = node.innerHTML.replace(re, highlighter);
+            toHtml(node.parentElement);
+        }
+    }
+
+    countSearchOccurences = () => {
+        const spanTags = document.getElementsByClassName("highlight-search-text");
+        let count = 0;
+
+        for(let i=0; i < spanTags.length; i++) {
+            if(spanTags[i].textContent === this.state.searchQuery) {
+                count += 1;
             }
         }
+        console.log("Total count search appearances is: ", count);
+
+        this.setState({ searchResultCount: count });
+        document.addEventListener('keyup', this.nextResult);
+    }
+
+    nextResult = async(ev) => {
+        const spanTags = document.getElementsByClassName("highlight-search-text");
+        let currentIdx = -1;
+        if(this.state.searchResultCount > 0 && ev.key === "Enter") {
+            currentIdx = this.state.searchResultIndex + 1;
+            await this.setState({ searchResultIndex: currentIdx });
+
+            // await this.setState({ searchResultIndex : currentIdx });
+            spanTags[currentIdx].scrollIntoView({ behavior: 'smooth' });
+
+            // add additional style to identify the current item
+            spanTags[currentIdx].style.setProperty('background','#ec9038','')
+
+            if(currentIdx + 1 >= this.state.searchResultCount) { // to keep in the loop
+                currentIdx = -1;
+                await this.setState({ searchResultIndex: currentIdx });
+            }
+        }
+        console.log("State is: ", this.state);
     }
 
     _renderPanelContent: () => React$Node | null;
