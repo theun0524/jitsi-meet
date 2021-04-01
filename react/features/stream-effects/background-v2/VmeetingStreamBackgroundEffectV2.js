@@ -63,7 +63,7 @@ export default class VmeetingStreamBackgroundEffectV2 {
         this.frameCount = 0;
         this.frameDurations = [];
 
-        this.cumData=[];
+        //this.cumData=[];
     }
 
     /**
@@ -275,8 +275,8 @@ export default class VmeetingStreamBackgroundEffectV2 {
             this.durations = this.frameDurations;
             this.previousTime = time;
             this.frameCount = 0;
-            //console.log(`FPS: ${this.fps}, Inference: ${this.durations[1]}`);
-            this.cumData.push({fps: this.fps, inferenceTime: this.durations[1]});
+            //console.log(`FPS: ${this.fps}, Resize: ${this.durations[0]}, Inference: ${this.durations[1]}, PostProcessing: ${this.durations[2]}`);
+            //this.cumData.push({fps: this.fps, inferenceTime: this.durations[1]});
         }
         this.eventCount = 0;
     }
