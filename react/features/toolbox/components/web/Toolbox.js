@@ -85,6 +85,7 @@ import HelpButton from '../HelpButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
 import MuteEveryoneButton from './MuteEveryoneButton';
+import MuteVideoEveryoneButton from './MuteVideoEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
@@ -1082,8 +1083,27 @@ class Toolbox extends Component<Props, State> {
             this._shouldShowButton('mute-everyone')
                 && <MuteEveryoneButton
                     key = 'mute-everyone'
+                    mute = { true }
                     showLabel = { true }
                     visible = { this._shouldShowButton('mute-everyone') } />,
+            this._shouldShowButton('unmute-everyone')
+                && <MuteEveryoneButton
+                    key = 'unmute-everyone'
+                    mute = { false }
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('unmute-everyone') } />,
+            this._shouldShowButton('mute-video-everyone')
+                && <MuteVideoEveryoneButton
+                    key = 'mute-video-everyone'
+                    mute = { true }
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('mute-video-everyone') } />,
+            this._shouldShowButton('unmute-video-everyone')
+                && <MuteVideoEveryoneButton
+                    key = 'unmute-video-everyone'
+                    mute = { false }
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('unmute-video-everyone') } />,
             this._shouldShowButton('stats') && _isStatsVisible
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }

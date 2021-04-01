@@ -8,7 +8,7 @@ import { calculateThumbnailSizeForHorizontalView, calculateThumbnailSizeForTileV
 /**
  * The size of the side margins for each tile as set in CSS.
  */
-const TILE_VIEW_SIDE_MARGINS = 10 * 2;
+const TILE_VIEW_SIDE_MARGINS = 4;
 
 /**
  * Sets the dimensions of the tile view grid.

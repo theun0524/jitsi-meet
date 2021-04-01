@@ -20,6 +20,8 @@ import {
 } from './';
 import MoveToFirstButton from './MoveToFirstButton';
 import MoveToLastButton from './MoveToLastButton';
+import MuteVideoButton from './MuteVideoButton';
+import MuteVideoEveryoneElseButton from './MuteVideoEveryoneElseButton';
 
 declare var $: Object;
 declare var interfaceConfig: Object;
@@ -193,14 +195,37 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             if (!_disableRemoteMute) {
                 buttons.push(
                     <MuteButton
-                        isAudioMuted = { isAudioMuted }
                         key = 'mute'
                         participantID = { participantID } />
                 );
                 buttons.push(
                     <MuteEveryoneElseButton
                         key = 'mute-others'
+                        participantID = { participantID }
+                        mute = { true } />
+                );
+                buttons.push(
+                    <MuteEveryoneElseButton
+                        key = 'unmute-others'
+                        participantID = { participantID }
+                        mute = { false } />
+                );
+                buttons.push(
+                    <MuteVideoButton
+                        key = 'mutevideo'
                         participantID = { participantID } />
+                );
+                buttons.push(
+                    <MuteVideoEveryoneElseButton
+                        key = 'mutevideo-others'
+                        participantID = { participantID }
+                        mute = { true } />
+                );
+                buttons.push(
+                    <MuteVideoEveryoneElseButton
+                        key = 'unmutevideo-others'
+                        participantID = { participantID }
+                        mute = { false } />
                 );
             }
 

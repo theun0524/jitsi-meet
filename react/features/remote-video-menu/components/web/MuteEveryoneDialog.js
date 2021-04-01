@@ -100,21 +100,21 @@ class MuteEveryoneDialog extends AbstractMuteRemoteParticipantDialog<Props> {
      * @private
      */
     _getTranslations(): Translations {
-        const { exclude, t } = this.props;
+        const { exclude, mute, t } = this.props;
         const { conference } = APP;
         const whom = exclude
             // eslint-disable-next-line no-confusing-arrow
             .map(id => conference.isLocalId(id)
-                ? t('dialog.muteEveryoneSelf')
+                ? t('me')
                 : conference.getParticipantDisplayName(id))
             .join(', ');
 
         return whom.length ? {
-            content: t('dialog.muteEveryoneElseDialog'),
-            title: t('dialog.muteEveryoneElseTitle', { whom })
+            content: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseDialog`),
+            title: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
         } : {
-            content: t('dialog.muteEveryoneDialog'),
-            title: t('dialog.muteEveryoneTitle')
+            content: t(`dialog.${mute ? '' : 'un'}muteEveryoneDialog`),
+            title: t(`dialog.${mute ? '' : 'un'}muteEveryoneTitle`)
         };
     }
 }

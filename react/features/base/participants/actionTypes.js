@@ -78,17 +78,17 @@ export const ENABLE_CHAT_FOR_ALL = 'ENABLE_CHAT_FOR_ALL';
  *     id: string
  * }
  */
- export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
+export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
 
 /**
- * Create an action for toggle mute a remote participant.
+ * Create an action for muting a remote participant video.
  *
  * {
- *     type: TOGGLE_MUTE_REMOTE_PARTICIPANT,
+ *     type: MUTE_REMOTE_PARTICIPANT_VIDEO,
  *     id: string
  * }
  */
-export const TOGGLE_MUTE_REMOTE_PARTICIPANT = 'TOGGLE_MUTE_REMOTE_PARTICIPANT';
+export const MUTE_REMOTE_PARTICIPANT_VIDEO = 'MUTE_REMOTE_PARTICIPANT_VIDEO';
 
 /**
  * Create an action for when the local participant's display name is updated.
@@ -196,7 +196,7 @@ export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
 
 /**
  * The type of the Redux action which receive/not receive
- * vieo of conference participant.
+ * video of conference participant.
  *
  * {
  *     type: RECV_VIDEO_PARTICIPANT,

@@ -2,12 +2,12 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled, IconMicrophone } from '../../../base/icons';
+import { IconCamera, IconCameraDisabled } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { showConfirmDialog } from '../../../notifications';
-import { muteAllParticipants } from '../../../remote-video-menu/actions';
+import { muteAllParticipantsVideo } from '../../../remote-video-menu/actions';
 
 type Props = AbstractButtonProps & {
 
@@ -33,17 +33,18 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * Implements a React {@link Component} which displays a button for audio muting
+ * Implements a React {@link Component} which displays a button for video muting
  * every participant (except the local one)
  */
-class MuteEveryoneButton extends AbstractButton<Props, *> {
+class MuteVideoEveryoneButton extends AbstractButton<Props, *> {
     constructor(props) {
         super(props);
 
-        this.accessibilityLabel = props.mute ? 'toolbar.accessibilityLabel.muteEveryone' : 'toolbar.accessibilityLabel.unmuteEveryone';
-        this.label = props.mute ? 'toolbar.muteEveryone' : 'toolbar.unmuteEveryone';
-        this.tooltip = props.mute ? 'toolbar.muteEveryone' : 'toolbar.unmuteEveryone';
-        this.icon = props.mute ? IconMicDisabled : IconMicrophone;
+        const { mute } = props;
+        this.accessibilityLabel = `toolbar.accessibilityLabel.${mute ? '' : 'un'}muteVideoEveryone`;
+        this.label = `toolbar.${mute ? '' : 'un'}muteVideoEveryone`;
+        this.tooltip = `toolbar.${mute ? '' : 'un'}muteVideoEveryone`;
+        this.icon = mute ? IconCameraDisabled : IconCamera;
     }
 
     /**
@@ -63,15 +64,15 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
                 : conference.getParticipantDisplayName(id))
             .join(', ');
 
-        sendAnalytics(createToolbarEvent('mute.everyone.pressed'));
+        sendAnalytics(createToolbarEvent('mutevideo.everyone.pressed'));
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}muteVideo`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+            text: t(`dialog.${mute ? '' : 'un'}muteVideoEveryoneElseTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteAllParticipants(exclude, mute));
+                dispatch(muteAllParticipantsVideo(exclude, mute));
             }
         });
         // dispatch(openDialog(MuteEveryoneDialog, {
@@ -101,4 +102,4 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(MuteEveryoneButton));
+export default translate(connect(_mapStateToProps)(MuteVideoEveryoneButton));

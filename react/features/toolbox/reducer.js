@@ -118,7 +118,7 @@ ReducerRegistry.register(
         case CLEAR_TOOLBOX_TIMEOUT:
             return {
                 ...state,
-                timeoutID: undefined
+                timer: undefined
             };
 
         case FULL_SCREEN_CHANGED:
@@ -155,7 +155,7 @@ ReducerRegistry.register(
         case SET_TOOLBOX_TIMEOUT:
             return {
                 ...state,
-                timeoutID: action.timeoutID,
+                timer: action.timer,
                 timeoutMS: action.timeoutMS
             };
 

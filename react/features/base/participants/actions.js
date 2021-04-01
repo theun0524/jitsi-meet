@@ -1,4 +1,5 @@
-import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT, showNotification, showToast } from '../../notifications';
+import { i18next } from '../i18n';
 import { set } from '../redux';
 
 import {
@@ -21,7 +22,7 @@ import {
     PIN_PARTICIPANT,
     RECV_VIDEO_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL,
-    TOGGLE_MUTE_REMOTE_PARTICIPANT
+    MUTE_REMOTE_PARTICIPANT_VIDEO
 } from './actionTypes';
 import {
     getLocalParticipant,
@@ -258,29 +259,33 @@ export function localParticipantRoleChanged(role) {
  * @param {string} id - Participant's ID.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     id: string,
+ *     mute: Boolean
  * }}
  */
-export function muteRemoteParticipant(id) {
+export function muteRemoteParticipant(id, mute) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
-        id
+        id,
+        mute
     };
 }
 
 /**
- * Create an action for toggle mute another participant in the conference.
+ * Create an action for muting video another participant in the conference.
  *
  * @param {string} id - Participant's ID.
  * @returns {{
- *     type: TOGGLE_MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     type: MUTE_REMOTE_PARTICIPANT_VIDEO,
+ *     id: string,
+ *     mute: Boolean
  * }}
  */
-export function toggleMuteRemoteParticipant(id) {
+export function muteRemoteParticipantVideo(id, mute) {
     return {
-        type: TOGGLE_MUTE_REMOTE_PARTICIPANT,
-        id
+        type: MUTE_REMOTE_PARTICIPANT_VIDEO,
+        id,
+        mute
     };
 }
 
@@ -492,22 +497,14 @@ export function participantUpdated(participant = {}) {
  */
 export function participantMutedUs(track, participant) {
     return (dispatch, getState) => {
-        if (!participant) {
+        if (!participant || !track.isMuted()) {
             return;
         }
 
-        const notification = track.isMuted() ? {
-            titleKey: 'notify.mutedRemotelyTitle',
-        } : {
-            titleKey: 'notify.unmutedRemotelyTitle',
-        };
-
-        dispatch(showNotification({
-            ...notification,
-            titleArguments: {
-                participantDisplayName:
-                    getParticipantDisplayName(getState, participant.getId())
-            }
+        const title = 'notify.mutedRemotelyTitle';
+        showToast(i18next.t(title, {
+            participantDisplayName:
+                getParticipantDisplayName(getState, participant.getId())
         }));
     };
 }
@@ -528,15 +525,21 @@ export function participantKicked(kicker, kicked) {
             kicker: kicker.getId()
         });
 
-        dispatch(showNotification({
-            titleArguments: {
-                kicked:
-                    getParticipantDisplayName(getState, kicked.getId()),
-                kicker:
-                    getParticipantDisplayName(getState, kicker.getId())
-            },
-            titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT * 10)); // leave more time for this
+        showToast(i18next.t('notify.kickParticipant', {
+            kicked:
+                getParticipantDisplayName(getState, kicked.getId()),
+            kicker:
+                getParticipantDisplayName(getState, kicker.getId())
+        }), NOTIFICATION_TIMEOUT * 2);
+        // dispatch(showNotification({
+        //     titleArguments: {
+        //         kicked:
+        //             getParticipantDisplayName(getState, kicked.getId()),
+        //         kicker:
+        //             getParticipantDisplayName(getState, kicker.getId())
+        //     },
+        //     titleKey: 'notify.kickParticipant'
+        // }, NOTIFICATION_TIMEOUT * 10)); // leave more time for this
     };
 }
 
@@ -548,12 +551,15 @@ export function moderatorRoleGranted(participantId) {
             participant: participantId
         });
 
-        dispatch(showNotification({
-            titleArguments: {
-                to: getParticipantDisplayName(getState, participantId)
-            },
-            titleKey: 'notify.grantedTo',
-        }, NOTIFICATION_TIMEOUT * 10));
+        showToast(i18next.t('notify.grantedTo', {
+            to: getParticipantDisplayName(getState, participantId)
+        }), NOTIFICATION_TIMEOUT * 2);
+        // dispatch(showNotification({
+        //     titleArguments: {
+        //         to: getParticipantDisplayName(getState, participantId)
+        //     },
+        //     titleKey: 'notify.grantedTo',
+        // }, NOTIFICATION_TIMEOUT * 10));
     };
 }
 // End of added portion --> Notification when granting moderator role

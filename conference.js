@@ -121,7 +121,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { toggleLobbyMode } from './react/features/lobby/actions';
-import { showConfirmDialog, showNotification } from './react/features/notifications';
+import { showConfirmDialog, showNotification, showToast } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
@@ -2097,13 +2097,13 @@ export default {
                 return;
             }
 
+            const { conference } = APP.store.getState()['features/base/conference'];
+
             const doMute = (mute) => {
                 // TODO: Add a way to differentiate between commands which caused
                 // us to mute and those that did not change our state (i.e. we were
                 // already muted).
                 // sendAnalytics(createRemotelyMutedEvent());
-
-                const { conference } = APP.store.getState()['features/base/conference'];
 
                 conference.mutedByFocusActor = actor;
 
@@ -2129,17 +2129,61 @@ export default {
                     cancelButtonText: i18next.t('dialog.Cancel'),
                     confirmButtonText: i18next.t('videothumbnail.dounmute'),
                     showCancelButton: true,
-                    title: i18next.t('notify.unmuteByHost')
+                    text: i18next.t('notify.unmuteByHost')
                 }).then(result => {
                     if (result.isConfirmed) {
                         doMute(mute);
                     }
+                    conference.ackMuteParticipant(actor, result.isConfirmed);
                 });
             }
         });
 
-        room.on(JitsiConferenceEvents.VIDEO_MUTED_BY_FOCUS, (actor, mute) => {
+        room.on(JitsiConferenceEvents.ACK_AUDIO_MUTED_BY_FOCUS, (id, ack) => {
+            if (!ack) {
+                const { conference } = APP.store.getState()['features/base/conference'];
+                const participant = conference.getParticipantById(id);
 
+                showToast(i18next.t('notify.refusedUnmute', {
+                    participantDisplayName: participant._displayName
+                }));
+            }
+        });
+
+        room.on(JitsiConferenceEvents.VIDEO_MUTED_BY_FOCUS, (actor, mute) => {
+            if (mute === this.isLocalVideoMuted()) {
+                // NO-OP
+                return;
+            }
+
+            if (mute) {
+                this.muteVideo(mute);
+            } else {
+                // ask unmute for privacy
+                showConfirmDialog({
+                    cancelButtonText: i18next.t('dialog.Cancel'),
+                    confirmButtonText: i18next.t('videothumbnail.dounmuteVideo'),
+                    showCancelButton: true,
+                    text: i18next.t('notify.unmuteVideoByHost')
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        this.muteVideo(mute);
+                    }
+                    const { conference } = APP.store.getState()['features/base/conference'];
+                    conference.ackMuteParticipantVideo(actor, result.isConfirmed);
+                });
+            }
+        });
+
+        room.on(JitsiConferenceEvents.ACK_VIDEO_MUTED_BY_FOCUS, (id, ack) => {
+            if (!ack) {
+                const { conference } = APP.store.getState()['features/base/conference'];
+                const participant = conference.getParticipantById(id);
+
+                showToast(i18next.t('notify.refusedUnmuteVideo', {
+                    participantDisplayName: participant._displayName
+                }));
+            }
         });
 
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {

@@ -93,6 +93,7 @@ deploy-local:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite-binary deploy-lib-jitsi-meet deploy-libflac
 
 dev-start:
+	./cssmon.sh ./css &
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

@@ -4,25 +4,25 @@ import React from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled, IconMicrophone, IconMuteEveryoneElse } from '../../../base/icons';
+import { IconCamera, IconCameraDisabled } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { showConfirmDialog } from '../../../notifications';
-import { muteAllParticipants } from '../../actions';
-import AbstractMuteButton, {
+import { muteAllParticipantsVideo } from '../../actions';
+import AbstractMuteVideoButton, {
     _mapStateToProps,
     type Props
-} from '../AbstractMuteButton';
+} from '../AbstractMuteVideoButton';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
 /**
- * Implements a React {@link Component} which displays a button for audio muting
+ * Implements a React {@link Component} which displays a button for video muting
  * every participant in the conference except the one with the given
  * participantID
  */
-class MuteEveryoneElseButton extends AbstractMuteButton {
+class MuteVideoEveryoneElseButton extends AbstractMuteVideoButton {
     /**
-     * Instantiates a new {@code MuteEveryoneElseButton}.
+     * Instantiates a new {@code MuteVideoEveryoneElseButton}.
      *
      * @inheritdoc
      */
@@ -43,9 +43,9 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
 
         return (
             <RemoteVideoMenuButton
-                buttonText = { t(`videothumbnail.do${mute ? '' : 'un'}muteOthers`) }
+                buttonText = { t(`videothumbnail.do${mute ? '' : 'un'}muteVideoOthers`) }
                 displayClass = { 'mutelink' }
-                icon = { mute ? IconMicDisabled : IconMicrophone }
+                icon = { mute ? IconCameraDisabled : IconCamera }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />
@@ -71,19 +71,18 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
                 : conference.getParticipantDisplayName(id))
             .join(', ');
 
-        sendAnalytics(createToolbarEvent('mute.everyoneelse.pressed'));
+        sendAnalytics(createToolbarEvent('mutevideo.everyoneelse.pressed'));
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}muteVideo`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+            text: t(`dialog.${mute ? '' : 'un'}muteVideoEveryoneElseTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteAllParticipants(exclude, mute));
+                dispatch(muteAllParticipantsVideo(exclude, mute));
             }
         });
-        // dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ], mute }));
     }
 }
 
-export default translate(connect(_mapStateToProps)(MuteEveryoneElseButton));
+export default translate(connect(_mapStateToProps)(MuteVideoEveryoneElseButton));

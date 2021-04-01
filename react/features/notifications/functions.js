@@ -7,6 +7,18 @@ import { i18next } from '../base/i18n';
 
 declare var interfaceConfig: Object;
 
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-start',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: false,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+});
+
 /**
  * Tells whether or not the notifications are enabled and if there are any
  * notifications to be displayed based on the current Redux state.
@@ -61,6 +73,10 @@ export function showSweetAlert(props) {
         confirmButtonText: i18next.t(confirmButtonText),
         customClass
     });
+}
+
+export function showToast(title, timer = 3000, icon = 'success', position = 'bottom-start') {
+    return Toast.fire({ icon, title, position, timer });
 }
 
 export function showConfirmDialog(props) {

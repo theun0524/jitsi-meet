@@ -520,6 +520,27 @@ export function createRemoteMuteConfirmedEvent(participantId) {
 }
 
 /**
+ * Creates an event which specifies that the "confirm" button on the remote
+ * mute video dialog has been clicked.
+ *
+ * @param {string} participantId - The ID of the participant that was remotely
+ * muted.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRemoteMuteVideoConfirmedEvent(participantId) {
+    return {
+        action: 'clicked',
+        actionSubject: 'remote.mutevideo.dialog.confirm.button',
+        attributes: {
+            'participant_id': participantId
+        },
+        source: 'remote.mutevideo.dialog',
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event which indicates that one of the buttons in the "remote
  * video menu" was clicked.
  *

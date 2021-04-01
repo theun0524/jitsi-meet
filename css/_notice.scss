@@ -1,8 +1,9 @@
 .notice {
     position: absolute;
     left: 50%;
-    z-index: $zindex3;
+    z-index: 11;
     margin-top: 6px;
+    text-align: center;
 
     @include transform(translateX(-50%));
 
