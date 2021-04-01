@@ -14,7 +14,9 @@ import FlipVideoButton from './FlipVideoButton';
 
 import MoveToFirstButton from './MoveToFirstButton';
 import MoveToLastButton from './MoveToLastButton';
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
+import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+import MuteVideoEveryoneElseButton from './MuteVideoEveryoneElseButton';
 
 /**
  * The type of the React {@code Component} props of
@@ -121,18 +123,50 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      */
     _renderLocalVideoMenu() {
         const {
+            _disableRemoteMute,
+            _participantCount,
             _shouldDisplayTileView,
             isFirst,
             isLast,
-            participantID
+            participant
         } = this.props;
         const buttons = [];
+        const participantID = participant?.id;
 
         buttons.push(
             <FlipVideoButton
                 key = 'flipvideo'
                 onFlipXChanged = { this.props.onFlipXChanged } />
         );
+
+        if (!_disableRemoteMute && participant.role === PARTICIPANT_ROLE.MODERATOR) {
+            if (_participantCount > 2) {
+                buttons.push(
+                    <MuteEveryoneElseButton
+                        key = 'mute-others'
+                        participantID = { participantID }
+                        mute = { true } />
+                );
+                buttons.push(
+                    <MuteEveryoneElseButton
+                        key = 'unmute-others'
+                        participantID = { participantID }
+                        mute = { false } />
+                );
+                buttons.push(
+                    <MuteVideoEveryoneElseButton
+                        key = 'mutevideo-others'
+                        participantID = { participantID }
+                        mute = { true } />
+                );
+                buttons.push(
+                    <MuteVideoEveryoneElseButton
+                        key = 'unmutevideo-others'
+                        participantID = { participantID }
+                        mute = { false } />
+                );
+            }
+        }
 
         if (_shouldDisplayTileView) {
             if (!isFirst) {
@@ -175,11 +209,14 @@ function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
     const { ordered } = state['features/video-layout'];
     const found = ordered?.indexOf(participant?.id);
+    const { disableRemoteMute } = state['features/base/config'];
 
     return {
+        _disableRemoteMute: Boolean(disableRemoteMute),
+        _participantCount: getParticipantCount(state),
         isFirst: ordered && found === 0,
         isLast: ordered && found === ordered.length - 1,
-        participantID: participant?.id,
+        participant,
         _shouldDisplayTileView: shouldDisplayTileView(state)
     };
 }

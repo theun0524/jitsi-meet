@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
+import { getLocalParticipant, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { shouldDisplayTileView } from '../../../video-layout';
@@ -179,8 +179,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disableRemoteMute,
             _isModerator,
             _shouldDisplayTileView,
+            _participantCount,
             initialVolumeValue,
-            isAudioMuted,
             isFirst,
             isLast,
             onRemoteControlToggle,
@@ -198,35 +198,39 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         key = 'mute'
                         participantID = { participantID } />
                 );
-                buttons.push(
-                    <MuteEveryoneElseButton
-                        key = 'mute-others'
-                        participantID = { participantID }
-                        mute = { true } />
-                );
-                buttons.push(
-                    <MuteEveryoneElseButton
-                        key = 'unmute-others'
-                        participantID = { participantID }
-                        mute = { false } />
-                );
+                if (_participantCount > 2) {
+                    buttons.push(
+                        <MuteEveryoneElseButton
+                            key = 'mute-others'
+                            participantID = { participantID }
+                            mute = { true } />
+                    );
+                    buttons.push(
+                        <MuteEveryoneElseButton
+                            key = 'unmute-others'
+                            participantID = { participantID }
+                            mute = { false } />
+                    );
+                }
                 buttons.push(
                     <MuteVideoButton
                         key = 'mutevideo'
                         participantID = { participantID } />
                 );
-                buttons.push(
-                    <MuteVideoEveryoneElseButton
-                        key = 'mutevideo-others'
-                        participantID = { participantID }
-                        mute = { true } />
-                );
-                buttons.push(
-                    <MuteVideoEveryoneElseButton
-                        key = 'unmutevideo-others'
-                        participantID = { participantID }
-                        mute = { false } />
-                );
+                if (_participantCount > 2) {
+                    buttons.push(
+                        <MuteVideoEveryoneElseButton
+                            key = 'mutevideo-others'
+                            participantID = { participantID }
+                            mute = { true } />
+                    );
+                    buttons.push(
+                        <MuteVideoEveryoneElseButton
+                            key = 'unmutevideo-others'
+                            participantID = { participantID }
+                            mute = { false } />
+                    );
+                }
             }
 
             if (!_disableGrantModerator) {
@@ -328,6 +332,7 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disablePrivateMessage: Boolean(disablePrivateMessage),
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _participantCount: getParticipantCount(state),
         _shouldDisplayTileView: shouldDisplayTileView(state),
         isFirst: ordered && found === 0,
         isLast: ordered && found === ordered.length - 1,
