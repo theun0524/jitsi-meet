@@ -1,21 +1,20 @@
 // @flow
 
+import ScheduleIcon from '@atlaskit/icon/glyph/schedule';
+import LockIcon from '@atlaskit/icon/glyph/lock';
+import UnlockIcon from '@atlaskit/icon/glyph/unlock';
+import TrashIcon from '@atlaskit/icon/glyph/trash';
 import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter
 } from '../../../i18n';
+import { Tooltip } from '../../../tooltip';
 
 import Container from './Container';
 import Text from './Text';
 import s from './MeetingListFromDB.module.scss';
-
-import Tooltip from '@atlaskit/tooltip';
-import ScheduleIcon from '@atlaskit/icon/glyph/schedule';
-import LockIcon from '@atlaskit/icon/glyph/lock';
-import UnlockIcon from '@atlaskit/icon/glyph/unlock';
-import TrashIcon from '@atlaskit/icon/glyph/trash';
 
 type Props = {
 

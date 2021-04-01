@@ -140,7 +140,6 @@ import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
-import { createBackgroundEffectV2 } from './react/features/stream-effects/background-v2';
 import { isHost } from './react/features/base/jwt';
 import { isMobileBrowser } from './react/features/base/environment/utils';
 import { i18next } from './react/features/base/i18n';
@@ -1404,24 +1403,6 @@ export default {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
 
-                const startBackgroundEffect = track => {
-                    const id = state['features/base/jwt'].user?.background ||
-                        jitsiLocalStorage.getItem('background');
-                    console.log('startBackgroundEffect:', id);
-                    // return;
-
-                    return (id && !isMobileBrowser())
-                        ? createBackgroundEffectV2(`${apiBase}/backgrounds/${id}/hd`)
-                            .then(backgroundEffectInstance => {
-                                console.log('background Effect:', backgroundEffectInstance);
-                                newTrack.setEffect(backgroundEffectInstance);
-                            })
-                            .catch(error => {
-                                logger.error('createBackgroundEffect failed with error:', error);
-                            })
-                        : Promise.resolve();
-                };
-    
                 // When the prejoin page is displayed localVideo is not set
                 // so just replace the video track from the store with the new one.
                 if (isPrejoinPageVisible(state)) {

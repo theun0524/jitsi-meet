@@ -2,7 +2,6 @@
 
 import ExcelSpreadsheet24Icon from '@atlaskit/icon-file-type/glyph/excel-spreadsheet/24';
 import Spinner from '@atlaskit/spinner';
-import Tooltip from '@atlaskit/tooltip';
 import axios from 'axios';
 import Moment from 'moment'
 import * as FileSaver from 'file-saver';
@@ -12,6 +11,7 @@ import * as XLSX from 'xlsx';
 
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { Tooltip } from '../../base/tooltip';
 
 /**
  * The type of the React {@code Component} props of {@link AddMeetingUrlButton}.

@@ -37,7 +37,6 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
-import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
@@ -73,6 +72,8 @@ import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
 } from '../../../video-quality';
+import { VideoBackgroundButton } from '../../../virtual-background';
+import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
     setOverflowMenuVisible,
@@ -1068,11 +1069,11 @@ class Toolbox extends Component<Props, State> {
                     key = 'etherpad'
                     closeOverflowMenu = { () => this._onSetOverflowVisible(false) }
                     showLabel = { true } />,
-            this._shouldShowButton('videobackgroundblur')
-                && <VideoBlurButton
-                    key = 'videobackgroundblur'
+            (this._shouldShowButton('select-background') || this._shouldShowButton('videobackgroundblur'))
+                && <VideoBackgroundButton
+                    key = { 'select-background' }
                     showLabel = { true }
-                    visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+                    visible = { !_screensharing && checkBlurSupport() } />,
             this._shouldShowButton('settings') && !_isChatOnly
                 && <SettingsButton
                     key = 'settings'

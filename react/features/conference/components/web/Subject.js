@@ -1,6 +1,5 @@
 /* @flow */
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 import Swal from 'sweetalert2';
 
@@ -10,6 +9,7 @@ import { isHost } from '../../../base/jwt';
 import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import { translate } from '../../../base/i18n';
+import { Tooltip } from '../../../base/tooltip';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import ConferenceTimer from '../ConferenceTimer';
 

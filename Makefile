@@ -4,7 +4,8 @@ DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 LIBFLAC_DIR = node_modules/libflacjs/dist/min/
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
-TFLITE_WASM_DIR = react/features/stream-effects/background-v2/
+TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
+MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models/
 NODE_SASS = ./node_modules/.bin/node-sass
 NPM = npm
 OUTPUT_DIR = .
@@ -23,7 +24,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -48,8 +49,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
-		$(BUILD_DIR)/video-blur-effect.min.js \
-		$(BUILD_DIR)/video-blur-effect.min.map \
+		$(BUILD_DIR)/virtual-background-effect.min.js \
+		$(BUILD_DIR)/virtual-background-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
 		$(DEPLOY_DIR)
@@ -73,13 +74,15 @@ deploy-rnnoise-binary:
 		$(RNNOISE_WASM_DIR)/rnnoise.wasm \
 		$(DEPLOY_DIR)
 
-deploy-tflite-binary:
+deploy-tflite:
 	cp \
-		$(TFLITE_WASM_DIR)/tflite/tflite.wasm \
-		$(TFLITE_WASM_DIR)/tflite/tflite-simd.wasm \
-		$(TFLITE_WASM_DIR)/models/bg_segmentation.tflite \
-		$(TFLITE_WASM_DIR)/models/bg_segmentation_lite.tflite \
-		$(DEPLOY_DIR)
+		$(TFLITE_WASM)/*.wasm \
+		$(DEPLOY_DIR)		
+
+deploy-meet-models:
+	cp \
+		$(MEET_MODELS_DIR)/*.tflite \
+		$(DEPLOY_DIR)	
 
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
@@ -90,7 +93,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite-binary deploy-lib-jitsi-meet deploy-libflac
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac
 
 dev-start:
 	./cssmon.sh ./css &

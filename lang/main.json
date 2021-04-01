@@ -396,6 +396,14 @@
     "embedMeeting": {
         "title": "Embed this meeting"
     },
+    "virtualBackground": {
+        "title": "Backgrounds",
+        "enableBlur": "Enable blur",
+        "removeBackground": "Remove background",
+        "uploadImage": "Upload image",
+        "pleaseWait": "Please wait...",
+        "none": "None"
+    },
     "feedback": {
         "average": "Average",
         "bad": "Bad",
@@ -836,7 +844,7 @@
             "toggleFilmstrip": "Toggle filmstrip",
             "toggleWhiteboard": "Toggle whiteboard",
             "videomute": "Toggle mute video",
-            "videoblur": "Toggle video blur"
+            "selectBackground": "Select Background"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -901,10 +909,9 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
-        "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur",
         "whiteboardClose": "Close whiteboard",
-        "whiteboardOpen": "Open whiteboard"
+        "whiteboardOpen": "Open whiteboard",
+        "selectBackground": "Select background"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

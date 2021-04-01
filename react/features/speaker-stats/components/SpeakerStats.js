@@ -6,13 +6,13 @@ import {
     ModalHeader
 } from '@atlaskit/modal-dialog';
 import Spinner from '@atlaskit/spinner';
-import Tooltip from '@atlaskit/tooltip';
 import { filter, keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { Tooltip } from '../../base/tooltip';
 import { loadSpeakerStats } from '../actions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';

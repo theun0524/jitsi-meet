@@ -5,11 +5,11 @@ import React from 'react';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import CrossCircleIcon from '@atlaskit/icon/glyph/cross-circle';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
-import Tooltip from '@atlaskit/tooltip';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconMenu, IconMenuThumb, IconSearch } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { Tooltip } from '../../../base/tooltip';
 import AbstractChat, {
     _mapDispatchToProps,
     _mapStateToProps,

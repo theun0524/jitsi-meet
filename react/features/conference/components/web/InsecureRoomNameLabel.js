@@ -1,12 +1,12 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconWarning } from '../../../base/icons';
 import { CircularLabel } from '../../../base/label';
 import { connect } from '../../../base/redux';
+import { Tooltip } from '../../../base/tooltip';
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
 /**
