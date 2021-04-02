@@ -29,6 +29,8 @@ import { openDialog } from '../../../base/dialog';
 import EnableChatForAllParticipantsDialog from '../../../remote-video-menu/components/web/EnableChatForAllParticipantsDialog';
 import DisableChatForAllParticipantsDialog from '../../../remote-video-menu/components/web/DisableChatForAllParticipantsDialog';
 
+import { notifyEndOfSearchResults, notifyNoResultsFound }  from '../../../../features/chat';
+
 declare var APP: Object;
 
 /**
@@ -47,6 +49,7 @@ declare var APP: Object;
     showChatMenu: Boolean,
     searchResultIndex: Integer,
     searchResultCount: Integer,
+    currentIdx: Integer,
  }
 
 
@@ -72,6 +75,7 @@ class Chat extends AbstractChat<Props> {
         showChatMenu: false,
         searchResultIndex: -1, // initial value to assign while searching a value;
         searchResultCount: 0, //how many results found for a search query
+        currentIdx: -1,
     };
     
     /**
@@ -349,13 +353,20 @@ class Chat extends AbstractChat<Props> {
         
         // invoke the function that scrolls to chatMessage and highlights it
         this._clearHighlightText();
+
+        this.resetSearchResultIndex();
     }
 
     _handleKeyPress = ev => {
         if (ev.key === "Enter") {
             this._handleChatSearchInput();
+
+            // count the occurences of search query
+            this.countSearchOccurences();
+
         } else if (ev.key === 'Escape') {
             this._onToggleSearch();
+            this.resetSearchResultIndex();
         }
     }
 
@@ -367,8 +378,6 @@ class Chat extends AbstractChat<Props> {
         // call the function for highlighting search text
         this.highlightTextinUserMessages(this.state.searchQuery, "highlight-search-text");
         
-        // count the occurences of search query
-        this.countSearchOccurences();
     }
 
     _clearHighlightText = () => {
@@ -388,8 +397,6 @@ class Chat extends AbstractChat<Props> {
             }
         }
         
-        // reset the original search result count to 0 and search index to -1
-
     }
 
     highlightTextinUserMessages = (term, hlClass, usrmsgs = document.getElementsByClassName('usermessage')) => {
@@ -404,7 +411,7 @@ class Chat extends AbstractChat<Props> {
         for (let i=0; i < usrmsgs.length; i += 1) {
             //loop for each individual chat message
             let node = usrmsgs[i];
-            let re = RegExp(`(${term})`, "gi");
+            let re = RegExp(`(${term})`, "g"); // g for global search, add i flag if you want to ignore case sensitivity
 
             // replace the inner text with highlighted portion
             node.innerHTML = node.innerHTML.replace(re, highlighter);
@@ -421,31 +428,58 @@ class Chat extends AbstractChat<Props> {
                 count += 1;
             }
         }
-        console.log("Total count search appearances is: ", count);
 
+        // set the state for result count
         this.setState({ searchResultCount: count });
-        document.addEventListener('keyup', this.nextResult);
+
+        if(count === 0) {
+            APP.store.dispatch(notifyNoResultsFound());
+        }
+
+        // navigate to next result when there are search results
+        else if(count > 0) {
+            document.addEventListener('keyup', this.nextResult);
+        }
+
+        // remove event listener on key press escape
+        
+    }
+
+    resetSearchResultIndex = () => {
+        this.setState({
+            searchResultIndex: -1,
+            currentIdx: -1,
+        });
+
+        // removed event listener for nextResult on key press escape
+        document.removeEventListener('keyup', this.nextResult);
     }
 
     nextResult = async(ev) => {
+        // get highlighted elements
         const spanTags = document.getElementsByClassName("highlight-search-text");
-        let currentIdx = -1;
+
+        await this.setState({ currentIdx : this.state.searchResultIndex + 1 });
+        await this.setState({ searchResultIndex: this.state.currentIdx });
+
         if(this.state.searchResultCount > 0 && ev.key === "Enter") {
-            currentIdx = this.state.searchResultIndex + 1;
-            await this.setState({ searchResultIndex: currentIdx });
 
-            // await this.setState({ searchResultIndex : currentIdx });
-            spanTags[currentIdx].scrollIntoView({ behavior: 'smooth' });
+            // code to scroll into highlighted text area
+            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].scrollIntoView({ behavior: 'smooth' });
+            
+            // add additional highlighting style to identify the current item
+            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].style.setProperty('background','#ec9038','')
 
-            // add additional style to identify the current item
-            spanTags[currentIdx].style.setProperty('background','#ec9038','')
+            // to keep in the loop
+            if(this.state.currentIdx + 1 >= this.state.searchResultCount) {
+                
+                this.setState({ currentIdx: -1 });
+                await this.setState({ searchResultIndex: this.state.currentIdx });
 
-            if(currentIdx + 1 >= this.state.searchResultCount) { // to keep in the loop
-                currentIdx = -1;
-                await this.setState({ searchResultIndex: currentIdx });
+                // dispatch a notification pop-up when reaching end of search results
+                APP.store.dispatch(notifyEndOfSearchResults());
             }
         }
-        console.log("State is: ", this.state);
     }
 
     _renderPanelContent: () => React$Node | null;
