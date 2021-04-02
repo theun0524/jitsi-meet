@@ -124,6 +124,9 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
     _renderLocalVideoMenu() {
         const {
             _disableRemoteMute,
+            _disableRemoteUnmute,
+            _disableRemoteMuteVideo,
+            _disableRemoteUnmuteVideo,
             _participantCount,
             _shouldDisplayTileView,
             isFirst,
@@ -139,26 +142,32 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                 onFlipXChanged = { this.props.onFlipXChanged } />
         );
 
-        if (!_disableRemoteMute && participant.role === PARTICIPANT_ROLE.MODERATOR) {
-            if (_participantCount > 2) {
+        if (participant.role === PARTICIPANT_ROLE.MODERATOR) {
+            if (!_disableRemoteMute) {
                 buttons.push(
                     <MuteEveryoneElseButton
                         key = 'mute-others'
                         participantID = { participantID }
                         mute = { true } />
                 );
+            }
+            if (!_disableRemoteUnmute) {
                 buttons.push(
                     <MuteEveryoneElseButton
                         key = 'unmute-others'
                         participantID = { participantID }
                         mute = { false } />
                 );
+            }
+            if (!_disableRemoteMuteVideo) {
                 buttons.push(
                     <MuteVideoEveryoneElseButton
                         key = 'mutevideo-others'
                         participantID = { participantID }
                         mute = { true } />
                 );
+            }
+            if (!_disableRemoteUnmuteVideo) {
                 buttons.push(
                     <MuteVideoEveryoneElseButton
                         key = 'unmutevideo-others'
@@ -209,10 +218,18 @@ function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
     const { ordered } = state['features/video-layout'];
     const found = ordered?.indexOf(participant?.id);
-    const { disableRemoteMute } = state['features/base/config'];
+    const {
+        disableRemoteMute,
+        disableRemoteUnmute,
+        disableRemoteMuteVideo,
+        disableRemoteUnmuteVideo,
+    } = state['features/base/config'];
 
     return {
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _disableRemoteUnmute: Boolean(disableRemoteUnmute),
+        _disableRemoteMuteVideo: Boolean(disableRemoteMuteVideo),
+        _disableRemoteUnmuteVideo: Boolean(disableRemoteUnmuteVideo),
         _participantCount: getParticipantCount(state),
         isFirst: ordered && found === 0,
         isLast: ordered && found === ordered.length - 1,
