@@ -586,9 +586,6 @@ var config = {
     //     disableKick: true
     // },
 
-    // If set to true all muting operations of remote participants will be disabled.
-    // disableRemoteMute: true,
-
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
@@ -731,6 +728,11 @@ var config = {
     // subject: 'Conference Subject',
 
     // enableChatControl: true,
+
+    // disableRemoteMute: true,
+    // disableRemoteMuteVideo: false,
+    // disableRemoteUnmute: false,
+    // disableRemoteUnmuteVideo: false,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

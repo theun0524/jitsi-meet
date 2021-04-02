@@ -60,7 +60,7 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _audioTrackMuted: muted, dispatch, participantID, t } = this.props;
+        const { mute, dispatch, participantID, t } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'mute.button',
@@ -70,12 +70,12 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
 
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${muted ? 'un' : ''}mute`),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
             showCancelButton: true,
-            text: t(`dialog.${muted ? 'un' : ''}muteParticipantTitle`)
+            text: t(`dialog.${mute ? '' : 'un'}muteParticipantTitle`)
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteRemote(participantID, !muted));
+                dispatch(muteRemote(participantID, mute));
             }
         });
         // dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
@@ -87,7 +87,8 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @inheritdoc
      */
     _isDisabled() {
-        return this.props._audioTrackMuted;
+        const { _audioTrackMuted, _disableRemoteUnmute } = this.props;
+        return _disableRemoteUnmute ? _audioTrackMuted : false;
     }
 
     /**
@@ -96,7 +97,8 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @inheritdoc
      */
     _isToggled() {
-        return this.props._audioTrackMuted;
+        const { _audioTrackMuted, _disableRemoteUnmute } = this.props;
+        return _disableRemoteUnmute ? _audioTrackMuted : false;
     }
 }
 
@@ -112,9 +114,11 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const tracks = state['features/base/tracks'];
+    const { disableRemoteUnmute } = state['features/base/config'];
 
     return {
         _audioTrackMuted: isRemoteTrackMuted(
-            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID)
+            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID),
+        _disableRemoteUnmute: disableRemoteUnmute
     };
 }

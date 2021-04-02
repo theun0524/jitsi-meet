@@ -41,22 +41,17 @@ class MuteVideoButton extends AbstractMuteVideoButton {
      * @returns {ReactElement}
      */
     render() {
-        const { _videoTrackMuted, participantID, t } = this.props;
-        const muteConfig = _videoTrackMuted ? {
-            buttonText: 'videothumbnail.dounmuteVideo',
-            muteClassName: 'mutelink',
-            icon: IconCamera,
-        } : {
-            buttonText: 'videothumbnail.domuteVideo',
-            muteClassName: 'mutelink',
-            icon: IconCameraDisabled
-        };
+        const { _videoTrackMuted, _disableRemoteUnmuteVideo, mute, participantID, t } = this.props;
+        const buttonText = `videothumbnail.do${mute ? '' : 'un'}muteVideo`;
+        const muteClassName = _videoTrackMuted && _disableRemoteUnmuteVideo
+            ? 'mutelink disabled' : 'mutelink';
+        const icon = mute ? IconCameraDisabled : IconCamera;
 
         return (
             <RemoteVideoMenuButton
-                buttonText = { t(muteConfig.buttonText) }
-                displayClass = { muteConfig.muteClassName }
-                icon = { muteConfig.icon }
+                buttonText = { t(buttonText) }
+                displayClass = { muteClassName }
+                icon = { icon }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />

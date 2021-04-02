@@ -231,6 +231,7 @@ export default class RemoteVideo extends SmallVideo {
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
                             isAudioMuted = { this.isAudioMuted }
+                            isVideoMuted = { this.isVideoMuted }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}

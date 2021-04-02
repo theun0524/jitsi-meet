@@ -53,7 +53,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _videoTrackMuted: muted, dispatch, participantID, t } = this.props;
+        const { mute, dispatch, participantID, t } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'mutevideo.button',
@@ -63,12 +63,12 @@ export default class AbstractMuteVideoButton extends AbstractButton<Props, *> {
 
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${muted ? 'un' : ''}muteVideo`),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}muteVideo`),
             showCancelButton: true,
-            text: t(`dialog.${muted ? 'un' : ''}muteVideoParticipantTitle`)
+            text: t(`dialog.${mute ? '' : 'un'}muteVideoParticipantTitle`)
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteRemoteVideo(participantID, !muted));
+                dispatch(muteRemoteVideo(participantID, mute));
             }
         });
         // dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
@@ -80,7 +80,8 @@ export default class AbstractMuteVideoButton extends AbstractButton<Props, *> {
      * @inheritdoc
      */
     _isDisabled() {
-        return this.props._videoTrackMuted;
+        const { _disableRemoteUnmuteVideo, _videoTrackMuted } = this.props;
+        return _disableRemoteUnmuteVideo ? _videoTrackMuted : false;
     }
 
     /**
@@ -89,7 +90,8 @@ export default class AbstractMuteVideoButton extends AbstractButton<Props, *> {
      * @inheritdoc
      */
     _isToggled() {
-        return this.props._videoTrackMuted;
+        const { _disableRemoteUnmuteVideo, _videoTrackMuted } = this.props;
+        return _disableRemoteUnmuteVideo ? _videoTrackMuted : false;
     }
 }
 
@@ -105,9 +107,11 @@ export default class AbstractMuteVideoButton extends AbstractButton<Props, *> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const tracks = state['features/base/tracks'];
+    const { disableRemoteUnmuteVideo } = state['features/base/config'];
 
     return {
         _videoTrackMuted: isRemoteTrackMuted(
-            tracks, MEDIA_TYPE.VIDEO, ownProps.participantID)
+            tracks, MEDIA_TYPE.VIDEO, ownProps.participantID),
+        _disableRemoteUnmuteVideo: disableRemoteUnmuteVideo
     };
 }

@@ -59,6 +59,11 @@ type Props = {
     isAudioMuted: boolean,
 
     /**
+     * Whether or not the participant video is currently muted.
+     */
+    isVideoMuted: boolean,
+
+     /**
      * Callback to invoke when the popover has been displayed.
      */
     onMenuDisplay: Function,
@@ -177,12 +182,17 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disableKick,
             _disablePrivateMessage,
             _disableRemoteMute,
+            _disableRemoteUnmute,
+            _disableRemoteMuteVideo,
+            _disableRemoteUnmuteVideo,
             _isModerator,
             _shouldDisplayTileView,
             _participantCount,
             initialVolumeValue,
+            isAudioMuted,
             isFirst,
             isLast,
+            isVideoMuted,
             onRemoteControlToggle,
             onVolumeChange,
             remoteControlState,
@@ -196,15 +206,20 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 buttons.push(
                     <MuteButton
                         key = 'mute'
-                        participantID = { participantID } />
+                        participantID = { participantID }
+                        mute = { _disableRemoteUnmute ? true : !isAudioMuted } />
                 );
-                if (_participantCount > 2) {
+            }
+            if (_participantCount > 2) {
+                if (!_disableRemoteMute) {
                     buttons.push(
                         <MuteEveryoneElseButton
                             key = 'mute-others'
                             participantID = { participantID }
                             mute = { true } />
                     );
+                }
+                if (!_disableRemoteUnmute) {
                     buttons.push(
                         <MuteEveryoneElseButton
                             key = 'unmute-others'
@@ -212,18 +227,25 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                             mute = { false } />
                     );
                 }
+            }
+            if (!_disableRemoteMuteVideo) {
                 buttons.push(
                     <MuteVideoButton
                         key = 'mutevideo'
-                        participantID = { participantID } />
+                        participantID = { participantID }
+                        mute = { _disableRemoteUnmuteVideo ? true : !isVideoMuted } />
                 );
-                if (_participantCount > 2) {
+            }
+            if (_participantCount > 2) {
+                if (!_disableRemoteMuteVideo) {
                     buttons.push(
                         <MuteVideoEveryoneElseButton
                             key = 'mutevideo-others'
                             participantID = { participantID }
                             mute = { true } />
                     );
+                }
+                if (!_disableRemoteUnmuteVideo) {
                     buttons.push(
                         <MuteVideoEveryoneElseButton
                             key = 'unmutevideo-others'
@@ -320,6 +342,9 @@ function _mapStateToProps(state, ownProps) {
         disableGrantModerator,
         disablePrivateMessage,
         disableRemoteMute,
+        disableRemoteUnmute,
+        disableRemoteMuteVideo,
+        disableRemoteUnmuteVideo,
         remoteVideoMenu = {},
     } = state['features/base/config'];
     const { disableKick } = remoteVideoMenu;
@@ -332,6 +357,9 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disablePrivateMessage: Boolean(disablePrivateMessage),
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _disableRemoteUnmute: Boolean(disableRemoteUnmute),
+        _disableRemoteMuteVideo: Boolean(disableRemoteMuteVideo),
+        _disableRemoteUnmuteVideo: Boolean(disableRemoteUnmuteVideo),
         _participantCount: getParticipantCount(state),
         _shouldDisplayTileView: shouldDisplayTileView(state),
         isFirst: ordered && found === 0,
