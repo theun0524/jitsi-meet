@@ -1409,7 +1409,6 @@ export default {
                     const oldTrack = getLocalJitsiVideoTrack(state);
 
                     return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
-                        .then(startBackgroundEffect)
                         .then(resolve)
                         .catch(reject)
                         .then(onFinish);
@@ -1425,7 +1424,6 @@ export default {
                         }
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
-                    .then(startBackgroundEffect)
                     .then(resolve)
                     .catch(reject)
                     .then(onFinish);

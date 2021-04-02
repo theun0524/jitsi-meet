@@ -1,5 +1,6 @@
 // @flow
 
+import { getAuthUrl } from '../../../api/url';
 import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
 import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 
@@ -14,9 +15,10 @@ import logger from './logger';
 export default function loadEffects(store: Object): Promise<any> {
     const state = store.getState();
     const virtualBackground = state['features/virtual-background'];
+    const apiBase = getAuthUrl(state);
 
     const backgroundPromise = virtualBackground.backgroundEffectEnabled
-        ? createVirtualBackgroundEffect(virtualBackground)
+        ? createVirtualBackgroundEffect({ ...virtualBackground, apiBase })
             .catch(error => {
                 logger.error('Failed to obtain the background effect instance with error: ', error);
 

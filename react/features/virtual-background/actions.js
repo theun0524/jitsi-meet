@@ -1,5 +1,6 @@
 // @flow
 
+import { getAuthUrl } from '../../api/url';
 import { getLocalVideoTrack } from '../base/tracks';
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
@@ -18,10 +19,14 @@ export function toggleBackgroundEffect(enabled: boolean) {
 
         const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
         const virtualBackground = state['features/virtual-background'];
+        const apiBase = getAuthUrl(state);
 
         try {
             if (enabled) {
-                await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
+                await jitsiTrack.setEffect(await createVirtualBackgroundEffect({
+                    ...virtualBackground,
+                    apiBase
+                }));
                 dispatch(backgroundEnabled(true));
             } else {
                 await jitsiTrack.setEffect(undefined);
