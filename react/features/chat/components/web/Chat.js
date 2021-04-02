@@ -29,7 +29,7 @@ import { openDialog } from '../../../base/dialog';
 import EnableChatForAllParticipantsDialog from '../../../remote-video-menu/components/web/EnableChatForAllParticipantsDialog';
 import DisableChatForAllParticipantsDialog from '../../../remote-video-menu/components/web/DisableChatForAllParticipantsDialog';
 
-import { notifyEndOfSearchResults, notifyNoResultsFound }  from '../../../../features/chat';
+import { showToast } from '../../../notifications';
 
 declare var APP: Object;
 
@@ -50,8 +50,9 @@ declare var APP: Object;
     searchResultIndex: Integer,
     searchResultCount: Integer,
     currentIdx: Integer,
- }
+}
 
+const NOTIFICATION_TIMEOUT = 1000;
 
 class Chat extends AbstractChat<Props> {
 
@@ -102,6 +103,8 @@ class Chat extends AbstractChat<Props> {
         this._onToggleSearch = this._onToggleSearch.bind(this);
         this._onDisableChatForAll = this._onDisableChatForAll.bind(this);
         this._onEnableChatForAll = this._onEnableChatForAll.bind(this);
+        this._handleKeyPress = this._handleKeyPress.bind(this);
+        this._nextResult = this._nextResult.bind(this);
     }
 
     /**
@@ -174,7 +177,7 @@ class Chat extends AbstractChat<Props> {
      * @private
      * @returns {void}
      */
-     _onToggleSearch() {
+    _onToggleSearch() {
         const showSearch = !this.state.showSearch;
 
         if (showSearch) {
@@ -363,7 +366,7 @@ class Chat extends AbstractChat<Props> {
 
             // count the occurences of search query
             this.countSearchOccurences();
-
+            this._nextResult(ev);
         } else if (ev.key === 'Escape') {
             this._onToggleSearch();
             this.resetSearchResultIndex();
@@ -420,6 +423,7 @@ class Chat extends AbstractChat<Props> {
     }
 
     countSearchOccurences = () => {
+        const { t } = this.props;
         const spanTags = document.getElementsByClassName("highlight-search-text");
         let count = 0;
 
@@ -433,12 +437,16 @@ class Chat extends AbstractChat<Props> {
         this.setState({ searchResultCount: count });
 
         if(count === 0) {
-            APP.store.dispatch(notifyNoResultsFound());
+            showToast({
+                title: t('notify.noSearchResultsFound'),
+                timeout: NOTIFICATION_TIMEOUT,
+                icon: 'info',
+                animation: false });
         }
 
         // navigate to next result when there are search results
         else if(count > 0) {
-            document.addEventListener('keyup', this.nextResult);
+            document.addEventListener('keyup', this._nextResult);
         }
 
         // remove event listener on key press escape
@@ -452,10 +460,11 @@ class Chat extends AbstractChat<Props> {
         });
 
         // removed event listener for nextResult on key press escape
-        document.removeEventListener('keyup', this.nextResult);
+        document.removeEventListener('keyup', this._nextResult);
     }
 
-    nextResult = async(ev) => {
+    _nextResult = async(ev) => {
+        const { t } = this.props;
         // get highlighted elements
         const spanTags = document.getElementsByClassName("highlight-search-text");
 
@@ -464,21 +473,25 @@ class Chat extends AbstractChat<Props> {
 
         if(this.state.searchResultCount > 0 && ev.key === "Enter") {
 
-            // code to scroll into highlighted text area
-            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].scrollIntoView({ behavior: 'smooth' });
-            
-            // add additional highlighting style to identify the current item
-            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].style.setProperty('background','#ec9038','')
-
             // to keep in the loop
-            if(this.state.currentIdx + 1 >= this.state.searchResultCount) {
+            if(this.state.currentIdx >= this.state.searchResultCount) {
                 
                 this.setState({ currentIdx: -1 });
                 await this.setState({ searchResultIndex: this.state.currentIdx });
 
                 // dispatch a notification pop-up when reaching end of search results
-                APP.store.dispatch(notifyEndOfSearchResults());
+                showToast({
+                    title: t('notify.endOfSearchResults'),
+                    timeout: NOTIFICATION_TIMEOUT,
+                    icon: 'info',
+                    animation: false });
             }
+
+            // code to scroll into highlighted text area
+            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].scrollIntoView({ behavior: 'smooth' });
+            
+            // add additional highlighting style to identify the current item
+            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].style.setProperty('background','#ec9038','')
         }
     }
 

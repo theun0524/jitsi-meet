@@ -20,34 +20,3 @@ export function toggleChat() {
         VideoLayout.onResize();
     };
 }
-
-// Start of added portion
-
-/**
- * Pop-up notification at the bottom of screen
- * when chat search results reach the end
- * 
- */
-export function notifyEndOfSearchResults() {
-    return (dispatch) => {
-
-        dispatch(showNotification({
-            titleKey: 'notify.endOfSearchResults',
-        }, NOTIFICATION_TIMEOUT * 1));
-    };
-}
-
-/**
- * Pop-up notification at the bottom of screen
- * when there is no results for chat search input
- * 
- */
-export function notifyNoResultsFound() {
-    return (dispatch) => {
-        dispatch(showNotification({
-            titleKey: 'notify.noSearchResultsFound',
-        }, NOTIFICATION_TIMEOUT * 1));
-    };
-}
-
-// End of added portion

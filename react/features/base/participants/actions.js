@@ -502,10 +502,12 @@ export function participantMutedUs(track, participant) {
         }
 
         const title = 'notify.mutedRemotelyTitle';
-        showToast(i18next.t(title, {
-            participantDisplayName:
-                getParticipantDisplayName(getState, participant.getId())
-        }));
+        showToast({
+            title: i18next.t(title, {
+                participantDisplayName:
+                    getParticipantDisplayName(getState, participant.getId())
+            })
+        });
     };
 }
 
@@ -525,12 +527,14 @@ export function participantKicked(kicker, kicked) {
             kicker: kicker.getId()
         });
 
-        showToast(i18next.t('notify.kickParticipant', {
-            kicked:
-                getParticipantDisplayName(getState, kicked.getId()),
-            kicker:
-                getParticipantDisplayName(getState, kicker.getId())
-        }), NOTIFICATION_TIMEOUT * 2);
+        showToast({
+            title: i18next.t('notify.kickParticipant', {
+                kicked:
+                    getParticipantDisplayName(getState, kicked.getId()),
+                kicker:
+                    getParticipantDisplayName(getState, kicker.getId())
+            }),
+            timeout: NOTIFICATION_TIMEOUT * 2 });
         // dispatch(showNotification({
         //     titleArguments: {
         //         kicked:
@@ -551,9 +555,11 @@ export function moderatorRoleGranted(participantId) {
             participant: participantId
         });
 
-        showToast(i18next.t('notify.grantedTo', {
-            to: getParticipantDisplayName(getState, participantId)
-        }), NOTIFICATION_TIMEOUT * 2);
+        showToast({
+            title: i18next.t('notify.grantedTo', {
+                to: getParticipantDisplayName(getState, participantId)
+            }),
+            timeout: NOTIFICATION_TIMEOUT * 2 });
         // dispatch(showNotification({
         //     titleArguments: {
         //         to: getParticipantDisplayName(getState, participantId)

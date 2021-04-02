@@ -2125,9 +2125,11 @@ export default {
                 const { conference } = APP.store.getState()['features/base/conference'];
                 const participant = conference.getParticipantById(id);
 
-                showToast(i18next.t('notify.refusedUnmute', {
-                    participantDisplayName: participant._displayName
-                }));
+                showToast({
+                    title: i18next.t('notify.refusedUnmute', {
+                        participantDisplayName: participant._displayName
+                    })
+                });
             }
         });
 
@@ -2161,9 +2163,11 @@ export default {
                 const { conference } = APP.store.getState()['features/base/conference'];
                 const participant = conference.getParticipantById(id);
 
-                showToast(i18next.t('notify.refusedUnmuteVideo', {
-                    participantDisplayName: participant._displayName
-                }));
+                showToast({
+                    title: i18next.t('notify.refusedUnmuteVideo', {
+                        participantDisplayName: participant._displayName
+                    })
+                });
             }
         });
 

@@ -493,7 +493,9 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // else: show thankYou dialog only if there is no feedback
         if (options.showThankYou) {
-            showToast(i18next.t('dialog.thankYou', { appName: getName() }));
+            showToast({
+                title: i18next.t('dialog.thankYou', { appName: getName() })
+            });
             // dispatch(showNotification({
             //     titleArguments: { appName: getName() },
             //     titleKey: 'dialog.thankYou'

@@ -75,8 +75,15 @@ export function showSweetAlert(props) {
     });
 }
 
-export function showToast(title, timer = 3000, icon = 'success', position = 'bottom-start') {
-    return Toast.fire({ icon, title, position, timer });
+export function showToast(props) {
+    const {
+        animation = true,
+        icon = 'success',
+        position = 'bottom-start',
+        timeout = 3000,
+        title,
+    } = props;
+    return Toast.fire({ icon, title, position, timer: timeout, animation });
 }
 
 export function showConfirmDialog(props) {

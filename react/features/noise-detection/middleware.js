@@ -39,7 +39,10 @@ MiddlewareRegistry.register(store => next => action => {
             });
         conference.on(
             JitsiConferenceEvents.NOISY_MIC, () => {
-                showToast(i18next.t('toolbar.noisyAudioInputDesc'), NOTIFICATION_TIMEOUT * 2, 'warning');
+                showToast({
+                    title: i18next.t('toolbar.noisyAudioInputDesc'),
+                    timeout: NOTIFICATION_TIMEOUT * 2,
+                    icon: 'warning' });
                 // const notification = showNotification({
                 //     titleKey: 'toolbar.noisyAudioInputTitle',
                 //     descriptionKey: 'toolbar.noisyAudioInputDesc'
