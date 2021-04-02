@@ -1,8 +1,9 @@
 .virtual-background-dialog {
-    display: inline-grid;
-    grid-template-columns: auto auto auto auto auto auto auto;
+    display: flex;
     max-width: 370px;
     cursor: pointer;
+    align-items: center;
+
     .thumbnail {
         border-radius: 10px;
         object-fit: cover;
@@ -27,28 +28,29 @@
         border: 2px solid #a4b8d1;
     }
     .virtual-background-none {
-        font-weight: bold;
         padding: 5px;
-        height: 34px;
-        width: 34px;
         border-radius: 10px;
-        border: 1px solid #a4b8d1;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 35px;
         margin-right: 5px;
     }
     .none-selected {
-        font-weight: bold;
-        padding: 5px;
-        height: 34px;
-        width: 34px;
+        padding: 3px;
         border-radius: 10px;
         border: 2px solid #a4b8d1;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 35px;
         margin-right: 5px;
+    }
+    .virtual-background-none, .none-selected {
+        > div {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px;
+            height: 34px;
+            width: 34px;
+            border-radius: 10px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 35px;
+            background: rgba(0, 0, 0, 0.3);
+        }
     }
 }
 

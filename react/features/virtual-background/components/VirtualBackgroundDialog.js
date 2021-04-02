@@ -75,35 +75,27 @@ function VirtualBackground({ dispatch, t }: Props) {
 
     const [ selected, setSelected ] = useState('');
     const enableBlur = async () => {
-        isloading(true);
         setSelected('blur');
         await dispatch(setVirtualBackground('', false));
         await dispatch(toggleBackgroundEffect(true));
-        isloading(false);
     };
 
     const removeBackground = async () => {
-        isloading(true);
         setSelected('none');
         await dispatch(setVirtualBackground('', false));
         await dispatch(toggleBackgroundEffect(false));
-        isloading(false);
     };
 
     const setUploadedImageBackground = async image => {
-        isloading(true);
         setSelected(image.id);
         await dispatch(setVirtualBackground(image.src, true));
         await dispatch(toggleBackgroundEffect(true));
-        isloading(false);
     };
 
     const setImageBackground = async image => {
-        isloading(true);
         setSelected(image.id);
         await dispatch(setVirtualBackground(await toDataURL(image.src), true));
         await dispatch(toggleBackgroundEffect(true));
-        isloading(false);
     };
 
     const uploadImage = async imageFile => {
@@ -154,7 +146,9 @@ function VirtualBackground({ dispatch, t }: Props) {
                             <div
                                 className = { selected === 'none' ? 'none-selected' : 'virtual-background-none' }
                                 onClick = { removeBackground }>
-                                {t('virtualBackground.none')}
+                                <div>
+                                    {t('virtualBackground.none')}
+                                </div>
                             </div>
                         </Tooltip>
                         <Tooltip
