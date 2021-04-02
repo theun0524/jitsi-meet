@@ -67,11 +67,11 @@ export function showSweetAlert(props) {
     }
 
     Swal.fire({
-        title: i18next.t(title),
-        text: i18next.t(text),
-        icon: appearance,
         confirmButtonText: i18next.t(confirmButtonText),
-        customClass
+        customClass,
+        icon: appearance,
+        text: i18next.t(text),
+        title: i18next.t(title),
     });
 }
 
