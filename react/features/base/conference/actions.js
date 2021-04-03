@@ -18,7 +18,6 @@ import {
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
-    moderatorRoleGranted,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -128,13 +127,6 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
         (kicker, kicked) => dispatch(participantKicked(kicker, kicked)));
-
-    // start of added portion
-    conference.on(
-        JitsiConferenceEvents.MODERATOR_ROLE_GRANTED,
-        (participant) => dispatch(moderatorRoleGranted(participant))
-    );
-    // end of added portion
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,

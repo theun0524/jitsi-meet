@@ -87,7 +87,6 @@ import {
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
     participantKicked,
-    moderatorRoleGranted,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -2312,10 +2311,6 @@ export default {
                 APP.store.dispatch(participantChatEnabled(room, participant));
             });
         }
-
-        room.on(JitsiConferenceEvents.MODERATOR_ROLE_GRANTED, participant => {
-            APP.store.dispatch(moderatorRoleGranted(participant));
-        });
         // end of added portion
 
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {

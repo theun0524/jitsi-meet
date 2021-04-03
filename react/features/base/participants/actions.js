@@ -547,29 +547,6 @@ export function participantKicked(kicker, kicked) {
     };
 }
 
-// Start of added portion --> Notification when granting moderator role
-export function moderatorRoleGranted(participantId) {
-    return (dispatch, getState) => {
-        dispatch({
-            type: MODERATOR_ROLE_GRANTED,
-            participant: participantId
-        });
-
-        showToast({
-            title: i18next.t('notify.grantedTo', {
-                to: getParticipantDisplayName(getState, participantId)
-            }),
-            timeout: NOTIFICATION_TIMEOUT * 2 });
-        // dispatch(showNotification({
-        //     titleArguments: {
-        //         to: getParticipantDisplayName(getState, participantId)
-        //     },
-        //     titleKey: 'notify.grantedTo',
-        // }, NOTIFICATION_TIMEOUT * 10));
-    };
-}
-// End of added portion --> Notification when granting moderator role
-
 /**
  * Create an action which pins a conference participant.
  *
