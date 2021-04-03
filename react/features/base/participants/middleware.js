@@ -3,7 +3,6 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
-import { getActiveSession } from '../../recording';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_JOINED,
@@ -55,6 +54,7 @@ import {
     getParticipantDisplayName
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
+import { isRecording } from '../../recording';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -96,9 +96,8 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             // 내가 방장이면 자동으로 레코딩이 시작되도록...
-            const isRecordingRunning = Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
             const conference = getCurrentConference(state);
-            if (conference && isHost && !isRecordingRunning && autoRecord) {
+            if (conference && isHost && !isRecording(state) && autoRecord) {
                 conference.startRecording({
                     mode: JitsiRecordingConstants.mode.FILE,
                     appData: JSON.stringify({

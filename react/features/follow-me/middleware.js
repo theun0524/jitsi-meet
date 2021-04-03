@@ -1,8 +1,8 @@
 // @flow
 
-import { getCurrentConference } from '../base/conference';
 import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
+    getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
     isLocalParticipantModerator,
@@ -12,6 +12,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
+import { isRecording, isStreaming } from '../recording';
 import { setTileView, setTileViewOrder } from '../video-layout';
 
 import {
@@ -19,7 +20,7 @@ import {
     setFollowMeState
 } from './actions';
 import { FOLLOW_ME_COMMAND } from './constants';
-import { isFollowMeActive } from './functions';
+import { isFollowMeActive, isFollowMeEnabled } from './functions';
 import logger from './logger';
 
 import './subscriber';
@@ -73,13 +74,11 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_JOINED: {
         const state = store.getState();
-        const conference = getCurrentConference(state);
 
         if (!action.participant.local &&
-            isLocalParticipantModerator(state) && (
-            state['features/base/config'].followMeEnabled ||
-            state['features/base/conference'].followMeEnabled    
-        )) {
+            isLocalParticipantModerator(state) &&
+            isFollowMeEnabled(state))
+        {
             setTimeout(() => {
                 conference.sendCommand(
                     FOLLOW_ME_COMMAND,
@@ -136,16 +135,26 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
         return;
     }
 
-    if (!isFollowMeActive(state)) {
-        store.dispatch(setFollowMeModerator(id));
-    }
-
     // just a command that follow me was turned off
     if (attributes.off) {
         store.dispatch(setFollowMeModerator());
 
         return;
     }
+
+    const { iAmRecorder } = state['features/base/config'];
+    if (attributes.sendToRecorder && !iAmRecorder) {
+        return;
+    }
+
+    if (!isFollowMeActive(state)) {
+        store.dispatch(setFollowMeModerator(id));
+    }
+
+    // For recording or streaming mode, jibri participant will follow state
+    // if ((isRecording(state) || isStreaming(state)) && !iAmRecorder) {
+    //     return;
+    // }
 
     const documentManager = APP.UI.getSharedDocumentManager();
     if (!documentManager) {
@@ -154,7 +163,7 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
 
     const { state: oldState, value: oldValue } = state['features/follow-me'] || {};
 
-    store.dispatch(setFollowMeState(attributes));
+    store.dispatch(setFollowMeState(attributes, value));
 
     // XMPP will translate all booleans to strings, so explicitly check against
     // the string form of the boolean {@code true}.

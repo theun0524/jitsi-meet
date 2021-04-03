@@ -27,7 +27,6 @@ import {
 } from '../../../base/icons';
 import { isHost } from '../../../base/jwt';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
@@ -50,7 +49,8 @@ import {
 import {
     LiveStreamButton,
     RecordButton,
-    getActiveSession
+    isRecording,
+    isStreaming
 } from '../../../recording';
 import { SecurityDialogButton } from '../../../security';
 import {
@@ -1480,8 +1480,8 @@ function _mapStateToProps(state) {
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
         _isChatOnly: isGuest && chatOnlyGuestEnabled,
-        _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
-        _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        _isLiveStreaming: isStreaming(state),
+        _isRecording: isRecording(state),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isStatsVisible: !(hideParticipantsStats === true || (hideParticipantsStats === 'guest' && isGuest)),
         _isVpaasMeeting: isVpaasMeeting(state),        

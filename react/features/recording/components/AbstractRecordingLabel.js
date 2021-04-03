@@ -1,8 +1,11 @@
 // @flow
 
 import { Component } from 'react';
+import { getCurrentConference } from '../../base/conference';
 
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { FOLLOW_ME_COMMAND } from '../../follow-me/constants';
+import { getFollowMeState } from '../../follow-me/subscriber';
 import { getSessionStatusToShow } from '../functions';
 
 /**
@@ -136,6 +139,25 @@ export default class AbstractRecordingLabel
      * @returns {void}
      */
     _updateStaleStatus(oldProps, newProps) {
+        if (newProps._status !== oldProps._status) {
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+
+            if (newProps._status === JitsiRecordingConstants.status.OFF) {
+                conference.sendCommandOnce(
+                    FOLLOW_ME_COMMAND,
+                    { attributes: { off: true } }
+                );
+            } else if (newProps._status === JitsiRecordingConstants.status.ON) {
+                setTimeout(() => {
+                    conference.sendCommand(
+                        FOLLOW_ME_COMMAND,
+                        { attributes: getFollowMeState(state) }
+                    );
+                }, 1000);
+            }
+        }
+
         if (newProps._status === JitsiRecordingConstants.status.OFF) {
             if (oldProps._status !== JitsiRecordingConstants.status.OFF) {
                 setTimeout(() => {

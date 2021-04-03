@@ -2,10 +2,9 @@
 
 import { openDialog } from '../../../base/dialog';
 import { IconLiveStreaming } from '../../../base/icons';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { getActiveSession } from '../../functions';
+import { isRecording, isStreaming } from '../../functions';
 
 import {
     StartLiveStreamDialog,
@@ -153,15 +152,14 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     }
 
     // disable the button if the recording is running.
-    if (getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
+    if (isRecording(state)) {
         _disabled = true;
         _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
     }
 
     return {
         _disabled,
-        _isLiveStreamRunning: Boolean(
-            getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        _isLiveStreamRunning: isStreaming(state),
         _tooltip,
         visible
     };

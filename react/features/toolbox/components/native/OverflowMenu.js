@@ -13,8 +13,7 @@ import { SharedDocumentButton } from '../../../etherpad';
 import { InviteButton } from '../../../invite';
 import { LobbyModeButton } from '../../../lobby/components/native';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { LiveStreamButton, RecordButton, getActiveSession } from '../../../recording';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { LiveStreamButton, RecordButton, isRecording, isStreaming } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
@@ -244,8 +243,8 @@ function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
-        _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM))
+        _isRecording: isRecording(state),
+        _isLiveStreaming: isStreaming(state)
     };
 }
 
