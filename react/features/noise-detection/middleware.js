@@ -51,8 +51,8 @@ MiddlewareRegistry.register(store => next => action => {
                 // dispatch(notification);
                 dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
 
-                // we store the last notification id so we can hide it if the mic is muted
-                dispatch(setNoisyAudioInputNotificationUid(notification.uid));
+                // // we store the last notification id so we can hide it if the mic is muted
+                // dispatch(setNoisyAudioInputNotificationUid(notification.uid));
             });
         break;
     }
