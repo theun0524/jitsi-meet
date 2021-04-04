@@ -141,7 +141,7 @@ export default class AbstractRecordingLabel
     _updateStaleStatus(oldProps, newProps) {
         // 녹화 시작을 내가 한 경우, initiator가 local이기 때문에 undefined 임.
         if (newProps._status !== oldProps._status &&
-            !newProps._session.initiator) {
+            !newProps._session?.initiator) {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
