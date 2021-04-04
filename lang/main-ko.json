@@ -394,7 +394,7 @@
         "title": "이 회의 삽입"
     },
     "virtualBackground": {
-        "title": "배경 설정",
+        "title": "배경 선택",
         "enableBlur": "배경 흐리게",
         "removeBackground": "배경 삭제",
         "uploadImage": "이미지 업로드",
