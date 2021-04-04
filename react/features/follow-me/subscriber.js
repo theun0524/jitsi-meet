@@ -87,7 +87,7 @@ export function getFollowMeState(state) {
 
     // mark sendToRecorder, if followMe is disabled and jibri is running
     if (!isFollowMeEnabled(state) &&
-        (isRecording(state) || isStreaming(state))) {
+        (isRecording(state, true) || isStreaming(state, true))) {
         followMeState.sendToRecorder = true;
     }
 
@@ -108,7 +108,7 @@ function _sendFollowMeCommand(
     const conference = getCurrentConference(state);
     const { chatOnlyGuestEnabled, followMeEnabled } = state['features/base/config'];
     const isGuest = !isHost(state);
-    const forceSend = isRecording(state) || isStreaming(state);
+    const forceSend = isRecording(state, true) || isStreaming(state, true);
 
     if (!conference) {
         return;

@@ -6,7 +6,7 @@ import { getCurrentConference } from '../../base/conference';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { FOLLOW_ME_COMMAND } from '../../follow-me/constants';
 import { getFollowMeState } from '../../follow-me/subscriber';
-import { getSessionStatusToShow } from '../functions';
+import { getActiveSession, getSessionStatusToShow } from '../functions';
 
 /**
  * NOTE: Web currently renders multiple indicators if multiple recording
@@ -139,7 +139,9 @@ export default class AbstractRecordingLabel
      * @returns {void}
      */
     _updateStaleStatus(oldProps, newProps) {
-        if (newProps._status !== oldProps._status) {
+        // 녹화 시작을 내가 한 경우, initiator가 local이기 때문에 undefined 임.
+        if (newProps._status !== oldProps._status &&
+            !newProps._session.initiator) {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -189,6 +191,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const { mode } = ownProps;
 
     return {
-        _status: getSessionStatusToShow(state, mode)
+        _status: getSessionStatusToShow(state, mode),
+        _session: getActiveSession(state, mode)
     };
 }
