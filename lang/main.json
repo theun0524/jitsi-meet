@@ -741,7 +741,8 @@
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
-        "title": "Settings"
+        "title": "Settings",
+        "disableDeviceAccess": "Disable user's device access"
     },
     "settingsView": {
         "advanced": "Advanced",

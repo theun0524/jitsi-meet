@@ -1,6 +1,6 @@
 // @flow
 
-import { setFollowMe, setStartMutedPolicy } from '../base/conference';
+import { setFollowMe, setStartMutedPolicy, setUserDeviceAccessDisabled } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
@@ -84,6 +84,12 @@ export function submitMoreTab(newState: Object): Function {
             dispatch(setStartMutedPolicy(
                 newState.startAudioMuted, newState.startVideoMuted));
         }
+
+        // start of added portion
+        if (newState.userDeviceAccessDisabled !== currentState.userDeviceAccessDisabled) {
+            dispatch(setUserDeviceAccessDisabled(newState.userDeviceAccessDisabled));
+        }
+        // end of added portion
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);

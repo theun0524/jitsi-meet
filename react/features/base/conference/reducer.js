@@ -26,7 +26,8 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_USER_DEVICE_ACCESS_DISABLED
 } from './actionTypes';
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
@@ -126,6 +127,13 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+        
+        case SET_USER_DEVICE_ACCESS_DISABLED:
+            return {
+                ...state,
+                userDeviceAccessDisabled: action.userDeviceAccessDisabled
+            };
+
         case SET_PUBLIC_SCOPE_ENABLED:
             return set(
                 state,

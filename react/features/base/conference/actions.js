@@ -55,7 +55,8 @@ import {
     SET_START_MUTED_POLICY,
     PARTICIPANT_CHAT_DISABLED,
     PARTICIPANT_CHAT_ENABLED,
-    CONFERENCE_TIME_REMAINED
+    CONFERENCE_TIME_REMAINED,
+    SET_USER_DEVICE_ACCESS_DISABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -792,7 +793,6 @@ export function setStartMutedPolicy(
         startAudioMuted: boolean, startVideoMuted: boolean) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const conference = getCurrentConference(getState());
-
         conference && conference.setStartMutedPolicy({
             audio: startAudioMuted,
             video: startVideoMuted
@@ -801,6 +801,19 @@ export function setStartMutedPolicy(
         return dispatch(
             onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
     };
+}
+
+/**
+ * Sets whether or not remote participants should be disabled to access their devices
+ *
+ * @param {boolean} userDeviceAccessDisabled - whether or not remote participants access to their device is disabled
+ * @returns {Function}
+ */
+export function setUserDeviceAccessDisabled(userDeviceAccessDisabled: boolean) {
+    return {
+        type: SET_USER_DEVICE_ACCESS_DISABLED,
+        userDeviceAccessDisabled
+    }
 }
 
 /**
