@@ -64,7 +64,7 @@
     "js-cookie": "2.2.1",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:vmeeting-io/lib-jitsi-meet#f89bd04a08d54b8a7fa397532a15fb1c94e7c2d9",
+    "lib-jitsi-meet": "github:vmeeting-io/lib-jitsi-meet#b825b46158386136668e9b1a561ef1d6aa127a18",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.19",
     "moment": "2.19.4",
