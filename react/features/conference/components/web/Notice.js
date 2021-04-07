@@ -50,9 +50,8 @@ class Notice extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
-    const {
-        noticeMessage
-    } = state['features/base/config'];
+    let noticeMessage = state['features/base/conference'].noticeMessage;
+    noticeMessage = noticeMessage || state['features/base/config'].noticeMessage;
 
     return {
         _message: noticeMessage
