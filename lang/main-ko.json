@@ -253,6 +253,7 @@
         "incorrectRoomLockPassword": "잘못된 비밀번호",
         "incorrectPassword": "잘못된 사용자 이름 또는 비밀번호",
         "InvalidLicense": "사용 중인 라이센스가 유효하지 않습니다. 라이센스에 오류가 있습니다. 관리자에게 문의하세요.",
+        "invalidBuildEnvironment": "빌드 환경에 오류가 있습니다. 빌드 환경을 초기화하고 다시 빌드하세요.",
         "internalError": "죄송합니다. 뭔가 잘못 됐습니다. 다음 오류가 발생했습니다: {{error}}",
         "internalErrorTitle": "내부 에러",
         "kickMessage": "자세한 내용은 {{participantDisplayName}}에 문의하세요.",
@@ -993,7 +994,7 @@
     },
     "welcomepage": {
         "accessibilityLabel": {
-            "join": "가입",
+            "join": "회의 참석",
             "roomname": "방 이름 입력"
         },
         "account": "계정 설정",
@@ -1020,14 +1021,13 @@
         "deleteFromRecent" : "최근 이력에서 삭제",
         "deleteModalHeading": "회의 삭제",
         "deleteReservation" : "예약된 회의 삭제",
-        "enterRoomTitle": "새로운 미팅 시작하기",
+        "enterRoomTitle": "회의 이름은 공백없이 입력해주세요.",
         "getHelp": "도움말",
         "go": "회의 생성",
-        "goSmall": "회의 생성",
         "info": "정보",
         "login": "로그인",
         "loginRequired": "로그인이 필요합니다.",
-        "join": "생성",
+        "join": "회의 참석",
         "moderatedMessage": "또는 본인이 방장인 경우 사전에 <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">회의 URL을 예약</a>하세요.",
         "privacy": "개인정보",
         "recentList": "최근 이력",

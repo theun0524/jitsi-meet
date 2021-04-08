@@ -72,7 +72,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     static getDerivedStateFromProps(props: Props, state: Object) {
         return {
-            room: props._room || state.room
+            room: state.room
         };
     }
 
@@ -291,6 +291,7 @@ export function _mapStateToProps(state: Object) {
         _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings'],
-        _user: state['features/base/jwt'].user
+        _user: state['features/base/jwt'].user,
+        _jwt: state['features/base/jwt']
     };
 }

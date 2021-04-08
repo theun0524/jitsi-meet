@@ -246,7 +246,7 @@ class WelcomePage extends AbstractWelcomePage {
         } else {
             children = (
                 <Text style = { styles.buttonText }>
-                    { this.props.t('welcomepage.join') }
+                    { this.props.t('welcomepage.go') }
                 </Text>
             );
         }
