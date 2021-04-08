@@ -16,6 +16,7 @@ WEBPACK = ./node_modules/.bin/webpack
 WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 LANGUAGES := $(shell node -p "Object.keys(require('./lang/languages.json')).join(' ')")
 COUNTRIES_DIR := node_modules/i18n-iso-countries/langs
+DEV_COUNTRIES_DIR := lang/countries
 
 all: compile deploy clean
 
@@ -108,7 +109,10 @@ $(LANGUAGES):
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac $(LANGUAGES)
-	mkdir lang/countries && cp -rf lang/countries-*.json lang/countries/
+	if [ ! -d $(DEV_COUNTRIES_DIR) ] ; \
+		mkdir $(DEV_COUNTRIES_DIR); \
+	fi; \
+	cp -rf lang/countries-*.json $(DEV_COUNTRIES_DIR)/
 
 dev-start:
 	./cssmon.sh ./css &
