@@ -71,6 +71,7 @@ class HangupOptionsMenu extends Component<Props> {
                         accessibilityLabel =
                             { t('toolbar.accessibilityLabel.hangup') }
                         icon = { IconHangup }
+                        type = {'hangup'}
                         onClick = { this._onToggleDialogVisibility }
                         toggled = { isOpen }
                         tooltip = { t('toolbar.hangup') } />

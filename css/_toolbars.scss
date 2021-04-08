@@ -133,6 +133,33 @@
                             fill: #fff;
                         }
                     }
+
+                    &.disabled, .disabled & {
+                        cursor: initial;
+                        color: #fff;
+                        background-color: #a4b8d1;
+                    }
+    
+                    svg {
+                        fill: #5e6d7a;
+                    }
+                }
+            }
+
+            .toolbox-button-hangup {
+                .toolbox-icon {
+                    align-items: center;
+                    cursor: pointer;
+                    background-color: $hangupColor;
+                    border-radius: 50%;
+                    border: 1px solid $hangupColor;
+                    margin: 0px 4px;
+                    width: 40px;
+                    height: 40px;
+        
+                    &:hover {
+                        background-color: $hangupColor;
+                    }
                 }
             }
         }
