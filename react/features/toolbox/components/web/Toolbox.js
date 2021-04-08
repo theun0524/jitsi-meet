@@ -264,6 +264,7 @@ class Toolbox extends Component<Props, State> {
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
         this._onSetHangupMenuVisible = this._onSetHangupMenuVisible.bind(this);
 
+        this._onHangupAll = this._onHangupAll.bind(this);
         this._onHangupMe = this._onHangupMe.bind(this);
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
         this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
@@ -766,6 +767,12 @@ class Toolbox extends Component<Props, State> {
         }
     }
 
+    _onHangupAll: () => void;
+
+    _onHangupAll() {
+        console.log("Clicked onHangupAll")
+    }
+
 
     _onToolbarOpenFeedback: () => void;
 
@@ -1183,7 +1190,7 @@ class Toolbox extends Component<Props, State> {
                     icon = { IconPresentation }
                     key = 'hangupAll'
                     warning = { true }
-                    onClick = { () => console.log('Hang up for all') }
+                    onClick = { this._onHangupAll }
                     text = { t('toolbar.hangupAll') } />,
                 <HangupMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.hangup') }
