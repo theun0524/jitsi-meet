@@ -1,5 +1,6 @@
 /* global APP, interfaceConfig, process */
 
+import Banner from '@atlaskit/banner';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
@@ -345,6 +346,13 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                 </div>
                 <div className = {s.welcomeContent}>
+                    { config.noticeMessage && (
+                        <div className = {s.banner}>
+                            <Banner appearance="announcement" isOpen>
+                                {config.noticeMessage}
+                            </Banner>
+                        </div>
+                    )}
                     <div className = {s.bgWrapper}>
                         <div className = {s.contentWrapper}>
                             <div className = {s.introWrapper}>

@@ -154,6 +154,14 @@ body {
         overflow-y: auto;
         margin-top: $welcomePageHandlerHeight;
 
+        .banner {
+            min-height: 54px;
+
+            div {
+                overflow: hidden;
+            }
+        }
+
         .bgWrapper {
             display: block;
 
