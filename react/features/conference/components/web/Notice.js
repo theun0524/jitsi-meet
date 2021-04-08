@@ -51,7 +51,9 @@ class Notice extends Component<Props> {
  */
 function _mapStateToProps(state) {
     let noticeMessage = state['features/base/conference'].noticeMessage;
-    noticeMessage = noticeMessage || state['features/base/config'].noticeMessage;
+    noticeMessage = typeof noticeMessage !== 'undefined'
+        ? noticeMessage
+        : state['features/base/config'].noticeMessage;
 
     return {
         _message: noticeMessage
