@@ -188,9 +188,15 @@ function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
 
+    let isUserDeviceAccessDisabled = state['features/base/conference'].userDeviceAccessDisabled;
+    isUserDeviceAccessDisabled = false ? undefined : isUserDeviceAccessDisabled;
+
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
+        // we should show that the camera is disabled when the moderator has disabled user's access to device
+        // or when the device is not available
+        _videoDisabled: !hasAvailableDevices(state, 'videoInput') || isUserDeviceAccessDisabled,
+        // _videoDisabled: true,
         _videoMediaType: getLocalVideoType(tracks),
         _videoMuted: isLocalVideoTrackMuted(tracks)
     };
