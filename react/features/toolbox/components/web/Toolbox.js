@@ -11,6 +11,10 @@ import {
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
+
+import { appNavigate } from '../../../app/actions';
+import { disconnect } from '../../../base/connection';
+
 import {
     IconChat,
     IconCodeBlock,
@@ -260,6 +264,7 @@ class Toolbox extends Component<Props, State> {
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
         this._onSetHangupMenuVisible = this._onSetHangupMenuVisible.bind(this);
 
+        this._onHangupMe = this._onHangupMe.bind(this);
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
         this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
         this._onShortcutToggleRaiseHand = this._onShortcutToggleRaiseHand.bind(this);
@@ -747,6 +752,21 @@ class Toolbox extends Component<Props, State> {
         this._doToggleScreenshare();
     }
 
+
+    _onHangupMe: () => void;
+
+    _onHangupMe() {
+        sendAnalytics(createToolbarEvent('hangup'));
+
+        // FIXME: these should be unified.
+        if (navigator.product === 'ReactNative') {
+            this.props.dispatch(appNavigate(undefined));
+        } else {
+            this.props.dispatch(disconnect(true));
+        }
+    }
+
+
     _onToolbarOpenFeedback: () => void;
 
     /**
@@ -1162,13 +1182,14 @@ class Toolbox extends Component<Props, State> {
                     accessibilityLabel = { t('toolbar.accessibilityLabel.hangupAll') }
                     icon = { IconPresentation }
                     key = 'hangupAll'
+                    warning = { true }
                     onClick = { () => console.log('Hang up for all') }
                     text = { t('toolbar.hangupAll') } />,
                 <HangupMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.hangup') }
                     icon = { IconOpenInNew }
                     key = 'hangup'
-                    onClick = { () => console.log('Hang up for me') }
+                    onClick = { this._onHangupMe }
                     text = { t('toolbar.hangup') } />
         ];
     }

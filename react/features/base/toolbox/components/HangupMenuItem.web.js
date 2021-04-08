@@ -26,15 +26,7 @@ type Props = {
      */
     elementAfter?: React$Node,
 
-    /**
-     * The icon class to use for displaying an icon before the link text.
-     */
-    icon: Object,
-
-    /**
-     * Id of the icon to be rendered.
-     */
-    iconId?: string,
+    warning: boolean,
 
     /**
      * The callback to invoke when {@code OverflowMenuItem} is clicked.
@@ -71,6 +63,7 @@ class HangupMenuItem extends Component<Props> {
      */
     static defaultProps = {
         tooltipPosition: 'left',
+        warning: false,
         disabled: false
     };
 
@@ -83,9 +76,9 @@ class HangupMenuItem extends Component<Props> {
     render() {
         const { accessibilityLabel, disabled, elementAfter, onClick } = this.props;
 
-        let className = 'hangup-menu-item';
-
+        let className = this.props.warning? 'hangup-menu-item-warning' : 'hangup-menu-item';
         className += this.props.disabled ? ' disabled' : '';
+        
 
         return (
             <li
