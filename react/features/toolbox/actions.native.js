@@ -3,6 +3,7 @@
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_OVERFLOW_MENU_VISIBLE,
+    SET_HANGUP_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -38,6 +39,22 @@ export function clearToolboxTimeout(): Object {
 export function setOverflowMenuVisible(visible: boolean): Object {
     return {
         type: SET_OVERFLOW_MENU_VISIBLE,
+        visible
+    };
+}
+
+/**
+ * Shows/hides the hangup menu.
+ *
+ * @param {boolean} visible - True to show it or false to hide it.
+ * @returns {{
+ *     type: SET_HANGUP_MENU_VISIBLE,
+ *     visible: boolean
+ * }}
+ */
+export function setHangupMenuVisible(visible: boolean): Object {
+    return {
+        type: SET_HANGUP_MENU_VISIBLE,
         visible
     };
 }

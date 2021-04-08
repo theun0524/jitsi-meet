@@ -157,6 +157,61 @@
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
+                text-align: center;
+                height: 22px;
+                padding: 5px 12px;
+
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+
+                &:hover {
+                    background-color: $overflowMenuItemHoverBG;
+                    color: $overflowMenuItemHoverColor;
+                }
+
+                &.unclickable {
+                    cursor: default;
+                }
+                &.unclickable:hover {
+                    background: inherit;
+                }
+                &.disabled {
+                    cursor: initial;
+                    color: #3b475c;
+                }
+            }
+            
+            .overflow-menu-item-text {
+            }
+
+            .profile-text {
+                max-width: 150px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        }
+
+        .hangup-menu {
+            font-size: 1.2em;
+            list-style-type: none;
+            background-color: $overflowMenuBG;
+            /**
+             * Undo atlaskit padding by reducing margins.
+             */
+            margin: -16px -24px;
+            padding: 4px 0;
+
+            .hangup-menu-item {
+                align-items: center;
+                color: $overflowMenuItemColor;
+                cursor: pointer;
+                //display: flex;
+                font-size: 14px;
+                text-align: center;
                 height: 22px;
                 padding: 5px 12px;
 
@@ -192,27 +247,8 @@
                 margin-left: 8px;
                 padding: 0 6px;
             }
-
-            .overflow-menu-item-icon {
-                margin-right: 10px;
-
-                i {
-                    display: inline;
-                    font-size: 24px;
-                }
-
-                i:hover {
-                    background-color: initial;
-                }
-
-                img {
-                    max-width: 24px;
-                    max-height: 24px;
-                }
-
-                svg {
-                    fill: #B8C7E0 !important;
-                }
+            
+            .hangup-menu-item-text {
             }
 
             .profile-text {

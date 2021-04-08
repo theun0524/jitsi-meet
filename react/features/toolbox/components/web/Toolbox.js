@@ -33,7 +33,7 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox/components';
+import { OverflowMenuItem, HangupMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
@@ -77,6 +77,7 @@ import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
     setOverflowMenuVisible,
+    setHangupMenuVisible,
     setToolbarHovered
 } from '../../actions';
 import { isToolboxVisible } from '../../functions';
@@ -85,6 +86,7 @@ import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
+import HangupOptionsMenu from './HangupOptionsMenu';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
@@ -135,6 +137,11 @@ type Props = {
      * Whether or not the tile view is enabled.
      */
     _tileViewEnabled: boolean,
+
+    /**
+     * Whether or not the overflow menu is visible.
+     */
+     _hangupOptionsMenuVisible: boolean,
 
     /**
      * Whether or not meeting is streaming live.
@@ -251,6 +258,7 @@ class Toolbox extends Component<Props, State> {
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onResize = this._onResize.bind(this);
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
+        this._onSetHangupMenuVisible = this._onSetHangupMenuVisible.bind(this);
 
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
         this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
@@ -347,10 +355,21 @@ class Toolbox extends Component<Props, State> {
             this._onSetOverflowVisible(false);
         }
 
+        if (prevProps._hangupOptionsMenuVisible && !this.props._visible) {
+            this._onSetHangupMenuVisible(false);
+        }
+
         if (prevProps._overflowMenuVisible
             && !prevProps._dialog
             && this.props._dialog) {
             this._onSetOverflowVisible(false);
+            this.props.dispatch(setToolbarHovered(false));
+        }
+
+        if (prevProps._hangupOptionsMenuVisible
+            && !prevProps._dialog
+            && this.props._dialog) {
+            this._onSetHangupMenuVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
 
@@ -604,6 +623,20 @@ class Toolbox extends Component<Props, State> {
      */
     _onSetOverflowVisible(visible) {
         this.props.dispatch(setOverflowMenuVisible(visible));
+    }
+
+    _onSetHangupMenuVisible: (boolean) => void;
+
+    /**
+     * Sets the visibility of the hangup menu.
+     *
+     * @param {boolean} visible - Whether or not the hangup menu should be
+     * displayed.
+     * @private
+     * @returns {void}
+     */
+    _onSetHangupMenuVisible(visible) {
+        this.props.dispatch(setHangupMenuVisible(visible));
     }
 
     _onShortcutToggleChat: () => void;
@@ -1119,6 +1152,27 @@ class Toolbox extends Component<Props, State> {
         ];
     }
 
+    _renderHangupOptionsMenuContent() {
+        const {
+            t
+        } = this.props;
+
+        return [
+                <HangupMenuItem
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.hangupAll') }
+                    icon = { IconPresentation }
+                    key = 'hangupAll'
+                    onClick = { () => console.log('Hang up for all') }
+                    text = { t('toolbar.hangupAll') } />,
+                <HangupMenuItem
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.hangup') }
+                    icon = { IconOpenInNew }
+                    key = 'hangup'
+                    onClick = { () => console.log('Hang up for me') }
+                    text = { t('toolbar.hangup') } />
+        ];
+    }
+
     /**
      * Renders a list of buttons that are moved to the overflow menu.
      *
@@ -1241,12 +1295,14 @@ class Toolbox extends Component<Props, State> {
     _renderToolboxContent() {
         const {
             _chatOpen,
+            _hangupOptionsMenuVisible,
             _overflowMenuVisible,
             _raisedHand,
             _tileViewVisible,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
+        const hangupOptionsMenuContent = this._renderHangupOptionsMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const buttonsLeft = [];
@@ -1369,8 +1425,16 @@ class Toolbox extends Component<Props, State> {
                 </div>
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
-                    <HangupButton
-                        visible = { this._shouldShowButton('hangup') } />
+                    { this._shouldShowButton('hangup') && 
+                        <HangupOptionsMenu
+                            isOpen = { _hangupOptionsMenuVisible }
+                            onVisibilityChange = { this._onSetHangupMenuVisible }>
+                            <ul
+                                aria-label = { t(toolbarAccLabel) }
+                                className = 'hangup-menu'>
+                                { hangupOptionsMenuContent }
+                            </ul>
+                        </HangupOptionsMenu> }
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
@@ -1443,7 +1507,8 @@ function _mapStateToProps(state) {
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
         fullScreen,
-        overflowMenuVisible
+        overflowMenuVisible,
+        hangupOptionsMenuVisible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
@@ -1479,6 +1544,7 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _hangupOptionsMenuVisible: hangupOptionsMenuVisible,
         _isChatOnly: isGuest && chatOnlyGuestEnabled,
         _isLiveStreaming: isStreaming(state),
         _isRecording: isRecording(state),

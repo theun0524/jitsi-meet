@@ -6,6 +6,7 @@ import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
     SET_OVERFLOW_MENU_VISIBLE,
+    SET_HANGUP_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -26,6 +27,7 @@ declare var interfaceConfig: Object;
  *     enabled: boolean,
  *     hovered: boolean,
  *     overflowMenuVisible: boolean,
+ *     hangupOptionsMenuVisible: boolean,
  *     timeoutID: number,
  *     timeoutMS: number,
  *     visible: boolean
@@ -86,6 +88,8 @@ function _getInitialState() {
          */
         overflowMenuVisible: false,
 
+        hangupOptionsMenuVisible: false,
+
         /**
          * A number, non-zero value which identifies the timer created by a call
          * to setTimeout() with timeoutMS.
@@ -131,6 +135,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 overflowMenuVisible: action.visible
+            };
+
+        case SET_HANGUP_MENU_VISIBLE:
+            return {
+                ...state,
+                hangupOptionsMenuVisible: action.visible
             };
 
         case SET_TOOLBAR_HOVERED:

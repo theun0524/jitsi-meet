@@ -54,6 +54,10 @@ class HangupButton extends AbstractHangupButton<Props, *> {
         });
     }
 
+    _handleClick() {
+        console.log('test');
+    }
+
     /**
      * Helper function to perform the actual hangup action.
      *
