@@ -110,6 +110,7 @@ $(LANGUAGES):
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac $(LANGUAGES)
 	if [ ! -d $(DEV_COUNTRIES_DIR) ] ; \
+	then \
 		mkdir $(DEV_COUNTRIES_DIR); \
 	fi; \
 	cp -rf lang/countries-*.json $(DEV_COUNTRIES_DIR)/
