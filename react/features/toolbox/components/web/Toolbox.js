@@ -272,6 +272,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
+        this._onToolbarOpenBreakoutRoom = this._onToolbarOpenBreakoutRoom.bind(this);
 
         this.state = {
             windowWidth: window.innerWidth
@@ -735,7 +736,7 @@ class Toolbox extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-     _onToolbarOpenBreakoutRoom() {
+    _onToolbarOpenBreakoutRoom() {
         sendAnalytics(createToolbarEvent('breakoutroom'));
 
         this._doOpenBreakoutRoom();

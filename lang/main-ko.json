@@ -739,7 +739,7 @@
         "speakers": "스피커",
         "startAudioMuted": "모두가 음소거로 시작합니다",
         "startVideoMuted": "모두가 카메라 꺼짐 상태로 시작합니다",
-        "title": "설정",
+        "title": "설정"
     },
     "settingsView": {
         "advanced": "고급 설정",
