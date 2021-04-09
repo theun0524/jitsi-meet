@@ -739,7 +739,7 @@
         "speakers": "스피커",
         "startAudioMuted": "모두가 음소거로 시작합니다",
         "startVideoMuted": "모두가 카메라 꺼짐 상태로 시작합니다",
-        "title": "설정"
+        "title": "설정",
     },
     "settingsView": {
         "advanced": "고급 설정",
@@ -797,6 +797,7 @@
         "accessibilityLabel": {
             "audioOnly": "음성전용 모드 토글",
             "audioRoute": "음성 장비 선택하기",
+            "breakoutRoom": "소회의실",
             "callQuality": "품질 설정하기",
             "cc": "자막 토글하기",
             "chat": "채팅방 토글하기",
@@ -851,6 +852,7 @@
         "audioOnlyOn": "음성회의로 전환",
         "audioRoute": "음성 장비 선택하기",
         "authenticate": "인증 중",
+        "breakoutRoom": "소회의실",
         "callQuality": "품질 설정하기",
         "chat": "채팅창 열기/닫기",
         "closeChat": "대화 종료",

@@ -23,7 +23,8 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareVideo
+    IconShareVideo,
+    IconUsersGroup
 } from '../../../base/icons';
 import { isHost } from '../../../base/jwt';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
@@ -396,6 +397,17 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
+     * Callback invoked to display {@code BreakoutRoomDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doOpenBreakoutRoom() {
+        console.log('open BreakoutRoomDialog');
+        // this.props.dispatch(openDialog(BreakoutRoomDialog));
+    }
+
+    /**
      * Callback invoked to display {@code FeedbackDialog}.
      *
      * @private
@@ -712,6 +724,21 @@ class Toolbox extends Component<Props, State> {
             }));
 
         this._doToggleScreenshare();
+    }
+
+    _onToolbarOpenBreakoutRoom: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for open
+     * breakout room dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+     _onToolbarOpenBreakoutRoom() {
+        sendAnalytics(createToolbarEvent('breakoutroom'));
+
+        this._doOpenBreakoutRoom();
     }
 
     _onToolbarOpenFeedback: () => void;
@@ -1240,6 +1267,7 @@ class Toolbox extends Component<Props, State> {
      */
     _renderToolboxContent() {
         const {
+            _breakoutRoomEnabled,
             _chatOpen,
             _overflowMenuVisible,
             _raisedHand,
@@ -1301,6 +1329,9 @@ class Toolbox extends Component<Props, State> {
             buttonsRight.push('security');
         }
 
+        if (this._shouldShowButton('breakoutroom') && _breakoutRoomEnabled) {
+            buttonsRight.push('breakoutroom');
+        }
         if (this._shouldShowButton('tileview') && _tileViewVisible) {
             buttonsRight.push('tileview');
         }
@@ -1374,6 +1405,12 @@ class Toolbox extends Component<Props, State> {
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
+                    { buttonsRight.indexOf('breakoutroom') !== -1 && _breakoutRoomEnabled
+                        && <ToolbarButton
+                            accessibilityLabel = { t('toolbar.accessibilityLabel.breakoutRoom') }
+                            icon = { IconUsersGroup }
+                            onClick = { this._onToolbarOpenBreakoutRoom }
+                            tooltip = { t('toolbar.breakoutRoom') } /> }
                     { buttonsRight.indexOf('localrecording') !== -1
                         && <LocalRecordingButton
                             onClick = {
@@ -1473,6 +1510,7 @@ function _mapStateToProps(state) {
     const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
     return {
+        _breakoutRoomEnabled: state['features/breakout-room'].enabled,
         _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,

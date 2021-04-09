@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import Logger from 'jitsi-meet-logger';
+import { throttle } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -25,6 +26,7 @@ import {
     RaisedHandIndicator,
     StatusIndicators
 } from '../../../react/features/filmstrip';
+import { showToolbox } from '../../../react/features/toolbox/actions.web';
 import {
     LAYOUTS,
     getCurrentLayout,
@@ -137,6 +139,15 @@ export default class SmallVideo {
         this.updateView = this.updateView.bind(this);
 
         this._onContainerClick = this._onContainerClick.bind(this);
+
+        this._originalOnShowToolbar = this._onShowToolbar;
+        this._onShowToolbar = throttle(
+            () => this._originalOnShowToolbar(),
+            100,
+            {
+                leading: true,
+                trailing: false
+            });
     }
 
     /**
@@ -202,6 +213,7 @@ export default class SmallVideo {
                 this.updateIndicators();
             }
         );
+        this.$container.mousemove(this._onShowToolbar);
     }
 
     /**
@@ -904,5 +916,9 @@ export default class SmallVideo {
             break;
         }
         }
+    }
+
+    _onShowToolbar() {
+        APP.store.dispatch(showToolbox());
     }
 }

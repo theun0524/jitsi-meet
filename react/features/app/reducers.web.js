@@ -1,6 +1,7 @@
 // @flow
 
 import '../base/devices/reducer';
+import '../breakout-room/reducer';
 import '../e2ee/reducer';
 import '../feedback/reducer';
 import '../local-recording/reducer';

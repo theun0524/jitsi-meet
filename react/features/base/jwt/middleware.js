@@ -15,6 +15,7 @@ import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
+import { enableBreakoutRoom } from '../../breakout-room';
 
 declare var APP: Object;
 
@@ -141,7 +142,7 @@ function _setJWT(store, next, action) {
                 action.jwt = jwt;
                 action.issuer = iss;
                 if (context) {
-                    const user = _user2participant(context.user || {});
+                    const user = _user2participant(store, context.user || {});
 
                     action.callee = context.callee;
                     action.group = context.group;
@@ -227,7 +228,9 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin, background }) {
+function _user2participant(
+    { dispatch },
+    { avatar, avatarUrl, email, id, name, username, isAdmin, background, settings }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -252,6 +255,10 @@ function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdm
     }
     if (typeof background === 'string') {
         participant.background = background;
+    }
+    if (typeof settings === 'object') {
+        participant.settings = settings;
+        dispatch(enableBreakoutRoom(Boolean(settings['breakout-room'])));
     }
 
     return Object.keys(participant).length ? participant : undefined;

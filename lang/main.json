@@ -800,6 +800,7 @@
         "accessibilityLabel": {
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
+            "breakoutRoom": "Breakout room",
             "callQuality": "Manage video quality",
             "cc": "Toggle subtitles",
             "chat": "Toggle chat window",
@@ -854,6 +855,7 @@
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "authenticate": "Authenticate",
+        "breakoutRoom": "Breakout room",
         "callQuality": "Manage video quality",
         "chat": "Open / Close chat",
         "closeChat": "Close chat",
