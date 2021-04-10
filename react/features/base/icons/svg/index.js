@@ -1,6 +1,7 @@
 // @flow
 
 export { default as IconAdd } from './add.svg';
+export { default as IconAddConference } from './video_call_black_24dp.svg';
 export { default as IconAddPeople } from './link.svg';
 export { default as IconAngleDoubleLeft } from './angle-double-left-solid.svg';
 export { default as IconAngleDoubleRight } from './angle-double-right-solid.svg';
@@ -51,6 +52,7 @@ export { default as IconHelp } from './help.svg';
 export { default as IconInfo } from './info.svg';
 export { default as IconInviteMore } from './user-plus.svg';
 export { default as IconKick } from './kick.svg';
+export { default as IconKeyboard } from './keyboard_black_24dp.svg';
 export { default as IconLiveStreaming } from './public.svg';
 export { default as IconMeetingLocked } from './meeting-locked.svg';
 export { default as IconMeetingUnlocked } from './meeting-unlocked.svg';

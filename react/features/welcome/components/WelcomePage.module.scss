@@ -291,7 +291,7 @@ body {
         
         .enterRoomInputContainer {
             width: 100%;
-            margin: $welcomePageEnterRoomInputContainerPadding;
+            margin: 0;
             text-align: left;
             color: #253858;
             height: fit-content;
@@ -299,6 +299,10 @@ body {
             border-radius: 4px;
             display: flex;
             align-items: center;
+
+            &.focused {
+                border: 2px solid #3B475C;
+            }
 
             .tenant {
                 padding: 8px 0 8px 16px;
@@ -444,7 +448,10 @@ body {
         }
     }
 
-    .welcomePageButton {
+    .goButton {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
         min-width: $welcomePageButtonMinWidth;
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
@@ -457,14 +464,30 @@ body {
         cursor: pointer;
         white-space: nowrap;
         padding: 8px 16px;
+        margin-right: 16px;
 
-        &.disabled {
-          color: rgba(0,0,0,0.65);
-          background: #f5f5f5;
-          border-color: #d9d9d9;
-          pointer-events: none;
-          padding: 7px 16px;
-          border: 1px solid #ccc;
+        :global .jitsi-icon {
+            margin-right: 5px;
+        }
+    }
+
+
+    .joinButton {
+        color: rgba(0,0,0,0.4);
+        pointer-events: none;
+        padding: 7px 16px;
+        margin: 4px 6px;
+
+        &.active {
+            color: #3B475C;
+            cursor: pointer;
+            pointer-events: auto;
+            font-weight: bold;
+            border-radius: $welcomePageButtonBorderRadius;
+
+            &:hover {
+                background: rgba(0,0,0,0.1);
+            }
         }
     }
 

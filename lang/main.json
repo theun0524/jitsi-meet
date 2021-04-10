@@ -1024,7 +1024,7 @@
         "deleteFromRecent" : "Delete only from recent list",
         "deleteModalHeading": "Delete Conference",
         "deleteReservation" : "Delete Reserved Conference",
-        "enterRoomTitle": "Please enter the meeting name without spaces.",
+        "enterRoomTitle": "Enter meeting id",
         "getHelp": "Get help",
         "go": "GO",
         "info": "Info",

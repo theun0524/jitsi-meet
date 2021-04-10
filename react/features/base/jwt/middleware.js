@@ -15,7 +15,7 @@ import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
-import { enableBreakoutRoom } from '../../breakout-room';
+import { updateSettings } from '../settings';
 
 declare var APP: Object;
 
@@ -150,9 +150,21 @@ function _setJWT(store, next, action) {
                     action.tenant = context.tenant;
                     action.user = user;
 
-                    user && _overwriteLocalParticipant(
-                        store, { ...user,
-                            features: context.features });
+                    if (user) {
+                        _overwriteLocalParticipant(
+                            store,
+                            { ...user, features: context.features }
+                        );
+                        const settings = user.settings || {};
+                        store.dispatch(updateSettings({
+                            breakoutRoomEnabled: Boolean(settings['breakout-room']),
+                            displayName: user.name,
+                            email: user.email,
+                            startAudioOnly: Boolean(settings['startAudioOnly']),
+                            startWithAudioMuted: Boolean(settings['startWithAudioMuted']),
+                            startWithVideoMuted: Boolean(settings['startWithVideoMuted']),
+                        }))
+                    }
 
                     axios.interceptors.request.use(function(config) {
                         config.headers.Authorization = `Bearer ${jwt}`;
@@ -258,7 +270,6 @@ function _user2participant(
     }
     if (typeof settings === 'object') {
         participant.settings = settings;
-        dispatch(enableBreakoutRoom(Boolean(settings['breakout-room'])));
     }
 
     return Object.keys(participant).length ? participant : undefined;

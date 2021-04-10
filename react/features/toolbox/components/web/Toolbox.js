@@ -1511,7 +1511,7 @@ function _mapStateToProps(state) {
     const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
     return {
-        _breakoutRoomEnabled: state['features/breakout-room'].enabled,
+        _breakoutRoomEnabled: state['features/base/settings'].breakoutRoomEnabled,
         _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,

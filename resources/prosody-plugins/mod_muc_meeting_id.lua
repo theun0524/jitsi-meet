@@ -5,6 +5,8 @@ local is_healthcheck_room = module:require "util".is_healthcheck_room;
 -- and adds it to all disco info form data (when room is queried or in the
 -- initial room owner config)
 
+math.randomseed(os.time());
+
 -- Hook to assign meetingId for new rooms
 module:hook("muc-room-created", function(event)
     local room = event.room;
@@ -13,7 +15,8 @@ module:hook("muc-room-created", function(event)
         return;
     end
 
-    room._data.meetingId = uuid_gen();
+    -- room._data.meetingId = uuid_gen();
+    room._data.meetingId = tostring(math.random(10000000000, 99999999999));
 
     module:log("debug", "Created meetingId:%s for %s",
         room._data.meetingId, room.jid);

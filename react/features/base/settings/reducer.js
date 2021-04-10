@@ -21,6 +21,7 @@ const DEFAULT_STATE = {
     audioOutputDeviceId: undefined,
     avatarID: undefined,
     avatarURL: undefined,
+    breakoutRoom: false,
     cameraDeviceId: undefined,
     disableCallIntegration: true,
     disableCrashReporting: undefined,

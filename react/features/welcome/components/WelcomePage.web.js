@@ -10,7 +10,7 @@ import React from 'react';
 
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { translate, translateToHTML } from '../../base/i18n';
-import { Icon, IconWarning } from '../../base/icons';
+import { Icon, IconAddConference, IconWarning } from '../../base/icons';
 import { setJWT } from '../../base/jwt';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
@@ -133,6 +133,8 @@ class WelcomePage extends AbstractWelcomePage {
         this._onOpenSettings = this._onOpenSettings.bind(this);
         this._setEditTenant = this._setEditTenant.bind(this);
         this._handleKeyPress = this._handleKeyPress.bind(this);
+        this._onInputBlur = this._onInputBlur.bind(this);
+        this._onInputFocus = this._onInputFocus.bind(this);
     }
 
     /**
@@ -245,7 +247,9 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { _moderatedRoomServiceUrl, _user, t } = this.props;
-        const { submitting, editTenant, currentTenant, inputTenant, room } = this.state;
+        const {
+            submitting, editTenant, currentTenant,
+            inputTenant, inputRoom, isInputFocused, room } = this.state;
         const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
@@ -325,6 +329,14 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
+        let inputContainer = s.enterRoomInputContainer;
+        if (editTenant) {
+            inputContainer += ` ${s.editTenant}`;
+        }
+        if (isInputFocused) {
+            inputContainer += ` ${s.focused}`;
+        }
+
         return (
             <div
                 className = { `${s.welcome} ${showAdditionalContent
@@ -383,7 +395,14 @@ class WelcomePage extends AbstractWelcomePage {
                                     </p>
                                 </div>
                                 <div className = {s.enterRoom}>
-                                    <div className = {`${s.enterRoomInputContainer} ${editTenant ? s.editTenant : ''}`}>
+                                    <div
+                                        className = {s.goButton}
+                                        id = 'enter_room_button'
+                                        onClick = { this._onFormSubmit }>
+                                        <Icon src = { IconAddConference } />
+                                        { t('welcomepage.go') }
+                                    </div>
+                                    <div className = { inputContainer }>
                                         <div
                                             className = {s.tenant}
                                             onClick = { e => this._setEditTenant(e, true) }>
@@ -392,35 +411,28 @@ class WelcomePage extends AbstractWelcomePage {
                                         </div>
                                         <form onSubmit = { this._onFormSubmit }>
                                             <input
-                                                autoFocus = { true }
+                                                autocomplete = "off"
                                                 className = {s.enterRoomInput}
                                                 id = 'enter_room_field'
                                                 onChange = { this._onRoomChange }
                                                 onClick = { e => e.stopPropagation() }
                                                 onInput = { this._onRoomInput }
+                                                onFocus = { this._onInputFocus }
+                                                onBlur = { this._onInputBlur }
                                                 pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                                placeholder = { this.state.roomPlaceholder }
+                                                placeholder = { t('welcomepage.enterRoomTitle') }
                                                 ref = { this._setRoomInputRef }
                                                 title = { t('welcomepage.roomNameAllowedChars') }
                                                 type = 'text' />
                                             { this._renderInsecureRoomNameWarning() }
                                         </form>
-                                    </div>
-                                    { tenant && tenant !== currentTenant ? (
                                         <div
-                                            className = {`${s.welcomePageButton} ${s.disabled}`}
+                                            className = { `${s.joinButton} ${inputRoom ? s.active : ''}` }
                                             id = 'enter_room_button'
                                             onClick = { this._onFormSubmit }>
                                             { t('welcomepage.join') }
                                         </div>
-                                    ) : (
-                                        <div
-                                            className = {s.welcomePageButton}
-                                            id = 'enter_room_button'
-                                            onClick = { this._onFormSubmit }>
-                                            { t('welcomepage.go') }
-                                        </div>
-                                    )}
+                                    </div>
                                     { _moderatedRoomServiceUrl && (
                                         <div id = 'moderated-meetings'>
                                             <p>
@@ -432,9 +444,6 @@ class WelcomePage extends AbstractWelcomePage {
                                             </p>
                                         </div>
                                     ) }
-                                </div>
-                                <div className = {s.helpMessage}>
-                                    {t('welcomepage.enterRoomTitle')}
                                 </div>
                             </div>
                             <div className = {s.headerImage}>
@@ -526,12 +535,21 @@ class WelcomePage extends AbstractWelcomePage {
 
     _onRoomInput(event) {
         let [ tenant, room ] = this._roomInputRef.value.split('/');
-        const { currentTenant } = this.state;
 
         console.log('_onRoomInput:', tenant, room);
         if (typeof room !== 'undefined') {
-            this.setState({ inputTenant: tenant });
+            this.setState({ inputTenant: tenant, inputRoom: room });
+        } else {
+            this.setState({ inputRoom: tenant });
         }
+    }
+
+    _onInputFocus(event) {
+        this.setState({ isInputFocused: true });
+    }
+
+    _onInputBlur(event) {
+        this.setState({ isInputFocused: false });
     }
 
     /**
