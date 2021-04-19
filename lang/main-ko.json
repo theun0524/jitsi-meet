@@ -249,6 +249,7 @@
         "gracefulShutdown": "서비스는 현재 유지 관리를 위해 중단되었습니다. 나중에 다시 시도 해주십시오.",
         "grantModeratorDialog": "이 참가자를 방장으로 지정 하시겠습니까?",
         "grantModeratorTitle": "방장 위임",
+        "hangupAllTitle": "{{participantDisplayName}}님이 회의를 종료했습니다!",
         "IamHost": "내가 호스트",
         "incorrectRoomLockPassword": "잘못된 비밀번호",
         "incorrectPassword": "잘못된 사용자 이름 또는 비밀번호",

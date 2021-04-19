@@ -39,6 +39,7 @@ import {
     conferenceWillLeave,
     dataChannelOpened,
     kickedOut,
+    leftByHangupAll,
     participantChatDisabled,
     participantChatEnabled,
     lockStateChanged,
@@ -2268,7 +2269,8 @@ export default {
             room.on(
                 JitsiConferenceEvents.HANGUP_ALL_MESSAGE_RECEIVED,
                 (...args) => {
-                    this.hangup();
+                    APP.UI.hideStats();
+                    APP.store.dispatch(leftByHangupAll(room, ...args));
                 });
 
         room.on(

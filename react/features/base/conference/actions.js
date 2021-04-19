@@ -41,6 +41,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     KICKED_OUT,
+    LEFT_BY_HANGUP_ALL,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
@@ -524,6 +525,14 @@ export function kickedOut(conference: Object, participant: Object) {
         type: KICKED_OUT,
         conference,
         participant
+    };
+}
+
+export function leftByHangupAll(conference: Object, args: Object){
+    return {
+        type: LEFT_BY_HANGUP_ALL,
+        conference,
+        args
     };
 }
 
