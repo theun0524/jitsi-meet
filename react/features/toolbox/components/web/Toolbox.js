@@ -34,7 +34,8 @@ import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem, HangupMenuItem } from '../../../base/toolbox/components';
@@ -148,10 +149,14 @@ type Props = {
      */
      _hangupOptionsMenuVisible: boolean,
 
+     _isLastModerator: boolean,
+
     /**
      * Whether or not meeting is streaming live.
      */
     _isLiveStreaming: boolean,
+
+    _isModerator: boolean,
 
     /**
      * Whether or not the profile is disabled.
@@ -758,13 +763,20 @@ class Toolbox extends Component<Props, State> {
     _onHangupMe: () => void;
 
     _onHangupMe() {
-        sendAnalytics(createToolbarEvent('hangup'));
+        const { _isLastModerator } = this.props;
 
-        // FIXME: these should be unified.
-        if (navigator.product === 'ReactNative') {
-            this.props.dispatch(appNavigate(undefined));
-        } else {
-            this.props.dispatch(disconnect(true));
+        if(!_isLastModerator){
+            sendAnalytics(createToolbarEvent('hangup'));
+
+            // FIXME: these should be unified.
+            if (navigator.product === 'ReactNative') {
+                this.props.dispatch(appNavigate(undefined));
+            } else {
+                this.props.dispatch(disconnect(true));
+            }
+        }
+        else{
+            console.log("You are the last moderator!");
         }
     }
 
@@ -772,7 +784,6 @@ class Toolbox extends Component<Props, State> {
 
     _onHangupAll() {
         this.props.dispatch(sendHangupMessage());
-        console.log("Clicked onHangupAll");
     }
 
 
@@ -1183,6 +1194,7 @@ class Toolbox extends Component<Props, State> {
 
     _renderHangupOptionsMenuContent() {
         const {
+            _isLastModerator,
             t
         } = this.props;
 
@@ -1195,11 +1207,11 @@ class Toolbox extends Component<Props, State> {
                     onClick = { this._onHangupAll }
                     text = { t('toolbar.hangupAll') } />,
                 <HangupMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.hangup') }
+                    accessibilityLabel = { _isLastModerator? t('toolbar.accessibilityLabel.grantModeratorAndHangup') : t('toolbar.accessibilityLabel.hangup') }
                     icon = { IconOpenInNew }
                     key = 'hangup'
                     onClick = { this._onHangupMe }
-                    text = { t('toolbar.hangup') } />
+                    text = { _isLastModerator? t('toolbar.grantModeratorAndHangup') : t('toolbar.hangup') } />
         ];
     }
 
@@ -1329,6 +1341,7 @@ class Toolbox extends Component<Props, State> {
             _overflowMenuVisible,
             _raisedHand,
             _tileViewVisible,
+            _isModerator,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -1456,7 +1469,7 @@ class Toolbox extends Component<Props, State> {
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
                     { this._shouldShowButton('hangup') && 
-                        <HangupOptionsMenu
+                        _isModerator? <HangupOptionsMenu
                             isOpen = { _hangupOptionsMenuVisible }
                             onVisibilityChange = { this._onSetHangupMenuVisible }>
                             <ul
@@ -1464,7 +1477,9 @@ class Toolbox extends Component<Props, State> {
                                 className = 'hangup-menu'>
                                 { hangupOptionsMenuContent }
                             </ul>
-                        </HangupOptionsMenu> }
+                        </HangupOptionsMenu> :
+                        <HangupButton
+                        visible = { this._shouldShowButton('hangup') } /> }
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
@@ -1544,6 +1559,8 @@ function _mapStateToProps(state) {
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const isGuest = !isHost(state);
+    const isLastModerator = (getParticipants(state).length > 1) &&
+                            (getParticipants(state).filter(participant => participant.role === PARTICIPANT_ROLE.MODERATOR).length === 1);
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1552,7 +1569,7 @@ function _mapStateToProps(state) {
         // feature enabled
         desktopSharingEnabled = getParticipants(state)
             .find(({ features = {} }) =>
-                String(features['screen-sharing']) === 'true') !== undefined;
+                String(features['screen-sharing']) === PARTICIPANT_ROLE.MODERATOR) !== undefined;
 
         // we want to show button and tooltip
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
@@ -1576,7 +1593,9 @@ function _mapStateToProps(state) {
         _feedbackConfigured: Boolean(callStatsID),
         _hangupOptionsMenuVisible: hangupOptionsMenuVisible,
         _isChatOnly: isGuest && chatOnlyGuestEnabled,
+        _isLastModerator: isLastModerator,
         _isLiveStreaming: isStreaming(state),
+        _isModerator: localParticipant.role === PARTICIPANT_ROLE.MODERATOR,
         _isRecording: isRecording(state),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isStatsVisible: !(hideParticipantsStats === true || (hideParticipantsStats === 'guest' && isGuest)),
