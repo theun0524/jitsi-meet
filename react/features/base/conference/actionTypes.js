@@ -265,3 +265,5 @@ export const PARTICIPANT_CHAT_ENABLED = 'PARTICIPANT_CHAT_ENABLED';
 
 // const for setting disable on user's device access
 export const SET_USER_DEVICE_ACCESS_DISABLED = 'SET_USER_DEVICE_ACCESS_DISABLED';
+
+export const DEVICE_ACCESS_DISABLED = 'DEVICE_ACCESS_DISABLED';

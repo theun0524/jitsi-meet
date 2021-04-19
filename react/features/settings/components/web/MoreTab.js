@@ -81,6 +81,11 @@ export type Props = {
     enableUserDeviceAccessDisabledOption: Boolean,
 
     /**
+     * 
+     */
+    // conferenceUserDeviceAccessDisabled: Boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -223,9 +228,16 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             startAudioMuted,
             startVideoMuted,
             userDeviceAccessDisabled,
+            // conferenceUserDeviceAccessDisabled,
             enableUserDeviceAccessDisabledOption,
             t
         } = this.props;
+
+        // console.log("In more tab now");
+        // console.log("ConferenceUserDeviceAccessDisabled is: ", conferenceUserDeviceAccessDisabled);
+        // console.log("User Device access disabled is: ", userDeviceAccessDisabled);
+        // console.log("------------------------------------------");
+        // console.log("This props are: ", this.props);
 
         return (
             <div
@@ -265,6 +277,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
 
                 {/* start of added portion */}
                 <Checkbox 
+                    // isChecked = { conferenceUserDeviceAccessDisabled }
                     isChecked = { userDeviceAccessDisabled }
                     isDisabled = { !enableUserDeviceAccessDisabledOption }
                     label = { t('settings.disableDeviceAccess') }
@@ -272,6 +285,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     // eslint-disable-next-line react/jsx-no-bind
                     onChange = {
                         ({ target: { checked } }) => 
+                            // super._onChange({ conferenceUserDeviceAccessDisabled : checked })
                             super._onChange({ userDeviceAccessDisabled : checked })
                     } />
                 {/* end of added portion */}

@@ -61,7 +61,9 @@ function setVideoSettingsVisibility(value: boolean) {
 export function submitMoreTab(newState: Object): Function {
     return (dispatch, getState) => {
         const currentState = getMoreTabProps(getState());
-
+        console.log("I am in submitMoreTab function");
+        console.log("CurrentState is: ", currentState);
+        console.log("New state is: ", newState);
         if (newState.followMeEnabled !== currentState.followMeEnabled) {
             dispatch(setFollowMe(newState.followMeEnabled));
         }
@@ -86,6 +88,9 @@ export function submitMoreTab(newState: Object): Function {
         }
 
         // start of added portion
+        // if (newState.conferenceUserDeviceAccessDisabled !== currentState.conferenceUserDeviceAccessDisabled) {
+        //     dispatch(setUserDeviceAccessDisabled(newState.conferenceUserDeviceAccessDisabled));
+        // }
         if (newState.userDeviceAccessDisabled !== currentState.userDeviceAccessDisabled) {
             dispatch(setUserDeviceAccessDisabled(newState.userDeviceAccessDisabled));
         }

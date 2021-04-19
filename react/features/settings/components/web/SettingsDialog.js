@@ -205,7 +205,8 @@ function _mapStateToProps(state) {
                     showPrejoinPage: tabState.showPrejoinPage,
                     startAudioMuted: tabState.startAudioMuted,
                     startVideoMuted: tabState.startVideoMuted,
-                    userDeviceAccessDisabled: tabState.userDeviceAccessDisabled
+                    userDeviceAccessDisabled: tabState.userDeviceAccessDisabled,
+                    // conferenceUserDeviceAccessDisabled: tabState.conferenceUserDeviceAccessDisabled
                 };
             },
             styles: 'settings-pane more-pane',

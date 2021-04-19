@@ -47,7 +47,8 @@ import {
     sendLocalParticipant,
     setDesktopSharingEnabled,
     setStartMutedPolicy,
-    conferenceTimeRemained
+    conferenceTimeRemained,
+    deviceAccessDisabled
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -2179,6 +2180,13 @@ export default {
 
         room.on(JitsiConferenceEvents.TIME_REMAINED,
             timeRemained => APP.store.dispatch(conferenceTimeRemained(timeRemained)));
+
+        // start of added portion
+        room.on(JitsiConferenceEvents.USER_DEVICE_ACCESS_DISABLED,
+            userDeviceAccessDisabled =>  {
+                APP.store.dispatch(deviceAccessDisabled(userDeviceAccessDisabled));
+            });
+        // end of added portion
 
         room.on(
             JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,

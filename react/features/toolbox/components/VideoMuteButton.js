@@ -19,6 +19,7 @@ import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
+import { getLocalParticipant } from '../../base/participants';
 
 declare var APP: Object;
 
@@ -188,6 +189,9 @@ function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
 
+    const localParticipant = getLocalParticipant(APP.store.getState());
+    let isLocalParticipantAModerator = (localParticipant.role === "moderator");
+
     let isUserDeviceAccessDisabled = state['features/base/conference'].userDeviceAccessDisabled;
     isUserDeviceAccessDisabled = false ? undefined : isUserDeviceAccessDisabled;
 
@@ -195,7 +199,7 @@ function _mapStateToProps(state): Object {
         _audioOnly: Boolean(audioOnly),
         // we should show that the camera is disabled when the moderator has disabled user's access to device
         // or when the device is not available
-        _videoDisabled: !hasAvailableDevices(state, 'videoInput') || isUserDeviceAccessDisabled,
+        _videoDisabled: !isLocalParticipantAModerator && (!hasAvailableDevices(state, 'videoInput') || isUserDeviceAccessDisabled),
         // _videoDisabled: true,
         _videoMediaType: getLocalVideoType(tracks),
         _videoMuted: isLocalVideoTrackMuted(tracks)

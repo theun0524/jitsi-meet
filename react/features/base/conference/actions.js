@@ -56,7 +56,8 @@ import {
     PARTICIPANT_CHAT_DISABLED,
     PARTICIPANT_CHAT_ENABLED,
     CONFERENCE_TIME_REMAINED,
-    SET_USER_DEVICE_ACCESS_DISABLED
+    SET_USER_DEVICE_ACCESS_DISABLED,
+    DEVICE_ACCESS_DISABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -803,6 +804,7 @@ export function setStartMutedPolicy(
     };
 }
 
+// start of added portion
 /**
  * Sets whether or not remote participants should be disabled to access their devices
  *
@@ -815,6 +817,14 @@ export function setUserDeviceAccessDisabled(userDeviceAccessDisabled: boolean) {
         userDeviceAccessDisabled
     }
 }
+
+export function deviceAccessDisabled(userDeviceAccessDisabled: boolean) {
+    return {
+        type: DEVICE_ACCESS_DISABLED,
+        userDeviceAccessDisabled
+    }
+}
+// end of added portion
 
 /**
  * Changing conference subject.

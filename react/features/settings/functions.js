@@ -100,8 +100,12 @@ export function getMoreTabProps(stateful: Object | Function) {
         conference,
         startAudioMutedPolicy,
         startVideoMutedPolicy,
-        userDeviceAccessDisabled
+        // add a new state variable to the global state features/base/conference
+        userDeviceAccessDisabled,
+        // roomInfo,
     } = state['features/base/conference'];
+    console.log("Features/base/conference state is: ", state['features/base/conference']);
+    // const conferenceUserDeviceAccessDisabled = roomInfo["userDeviceAccessDisabled"];
     const followMeActive = isFollowMeActive(state) ||
         typeof state['features/base/config'].followMeEnabled !== 'undefined';
     const followMeEnabled = isFollowMeEnabled(state);
@@ -125,7 +129,8 @@ export function getMoreTabProps(stateful: Object | Function) {
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy),
-        userDeviceAccessDisabled: Boolean(conference && userDeviceAccessDisabled)
+        userDeviceAccessDisabled: Boolean(conference && userDeviceAccessDisabled),
+        // conferenceUserDeviceAccessDisabled: Boolean(conference && conferenceUserDeviceAccessDisabled)
     };
 }
 
