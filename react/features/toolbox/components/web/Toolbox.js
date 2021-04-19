@@ -40,7 +40,7 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem, HangupMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { CHAT_SIZE, ChatCounter, toggleChat, sendHangupMessage } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -95,6 +95,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
+
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -770,7 +771,8 @@ class Toolbox extends Component<Props, State> {
     _onHangupAll: () => void;
 
     _onHangupAll() {
-        console.log("Clicked onHangupAll")
+        this.props.dispatch(sendHangupMessage());
+        console.log("Clicked onHangupAll");
     }
 
 

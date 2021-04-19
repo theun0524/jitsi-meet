@@ -2265,6 +2265,12 @@ export default {
                 }
             });
 
+            room.on(
+                JitsiConferenceEvents.HANGUP_ALL_MESSAGE_RECEIVED,
+                (...args) => {
+                    this.hangup();
+                });
+
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
