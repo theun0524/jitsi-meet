@@ -37,6 +37,7 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
+import BreakoutRoomDialog from '../../../breakout-room/components/BreakoutRoomDialog';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
@@ -405,7 +406,7 @@ class Toolbox extends Component<Props, State> {
      */
     _doOpenBreakoutRoom() {
         console.log('open BreakoutRoomDialog');
-        // this.props.dispatch(openDialog(BreakoutRoomDialog));
+        this.props.dispatch(openDialog(BreakoutRoomDialog));
     }
 
     /**
@@ -1217,7 +1218,11 @@ class Toolbox extends Component<Props, State> {
                         text = { t('toolbar.invite') } />
                 );
             case 'tileview':
-                return <TileViewButton showLabel = { true } />;
+                return (
+                    <TileViewButton
+                        key = 'tileview'
+                        showLabel = { true } />
+                );
             case 'localrecording':
                 return (
                     <OverflowMenuItem

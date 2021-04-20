@@ -47,6 +47,22 @@
         "delete": "Delete Background Image",
         "none": "None"
     },
+    "breakoutRoom": {
+        "addRooms": "Add <1></1> Rooms",
+        "askForHelp": "{{name}} in {{room}} asked for help.",
+        "automaticAssign": "Automatic Assign",
+        "breakoutRoomTimeout": "Breakout room time",
+        "closeAllRooms": "Close All Rooms",
+        "editMode": "Edit Mode",
+        "joinBreakoutRoom": "Join Breakout Room",
+        "later": "Later",
+        "minutes": "minutes",
+        "openAllRooms": "Open All Rooms",
+        "reset": "Reset",
+        "title": "Breakout Room",
+        "unassigned": "Unassigned",
+        "willCloseAllBreakoutRooms": "All Breakout Rooms will close in {{remainTime}}."
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",

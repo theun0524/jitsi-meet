@@ -411,7 +411,7 @@ class WelcomePage extends AbstractWelcomePage {
                                         </div>
                                         <form onSubmit = { this._onFormSubmit }>
                                             <input
-                                                autocomplete = "off"
+                                                autoComplete = "off"
                                                 className = {s.enterRoomInput}
                                                 id = 'enter_room_field'
                                                 onChange = { this._onRoomChange }

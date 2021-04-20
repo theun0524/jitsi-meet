@@ -1,0 +1,59 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../css/variables';
+
+.container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    padding: 20px 0;
+    box-sizing: border-box;
+
+    .content {
+        padding: 20px 0;
+        flex-grow: 1;
+        display: flex;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+
+        .roomTimeContainer {
+            display: flex;
+            align-items: center;
+
+            & > span:first-child {
+                margin-right: 10px;
+            }
+
+            & > span:last-child {
+                margin-left: 10px;
+            }
+
+            .selectTime {
+                width: 70px;
+            }
+        }
+
+        .toggleEditMode {
+            display: flex;
+            align-items: center;
+
+            & > span:first-child {
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .colFooter {
+        display: flex;
+        justify-content: space-between;
+    }
+}

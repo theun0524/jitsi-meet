@@ -47,6 +47,22 @@
         "delete": "배경 이미지 삭제",
         "none": "없음"
     },
+    "breakoutRoom": {
+        "addRooms": "<1></1>개 회의실 추가",
+        "askForHelp": "{{room}}에서 {{name}}가 도움을 요청합니다.",
+        "automaticAssign": "자동 할당",
+        "breakoutRoomTimeout": "소회의실 시간",
+        "closeAllRooms": "소회의실 모두 닫기",
+        "editMode": "편집 모드",
+        "joinBreakoutRoom": "소회의실 입장",
+        "later": "나중에",
+        "minutes": "분",
+        "openAllRooms": "소회의실 모두 열기",
+        "reset": "초기화",
+        "title": "소회의실",
+        "unassigned": "미할당",
+        "willCloseAllBreakoutRooms": "{{remainTime}} 후에 모든 소회의실이 종료될 예정입니다."
+    },
     "calendarSync": {
         "addMeetingURL": "회의 링크 추가",
         "confirmAddLink": "이 이벤트에 회의 링크를 추가 하시겠습니까?",
