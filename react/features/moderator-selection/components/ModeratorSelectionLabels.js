@@ -18,7 +18,7 @@ type Props = {
 };
 
 /**
- * React component for labeling speaker stats column items.
+ * React component for labeling users column items.
  *
  * @extends Component
  */

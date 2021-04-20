@@ -15,7 +15,7 @@ import s from './ModeratorSelectionItem.module.scss';
 declare var interfaceConfig: Object;
 
 /**
- * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
+ * The type of the React {@code Component} props of {@link ModeratorSelectionItem}.
  */
 type Props = {
 
@@ -31,7 +31,7 @@ type Props = {
 };
 
 /**
- * React component for display an individual user's speaker stats.
+ * React component for display an individual user's.
  *
  * @extends Component
  */

@@ -776,7 +776,6 @@ class Toolbox extends Component<Props, State> {
         }
         else{
             this.props.dispatch(toggleModeratorSelectionDialog(this.props._conference));
-            console.log("You are the last moderator!");
         }
     }
 

@@ -40,7 +40,7 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link SpeakerStats}.
+ * The type of the React {@code Component} state of {@link ModeratorSelection}.
  */
 type State = {
 
@@ -60,13 +60,13 @@ type State = {
 };
 
 /**
- * React component for displaying a list of speaker stats.
+ * React component for displaying a list of users.
  *
  * @extends Component
  */
 class ModeratorSelection extends Component<Props, State> {
     /**
-     * Initializes a new SpeakerStats instance.
+     * Initializes a new ModeratorSelection instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -247,7 +247,7 @@ class ModeratorSelection extends Component<Props, State> {
 }
 
 /**
- * Maps (parts of) the redux state to the associated SpeakerStats's props.
+ * Maps (parts of) the redux state to the associated ModeratorSelection's props.
  *
  * @param {Object} state - The redux state.
  * @private
