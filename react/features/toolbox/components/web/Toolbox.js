@@ -51,6 +51,7 @@ import {
     LocalRecordingButton,
     LocalRecordingInfoDialog
 } from '../../../local-recording';
+import { toggleModeratorSelectionDialog } from '../../../moderator-selection';
 import {
     LiveStreamButton,
     RecordButton,
@@ -766,8 +767,6 @@ class Toolbox extends Component<Props, State> {
         const { _isLastModerator } = this.props;
 
         if(!_isLastModerator){
-            sendAnalytics(createToolbarEvent('hangup'));
-
             // FIXME: these should be unified.
             if (navigator.product === 'ReactNative') {
                 this.props.dispatch(appNavigate(undefined));
@@ -776,6 +775,7 @@ class Toolbox extends Component<Props, State> {
             }
         }
         else{
+            this.props.dispatch(toggleModeratorSelectionDialog(this.props._conference));
             console.log("You are the last moderator!");
         }
     }

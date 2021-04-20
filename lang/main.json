@@ -553,6 +553,14 @@
     "lockRoomPassword": "password",
     "lockRoomPasswordUppercase": "Password",
     "me": "me",
+    "moderatorSelection": {
+        "email": "E-mail",
+        "moderatorSelection": "Grant Moderator",
+        "moderatorSelectionDesc": "Select next moderator and leave the meeting.",
+        "name": "Name",
+        "search": "Search",
+        "searchPlaceholder": "Search Name"
+    },
     "notify": {
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and {{count}} others joined the meeting",

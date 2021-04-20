@@ -550,6 +550,14 @@
     "lockRoomPassword": "패스워드",
     "lockRoomPasswordUppercase": "패스워드",
     "me": "나",
+    "moderatorSelection": {
+        "email": "이메일",
+        "moderatorSelection": "방장 넘겨주기",
+        "moderatorSelectionDesc": "방장을 넘겨줄 사용자를 선택한 후 회의를 나갑니다",
+        "name": "이름",
+        "search": "검색",
+        "searchPlaceholder": "이름 검색"
+    },
     "notify": {
         "connectedOneMember": "{{name}}님이 회의에 참석했습니다",
         "connectedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 회의에 참석했습니다",
