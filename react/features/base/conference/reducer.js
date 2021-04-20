@@ -129,8 +129,6 @@ ReducerRegistry.register(
             };
         
         case DEVICE_ACCESS_DISABLED:
-            // return set(state, 'roomInfo', { ...state.roomInfo, userDeviceAccessDisabled: action.userDeviceAccessDisabled });
-            // return set(state, 'userDeviceAccessDisabled', action.userDeviceAccessDisabled);
             return  {
                 ...state, 
                 roomInfo : { 

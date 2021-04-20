@@ -81,11 +81,6 @@ export type Props = {
     enableUserDeviceAccessDisabledOption: Boolean,
 
     /**
-     * 
-     */
-    // conferenceUserDeviceAccessDisabled: Boolean,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -228,7 +223,6 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             startAudioMuted,
             startVideoMuted,
             userDeviceAccessDisabled,
-            // conferenceUserDeviceAccessDisabled,
             enableUserDeviceAccessDisabledOption,
             t
         } = this.props;
