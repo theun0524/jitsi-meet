@@ -48,7 +48,8 @@ import {
     sendLocalParticipant,
     setDesktopSharingEnabled,
     setStartMutedPolicy,
-    conferenceTimeRemained
+    conferenceTimeRemained,
+    setNoticeMessage
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -2327,6 +2328,10 @@ export default {
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
+        });
+
+        room.on(JitsiConferenceEvents.NOTICE_MESSAGE, (noticeMessage) => {
+            APP.store.dispatch(setNoticeMessage(noticeMessage));
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {

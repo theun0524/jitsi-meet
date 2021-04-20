@@ -21,6 +21,7 @@ import {
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
+    SET_NOTICE_MESSAGE,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_PREFERRED_VIDEO_QUALITY,
@@ -131,6 +132,12 @@ ReducerRegistry.register(
                 state,
                 'roomInfo',
                 { ...state.roomInfo, scope: action.enabled }
+            );
+        case SET_NOTICE_MESSAGE:
+            return set(
+                state,
+                'noticeMessage',
+                action.noticeMessage
             );
         }
 

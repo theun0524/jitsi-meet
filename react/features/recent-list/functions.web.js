@@ -14,11 +14,12 @@ export function toDisplayableList(recentList) {
     return (
         recentList.slice(-3).reverse()
             .map(item => {
+                const conf = parseURIString(item.conference);
                 return {
                     date: item.date,
                     duration: item.duration,
                     time: [ item.date ],
-                    title: safeDecodeURIComponent(parseURIString(item.conference).room),
+                    title: `${conf.tenant} / ${safeDecodeURIComponent(conf.room)}`,
                     url: item.conference
                 };
             }));

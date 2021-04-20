@@ -56,7 +56,8 @@ import {
     SET_START_MUTED_POLICY,
     PARTICIPANT_CHAT_DISABLED,
     PARTICIPANT_CHAT_ENABLED,
-    CONFERENCE_TIME_REMAINED
+    CONFERENCE_TIME_REMAINED,
+    SET_NOTICE_MESSAGE
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -216,6 +217,10 @@ function _addConferenceListeners(conference, dispatch) {
             id,
             botType
         })));
+
+    conference.on(
+        JitsiConferenceEvents.NOTICE_MESSAGE,
+        (...args) => dispatch(setNoticeMessage(...args)));
 
     conference.addCommandListener(
         AVATAR_ID_COMMAND,
@@ -830,5 +835,12 @@ export function setSubject(subject: string) {
                 subject
             });
         }
+    };
+}
+
+export function setNoticeMessage(noticeMessage: string) {
+    return {
+        type: SET_NOTICE_MESSAGE,
+        noticeMessage
     };
 }
