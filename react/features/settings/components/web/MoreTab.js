@@ -233,11 +233,6 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             t
         } = this.props;
 
-        // console.log("In more tab now");
-        // console.log("ConferenceUserDeviceAccessDisabled is: ", conferenceUserDeviceAccessDisabled);
-        // console.log("User Device access disabled is: ", userDeviceAccessDisabled);
-        // console.log("------------------------------------------");
-        // console.log("This props are: ", this.props);
 
         return (
             <div

@@ -130,7 +130,14 @@ ReducerRegistry.register(
         
         case DEVICE_ACCESS_DISABLED:
             // return set(state, 'roomInfo', { ...state.roomInfo, userDeviceAccessDisabled: action.userDeviceAccessDisabled });
-            return set(state, 'userDeviceAccessDisabled', action.userDeviceAccessDisabled);
+            // return set(state, 'userDeviceAccessDisabled', action.userDeviceAccessDisabled);
+            return  {
+                ...state, 
+                roomInfo : { 
+                    ...state.roomInfo, 
+                    userDeviceAccessDisabled: action.userDeviceAccessDisabled },
+                userDeviceAccessDisabled: action.userDeviceAccessDisabled
+            };
 
         case SET_PUBLIC_SCOPE_ENABLED:
             return set(

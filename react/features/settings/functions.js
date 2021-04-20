@@ -101,11 +101,11 @@ export function getMoreTabProps(stateful: Object | Function) {
         startAudioMutedPolicy,
         startVideoMutedPolicy,
         // add a new state variable to the global state features/base/conference
-        userDeviceAccessDisabled,
-        // roomInfo,
+        // userDeviceAccessDisabled,
+        roomInfo,
     } = state['features/base/conference'];
-    console.log("Features/base/conference state is: ", state['features/base/conference']);
     // const conferenceUserDeviceAccessDisabled = roomInfo["userDeviceAccessDisabled"];
+    const userDeviceAccessDisabled = roomInfo["userDeviceAccessDisabled"];
     const followMeActive = isFollowMeActive(state) ||
         typeof state['features/base/config'].followMeEnabled !== 'undefined';
     const followMeEnabled = isFollowMeEnabled(state);
