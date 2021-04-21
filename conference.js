@@ -2185,6 +2185,13 @@ export default {
         room.on(JitsiConferenceEvents.USER_DEVICE_ACCESS_DISABLED,
             userDeviceAccessDisabled =>  {
                 APP.store.dispatch(deviceAccessDisabled(userDeviceAccessDisabled));
+
+                // show toast message to all participants when user device access is disabled
+                if(userDeviceAccessDisabled === true) {
+                    showToast({
+                        title: i18next.t('dialog.deviceAccessDisabled')
+                    });
+                }
             });
         // end of added portion
 
