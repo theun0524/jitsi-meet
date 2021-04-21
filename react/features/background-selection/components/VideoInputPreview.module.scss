@@ -1,0 +1,37 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '../../../../css/variables';
+
+.videoInputPreview {
+    margin-top: 2px;
+    position: relative;
+
+    > video {
+        border-radius: 3px;
+    }
+
+    .error {
+        color: $participantNameColor;
+        display: none;
+        left: 0;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        top: 50%;
+    }
+
+    &.hasError {
+        background: black;
+
+        .error {
+            display: block;
+        }
+    }
+
+    .display {
+        height: auto;
+        overflow: hidden;
+        width: 100%;
+    }
+}
