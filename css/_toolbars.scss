@@ -298,6 +298,42 @@
                 }
             }
 
+            .hangup-menu-item-selected {
+                align-items: center;
+                background-color: #3c4a63;
+                color: #ffffff;
+                border-radius: 5px;
+                cursor: pointer;
+                //display: flex;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center;
+                height: 22px;
+                padding: 5px 12px;
+
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+
+                &:hover {
+                    background-color: $overflowMenuItemHoverBG;
+                    color: #ffffff;
+                }
+
+                &.unclickable {
+                    cursor: default;
+                }
+                &.unclickable:hover {
+                    background: inherit;
+                }
+                &.disabled {
+                    cursor: initial;
+                    color: #3b475c;
+                }
+            }
+
             .beta-tag {
                 background: $overflowMenuItemColor;
                 border-radius: 2px;

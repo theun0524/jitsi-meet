@@ -41,6 +41,8 @@ export const SET_OVERFLOW_MENU_VISIBLE = 'SET_OVERFLOW_MENU_VISIBLE';
 
 export const SET_HANGUP_MENU_VISIBLE = 'SET_HANGUP_MENU_VISIBLE';
 
+export const SET_MODERATOR_SELECTION_VISIBLE = 'SET_MODERATOR_SELECTION_VISIBLE';
+
 /**
  * The type of the action which sets the indicator which determiens whether a
  * fToolbar in the Toolbox is hovered.
