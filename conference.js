@@ -2192,6 +2192,13 @@ export default {
                         title: i18next.t('dialog.deviceAccessDisabled')
                     });
                 }
+
+                // show toast message to all participants once user device is re-enabled
+                else if (userDeviceAccessDisabled === false) {
+                    showToast({
+                        title: i18next.t('dialog.deviceAccessReEnabled')
+                    });
+                }
             });
         // end of added portion
 
