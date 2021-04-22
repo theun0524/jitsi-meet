@@ -24,6 +24,7 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import s from './WelcomePage.module.scss';
 import { NOTIFICATION_TYPE, showSweetAlert } from '../../notifications';
+import alarmImg from '../../../../resources/img/appstore-badge.png';
 
 /**
  * The pattern used to validate room name.
@@ -278,6 +279,12 @@ class WelcomePage extends AbstractWelcomePage {
                                     src = { _user.avatarURL } />
                             )}
                             { _user.name }
+                            { !(_user.email_verified) && (
+                                <img
+                                  alt = 'avatar'
+                                  className = {s.avatar}
+                                  src = { alarmImg } />
+                            )}
                         </div>
                     }
                     triggerType = 'button'>
@@ -291,6 +298,12 @@ class WelcomePage extends AbstractWelcomePage {
                             className = {s.menuItem}
                             href = { `${AUTH_PAGE_BASE}/account` }>
                             { t('welcomepage.account') }
+                            {!(_user.email_verified) && (
+                                <img
+                                  alt = 'avatar'
+                                  className = {s.avatar}
+                                  src = { alarmImg } />
+                            )}
                         </DropdownItem>
                         <DropdownItem
                             className = {s.menuItem}
