@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { Icon } from '../../icons';
 import { Tooltip } from '../../tooltip';
+import { Avatar } from '../../avatar';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuItem}.
@@ -93,7 +94,7 @@ class ModeratorSelectionItem extends Component<Props, State> {
     render() {
         const { accessibilityLabel, disabled, elementAfter } = this.props;
 
-        let className = this.state.clicked? 'hangup-menu-item-selected' : 'hangup-menu-item';
+        let className = this.state.clicked? 'moderator-selection-menu-item-selected' : 'moderator-selection-menu-item';
         className += this.props.disabled ? ' disabled' : '';
         
 
@@ -102,6 +103,9 @@ class ModeratorSelectionItem extends Component<Props, State> {
                 aria-label = { accessibilityLabel }
                 className = { className }
                 onClick = { disabled ? null : this._onClick }>
+                <Avatar
+                    participantId = { this.props.id }
+                    size = { 24 } />
                 { this._renderText() }
                 {
                     elementAfter || null
@@ -118,7 +122,7 @@ class ModeratorSelectionItem extends Component<Props, State> {
      */
     _renderText() {
         const textElement = (
-            <span className = 'hangup-menu-item-text'>
+            <span className = 'moderator-selection-menu-item-text'>
                 { this.props.text }
             </span>
         );

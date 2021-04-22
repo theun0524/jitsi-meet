@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { ModeratorSelectionItem } from '../../../base/toolbox/components';
+import { HangupMenuItem } from '../../../base/toolbox/components';
 import { IconOpenInNew } from '../../../base/icons';
 
 import ToolbarButton from './ToolbarButton';
@@ -67,7 +67,7 @@ class ModeratorSelectionMenu extends Component<Props> {
                     isOpen = { isOpen }
                     onClose = { this._onCloseDialog }
                     position = { 'top center' }>
-                    <ModeratorSelectionItem
+                    <HangupMenuItem
                         accessibilityLabel = { t('toolbar.accessibilityLabel.grantModeratorAndHangup') }
                         icon = { IconOpenInNew }
                         key = 'hangup'

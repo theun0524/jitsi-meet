@@ -298,13 +298,110 @@
                 }
             }
 
-            .hangup-menu-item-selected {
+            .beta-tag {
+                background: $overflowMenuItemColor;
+                border-radius: 2px;
+                color: $overflowMenuBG;
+                font-size: 11px;
+                font-weight: bold;
+                margin-left: 8px;
+                padding: 0 6px;
+            }
+
+            .profile-text {
+                max-width: 150px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        }
+
+        .moderator-selection-menu {
+            font-size: 1.2em;
+            list-style-type: none;
+            background-color: $overflowMenuBG;
+            /**
+             * Undo atlaskit padding by reducing margins.
+             */
+            margin: -16px -24px;
+            padding: 4px 6px;
+
+            .moderator-selection-menu-item {
+                align-items: center;
+                color: $overflowMenuItemColor;
+                cursor: pointer;
+                display: flex;
+                font-size: 14px;
+                text-align: center;
+                height: 22px;
+                padding: 5px 12px;
+
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+
+                &:hover {
+                    background-color: $overflowMenuItemHoverBG;
+                    color: $overflowMenuItemHoverColor;
+                }
+
+                &.unclickable {
+                    cursor: default;
+                }
+                &.unclickable:hover {
+                    background: inherit;
+                }
+                &.disabled {
+                    cursor: initial;
+                    color: #3b475c;
+                }
+            }
+
+            .moderator-selection-menu-item-warning {
+                align-items: center;
+                background-color: #b72727;
+                color: #ffffff;
+                border-radius: 5px;
+                cursor: pointer;
+                display: flex;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center;
+                height: 22px;
+                padding: 5px 12px;
+
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+
+                &:hover {
+                    background-color: #d51919;
+                    color: #ffffff;
+                }
+
+                &.unclickable {
+                    cursor: default;
+                }
+                &.unclickable:hover {
+                    background: inherit;
+                }
+                &.disabled {
+                    cursor: initial;
+                    color: #3b475c;
+                }
+            }
+
+            .moderator-selection-menu-item-selected {
                 align-items: center;
                 background-color: #3c4a63;
                 color: #ffffff;
                 border-radius: 5px;
                 cursor: pointer;
-                //display: flex;
+                display: flex;
                 font-size: 14px;
                 font-weight: bold;
                 text-align: center;
@@ -334,21 +431,10 @@
                 }
             }
 
-            .beta-tag {
-                background: $overflowMenuItemColor;
-                border-radius: 2px;
-                color: $overflowMenuBG;
-                font-size: 11px;
-                font-weight: bold;
-                margin-left: 8px;
-                padding: 0 6px;
-            }
-
-            .profile-text {
-                max-width: 150px;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
+            .moderator-selection-menu-item-text {
+                text-align: center;
+                margin-right: auto;
+                margin-left: auto;
             }
         }
 

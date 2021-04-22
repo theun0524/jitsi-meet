@@ -1317,7 +1317,7 @@ class Toolbox extends Component<Props, State> {
                     onVisibilityChange = { this._onSetModeratorSelectionVisible }>
                     <ul
                         aria-label = { t('toolbar.accessibilityLabel.moreActionsMenu') }
-                        className = 'hangup-menu'>
+                        className = 'moderator-selection-menu'>
                         { moderatorSelectionContent }
                     </ul>
                 </ModeratorSelectionMenu> :
@@ -1377,15 +1377,11 @@ class Toolbox extends Component<Props, State> {
         let last_item = 
             <li
                 aria-label = { t('toolbar.accessibilityLabel.grantModerator') }
-                className = 'hangup-menu-item-warning'
+                className = 'moderator-selection-menu-item-warning'
                 onClick =  { this._onSubmitModeratorSelection }>
-                <Tooltip
-                    content = ''
-                    position = 'left'>
-                    <span className = 'hangup-menu-item-text'>
-                        { t('toolbar.selectModeratorAndLeave') }
-                    </span>
-                </Tooltip>
+                <span className = 'moderator-selection-menu-item-text'>
+                    { t('toolbar.selectModeratorAndLeave') }
+                </span>
             </li>;
 
         items.push(last_item);
