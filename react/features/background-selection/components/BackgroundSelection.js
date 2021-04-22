@@ -20,7 +20,7 @@ import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-back
 import logger from '../logger';
 import { getAuthUrl } from '../../../api/url';
 
-import { toggleBackgroundEffect, setVirtualBackground } from '../../virtual-background/actions';
+import { toggleBackgroundEffect, setVirtualBackground, backgroundEnabled } from '../../virtual-background/actions';
 
 import VideoInputPreview from './VideoInputPreview';
 import s from './BackgroundSelection.module.scss';
@@ -103,7 +103,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
             previewVideoTrack: null,
             previewVideoTrackError: null,
             selected: props._user?.background ||
-                jitsiLocalStorage.getItem('background') ||
+                props._virtualBackground.virtualSource ||
                 'none',
             loading: false,
         };
@@ -125,12 +125,14 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
         this._createVideoInputTrack(this.props.selectedVideoInputId)
         .catch(err => logger.warn('Failed to initialize preview tracks', err))
         .then(() => this.props.mountCallback && this.props.mountCallback());
+        let newState = this.props._virtualBackground.virtualSource === ''? 'none' : this.props._virtualBackground.virtualSource;
+        this.setState({selected: newState});
 
         this._loadBackgrounds()
         .then(resp => {
             console.log('backgrounds:', resp.data.docs);
             this.setState({ backgrounds: resp.data?.docs || [] });
-            this._setBackgroundEffect(this.state.selected);
+            this._setBackgroundEffect(newState);
         });
     }
 
@@ -276,7 +278,11 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
                 onClick = { this._onSelect }>
                 { _id === 'none'
                 ? <span>{this.props.t('backgroundSelection.none')}</span>
-                : <img src = { `${apiBase}/backgrounds/${_id}/ld` } /> }
+                : 
+                _id === 'blur'
+                ? <span>{this.props.t('backgroundSelection.blur')}</span>
+                :
+                <img src = { `${apiBase}/backgrounds/${_id}/ld` } /> }
                 { !isPublic && (
                     <div
                         className = { `${s.button} ${s.close}` }
@@ -300,7 +306,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
      */
     _renderSelectors() {
         const { backgrounds } = this.state;
-        return [{ _id: 'none', isPublic: true }, ...backgrounds].map(item => this._renderSelector(item));
+        return [{ _id: 'none', isPublic: true }, { _id: 'blur', isPublic: true }, ...backgrounds].map(item => this._renderSelector(item));
     }
 
     _onDeleteBackgroundImage: (Object) => void;
@@ -415,21 +421,36 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
     }
 
     async _setBackgroundEffect(id) {
+        const trackExist = this.props._trackExist;
+
         if (id === 'none') {
             this.state.previewVideoTrack.setEffect(undefined);
+            this.props.dispatch(backgroundEnabled(false));
             this.setState({ selected: id });
             await this.props.dispatch(setVirtualBackground('', false));
-        } else {
-            await this.props.dispatch(setVirtualBackground(id, true));
+            if(trackExist)
+                await this.props.dispatch(toggleBackgroundEffect(false));
+        } 
+        else {
+            const isVirtualBackground = id === 'blur'? false : true; 
+            await this.props.dispatch(setVirtualBackground(id, isVirtualBackground));
 
             const virtualBackground = this.props._virtualBackground;
+
+            if(trackExist)
+                await this.props.dispatch(toggleBackgroundEffect(true));
 
             this._createBackgroundEffect(virtualBackground, this.props._apiBase)
             .then(effect => {
                 console.log('effect:', effect);
+                this.props.dispatch(backgroundEnabled(true));
+
                 return this.state.previewVideoTrack.setEffect(effect);
+            }, err => {
+                console.log('effect err:', err);
+                this.props.dispatch(backgroundEnabled(false)); 
             })
-            .then(() => {
+            .then(() => {               
                 this.setState({ selected: id });
             });
         }
@@ -439,6 +460,7 @@ class BackgroundSelection extends AbstractDialogTab<Props, State> {
 function _mapStateToProps(state) {
     return {
         _apiBase: getAuthUrl(state),
+        _trackExist: state['features/base/tracks'].length === 0? false : true,
         _virtualBackground: state['features/virtual-background']
     };
 }

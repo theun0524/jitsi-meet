@@ -58,7 +58,7 @@ function VirtualBackground({ _apiBase, _virtualSource, dispatch, t }: Props) {
     const [ selected, setSelected ] = useState(_virtualSource || 'none');
     const enableBlur = async () => {
         setSelected('blur');
-        await dispatch(setVirtualBackground('', false));
+        await dispatch(setVirtualBackground('blur', false));
         await dispatch(toggleBackgroundEffect(true));
     };
 

@@ -44,6 +44,7 @@
     },
     "backgroundSelection": {
         "add": "배경 이미지 추가",
+        "blur": "흐리게",
         "delete": "배경 이미지 삭제",
         "none": "없음"
     },

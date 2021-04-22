@@ -44,6 +44,7 @@
     },
     "backgroundSelection": {
         "add": "Add Background Image",
+        "blur": "Blur",
         "delete": "Delete Background Image",
         "none": "None"
     },
