@@ -168,6 +168,7 @@ class Filmstrip extends Component<Props> {
 
     componentDidUpdate(prevProps: Props) {
         if (prevProps._currentLayout !== this.props._currentLayout) {
+            console.log('current layout is changed:', this.props._currentLayout);
             this._changeSortable();
         }
     }
@@ -175,6 +176,7 @@ class Filmstrip extends Component<Props> {
     _changeSortable() {
         if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
             this.$videosContainer.sortable({
+                disabled: false,
                 stop: () => {
                     this.props.dispatch(setTileViewOrder(
                         map(this.$videosContainer.children(), getVideoId)
@@ -182,7 +184,9 @@ class Filmstrip extends Component<Props> {
                 }
             });
         } else {
-            this.$videosContainer.sortable('disable');
+            this.$videosContainer.sortable({
+                disabled: true
+            });
         }
     }
 
