@@ -5,6 +5,7 @@ import {
     SET_OVERFLOW_MENU_VISIBLE,
     SET_HANGUP_MENU_VISIBLE,
     SET_MODERATOR_SELECTION_VISIBLE,
+    SET_NEXT_MODERATOR,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -64,6 +65,13 @@ export function setModeratorSelectionVisible(visible: boolean): Object {
     return {
         type: SET_MODERATOR_SELECTION_VISIBLE,
         visible
+    };
+}
+
+export function setNextModerator(id: string): Object {
+    return{
+        type: SET_NEXT_MODERATOR,
+        id
     };
 }
 

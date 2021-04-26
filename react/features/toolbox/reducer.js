@@ -8,6 +8,7 @@ import {
     SET_OVERFLOW_MENU_VISIBLE,
     SET_HANGUP_MENU_VISIBLE,
     SET_MODERATOR_SELECTION_VISIBLE,
+    SET_NEXT_MODERATOR,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -29,6 +30,7 @@ declare var interfaceConfig: Object;
  *     hovered: boolean,
  *     overflowMenuVisible: boolean,
  *     hangupOptionsMenuVisible: boolean,
+ *     selectedModerator: string, 
  *     timeoutID: number,
  *     timeoutMS: number,
  *     visible: boolean
@@ -91,6 +93,8 @@ function _getInitialState() {
 
         hangupOptionsMenuVisible: false,
 
+        selectedModerator: '',
+
         /**
          * A number, non-zero value which identifies the timer created by a call
          * to setTimeout() with timeoutMS.
@@ -148,6 +152,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 moderatorSelectionVisible: action.visible
+            };
+        
+        case SET_NEXT_MODERATOR:
+            return {
+                ...state,
+                selectedModerator: action.id
             };
 
         case SET_TOOLBAR_HOVERED:

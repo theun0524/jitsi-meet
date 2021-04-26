@@ -87,6 +87,7 @@ import {
     setOverflowMenuVisible,
     setHangupMenuVisible,
     setModeratorSelectionVisible,
+    setNextModerator,
     setToolbarHovered
 } from '../../actions';
 import { isToolboxVisible } from '../../functions';
@@ -215,6 +216,8 @@ type Props = {
      */
     _screensharing: boolean,
 
+    _selectedModerator: string,
+
     /**
      * Whether or not the local participant is sharing a YouTube video.
      */
@@ -249,9 +252,7 @@ type State = {
     /**
      * The width of the browser's window.
      */
-    windowWidth: number,
-
-    selectedModerator: Array
+    windowWidth: number
 };
 
 declare var APP: Object;
@@ -309,8 +310,7 @@ class Toolbox extends Component<Props, State> {
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
         this.state = {
-            windowWidth: window.innerWidth,
-            selectedModerator: []
+            windowWidth: window.innerWidth
         };
     }
 
@@ -679,6 +679,7 @@ class Toolbox extends Component<Props, State> {
         this.props.dispatch(setHangupMenuVisible(visible));
         
         if(!visible){
+            this.props.dispatch(setNextModerator(''));
             this.props.dispatch(setModeratorSelectionVisible(visible));
         }
     }
@@ -697,15 +698,12 @@ class Toolbox extends Component<Props, State> {
         const { _participants, _localParticipantID } = this.props;
         this.props.dispatch(setModeratorSelectionVisible(visible));
 
-        if(!visible){
-            this.setState({selectedModerator: []});
-        }
-        else {
+        if(visible) {
             if(_participants.length > 1){
                 let initial_select = (_participants[0].id === _localParticipantID)? 1 : 0;
-                let nextModerator = [_participants[initial_select].id]
-    
-                this.setState({selectedModerator: nextModerator});
+                let nextModerator = _participants[initial_select].id
+
+                this.props.dispatch(setNextModerator(nextModerator));
             }
         }
     }
@@ -843,46 +841,35 @@ class Toolbox extends Component<Props, State> {
     _onModeratorSelection: () => void;
 
     _onModeratorSelection(id) {
-        let selectedList = this.state.selectedModerator;
+        console.log('Select id: ', id);
+        let selected = this.props._selectedModerator;
 
-        if(selectedList.includes(id)){
-            var index = selectedList.indexOf(id);
-            if (index !== -1) {
-                selectedList.splice(index, 1);
-            }
+        if(selected === id){
+            selected = '';
         }
         else{
-            selectedList.push(id);
+            selected = id;
         }
 
-        this.setState({selectedModerator: selectedList});
-
-        console.log(this.state.selectedModerator);
+        this.props.dispatch(setNextModerator(selected));
     }
 
     _onSubmitModeratorSelection: () => void;
 
     _onSubmitModeratorSelection() {
-        //console.log(this.state.selectedModerator);
-        let moderatorCandidate = this.state.selectedModerator;
-        var grantCounter = 0;
+        let moderatorCandidate = this.props._selectedModerator;
 
-        if(moderatorCandidate.length === 0)
+        if(moderatorCandidate === '')
             return;
 
-        moderatorCandidate.forEach(id => {
-            this.props.dispatch(grantModerator(id));
-            grantCounter++;
-            if(grantCounter === moderatorCandidate.length){
-                this.setState({selectedModerator: []});
-                // FIXME: these should be unified.
-                if (navigator.product === 'ReactNative') {
-                    this.props.dispatch(appNavigate(undefined));
-                } else {
-                    this.props.dispatch(disconnect(true));
-                }
-            }
-        });
+        this.props.dispatch(grantModerator(moderatorCandidate));
+
+        // FIXME: these should be unified.
+        if (navigator.product === 'ReactNative') {
+            this.props.dispatch(appNavigate(undefined));
+        } else {
+            this.props.dispatch(disconnect(true));
+        }
     }
 
 
@@ -1345,10 +1332,6 @@ class Toolbox extends Component<Props, State> {
         let items = [];
 
         let initial_select = (_participants[0].id === _localParticipantID)? 1 : 0;
-        /*let nextModerator = this.state.selectedModerator;
-        nextModerator.push(_participants[initial_select].id);
-
-        this.setState({selectedModerator: nextModerator});*/
 
         for (let i = 0; i < _participants.length; i++){
             if (_participants[i].id === _localParticipantID)
@@ -1732,6 +1715,7 @@ function _mapStateToProps(state) {
         overflowMenuVisible,
         hangupOptionsMenuVisible,
         moderatorSelectionVisible,
+        selectedModerator,
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
@@ -1794,6 +1778,7 @@ function _mapStateToProps(state) {
         _participantsById: participantsById,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _selectedModerator: selectedModerator,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',

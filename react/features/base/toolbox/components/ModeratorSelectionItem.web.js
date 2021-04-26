@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { translate } from '../../i18n';
+import { connect } from '../../redux';
+
 import { Icon } from '../../icons';
 import { Tooltip } from '../../tooltip';
 import { Avatar } from '../../avatar';
@@ -49,7 +52,9 @@ type Props = {
     /**
      * From which direction the tooltip should appear, relative to the button.
      */
-    tooltipPosition: string
+    tooltipPosition: string,
+
+    _selectedModerator: string
 };
 
 type State = {
@@ -94,9 +99,10 @@ class ModeratorSelectionItem extends Component<Props, State> {
     render() {
         const { accessibilityLabel, disabled, elementAfter } = this.props;
 
-        let className = this.state.clicked? 'moderator-selection-menu-item-selected' : 'moderator-selection-menu-item';
+        let clicked = this.props.id === this.props._selectedModerator ? true : false;
+
+        let className = clicked? 'moderator-selection-menu-item-selected' : 'moderator-selection-menu-item';
         className += this.props.disabled ? ' disabled' : '';
-        
 
         return (
             <li
@@ -142,13 +148,25 @@ class ModeratorSelectionItem extends Component<Props, State> {
 
     _onClick() {
         //console.log(this.props);
-        const currentState = this.state.clicked;
+        //const currentState = this.state.clicked;
         const { onClick, id } = this.props;
 
         onClick(id);
 
-        this.setState({clicked: !currentState});
+        //this.setState({clicked: !currentState});
     }
 }
 
-export default ModeratorSelectionItem;
+//export default ModeratorSelectionItem;
+
+function _mapStateToProps(state) {
+    const {
+        selectedModerator,
+    } = state['features/toolbox'];
+
+    return {
+        _selectedModerator: selectedModerator
+    };
+}
+
+export default translate(connect(_mapStateToProps)(ModeratorSelectionItem));
