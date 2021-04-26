@@ -327,14 +327,27 @@
             padding: 4px 6px;
 
             .moderator-selection-menu-item {
-                align-items: center;
+                //align-items: center;
                 color: $overflowMenuItemColor;
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
                 text-align: center;
                 height: 22px;
-                padding: 5px 12px;
+                padding: 5px 5px;
+
+                .avatar {
+                    width: 20%
+                }
+
+                .text {
+                    margin: 5px 5px;
+                    width: 60%
+                }
+
+                .icon {
+                    width: 20%
+                }
 
                 div {
                     display: flex;
@@ -396,7 +409,7 @@
             }
 
             .moderator-selection-menu-item-selected {
-                align-items: center;
+                //align-items: center;
                 background-color: #3c4a63;
                 color: #ffffff;
                 border-radius: 5px;
@@ -406,12 +419,25 @@
                 font-weight: bold;
                 text-align: center;
                 height: 22px;
-                padding: 5px 12px;
+                padding: 5px 5px;
 
                 div {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
+                }
+
+                .avatar {
+                    width: 20%;
+                }
+
+                .text {
+                    margin: 5px 5px;
+                    width: 60%;
+                }
+
+                .icon {
+                    width: 20%;
                 }
 
                 &:hover {
@@ -432,9 +458,13 @@
             }
 
             .moderator-selection-menu-item-text {
-                text-align: center;
+                text-align: left;
                 margin-right: auto;
-                margin-left: auto;
+
+                &.warning {
+                    text-align: center;
+                    margin-left: auto;
+                }
             }
         }
 

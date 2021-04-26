@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { translate } from '../../i18n';
 import { connect } from '../../redux';
 
-import { Icon } from '../../icons';
+import { Icon, IconCheck } from '../../icons';
 import { Tooltip } from '../../tooltip';
 import { Avatar } from '../../avatar';
 
@@ -57,11 +57,6 @@ type Props = {
     _selectedModerator: string
 };
 
-type State = {
-
-    clicked: boolean
-};
-
 /**
  * A React {@code Component} for displaying a link to interact with other
  * features of the application.
@@ -77,17 +72,12 @@ class ModeratorSelectionItem extends Component<Props, State> {
     static defaultProps = {
         tooltipPosition: 'left',
         warning: false,
-        disabled: false,
-        initialSelected: false
+        disabled: false
     };
 
     constructor(props: Props) {
         super(props);
         this._onClick = this._onClick.bind(this);
-
-        this.state = {
-            clicked: this.props.initialSelected
-        };
     }
 
     /**
@@ -109,10 +99,19 @@ class ModeratorSelectionItem extends Component<Props, State> {
                 aria-label = { accessibilityLabel }
                 className = { className }
                 onClick = { disabled ? null : this._onClick }>
-                <Avatar
-                    participantId = { this.props.id }
-                    size = { 24 } />
-                { this._renderText() }
+                <div className = 'avatar'>
+                    <Avatar
+                        participantId = { this.props.id }
+                        size = { 24 } />
+                </div>
+                <div className = 'text'>
+                    { this._renderText() }
+                </div>
+                <div className = 'icon'>
+                {
+                    clicked? <Icon src = { IconCheck } /> : null
+                }
+                </div>
                 {
                     elementAfter || null
                 }
@@ -147,13 +146,9 @@ class ModeratorSelectionItem extends Component<Props, State> {
     }
 
     _onClick() {
-        //console.log(this.props);
-        //const currentState = this.state.clicked;
         const { onClick, id } = this.props;
 
         onClick(id);
-
-        //this.setState({clicked: !currentState});
     }
 }
 

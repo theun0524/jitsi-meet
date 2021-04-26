@@ -841,7 +841,6 @@ class Toolbox extends Component<Props, State> {
     _onModeratorSelection: () => void;
 
     _onModeratorSelection(id) {
-        console.log('Select id: ', id);
         let selected = this.props._selectedModerator;
 
         if(selected === id){
@@ -1331,15 +1330,12 @@ class Toolbox extends Component<Props, State> {
 
         let items = [];
 
-        let initial_select = (_participants[0].id === _localParticipantID)? 1 : 0;
-
         for (let i = 0; i < _participants.length; i++){
             if (_participants[i].id === _localParticipantID)
                 continue;
 
             let item = <ModeratorSelectionItem
                 key = { _participants[i].id }
-                initialSelected = { initial_select === i }
                 accessibilityLabel = { t('toolbar.accessibilityLabel.moderatorSelectionList') }
                 onClick = { this._onModeratorSelection }
                 text = { _participants[i].name }
@@ -1362,7 +1358,7 @@ class Toolbox extends Component<Props, State> {
                 aria-label = { t('toolbar.accessibilityLabel.grantModerator') }
                 className = 'moderator-selection-menu-item-warning'
                 onClick =  { this._onSubmitModeratorSelection }>
-                <span className = 'moderator-selection-menu-item-text'>
+                <span className = 'moderator-selection-menu-item-text warning'>
                     { t('toolbar.selectModeratorAndLeave') }
                 </span>
             </li>;
