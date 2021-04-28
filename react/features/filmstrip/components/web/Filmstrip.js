@@ -1,6 +1,7 @@
 /* @flow */
 
-import { debounce, map } from 'lodash';
+import Pagination from '@atlaskit/pagination';
+import { debounce, map, range } from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -19,7 +20,9 @@ import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import Toolbar from './Toolbar';
 import s from './Filmstrip.module.scss';
-import { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
+import VideoLayout, { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
+import { getParticipantCount } from '../../../base/participants';
+import { setHorizontalViewPage, setTileViewPage } from '../../actions.web';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -133,6 +136,7 @@ class Filmstrip extends Component<Props> {
         this._isHovered = false;
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onChangePage = this._onChangePage.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
@@ -190,6 +194,17 @@ class Filmstrip extends Component<Props> {
         }
     }
 
+    _onChangePage(e, page) {
+        const index = this.props._pages.indexOf(page);
+        console.log('onChangePage:', page, index);
+        if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
+            this.props.dispatch(setTileViewPage(index));
+        } else {
+            this.props.dispatch(setHorizontalViewPage(index));
+        }
+        VideoLayout.reorderVideos();
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -204,6 +219,7 @@ class Filmstrip extends Component<Props> {
         // will get updated without replacing the DOM. If the known DOM gets
         // modified, then the views will get blown away.
 
+        const { _page, _pages } = this.props;
         const filmstripStyle = {};
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
@@ -218,9 +234,9 @@ class Filmstrip extends Component<Props> {
                 // The size of the side margins for each tile as set in CSS.
                 const { _columns, _rows, _filmstripWidth } = this.props;
 
-                if (_rows > _columns) {
-                    remoteVideoContainerClassName += ' has-overflow';
-                }
+                // if (_rows > _columns) {
+                //     remoteVideoContainerClassName += ' has-overflow';
+                // }
 
                 filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
                 break;
@@ -272,6 +288,14 @@ class Filmstrip extends Component<Props> {
                             <div id='localVideoTileViewContainer' />
                         </div>
                     </div>
+                    { _pages && (
+                        <div className={s.paginationContainer}>
+                            <Pagination
+                                pages = { _pages }
+                                onChange = { this._onChangePage }
+                                selectedIndex = { _page } />
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -406,11 +430,24 @@ function _mapStateToProps(state) {
         } ${shiftRight ? 'shift-right' : ''}`.trim();
     const videosClassName = `filmstrip__videos${isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
+    const currentLayout = getCurrentLayout(state);
+    let numPage = 0;
+    let page = 0;
+
+    switch (currentLayout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            numPage = Math.ceil(getParticipantCount(state) / (state['features/filmstrip'].horizontalViewDimensions?.visibleRows || 1));
+            page = state['features/filmstrip'].horizontalViewPage || 0;
+            break;
+        case LAYOUTS.TILE_VIEW:
+            numPage = Math.ceil((gridDimensions.rows || 0) / (gridDimensions.visibleRows || 1));
+            page = state['features/filmstrip'].tileViewPage || 0;
+    }
 
     return {
         _className: className,
         _columns: gridDimensions.columns,
-        _currentLayout: getCurrentLayout(state),
+        _currentLayout: currentLayout,
         _filmstripOnly: isFilmstripOnly,
         _filmstripWidth: filmstripWidth,
         _hideFilmstrip: Boolean(hideRemoteVideos && hideLocalVideo),
@@ -419,6 +456,8 @@ function _mapStateToProps(state) {
         _hovered: hovered,
         _localVideoClass: Boolean(hideLocalVideo) ? 'hide' : '',
         _rows: gridDimensions.rows,
+        _page: page,
+        _pages: numPage > 1 ? range(1, numPage + 1) : null,
         _videosClassName: videosClassName,
         _visible: visible
     };

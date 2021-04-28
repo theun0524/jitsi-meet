@@ -63,6 +63,7 @@ export function getTileViewGridDimensions(state: Object, maxColumns: number = ge
 
     return {
         columns,
+        rows,
         visibleRows
     };
 }

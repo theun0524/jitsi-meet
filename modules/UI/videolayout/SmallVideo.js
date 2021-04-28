@@ -880,27 +880,27 @@ export default class SmallVideo {
             break;
         }
         case LAYOUTS.TILE_VIEW: {
-            const state = APP.store.getState();
-            const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+            // const state = APP.store.getState();
+            // const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
 
-            if (typeof thumbnailSize !== 'undefined') {
-                const { innerHeight, innerWidth } = window;
-                // const { height, width } = thumbnailSize;
-                // const avatarSize = height / 2;
+            // if (typeof thumbnailSize !== 'undefined') {
+            //     const { innerHeight, innerWidth } = window;
+            //     // const { height, width } = thumbnailSize;
+            //     // const avatarSize = height / 2;
 
-                // this.$container.css({
-                //     height: `${height}px`,
-                //     'min-height': `${height}px`,
-                //     'min-width': `${width}px`,
-                //     width: `${width}px`
-                // });
-                // this.$avatar().css({
-                //     height: `${avatarSize}px`,
-                //     width: `${avatarSize}px`
-                // });
+            //     // this.$container.css({
+            //     //     height: `${height}px`,
+            //     //     'min-height': `${height}px`,
+            //     //     'min-width': `${width}px`,
+            //     //     width: `${width}px`
+            //     // });
+            //     // this.$avatar().css({
+            //     //     height: `${avatarSize}px`,
+            //     //     width: `${avatarSize}px`
+            //     // });
 
-                APP.store.dispatch(clientResized(innerWidth, innerHeight));
-            }
+            //     APP.store.dispatch(clientResized(innerWidth, innerHeight));
+            // }
             break;
         }
         }

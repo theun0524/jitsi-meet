@@ -1,5 +1,6 @@
 // @flow
 
+import { debounce } from 'lodash';
 import React from 'react';
 
 import { FieldTextStateless } from '@atlaskit/field-text';
@@ -458,7 +459,7 @@ class Chat extends AbstractChat<Props> {
         document.removeEventListener('keyup', this._nextResult);
     }
 
-    _nextResult = async(ev) => {
+    _nextResult = debounce(async (ev) => {
         const { t } = this.props;
         // get highlighted elements
         const spanTags = document.getElementsByClassName("highlight-search-text");
@@ -466,10 +467,10 @@ class Chat extends AbstractChat<Props> {
         await this.setState({ currentIdx : this.state.searchResultIndex + 1 });
         await this.setState({ searchResultIndex: this.state.currentIdx });
 
-        if(this.state.searchResultCount > 0 && ev.key === "Enter") {
+        if (this.state.searchResultCount > 0 && ev.key === "Enter") {
 
             // to keep in the loop
-            if(this.state.currentIdx >= this.state.searchResultCount) {
+            if (this.state.currentIdx >= this.state.searchResultCount) {
                 
                 this.setState({ currentIdx: -1 });
                 await this.setState({ searchResultIndex: this.state.currentIdx });
@@ -488,7 +489,7 @@ class Chat extends AbstractChat<Props> {
             // add additional highlighting style to identify the current item
             spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].style.setProperty('background','#ec9038','')
         }
-    }
+    }, 100);
 
     _renderPanelContent: () => React$Node | null;
 

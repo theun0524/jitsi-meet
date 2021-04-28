@@ -7,7 +7,9 @@ import {
     SET_FILMSTRIP_HOVERED,
     SET_FILMSTRIP_VISIBLE,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
-    SET_TILE_VIEW_DIMENSIONS
+    SET_HORIZONTAL_VIEW_PAGE,
+    SET_TILE_VIEW_DIMENSIONS,
+    SET_TILE_VIEW_PAGE
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -83,6 +85,16 @@ ReducerRegistry.register(
             return {
                 ...state,
                 tileViewDimensions: action.dimensions
+            };
+        case SET_TILE_VIEW_PAGE:
+            return {
+                ...state,
+                tileViewPage: action.page
+            };
+        case SET_HORIZONTAL_VIEW_PAGE:
+            return {
+                ...state,
+                horizontalViewPage: action.page
             };
         }
 

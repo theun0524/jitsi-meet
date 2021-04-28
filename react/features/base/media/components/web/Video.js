@@ -98,6 +98,7 @@ class Video extends Component<Props> {
             this._videoElement.onplaying = this._onVideoPlaying;
         }
 
+        console.log('===> Video is attached');
         this._attachTrack(this.props.videoTrack);
     }
 

@@ -1,5 +1,6 @@
 // @flow
 
+import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import {
@@ -13,7 +14,8 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
-import { SET_TILE_VIEW_ORDER } from './actionTypes.js';
+import { ORDERED_TILE_VIEW, SET_TILE_VIEW_ORDER } from './actionTypes';
+import { shouldDisplayTileView } from './functions';
 
 import './middleware.any';
 
@@ -46,11 +48,13 @@ MiddlewareRegistry.register(store => next => action => {
         if (!action.participant.local) {
             VideoLayout.addRemoteParticipantContainer(
                 getParticipantById(store.getState(), action.participant.id));
+            VideoLayout.reorderVideos();
         }
         break;
 
     case PARTICIPANT_LEFT:
         VideoLayout.removeParticipantContainer(action.participant.id);
+        VideoLayout.reorderVideos();
         break;
 
     case PARTICIPANT_UPDATED: {
@@ -74,6 +78,17 @@ MiddlewareRegistry.register(store => next => action => {
         VideoLayout.onDominantSpeakerChanged(action.participant.id);
         break;
 
+    case ORDERED_TILE_VIEW: {
+        const state = store.getState();
+        if (shouldDisplayTileView(state)) {
+            const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
+
+            // Once the thumbnails are reactified this should be moved there too.
+            Filmstrip.resizeThumbnailsForTileView(width, height, true);
+        }
+        break;
+    }
+
     case PIN_PARTICIPANT:
         VideoLayout.onPinChange(action.participant?.id);
         break;
@@ -96,6 +111,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED:
         if (!action.track.local) {
             VideoLayout.onRemoteStreamRemoved(action.track.jitsiTrack);
+            VideoLayout.reorderVideos();
         }
         break;
     }

@@ -7,7 +7,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
-import { InView } from 'react-intersection-observer';
 
 import { i18next } from '../../../react/features/base/i18n';
 import {
@@ -16,7 +15,6 @@ import {
 import {
     getPinnedParticipant,
     pinParticipant,
-    recvVideoParticipant
 } from '../../../react/features/base/participants';
 import { clientResized } from '../../../react/features/base/responsive-ui';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
@@ -49,17 +47,7 @@ const containerEvents = [
  * @param {*} userId
  */
 function createContainer(spanId, userId) {
-    const _container = document.createElement('span');
-    var onInViewportChange = (inView, entry) => {
-        APP.store.dispatch(recvVideoParticipant(userId, inView === true));
-    }
-    ReactDOM.render(
-        <InView as="span" threshold={[0.1, 0.3]} onChange={onInViewportChange} />,
-        _container
-    );
-    // FIXME: (tu-nv) reactDOM render another span element inside current span element,
-    // thus we need to strip the outer video tag. There should be a better way to do this
-    const container = _container.firstChild;
+    const container = document.createElement('span');
 
     container.id = spanId;
     container.className = 'videocontainer';
@@ -74,10 +62,10 @@ function createContainer(spanId, userId) {
         <div class ='presence-label-container'></div>
         <span class = 'remotevideomenu'></span>`;
 
-    const remoteVideosContainer
-        = document.getElementById('filmstripRemoteVideosContainer');
+    // const remoteVideosContainer
+    //     = document.getElementById('filmstripRemoteVideosContainer');
 
-    remoteVideosContainer.appendChild(container);
+    // remoteVideosContainer.appendChild(container);
 
     return container;
 }
@@ -402,10 +390,10 @@ export default class RemoteVideo extends SmallVideo {
 
         this.updateView();
 
-        setTimeout(() => {
-            const { innerHeight, innerWidth } = window;
-            APP.store.dispatch(clientResized(innerWidth, innerHeight));
-        });
+        // setTimeout(() => {
+        //     const { innerHeight, innerWidth } = window;
+        //     APP.store.dispatch(clientResized(innerWidth, innerHeight));
+        // });
     }
 
     /**

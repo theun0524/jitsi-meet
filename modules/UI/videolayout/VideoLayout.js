@@ -1,7 +1,7 @@
 /* global APP, $, interfaceConfig  */
 
 import Logger from 'jitsi-meet-logger';
-import { concat, filter, map, sortBy } from 'lodash';
+import { concat, debounce, filter, map, sortBy } from 'lodash';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -10,11 +10,12 @@ import {
     getParticipantById,
     pinParticipant,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getParticipants
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
-import { orderedTileView, setTileViewOrder } from '../../../react/features/video-layout';
+import { getTileViewGridDimensions, orderedTileView } from '../../../react/features/video-layout';
 import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
@@ -22,10 +23,11 @@ import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 import LargeVideoManager from './LargeVideoManager';
 import LocalVideo from './LocalVideo';
 import RemoteVideo from './RemoteVideo';
-import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
+import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
 const logger = Logger.getLogger(__filename);
 
+const DEBOUNCE_TIMEOUT = 100;   // 100ms for debounce timer
 const remoteVideos = {};
 let localVideoThumbnail = null;
 
@@ -80,9 +82,8 @@ export function getVideoId(node) {
 
 const orderBy = {
     displayName: (state, ...data) =>
-        concat(...map(data, part => sortBy(part, node => {
-            const id = getVideoId(node);
-            return getParticipantDisplayName(state, id);
+        concat(...map(data, part => sortBy(part, participant => {
+            return getParticipantDisplayName(state, participant.id);
         }))),
 
 };
@@ -394,7 +395,7 @@ const VideoLayout = {
      *  iii. Append a muted video to the end of DOM
      *  iv. Identify the position to insert local thumbnail and insert it
      */
-    reorderVideos() {
+    _reorderVideos() {
         const state = APP.store.getState();
         const { order } = state['features/video-layout'];
 
@@ -410,34 +411,30 @@ const VideoLayout = {
 
         // remove the local video container from DOM
         const videosContainer = document.getElementById('filmstripRemoteVideosContainer');
-        const localVideo = document.getElementById('localVideoTileViewContainer');
-        const nodes = videosContainer.childNodes;
         let ordered;
 
         // reorder videos by order settings
         if (Array.isArray(order)) {
-            ordered = filter(map(order, id =>
-                id === localVideoThumbnail.id
-                    ? localVideo
-                    : document.getElementById(`participant_${id}`)));
+            ordered = filter(map(order, getParticipantById));
         } else {
             let data = [];
-
+            const participants = getParticipants(state);
             if (order.videoMuted) {
                 // split videoMuted order
                 data.push([]);
                 data.push([]);
 
-                nodes.forEach(node => {
-                    if (node === localVideo) {
-                        data[localVideoThumbnail.isVideoMuted ? 1 : 0].push(node);
+                participants.forEach(participant => {
+                    if (participant.local) {
+                        data[localVideoThumbnail.isVideoMuted ? 1 : 0].push(participant);
                     } else { // remoteVideo
-                        const id = node.id.split('_')[1];
-                        data[remoteVideos[id].isVideoMuted ? 1 : 0].push(node);
+                        const jitsiParticipant = APP.conference.getParticipantById(participant.id);
+                        console.log('====> remoteVideo: isVideoMuted:', jitsiParticipant.isVideoMuted());
+                        data[jitsiParticipant.isVideoMuted() ? 1 : 0].push(participant);
                     }
                 });
             } else {
-                data.push(nodes);
+                data.push(participants);
             }
 
             if (orderBy[order.by]) {
@@ -446,11 +443,26 @@ const VideoLayout = {
         }
 
         if (ordered) {
+            const { conference } = state['features/base/conference'];
+            const { tileViewPage: page = 0 } = state['features/filmstrip'];
+            const { columns, visibleRows } = getTileViewGridDimensions(state);
+            const pageSize = columns * visibleRows;
+            const nodes = ordered.slice(page * pageSize, (page+1) * pageSize);
+            console.log('page:', nodes);
+
+            conference.recvVideoParticipants(map(nodes, 'id'));
+
             // remove videoContainer innerHTML
             videosContainer.innerHTML = '';
-            ordered.forEach(node => {
-                videosContainer.appendChild(node);
+            const c = document.createDocumentFragment();
+            nodes.forEach(participant => {
+                if (participant.local) {
+                    c.appendChild(localVideoThumbnail.container);
+                } else {
+                    c.appendChild(remoteVideos[participant.id].container);
+                }
             });
+            videosContainer.appendChild(c);
 
             APP.store.dispatch(orderedTileView(
                 map(videosContainer.childNodes, getVideoId)
@@ -923,5 +935,10 @@ const VideoLayout = {
         VideoLayout.resizeVideoArea();
     }
 };
+
+VideoLayout.reorderVideos = debounce(
+    VideoLayout._reorderVideos,
+    DEBOUNCE_TIMEOUT);
+
 export { remoteVideos };
 export default VideoLayout;

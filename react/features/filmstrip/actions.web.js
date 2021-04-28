@@ -2,8 +2,16 @@
 
 import { CHAT_SIZE } from '../chat/constants';
 
-import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
-import { calculateThumbnailSizeForHorizontalView, calculateThumbnailSizeForTileView } from './functions';
+import {
+    SET_HORIZONTAL_VIEW_DIMENSIONS,
+    SET_HORIZONTAL_VIEW_PAGE,
+    SET_TILE_VIEW_DIMENSIONS,
+    SET_TILE_VIEW_PAGE
+} from './actionTypes';
+import {
+    calculateThumbnailSizeForHorizontalView,
+    calculateThumbnailSizeForTileView
+} from './functions';
 
 /**
  * The size of the side margins for each tile as set in CSS.
@@ -51,6 +59,22 @@ export function setTileViewDimensions(dimensions: Object, windowSize: Object, is
 }
 
 /**
+ * Sets the visible page of the tile view grid.
+ *
+ * @param {Number} page - The visible page.
+ * @returns {{
+ *     type: SET_TILE_VIEW_PAGE,
+ *     page: Number
+ * }}
+ */
+export function setTileViewPage(page: Number) {
+    return {
+        type: SET_TILE_VIEW_PAGE,
+        page
+    };
+}
+
+/**
  * Sets the dimensions of the thumbnails in horizontal view.
  *
  * @param {number} clientHeight - The height of the window.
@@ -63,6 +87,22 @@ export function setHorizontalViewDimensions(clientHeight: number = 0) {
     return {
         type: SET_HORIZONTAL_VIEW_DIMENSIONS,
         dimensions: calculateThumbnailSizeForHorizontalView(clientHeight)
+    };
+}
+
+/**
+ * Sets the visible page of the thumbnails in horizontal view.
+ *
+ * @param {Number} page - The visible page.
+ * @returns {{
+ *     type: SET_HORIZONTAL_VIEW_PAGE,
+ *     page: Number
+ * }}
+ */
+export function setHorizontalViewPage(page: Number) {
+    return {
+        type: SET_HORIZONTAL_VIEW_PAGE,
+        page
     };
 }
 

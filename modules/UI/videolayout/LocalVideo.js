@@ -312,9 +312,7 @@ export default class LocalVideo extends SmallVideo {
             this.container.parentElement.removeChild(this.container);
         }
 
-        const appendTarget = shouldDisplayTileView(APP.store.getState())
-            ? document.getElementById('localVideoTileViewContainer')
-            : document.getElementById('filmstripLocalVideoThumbnail');
+        const appendTarget = document.getElementById('filmstripLocalVideoThumbnail');
 
         appendTarget && appendTarget.appendChild(this.container);
         this._updateVideoElement();
@@ -329,14 +327,16 @@ export default class LocalVideo extends SmallVideo {
         const videoTrack
             = getLocalVideoTrack(APP.store.getState()['features/base/tracks']);
 
-        ReactDOM.render(
-            <Provider store = { APP.store }>
-                <VideoTrack
-                    id = 'localVideo_container'
-                    videoTrack = { videoTrack } />
-            </Provider>,
-            localVideoContainer
-        );
+        if (localVideoContainer) {
+            ReactDOM.render(
+                <Provider store = { APP.store }>
+                    <VideoTrack
+                        id = 'localVideo_container'
+                        videoTrack = { videoTrack } />
+                </Provider>,
+                localVideoContainer
+            );
+        }
 
         // Ensure the video gets play() called on it. This may be necessary in the
         // case where the local video container was moved and re-attached, in which
