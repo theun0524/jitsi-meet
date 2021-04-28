@@ -17,8 +17,11 @@ import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
     getLocalParticipant,
+    getParticipants,
     getParticipantById,
     getPinnedParticipant,
+    grantModerator,
+    isParticipantModerator,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -262,6 +265,21 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     // that should cover the described use case as part of the effort to
     // implement the conferenceWillLeave action for web.
     beforeUnloadHandler = () => {
+        /* for grant moderator
+        const localParticipant = getLocalParticipant(APP.store.getState());
+        const participants = getParticipants(APP.store.getState());
+        const isLastModerator = (participants.length > 1) &&
+                                (participants.filter(participant => participant.role === PARTICIPANT_ROLE.MODERATOR).length === 1);
+
+        if(isLastModerator && isParticipantModerator(localParticipant)){
+            const nextModerator = participants[0].id === localParticipant.id? participants[1].id : participants[0].id;
+            console.log(nextModerator);
+            dispatch(grantModerator(nextModerator));
+            dispatch(conferenceWillLeave(conference));
+        }
+        else{
+            dispatch(conferenceWillLeave(conference));
+        }*/
         dispatch(conferenceWillLeave(conference));
     };
     window.addEventListener('beforeunload', beforeUnloadHandler);

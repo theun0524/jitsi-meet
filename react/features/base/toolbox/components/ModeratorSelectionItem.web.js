@@ -105,7 +105,7 @@ class ModeratorSelectionItem extends Component<Props, State> {
                         size = { 24 } />
                 </div>
                 <div className = 'text'>
-                    { this._renderText() }
+                    { this.props.text }
                 </div>
                 <div className = 'icon'>
                 {
@@ -117,32 +117,6 @@ class ModeratorSelectionItem extends Component<Props, State> {
                 }
             </li>
         );
-    }
-
-    /**
-     * Renders the text label to display in the {@code OverflowMenuItem}.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderText() {
-        const textElement = (
-            <span className = 'moderator-selection-menu-item-text'>
-                { this.props.text }
-            </span>
-        );
-
-        if (this.props.tooltip) {
-            return (
-                <Tooltip
-                    content = { this.props.tooltip }
-                    position = { this.props.tooltipPosition }>
-                    { textElement }
-                </Tooltip>
-            );
-        }
-
-        return textElement;
     }
 
     _onClick() {

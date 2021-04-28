@@ -85,38 +85,14 @@ class HangupMenuItem extends Component<Props> {
                 aria-label = { accessibilityLabel }
                 className = { className }
                 onClick = { disabled ? null : onClick }>
-                { this._renderText() }
+                <div className = 'text'>
+                    { this.props.text }
+                </div>
                 {
                     elementAfter || null
                 }
             </li>
         );
-    }
-
-    /**
-     * Renders the text label to display in the {@code OverflowMenuItem}.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderText() {
-        const textElement = (
-            <span className = 'hangup-menu-item-text'>
-                { this.props.text }
-            </span>
-        );
-
-        if (this.props.tooltip) {
-            return (
-                <Tooltip
-                    content = { this.props.tooltip }
-                    position = { this.props.tooltipPosition }>
-                    { textElement }
-                </Tooltip>
-            );
-        }
-
-        return textElement;
     }
 }
 

@@ -1358,9 +1358,9 @@ class Toolbox extends Component<Props, State> {
                 aria-label = { t('toolbar.accessibilityLabel.grantModerator') }
                 className = 'moderator-selection-menu-item-warning'
                 onClick =  { this._onSubmitModeratorSelection }>
-                <span className = 'moderator-selection-menu-item-text warning'>
+                <div className = 'text'>
                     { t('toolbar.selectModeratorAndLeave') }
-                </span>
+                </div>
             </li>;
 
         items.push(last_item);

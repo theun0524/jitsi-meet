@@ -93,6 +93,8 @@ function _getInitialState() {
 
         hangupOptionsMenuVisible: false,
 
+        moderatorSelectionVisible: false,
+
         selectedModerator: '',
 
         /**
