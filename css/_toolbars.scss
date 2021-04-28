@@ -223,7 +223,7 @@
             width: 200px;
             font-size: 1.2em;
             list-style-type: none;
-            background-color: $overflowMenuBG;
+            background-color: #1b222e;
             /**
              * Undo atlaskit padding by reducing margins.
              */
@@ -233,11 +233,13 @@
             .hangup-menu-item {
                 align-items: center;
                 color: $overflowMenuItemColor;
+                background-color: #283242;
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
                 text-align: center;
                 height: 22px;
+                margin: 5px 0 0 0;
                 padding: 5px 12px;
                 vertical-align: middle;
 
@@ -335,7 +337,7 @@
             width: 200px;
             font-size: 1.2em;
             list-style-type: none;
-            background-color: $overflowMenuBG;
+            background-color: #1b222e;
             /**
              * Undo atlaskit padding by reducing margins.
              */
@@ -345,11 +347,13 @@
             .moderator-selection-menu-item {
                 //align-items: center;
                 color: $overflowMenuItemColor;
+                background-color: #283242;
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
                 text-align: center;
                 height: 22px;
+                margin: 0 0 5px 0;
                 padding: 5px 5px;
 
                 .avatar {
@@ -443,6 +447,7 @@
                 font-weight: bold;
                 text-align: center;
                 height: 22px;
+                margin: 0 0 5px 0;
                 padding: 5px 5px;
 
                 div {
