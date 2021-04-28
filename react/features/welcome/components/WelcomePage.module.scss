@@ -84,6 +84,10 @@ body {
                 min-width: 100px;
                 min-height: 40px;
                 text-align: left;
+
+                .icon {
+                    display : inline-flex;
+                }
             }
 
             .mobile.menuItem {

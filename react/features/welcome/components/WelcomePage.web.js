@@ -281,8 +281,9 @@ class WelcomePage extends AbstractWelcomePage {
                             { _user.name }
                             { !(_user.email_verified) && (
                                 <Icon
+                                className = 'red'
+                                size = { 20 }
                                 src = { IconWarning }
-                                color = 'red'
                                  />
                             )}
                         </div>
@@ -300,8 +301,9 @@ class WelcomePage extends AbstractWelcomePage {
                             { t('welcomepage.account') }
                             {!(_user.email_verified) && (
                                 <Icon
+                                className = {`${s.icon} red`}
+                                size = { 20 }
                                 src = { IconWarning }
-                                color = 'red'
                                  />
                             )}
                         </DropdownItem>
