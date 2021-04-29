@@ -444,11 +444,6 @@ class Chat extends AbstractChat<Props> {
                 animation: false });
         }
 
-        // navigate to next result when there are search results
-        else if(count > 0) {
-            document.addEventListener('keyup', this._nextResult);
-        }
-
         // remove event listener on key press escape
         
     }

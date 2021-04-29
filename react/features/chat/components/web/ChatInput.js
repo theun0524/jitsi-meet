@@ -11,6 +11,9 @@ import { connect } from '../../../base/redux';
 
 import SmileysPanel from './SmileysPanel';
 
+import { Icon, IconShareDoc } from '../../../base/icons';
+import { FileUploadButton } from './FileUploadButton';
+
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
@@ -99,6 +102,10 @@ class ChatInput extends Component<Props, State> {
         this._focus();
     }
 
+    // handleFileUpload = event => {
+    //     console.log(event.target.files[0]);
+    // }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -113,6 +120,10 @@ class ChatInput extends Component<Props, State> {
         const chatInputStyleName = `${(prole === "visitor") ? 'no-display' : '' } chat-input`;
         return (
             <div key={prole} className= {chatInputStyleName}>
+                
+                {/* Add a file upload button component */}
+                <FileUploadButton visible= { true }/>
+                        
                 <div className = 'smiley-input'>
                     <div id = 'smileysarea'>
                         <div id = 'smileys'>
