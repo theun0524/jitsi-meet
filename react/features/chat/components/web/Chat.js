@@ -409,7 +409,7 @@ class Chat extends AbstractChat<Props> {
         hlClass = hlClass || "highlight-search-text";
         term = term instanceof Array ? term.join("|") : term;
         const highlighter = a => `<span class="${hlClass}">${a}</span>`;
-        const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+        // const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
         
         for (let i=0; i < usrmsgs.length; i += 1) {
             //loop for each individual chat message
@@ -418,7 +418,7 @@ class Chat extends AbstractChat<Props> {
 
             // replace the inner text with highlighted portion
             node.innerHTML = node.innerHTML.replace(re, highlighter);
-            toHtml(node.parentElement);
+            // toHtml(node.parentElement); // this line was replacing DOM for parent element which contained chat pop-up menu
         }
     }
 
