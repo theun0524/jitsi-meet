@@ -314,6 +314,7 @@
         "placeholderOrganization": "직책, 소속",        
         "popupError": "브라우저가이 사이트의 팝업 창을 차단하고 있습니다. 브라우저의 보안 설정에서 팝업을 활성화하고 다시 시도하십시오.",
         "popupErrorTitle": "팝업 차단됨",
+        "privateMessage": "개인메시지 보내기",
         "readMore": "더보기",
         "recording": "레코딩",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "실시간 스트림이 활성화 된 동안에는 불가능",

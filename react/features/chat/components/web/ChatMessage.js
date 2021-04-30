@@ -22,6 +22,7 @@ import s from './ChatMessage.module.scss';
 import { openDialog } from '../../../base/dialog';
 import EnableChatForRemoteParticipantDialog from '../../../remote-video-menu/components/web/EnableChatForRemoteParticipantDialog';
 import DisableChatForRemoteParticipantDialog from '../../../remote-video-menu/components/web/DisableChatForRemoteParticipantDialog';
+import { setPrivateMessageRecipient } from '../../actions'
 
 declare var APP: Object;
 
@@ -41,6 +42,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         this._onToggleChatState = this._onToggleChatState.bind(this);
         this._onBanUser = this._onBanUser.bind(this);
+        this._onPrivateMessage = this._onPrivateMessage.bind(this);
     }
 
     render() {
@@ -96,6 +98,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
     _onBanUser() {
         const { dispatch, message } = this.props;
         dispatch(openDialog(BanRemoteParticipantDialog, { participantID: message.id }));
+    }
+
+    _onPrivateMessage: () => void;
+
+    _onPrivateMessage() {
+        const { dispatch, _participant } = this.props;
+        dispatch(setPrivateMessageRecipient(_participant));
     }
 
     _onToggleChatState: () => void;
@@ -156,6 +165,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
                         triggerButtonProps = {{ iconBefore: <Icon size = { 16 } src = { IconMenuThumb } /> }}
                         triggerType = 'button'>
                         <DropdownItemGroup>
+                            <DropdownItem onClick = { this._onPrivateMessage }>
+                                { t('dialog.privateMessage') }
+                            </DropdownItem>
                             <DropdownItem onClick = { this._onToggleChatState }>
                                 { _isChatMessageDisabled ? t('dialog.enableChat') : t('dialog.disableChat') }
                             </DropdownItem>
