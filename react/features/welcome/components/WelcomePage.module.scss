@@ -50,6 +50,15 @@ body {
                 border-radius: 50%;
                 margin-right: 6px;
             }
+            .badge {
+                margin-left: 5px;
+            }
+        }
+
+        .img{
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
         }
     
         .toolbars {
@@ -78,6 +87,11 @@ body {
                 min-width: 100px;
                 min-height: 40px;
                 text-align: left;
+
+                .badge {
+                    margin-left: 5px;
+                    display : inline-flex;
+                }
             }
 
             .mobile.menuItem {

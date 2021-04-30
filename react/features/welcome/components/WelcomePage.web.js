@@ -1,5 +1,6 @@
 /* global APP, interfaceConfig, process */
 
+import Badge from '@atlaskit/badge';
 import Banner from '@atlaskit/banner';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
@@ -24,6 +25,7 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import s from './WelcomePage.module.scss';
 import { NOTIFICATION_TYPE, showSweetAlert } from '../../notifications';
+//import alarmImg from '../../../../resources/img/appstore-badge.png';
 
 /**
  * The pattern used to validate room name.
@@ -278,6 +280,11 @@ class WelcomePage extends AbstractWelcomePage {
                                     src = { _user.avatarURL } />
                             )}
                             { _user.name }
+                            { !(_user.email_verified) && (
+                                <div className = {s.badge}>
+                                    <Badge appearance="important">{1}</Badge>
+                                </div>
+                            )}
                         </div>
                     }
                     triggerType = 'button'>
@@ -291,6 +298,11 @@ class WelcomePage extends AbstractWelcomePage {
                             className = {s.menuItem}
                             href = { `${AUTH_PAGE_BASE}/account` }>
                             { t('welcomepage.account') }
+                            {!(_user.email_verified) && (
+                                <div className = {s.badge}>
+                                    <Badge appearance="important">{1}</Badge>
+                                </div>
+                            )}
                         </DropdownItem>
                         <DropdownItem
                             className = {s.menuItem}

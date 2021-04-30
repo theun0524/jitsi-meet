@@ -15,7 +15,8 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-    "@atlaskit/banner": "^10.1.1",
+    "@atlaskit/badge": "10.0.1",
+    "@atlaskit/banner": "10.1.1",
     "@atlaskit/button": "10.1.1",
     "@atlaskit/checkbox": "5.0.10",
     "@atlaskit/dropdown-menu": "6.1.25",
