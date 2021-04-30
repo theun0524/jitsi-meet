@@ -107,6 +107,8 @@ export const DATA_CHANNEL_OPENED = 'DATA_CHANNEL_OPENED';
  */
 export const KICKED_OUT = 'KICKED_OUT';
 
+export const LEFT_BY_HANGUP_ALL = 'LEFT_BY_HANGUP_ALL';
+
 /**
  * The type of (redux) action which signals that the lock state of a specific
  * {@code JitsiConference} changed.

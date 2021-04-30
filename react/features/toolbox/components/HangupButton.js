@@ -53,7 +53,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             }
         });
     }
-
+    
     /**
      * Helper function to perform the actual hangup action.
      *
