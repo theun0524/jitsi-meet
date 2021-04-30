@@ -49,7 +49,8 @@ import {
     setDesktopSharingEnabled,
     setStartMutedPolicy,
     conferenceTimeRemained,
-    setNoticeMessage
+    setNoticeMessage,
+    deviceAccessDisabled
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -2181,6 +2182,27 @@ export default {
 
         room.on(JitsiConferenceEvents.TIME_REMAINED,
             timeRemained => APP.store.dispatch(conferenceTimeRemained(timeRemained)));
+
+        // start of added portion
+        room.on(JitsiConferenceEvents.USER_DEVICE_ACCESS_DISABLED,
+            userDeviceAccessDisabled =>  {
+                APP.store.dispatch(deviceAccessDisabled(userDeviceAccessDisabled));
+
+                // show toast message to all participants when user device access is disabled
+                if(userDeviceAccessDisabled === true) {
+                    showToast({
+                        title: i18next.t('dialog.deviceAccessDisabled')
+                    });
+                }
+
+                // show toast message to all participants once user device is re-enabled
+                else if (userDeviceAccessDisabled === false) {
+                    showToast({
+                        title: i18next.t('dialog.deviceAccessReEnabled')
+                    });
+                }
+            });
+        // end of added portion
 
         room.on(
             JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,

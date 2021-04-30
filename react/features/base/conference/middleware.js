@@ -39,7 +39,8 @@ import {
     SEND_TONES,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_ROOM
+    SET_ROOM,
+    SET_USER_DEVICE_ACCESS_DISABLED,
 } from './actionTypes';
 import {
     conferenceFailed,
@@ -116,6 +117,32 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_ROOM:
         return _setRoom(store, next, action);
+
+    case SET_USER_DEVICE_ACCESS_DISABLED:
+        // retrieve JitsiConference object
+        const { conference } = store.getState()['features/base/conference'];
+        
+        // update conference database information to set userDeviceAccessDisabled field
+        const room = store.getState()['features/base/conference'].roomInfo;
+        const baseURL = store.getState()['features/base/connection'].locationURL;
+        const config = {
+            headers: { Authorization: `Bearer ${process.env.VMEETING_API_TOKEN}`}
+          };
+        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+        let data
+        try {
+            axios.patch(`${apiBaseUrl}/conferences/${room._id}`, { userDeviceAccessDisabled: String(action.userDeviceAccessDisabled) }, config).then((resp) => {
+                console.log("Response data is: ", resp.data);
+                data = resp.data;
+            });
+        } catch(err) {    
+            console.log(err);
+        }
+
+        // call a function from JitsiConference that sends userDeviceAccessConfiguration as a message
+        conference.sendUserDeviceAccessConfiguration(action.userDeviceAccessDisabled);
+        break;
 
     case TRACK_ADDED:
     case TRACK_REMOVED:

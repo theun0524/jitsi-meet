@@ -259,10 +259,13 @@ export const SET_SIP_GATEWAY_ENABLED = 'SET_SIP_GATEWAY_ENABLED';
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
 
-// start of added portion
 export const PARTICIPANT_CHAT_DISABLED = 'PARTICIPANT_CHAT_DISABLED';
 
 export const PARTICIPANT_CHAT_ENABLED = 'PARTICIPANT_CHAT_ENABLED';
-// end of added portion
 
 export const SET_NOTICE_MESSAGE = 'SET_NOTICE_MESSAGE';
+
+// const for setting disable on user's device access
+export const SET_USER_DEVICE_ACCESS_DISABLED = 'SET_USER_DEVICE_ACCESS_DISABLED';
+
+export const DEVICE_ACCESS_DISABLED = 'DEVICE_ACCESS_DISABLED';
