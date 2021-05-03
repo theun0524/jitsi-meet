@@ -17,8 +17,11 @@ import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
     getLocalParticipant,
+    getParticipants,
     getParticipantById,
     getPinnedParticipant,
+    grantModerator,
+    isParticipantModerator,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -36,7 +39,8 @@ import {
     SEND_TONES,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_ROOM
+    SET_ROOM,
+    SET_USER_DEVICE_ACCESS_DISABLED,
 } from './actionTypes';
 import {
     conferenceFailed,
@@ -113,6 +117,32 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_ROOM:
         return _setRoom(store, next, action);
+
+    case SET_USER_DEVICE_ACCESS_DISABLED:
+        // retrieve JitsiConference object
+        const { conference } = store.getState()['features/base/conference'];
+        
+        // update conference database information to set userDeviceAccessDisabled field
+        const room = store.getState()['features/base/conference'].roomInfo;
+        const baseURL = store.getState()['features/base/connection'].locationURL;
+        const config = {
+            headers: { Authorization: `Bearer ${process.env.VMEETING_API_TOKEN}`}
+          };
+        const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+        const apiBaseUrl = `${baseURL.origin}${AUTH_API_BASE}`;
+        let data
+        try {
+            axios.patch(`${apiBaseUrl}/conferences/${room._id}`, { userDeviceAccessDisabled: String(action.userDeviceAccessDisabled) }, config).then((resp) => {
+                console.log("Response data is: ", resp.data);
+                data = resp.data;
+            });
+        } catch(err) {    
+            console.log(err);
+        }
+
+        // call a function from JitsiConference that sends userDeviceAccessConfiguration as a message
+        conference.sendUserDeviceAccessConfiguration(action.userDeviceAccessDisabled);
+        break;
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -262,6 +292,21 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     // that should cover the described use case as part of the effort to
     // implement the conferenceWillLeave action for web.
     beforeUnloadHandler = () => {
+        /* for grant moderator
+        const localParticipant = getLocalParticipant(APP.store.getState());
+        const participants = getParticipants(APP.store.getState());
+        const isLastModerator = (participants.length > 1) &&
+                                (participants.filter(participant => participant.role === PARTICIPANT_ROLE.MODERATOR).length === 1);
+
+        if(isLastModerator && isParticipantModerator(localParticipant)){
+            const nextModerator = participants[0].id === localParticipant.id? participants[1].id : participants[0].id;
+            console.log(nextModerator);
+            dispatch(grantModerator(nextModerator));
+            dispatch(conferenceWillLeave(conference));
+        }
+        else{
+            dispatch(conferenceWillLeave(conference));
+        }*/
         dispatch(conferenceWillLeave(conference));
     };
     window.addEventListener('beforeunload', beforeUnloadHandler);

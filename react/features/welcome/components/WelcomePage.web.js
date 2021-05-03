@@ -1,9 +1,12 @@
 /* global APP, interfaceConfig, process */
 
+import Badge from '@atlaskit/badge';
+import Banner from '@atlaskit/banner';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
+import { map, trim } from 'lodash';
 import React from 'react';
 
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
@@ -21,7 +24,8 @@ import { openSettingsDialog } from '../../settings/actions';
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import s from './WelcomePage.module.scss';
-import { showSweetAlert } from '../../notifications';
+import { NOTIFICATION_TYPE, showSweetAlert } from '../../notifications';
+//import alarmImg from '../../../../resources/img/appstore-badge.png';
 
 /**
  * The pattern used to validate room name.
@@ -31,6 +35,7 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
+const DEFAULT_TENANT = process.env.DEFAULT_SITE_ID;
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -69,7 +74,8 @@ class WelcomePage extends AbstractWelcomePage {
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
             selectedTab: 0,
             savedNotification: jitsiLocalStorage.getItem('saved_notification'),
-            submitting: false
+            submitting: false,
+            currentTenant: props._jwt.tenant || DEFAULT_TENANT
         };
 
         /**
@@ -118,6 +124,7 @@ class WelcomePage extends AbstractWelcomePage {
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._onRoomInput = this._onRoomInput.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
@@ -126,6 +133,8 @@ class WelcomePage extends AbstractWelcomePage {
         this._onTabSelected = this._onTabSelected.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
+        this._setEditTenant = this._setEditTenant.bind(this);
+        this._handleKeyPress = this._handleKeyPress.bind(this);
     }
 
     /**
@@ -155,6 +164,14 @@ class WelcomePage extends AbstractWelcomePage {
                 this._additionalToolbarContentTemplate.content.cloneNode(true)
             );
         }
+
+        if (!DEFAULT_TENANT) {
+            showSweetAlert({
+                appearance: NOTIFICATION_TYPE.ERROR,
+                descriptionKey: `dialog.invalidBuildEnvironment`,
+                titleKey: 'dialog.error'
+            });
+        }
     }
 
     /**
@@ -167,6 +184,7 @@ class WelcomePage extends AbstractWelcomePage {
         super.componentWillUnmount();
 
         document.body.classList.remove('welcome-page');
+        document.removeEventListener('keyup', this._handleKeyPress);
     }
 
     componentDidUpdate() {
@@ -229,12 +247,12 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { _moderatedRoomServiceUrl, _user, t } = this.props;
-        const { submitting } = this.state;
+        const { submitting, editTenant, currentTenant, inputTenant, room } = this.state;
         const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
-        const showResponsiveText = this._shouldShowResponsiveText();
         const buttons = [];
+        const [ tenant ] = room.split('/');
 
         if (_user) {
             if (_user.isAdmin) {
@@ -262,6 +280,11 @@ class WelcomePage extends AbstractWelcomePage {
                                     src = { _user.avatarURL } />
                             )}
                             { _user.name }
+                            { !(_user.email_verified) && (
+                                <div className = {s.badge}>
+                                    <Badge appearance="important">{1}</Badge>
+                                </div>
+                            )}
                         </div>
                     }
                     triggerType = 'button'>
@@ -275,6 +298,11 @@ class WelcomePage extends AbstractWelcomePage {
                             className = {s.menuItem}
                             href = { `${AUTH_PAGE_BASE}/account` }>
                             { t('welcomepage.account') }
+                            {!(_user.email_verified) && (
+                                <div className = {s.badge}>
+                                    <Badge appearance="important">{1}</Badge>
+                                </div>
+                            )}
                         </DropdownItem>
                         <DropdownItem
                             className = {s.menuItem}
@@ -312,7 +340,9 @@ class WelcomePage extends AbstractWelcomePage {
         return (
             <div
                 className = { `${s.welcome} ${showAdditionalContent
-                    ? 'with-content' : 'without-content'}` }
+                    ? 'with-content' : 'without-content'}`
+                }
+                onClick = { e => this._setEditTenant(e, false) }
                 id = 'welcome_page'>
                 <div className = {s.header}>
                     <div className = {s.container}>
@@ -345,6 +375,13 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                 </div>
                 <div className = {s.welcomeContent}>
+                    { config.noticeMessage && (
+                        <div className = {s.banner}>
+                            <Banner appearance="announcement" isOpen>
+                                {config.noticeMessage}
+                            </Banner>
+                        </div>
+                    )}
                     <div className = {s.bgWrapper}>
                         <div className = {s.contentWrapper}>
                             <div className = {s.introWrapper}>
@@ -358,32 +395,44 @@ class WelcomePage extends AbstractWelcomePage {
                                     </p>
                                 </div>
                                 <div className = {s.enterRoom}>
-                                    <div className = {s.enterRoomInputContainer}>
+                                    <div className = {`${s.enterRoomInputContainer} ${editTenant ? s.editTenant : ''}`}>
+                                        <div
+                                            className = {s.tenant}
+                                            onClick = { e => this._setEditTenant(e, true) }>
+                                            <span>{ inputTenant || currentTenant }</span>
+                                            <span>/</span>
+                                        </div>
                                         <form onSubmit = { this._onFormSubmit }>
                                             <input
                                                 autoFocus = { true }
                                                 className = {s.enterRoomInput}
                                                 id = 'enter_room_field'
                                                 onChange = { this._onRoomChange }
+                                                onClick = { e => e.stopPropagation() }
+                                                onInput = { this._onRoomInput }
                                                 pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
                                                 placeholder = { this.state.roomPlaceholder }
                                                 ref = { this._setRoomInputRef }
                                                 title = { t('welcomepage.roomNameAllowedChars') }
-                                                type = 'text'
-                                                value = { this.state.room } />
+                                                type = 'text' />
                                             { this._renderInsecureRoomNameWarning() }
                                         </form>
                                     </div>
-                                    <div
-                                        className = {s.welcomePageButton}
-                                        id = 'enter_room_button'
-                                        onClick = { this._onFormSubmit }>
-                                        {
-                                            showResponsiveText
-                                                ? t('welcomepage.goSmall')
-                                                : t('welcomepage.go')
-                                        }
-                                    </div>
+                                    { tenant && tenant !== currentTenant ? (
+                                        <div
+                                            className = {`${s.welcomePageButton} ${s.disabled}`}
+                                            id = 'enter_room_button'
+                                            onClick = { this._onFormSubmit }>
+                                            { t('welcomepage.join') }
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className = {s.welcomePageButton}
+                                            id = 'enter_room_button'
+                                            onClick = { this._onFormSubmit }>
+                                            { t('welcomepage.go') }
+                                        </div>
+                                    )}
                                     { _moderatedRoomServiceUrl && (
                                         <div id = 'moderated-meetings'>
                                             <p>
@@ -395,6 +444,9 @@ class WelcomePage extends AbstractWelcomePage {
                                             </p>
                                         </div>
                                     ) }
+                                </div>
+                                <div className = {s.helpMessage}>
+                                    {t('welcomepage.enterRoomTitle')}
                                 </div>
                             </div>
                             <div className = {s.headerImage}>
@@ -457,6 +509,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onFormSubmit(event) {
         event.preventDefault();
+        event.stopPropagation();
 
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
@@ -474,7 +527,23 @@ class WelcomePage extends AbstractWelcomePage {
      * @protected
      */
     _onRoomChange(event) {
-        super._onRoomChange(event.target.value);
+        event.stopPropagation();
+        let [ tenant, room ] = event.target.value.split('/');
+        if (typeof room === 'undefined') {
+            room = tenant;
+            tenant = this.state.currentTenant;
+        }
+        super._onRoomChange(`${tenant}/${room}`);
+    }
+
+    _onRoomInput(event) {
+        let [ tenant, room ] = this._roomInputRef.value.split('/');
+        const { currentTenant } = this.state;
+
+        console.log('_onRoomInput:', tenant, room);
+        if (typeof room !== 'undefined') {
+            this.setState({ inputTenant: tenant });
+        }
     }
 
     /**
@@ -489,6 +558,48 @@ class WelcomePage extends AbstractWelcomePage {
         this.setState({ selectedTab: tabIndex });
     }
 
+    _setEditTenant(e, value) {
+        const { currentTenant, inputTenant, generatedRoomname } = this.state;
+
+        e.stopPropagation();
+
+        if (value) {
+            document.addEventListener('keyup', this._handleKeyPress);
+        } else {
+            document.removeEventListener('keyup', this._handleKeyPress);
+        }
+        if (value) {
+            this._roomInputRef.focus();
+        }
+        this.setState({ editTenant: value });
+
+        let [ tenant, room ] = map(this._roomInputRef.value.split('/'), trim);
+        console.log('_setEditTenant:', value, e.type, tenant, room, generatedRoomname);
+        if (typeof room === 'undefined') {
+            room = tenant;
+        }
+
+        if (value) {
+            this._roomInputRef.value = `${inputTenant || currentTenant}/${room || generatedRoomname}`;
+            this._roomInputRef.selectionStart = 0;
+            this._roomInputRef.selectionEnd = (inputTenant || currentTenant).length;
+            this._clearTimeouts();
+        } else {
+            this._roomInputRef.value = room === generatedRoomname
+                ? '' : room || '';
+            if (!this._roomInputRef.value) {
+                this._updateRoomname();
+            }
+        }
+    }
+
+    _handleKeyPress = ev => {
+        if (ev.key === 'Escape') {
+            this._setEditTenant(ev, false);
+            this._roomInputRef.blur();
+        }
+    }
+
     /**
      * Renders tabs to show previous meetings and upcoming calendar events. The
      * tabs are purposefully hidden on mobile browsers.
@@ -499,18 +610,9 @@ class WelcomePage extends AbstractWelcomePage {
         // if (isMobileBrowser()) {
         //     return null;
         // }
-        const { _calendarEnabled, _recentListEnabled, _user, t } = this.props;
+        const { _calendarEnabled, _recentListEnabled, t } = this.props;
 
         const tabs = [];
-
-        const _dbEnabled = true;
-
-        /*if(_user && _dbEnabled){
-            tabs.push({
-                label: t('welcomepage.dbList'),
-                content: <DBList />
-            });
-        }*/
 
         if (_calendarEnabled) {
             tabs.push({
@@ -601,19 +703,6 @@ class WelcomePage extends AbstractWelcomePage {
             && this._additionalToolbarContentTemplate
             && this._additionalToolbarContentTemplate.content
             && this._additionalToolbarContentTemplate.innerHTML.trim();
-    }
-
-    /**
-     * Returns whether or not the screen has a size smaller than a custom margin
-     * and therefore display different text in the go button.
-     *
-     * @private
-     * @returns {boolean}
-     */
-    _shouldShowResponsiveText() {
-        const { innerWidth } = window;
-
-        return innerWidth <= WINDOW_WIDTH_THRESHOLD;
     }
 }
 

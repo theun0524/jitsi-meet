@@ -219,7 +219,7 @@ export default class RemoteVideo extends SmallVideo {
         if (currentLayout === LAYOUTS.TILE_VIEW) {
             remoteMenuPosition = 'left top';
         } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            remoteMenuPosition = 'left bottom';
+            remoteMenuPosition = 'left middle';
         } else {
             remoteMenuPosition = 'top center';
         }

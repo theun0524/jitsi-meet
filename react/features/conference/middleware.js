@@ -3,6 +3,7 @@ import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_JOINED,
     KICKED_OUT,
+    LEFT_BY_HANGUP_ALL,
     PARTICIPANT_CHAT_DISABLED,
     PARTICIPANT_CHAT_ENABLED,
     conferenceLeft,
@@ -49,6 +50,24 @@ MiddlewareRegistry.register(store => next => action => {
         };
         dispatch(saveErrorNotification({
             descriptionKey: 'dialog.kickTitle',
+            descriptionArguments: args,
+            titleKey: 'dialog.sessTerminated',
+        }));
+
+        dispatch(disconnect(false));
+        break;
+    }
+
+    case LEFT_BY_HANGUP_ALL: {
+        const { dispatch, getState } = store;
+
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, action.args)
+        };
+        console.log(args.participantDisplayName);
+        dispatch(saveErrorNotification({
+            descriptionKey: 'dialog.hangupAllTitle',
             descriptionArguments: args,
             titleKey: 'dialog.sessTerminated',
         }));

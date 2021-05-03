@@ -1,5 +1,6 @@
 // @flow
 
+import { debounce } from 'lodash';
 import React from 'react';
 
 import { FieldTextStateless } from '@atlaskit/field-text';
@@ -409,7 +410,7 @@ class Chat extends AbstractChat<Props> {
         hlClass = hlClass || "highlight-search-text";
         term = term instanceof Array ? term.join("|") : term;
         const highlighter = a => `<span class="${hlClass}">${a}</span>`;
-        const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+        // const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
         
         for (let i=0; i < usrmsgs.length; i += 1) {
             //loop for each individual chat message
@@ -418,7 +419,7 @@ class Chat extends AbstractChat<Props> {
 
             // replace the inner text with highlighted portion
             node.innerHTML = node.innerHTML.replace(re, highlighter);
-            toHtml(node.parentElement);
+            // toHtml(node.parentElement); // this line was replacing DOM for parent element which contained chat pop-up menu
         }
     }
 
@@ -444,8 +445,6 @@ class Chat extends AbstractChat<Props> {
                 animation: false });
         }
 
-        // remove event listener on key press escape
-        
     }
 
     resetSearchResultIndex = () => {
@@ -458,7 +457,7 @@ class Chat extends AbstractChat<Props> {
         document.removeEventListener('keyup', this._nextResult);
     }
 
-    _nextResult = async(ev) => {
+    _nextResult = debounce(async (ev) => {
         const { t } = this.props;
         // get highlighted elements
         const spanTags = document.getElementsByClassName("highlight-search-text");
@@ -466,10 +465,10 @@ class Chat extends AbstractChat<Props> {
         await this.setState({ currentIdx : this.state.searchResultIndex + 1 });
         await this.setState({ searchResultIndex: this.state.currentIdx });
 
-        if(this.state.searchResultCount > 0 && ev.key === "Enter") {
+        if (this.state.searchResultCount > 0 && ev.key === "Enter") {
 
             // to keep in the loop
-            if(this.state.currentIdx >= this.state.searchResultCount) {
+            if (this.state.currentIdx >= this.state.searchResultCount) {
                 
                 this.setState({ currentIdx: -1 });
                 await this.setState({ searchResultIndex: this.state.currentIdx });
@@ -488,7 +487,7 @@ class Chat extends AbstractChat<Props> {
             // add additional highlighting style to identify the current item
             spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].style.setProperty('background','#ec9038','')
         }
-    }
+    }, 100);
 
     _renderPanelContent: () => React$Node | null;
 

@@ -62,6 +62,10 @@ body {
     cursor: pointer;
 }
 
+.jitsi-icon.red svg {
+    fill: #ff0000;
+}
+
 /**
  * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
  * preventing transparency in filmstrip-only mode. The selector chosen to
@@ -209,8 +213,4 @@ form {
 ::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, .5);
     border-radius: 4px;
-}
-
-body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
-    overflow-y: visible !important;
 }

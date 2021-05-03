@@ -1,7 +1,7 @@
 /* @flow */
+/* global $ */
 
 import React, { Component } from 'react';
-import Swal from 'sweetalert2';
 
 import { getConferenceName, getConferenceTimeRemained } from '../../../base/conference/functions';
 import { Icon, IconEdit } from '../../../base/icons';
@@ -17,6 +17,7 @@ import ParticipantsCount from './ParticipantsCount';
 
 import s from './Subject.module.scss';
 import { setSubject } from '../../../base/conference';
+import { showConfirmDialog } from '../../../notifications';
 
 /**
  * The type of the React {@code Component} props of {@link Subject}.
@@ -103,14 +104,18 @@ class Subject extends Component<Props> {
     }
 
     _onEditSubject() {
-        const { dispatch, t } = this.props;
+        const { _subject, dispatch, t } = this.props;
 
-        Swal.fire({
+        showConfirmDialog({
             text: t('dialog.changeSubject'),
             input: 'text',
+            inputValue: _subject,
             showCancelButton: true,
             confirmButtonText: t('dialog.Change'),
-            cancelButtonText: t('dialog.Cancel')
+            cancelButtonText: t('dialog.Cancel'),
+            didOpen: () => {
+                $('.swal2-input').select();
+            }
         }).then(result => {
             if (result.isConfirmed) {
                 dispatch(setSubject(result.value));
