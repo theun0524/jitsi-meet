@@ -245,7 +245,7 @@ export function appNavigate(uri: ?string) {
         // host가 지정된 경우, host 값이 true인 경우만 방장으로 참석한다.
         if (room &&
             pathname !== '/' &&
-            window.location.pathname !== '/' &&
+            window.location.pathname === pathname &&
             (!has(params, 'host') || params.host === 'true')
         ) {
             let apiUrl;
