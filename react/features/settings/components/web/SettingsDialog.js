@@ -3,10 +3,6 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { Component } from 'react';
 
-import {
-    BackgroundSelection,
-    submitBackgroundSelectionTab
-} from '../../../background-selection';
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
@@ -19,7 +15,6 @@ import {
 import { submitMoreTab, submitProfileTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import { getMoreTabProps, getProfileTabProps } from '../../functions';
-import { getUserSelectedCameraDeviceId } from '../../../base/settings';
 
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
@@ -184,23 +179,6 @@ function _mapStateToProps(state) {
             submit: submitProfileTab
         });
     }
-
-    if (showBackgroundSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.BACKGROUND,
-            component: BackgroundSelection,
-            label: 'settings.background',
-            props: {
-                selectedVideoInputId: getUserSelectedCameraDeviceId(state),
-                selectedBackgroundId: _user?.background || jitsiLocalStorage.getItem('background') || '',
-                _user,
-                _jwt,
-            },
-            styles: 'settings-pane backgrounds-pane',
-            submit: submitBackgroundSelectionTab
-        });
-    }
-
 
     if (showCalendarSettings) {
         tabs.push({
