@@ -15,11 +15,13 @@ import { Icon, IconWarning } from '../../base/icons';
 import { setJWT } from '../../base/jwt';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { openDialog } from '../../base/dialog';
 import { CalendarList } from '../../calendar-sync';
 import { NotificationsContainer } from '../../notifications/components';
 import { RecentList } from '../../recent-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
+import { VirtualBackgroundDialog } from '../../virtual-background';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
@@ -132,6 +134,7 @@ class WelcomePage extends AbstractWelcomePage {
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
+        this._onVirtualBackground = this._onVirtualBackground.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
         this._setEditTenant = this._setEditTenant.bind(this);
@@ -227,6 +230,12 @@ class WelcomePage extends AbstractWelcomePage {
         });
     }
 
+    _onVirtualBackground(){
+        const { dispatch } = this.props;
+        
+        dispatch(openDialog(VirtualBackgroundDialog));
+    }
+
     /**
      * Settings handler.
      *
@@ -304,6 +313,11 @@ class WelcomePage extends AbstractWelcomePage {
                                     <Badge appearance="important">{1}</Badge>
                                 </div>
                             )}
+                        </DropdownItem>
+                        <DropdownItem
+                            className = {s.menuItem}
+                            onClick = { this._onVirtualBackground }>
+                            { t('toolbar.virtualBackground') }
                         </DropdownItem>
                         <DropdownItem
                             className = {s.menuItem}
