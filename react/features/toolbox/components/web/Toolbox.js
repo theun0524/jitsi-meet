@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { filter, keyBy, map } from 'lodash';
+import { keyBy } from 'lodash';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
@@ -12,9 +12,6 @@ import {
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-
-import { appNavigate } from '../../../app/actions';
-import { disconnect } from '../../../base/connection';
 
 import {
     IconChat,
@@ -30,21 +27,19 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
-import { Tooltip } from '../../../base/tooltip';
 import { isHost } from '../../../base/jwt';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
-    grantModerator,
     participantUpdated,
     PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem, HangupMenuItem, ModeratorSelectionItem } from '../../../base/toolbox/components';
+import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
-import { CHAT_SIZE, ChatCounter, toggleChat, sendHangupMessage } from '../../../chat';
+import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -85,9 +80,6 @@ import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
     setOverflowMenuVisible,
-    setHangupMenuVisible,
-    setModeratorSelectionVisible,
-    setNextModerator,
     setToolbarHovered
 } from '../../actions';
 import { isToolboxVisible } from '../../functions';
@@ -96,8 +88,6 @@ import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
-import HangupOptionsMenu from './HangupOptionsMenu';
-import ModeratorSelectionMenu from './ModeratorSelectionMenu';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
@@ -288,10 +278,6 @@ class Toolbox extends Component<Props, State> {
         this._onSetHangupMenuVisible = this._onSetHangupMenuVisible.bind(this);
         this._onSetModeratorSelectionVisible = this._onSetModeratorSelectionVisible.bind(this);
 
-        this._onHangupAll = this._onHangupAll.bind(this);
-        this._onHangupMe = this._onHangupMe.bind(this);
-        this._onModeratorSelection = this._onModeratorSelection.bind(this);
-        this._onSubmitModeratorSelection = this._onSubmitModeratorSelection.bind(this);
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
         this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
         this._onShortcutToggleRaiseHand = this._onShortcutToggleRaiseHand.bind(this);
@@ -819,62 +805,6 @@ class Toolbox extends Component<Props, State> {
         this._doToggleScreenshare();
     }
 
-
-    _onHangupMe: () => void;
-
-    _onHangupMe() {
-        const { _isLastModerator } = this.props;
-
-        if(!_isLastModerator){
-            // FIXME: these should be unified.
-            if (navigator.product === 'ReactNative') {
-                this.props.dispatch(appNavigate(undefined));
-            } else {
-                this.props.dispatch(disconnect(true));
-            }
-        }
-    }
-
-    _onHangupAll: () => void;
-
-    _onHangupAll() {
-        this.props.dispatch(sendHangupMessage());
-    }
-
-    _onModeratorSelection: () => void;
-
-    _onModeratorSelection(id) {
-        let selected = this.props._selectedModerator;
-
-        if(selected === id){
-            selected = '';
-        }
-        else{
-            selected = id;
-        }
-
-        this.props.dispatch(setNextModerator(selected));
-    }
-
-    _onSubmitModeratorSelection: () => void;
-
-    _onSubmitModeratorSelection() {
-        let moderatorCandidate = this.props._selectedModerator;
-
-        if(moderatorCandidate === '')
-            return;
-
-        this.props.dispatch(grantModerator(moderatorCandidate));
-
-        // FIXME: these should be unified.
-        if (navigator.product === 'ReactNative') {
-            this.props.dispatch(appNavigate(undefined));
-        } else {
-            this.props.dispatch(disconnect(true));
-        }
-    }
-
-
     _onToolbarOpenFeedback: () => void;
 
     /**
@@ -1280,99 +1210,6 @@ class Toolbox extends Component<Props, State> {
         ];
     }
 
-    _renderHangupOptionsMenuContent() {
-        const {
-            _isLastModerator,
-            _moderatorSelectionVisible,
-            t
-        } = this.props;
-
-        const moderatorSelectionContent = this._renderModeratorSelectionContent();
-
-        let items = [
-            <HangupMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.hangupAll') }
-                    icon = { IconPresentation }
-                    key = 'hangupAll'
-                    warning = { true }
-                    onClick = { this._onHangupAll }
-                    text = { t('toolbar.hangupAll') } />
-        ];
-
-        items.push(
-            _isLastModerator ? (
-                <ModeratorSelectionMenu
-                    isOpen = { _moderatorSelectionVisible }
-                    onVisibilityChange = { this._onSetModeratorSelectionVisible }>
-                    <ul
-                        aria-label = { t('toolbar.accessibilityLabel.moreActionsMenu') }
-                        className = 'moderator-selection-menu'>
-                        { moderatorSelectionContent }
-                    </ul>
-                </ModeratorSelectionMenu>
-            ) : (
-                <HangupMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.hangup') }
-                    icon = { IconOpenInNew }
-                    key = 'hangup'
-                    onClick = { this._onHangupMe }
-                    text = { t('toolbar.hangup') } />
-            )
-        );
-        
-        return items;
-    }
-
-    _renderModeratorSelectionContent() {
-        const {
-            _participants,
-            _localParticipantID,
-            t
-        } = this.props;
-
-        if(_participants.length <= 1)
-            return [];
-
-        let items = [];
-
-        for (let i = 0; i < _participants.length; i++){
-            if (_participants[i].id === _localParticipantID)
-                continue;
-
-            let item = <ModeratorSelectionItem
-                key = { _participants[i].id }
-                accessibilityLabel = { t('toolbar.accessibilityLabel.moderatorSelectionList') }
-                onClick = { this._onModeratorSelection }
-                text = { _participants[i].name }
-                { ..._participants[i] } />;
-
-            items.push(item);
-        }
-
-        /*items = map(_participants, item => (
-            <ModeratorSelectionItem
-                key = { item.id }
-                accessibilityLabel = { t('toolbar.accessibilityLabel.moderatorSelectionList') }
-                onClick = { this._onModeratorSelection }
-                text = { item.name }
-                { ...item } />
-        ));*/
-
-        let last_item = 
-            <li
-                aria-label = { t('toolbar.accessibilityLabel.grantModerator') }
-                className = 'moderator-selection-menu-item-warning'
-                onClick =  { this._onSubmitModeratorSelection }>
-                <div className = 'text'>
-                    { t('toolbar.selectModeratorAndLeave') }
-                </div>
-            </li>;
-
-        items.push(last_item);
-
-        return items;
-    }
-
     /**
      * Renders a list of buttons that are moved to the overflow menu.
      *
@@ -1503,7 +1340,6 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
-        const hangupOptionsMenuContent = this._renderHangupOptionsMenuContent();
 
         const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
@@ -1628,20 +1464,8 @@ class Toolbox extends Component<Props, State> {
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
                     { this._shouldShowButton('hangup') && (
-                        _showHangupMenu ? (
-                            <HangupOptionsMenu
-                                isOpen = { _hangupOptionsMenuVisible }
-                                onVisibilityChange = { this._onSetHangupMenuVisible }>
-                                <ul
-                                    aria-label = { t(toolbarAccLabel) }
-                                    className = 'hangup-menu'>
-                                    { hangupOptionsMenuContent }
-                                </ul>
-                            </HangupOptionsMenu> 
-                        ) : (
-                            <HangupButton
-                                visible = { this._shouldShowButton('hangup') } />
-                        )
+                        <HangupButton
+                            visible = { this._shouldShowButton('hangup') } />
                     ) }
                     { this._renderVideoButton() }
                 </div>

@@ -63,7 +63,6 @@ class HangupMenuItem extends Component<Props> {
      */
     static defaultProps = {
         tooltipPosition: 'left',
-        warning: false,
         disabled: false
     };
 
@@ -74,16 +73,12 @@ class HangupMenuItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { accessibilityLabel, disabled, elementAfter, onClick } = this.props;
-
-        let className = this.props.warning? 'hangup-menu-item-warning' : 'hangup-menu-item';
-        className += this.props.disabled ? ' disabled' : '';
-        
+        const { accessibilityLabel, className, disabled, elementAfter, onClick } = this.props;
 
         return (
             <li
                 aria-label = { accessibilityLabel }
-                className = { className }
+                className = { `${className}${disabled ? ' disabled' : ''}` }
                 onClick = { disabled ? null : onClick }>
                 <div className = 'text'>
                     { this.props.text }
