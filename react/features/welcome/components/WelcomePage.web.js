@@ -317,7 +317,7 @@ class WelcomePage extends AbstractWelcomePage {
                         <DropdownItem
                             className = {s.menuItem}
                             onClick = { this._onVirtualBackground }>
-                            { t('toolbar.virtualBackground') }
+                            { t('toolbar.selectBackground') }
                         </DropdownItem>
                         <DropdownItem
                             className = {s.menuItem}
