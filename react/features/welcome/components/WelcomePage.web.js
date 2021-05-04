@@ -37,6 +37,7 @@ const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const DEFAULT_TENANT = process.env.DEFAULT_SITE_ID;
 
+
 /**
  * Maximum number of pixels corresponding to a mobile layout.
  * @type {number}
@@ -235,7 +236,7 @@ class WelcomePage extends AbstractWelcomePage {
     _onOpenSettings() {
         const { dispatch } = this.props;
         const defaultTab = SETTINGS_TABS.DEVICES;
-
+       
         dispatch(openSettingsDialog(defaultTab));
     }
 
@@ -280,7 +281,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     src = { _user.avatarURL } />
                             )}
                             { _user.name }
-                            { !(_user.email_verified) && (
+                            { (!_user.email_verified && currentTenant === DEFAULT_TENANT) && (
                                 <div className = {s.badge}>
                                     <Badge appearance="important">{1}</Badge>
                                 </div>
@@ -298,7 +299,7 @@ class WelcomePage extends AbstractWelcomePage {
                             className = {s.menuItem}
                             href = { `${AUTH_PAGE_BASE}/account` }>
                             { t('welcomepage.account') }
-                            {!(_user.email_verified) && (
+                            {(!_user.email_verified && currentTenant === DEFAULT_TENANT) && (
                                 <div className = {s.badge}>
                                     <Badge appearance="important">{1}</Badge>
                                 </div>
