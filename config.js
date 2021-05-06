@@ -734,6 +734,7 @@ var config = {
     // disableRemoteUnmute: false,
     // disableRemoteUnmuteVideo: false,
     // disableSortable: false,
+    // hideEmailSetting: false,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
