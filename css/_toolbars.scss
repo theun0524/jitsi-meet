@@ -133,6 +133,33 @@
                             fill: #fff;
                         }
                     }
+
+                    &.disabled, .disabled & {
+                        cursor: initial;
+                        color: #fff;
+                        background-color: #a4b8d1;
+                    }
+    
+                    svg {
+                        fill: #5e6d7a;
+                    }
+                }
+            }
+
+            .toolbox-button-hangup {
+                .toolbox-icon {
+                    align-items: center;
+                    cursor: pointer;
+                    background-color: $hangupColor;
+                    border-radius: 50%;
+                    border: 1px solid $hangupColor;
+                    margin: 0px 4px;
+                    width: 40px;
+                    height: 40px;
+        
+                    &:hover {
+                        background-color: $hangupColor;
+                    }
                 }
             }
         }
@@ -157,6 +184,7 @@
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
+                text-align: center;
                 height: 22px;
                 padding: 5px 12px;
 
@@ -180,38 +208,6 @@
                 &.disabled {
                     cursor: initial;
                     color: #3b475c;
-                }
-            }
-
-            .beta-tag {
-                background: $overflowMenuItemColor;
-                border-radius: 2px;
-                color: $overflowMenuBG;
-                font-size: 11px;
-                font-weight: bold;
-                margin-left: 8px;
-                padding: 0 6px;
-            }
-
-            .overflow-menu-item-icon {
-                margin-right: 10px;
-
-                i {
-                    display: inline;
-                    font-size: 24px;
-                }
-
-                i:hover {
-                    background-color: initial;
-                }
-
-                img {
-                    max-width: 24px;
-                    max-height: 24px;
-                }
-
-                svg {
-                    fill: #B8C7E0 !important;
                 }
             }
 

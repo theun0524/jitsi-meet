@@ -1,0 +1,115 @@
+.virtual-background-dialog {
+    display: flex;
+    max-width: 370px;
+    cursor: pointer;
+    align-items: center;
+    flex-wrap: wrap;
+
+    &> div {
+        margin-bottom: 5px;
+    }
+
+    .thumbnail {
+        border-radius: 10px;
+        object-fit: cover;
+        padding: 5px;
+        height: 40px;
+        width: 40px;
+    }
+
+    .thumbnail:hover ~ .delete-image-icon {
+        display: block;
+    }
+    .thumbnail-selected {
+        border-radius: 10px;
+        object-fit: cover;
+        padding: 5px;
+        height: 40px;
+        width: 40px;
+        border: 2px solid #a4b8d1;
+    }
+    .blur-selected {
+        border-radius: 10px;
+        border: 2px solid #a4b8d1;
+    }
+    .virtual-background-none {
+        padding: 3px;
+        border-radius: 10px;
+    }
+    .none-selected {
+        padding: 3px;
+        border-radius: 10px;
+        border: 2px solid #a4b8d1;
+    }
+    .virtual-background-none, .none-selected {
+        > div {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px;
+            height: 34px;
+            width: 34px;
+            border-radius: 10px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 35px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+    }
+}
+
+.modal-dialog-form .virtual-background-loading {
+    overflow: hidden;
+}
+.file-upload-btn {
+    display: none;
+}
+.file-upload-container {
+    padding: 0px;
+}
+.file-loading {
+    display: inline-flex;
+    padding: 4px;
+    height: 43px;
+    width: 43px;
+    border-radius: 10px;
+    border: 1px solid #a4b8d1;
+    line-height: 30px;
+    margin: 0 4px 4px 4px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+}
+.custom-file-upload {
+    font-size: x-large;
+    font-weight: bold;
+    display: inline-block;
+    padding: 4px;
+    height: 43px;
+    width: 43px;
+    border-radius: 10px;
+    border: 1px solid #a4b8d1;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+    margin: 0 4px 4px 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.delete-image-icon {
+    position: absolute;
+    display: none;
+    left: 36;
+    bottom: 36;
+}
+.delete-image-icon:hover {
+    display: block;
+}
+
+.thumbnail-container {
+    position: relative;
+}
+
+.loading-content-text{
+  margin-right: 15px;
+}

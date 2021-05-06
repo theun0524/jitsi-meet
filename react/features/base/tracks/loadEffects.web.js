@@ -1,7 +1,8 @@
 // @flow
 
-import { getBlurEffect } from '../../blur';
+import { getAuthUrl } from '../../../api/url';
 import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
+import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 
 import logger from './logger';
 
@@ -13,11 +14,13 @@ import logger from './logger';
  */
 export default function loadEffects(store: Object): Promise<any> {
     const state = store.getState();
+    const virtualBackground = state['features/virtual-background'];
+    const apiBase = getAuthUrl(state);
 
-    const blurPromise = state['features/blur'].blurEnabled
-        ? getBlurEffect()
+    const backgroundPromise = virtualBackground.backgroundEffectEnabled
+        ? createVirtualBackgroundEffect({ ...virtualBackground, apiBase })
             .catch(error => {
-                logger.error('Failed to obtain the blur effect instance with error: ', error);
+                logger.error('Failed to obtain the background effect instance with error: ', error);
 
                 return Promise.resolve();
             })
@@ -31,5 +34,5 @@ export default function loadEffects(store: Object): Promise<any> {
             })
         : Promise.resolve();
 
-    return Promise.all([ blurPromise, screenshotCapturePromise ]);
+    return Promise.all([ backgroundPromise, screenshotCapturePromise ]);
 }

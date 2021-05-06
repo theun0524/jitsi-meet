@@ -10,8 +10,8 @@
         display: flex;
         flex: 0;
         flex-direction: row;
-        justify-content: space-between;
-        padding-top: 32px;
+        // justify-content: space-between;
+        // padding-top: 32px;
 
         .recording-title {
             display: inline-flex;
@@ -38,7 +38,7 @@
         width: 32px;
         height: 32px;
         object-fit: contain;
-        background-color: white;
+        // background-color: white;
     }
 
     .recording-switch {

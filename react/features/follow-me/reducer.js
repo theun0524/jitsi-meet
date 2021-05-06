@@ -26,7 +26,11 @@ ReducerRegistry.register(
             return newState;
         }
         case SET_FOLLOW_ME_STATE: {
-            return set(state, 'state', action.state);
+            return {
+                ...state,
+                state: action.state,
+                value: action.value
+            };
         }
         }
 

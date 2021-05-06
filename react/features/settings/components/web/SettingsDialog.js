@@ -1,11 +1,8 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { Component } from 'react';
 
-import {
-    BackgroundSelection,
-    submitBackgroundSelectionTab
-} from '../../../background-selection';
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
@@ -18,11 +15,11 @@ import {
 import { submitMoreTab, submitProfileTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import { getMoreTabProps, getProfileTabProps } from '../../functions';
-import { getUserSelectedCameraDeviceId } from '../../../base/settings';
 
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
+import { isMobileBrowser } from '../../../base/environment/utils';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -143,7 +140,7 @@ function _mapStateToProps(state) {
     const _user = state['features/base/jwt'].user;
     const _jwt = state['features/base/jwt'].jwt;
     const showBackgroundSettings
-        = configuredTabs.includes('background') && !!_user;
+        = configuredTabs.includes('background') && !isMobileBrowser();
     const tabs = [];
 
     if (showDeviceSettings) {
@@ -183,21 +180,6 @@ function _mapStateToProps(state) {
         });
     }
 
-    if (showBackgroundSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.BACKGROUND,
-            component: BackgroundSelection,
-            label: 'settings.background',
-            props: {
-                selectedVideoInputId: getUserSelectedCameraDeviceId(state),
-                _user,
-                _jwt,
-            },
-            styles: 'settings-pane backgrounds-pane',
-            submit: submitBackgroundSelectionTab
-        });
-    }
-
     if (showCalendarSettings) {
         tabs.push({
             name: SETTINGS_TABS.CALENDAR,
@@ -222,7 +204,9 @@ function _mapStateToProps(state) {
                     followMeEnabled: tabState.followMeEnabled,
                     showPrejoinPage: tabState.showPrejoinPage,
                     startAudioMuted: tabState.startAudioMuted,
-                    startVideoMuted: tabState.startVideoMuted
+                    startVideoMuted: tabState.startVideoMuted,
+                    userDeviceAccessDisabled: tabState.userDeviceAccessDisabled,
+                    // conferenceUserDeviceAccessDisabled: tabState.conferenceUserDeviceAccessDisabled
                 };
             },
             styles: 'settings-pane more-pane',

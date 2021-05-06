@@ -90,7 +90,7 @@ var config = {
     // Audio
 
     // Disable measuring of audio levels.
-    disableAudioLevels: true,
+    disableAudioLevels: false,
 
     // audioLevelsInterval: 200,
 
@@ -376,7 +376,7 @@ var config = {
     // enableCalendarIntegration: false,
 
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-    // prejoinPageEnabled: false,
+    prejoinPageEnabled: false,
 
     // If true, shows the unsafe room name warning label when a room name is
     // deemed unsafe (due to the simplicity in the name) and a password is not
@@ -586,9 +586,6 @@ var config = {
     //     disableKick: true
     // },
 
-    // If set to true all muting operations of remote participants will be disabled.
-    // disableRemoteMute: true,
-
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
@@ -729,6 +726,14 @@ var config = {
 
     // Sets the conference subject
     // subject: 'Conference Subject',
+
+    // enableChatControl: true,
+
+    // disableRemoteMute: true,
+    // disableRemoteMuteVideo: false,
+    // disableRemoteUnmute: false,
+    // disableRemoteUnmuteVideo: false,
+    disableSortable: false,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

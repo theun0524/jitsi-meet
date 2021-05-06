@@ -72,3 +72,27 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
 
     return status;
 }
+
+/**
+ * Returns the recording is running or not.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @param {Boolean} fromMe - Whether recording initiated from me.
+ * @returns {Boolean}
+ */
+export function isRecording(state: Object, fromMe: Boolean) {
+    const session = getActiveSession(state, JitsiRecordingConstants.mode.FILE);
+    return fromMe ? (session && !session.initiator) : Boolean(session);
+}
+
+/**
+ * Returns the streaming is running or not.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @param {Boolean} fromMe - Whether streaming initiated from me.
+ * @returns {Boolean}
+ */
+export function isStreaming(state: Object, fromMe: Boolean) {
+    const session = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+    return fromMe ? (session && !session.initiator) : Boolean(session);
+}

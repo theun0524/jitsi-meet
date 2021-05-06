@@ -1,9 +1,9 @@
 /* @flow */
 
-import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { Icon } from '../../../base/icons';
+import { Tooltip } from '../../../base/tooltip';
 import AbstractToolbarButton from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
@@ -22,7 +22,10 @@ type Props = AbstractToolbarButtonProps & {
      * From which direction the tooltip should appear, relative to the
      * button.
      */
-    tooltipPosition: string
+    tooltipPosition: string,
+
+    
+    type: string
 };
 
 /**
@@ -37,7 +40,8 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      * @static
      */
     static defaultProps = {
-        tooltipPosition: 'top'
+        tooltipPosition: 'top',
+        type: 'default'
     };
 
     /**
@@ -84,11 +88,12 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      * @returns {ReactElement} The button of this {@code ToolbarButton}.
      */
     _renderButton(children) {
+        let className = this.props.type === 'hangup' ? 'toolbox-button-hangup' : 'toolbox-button';
         return (
             <div
                 aria-label = { this.props.accessibilityLabel }
                 aria-pressed = { this.props.toggled }
-                className = 'toolbox-button'
+                className = {className}
                 onClick = { this.props.onClick }
                 onKeyDown = { this._onKeyDown }
                 role = 'button'

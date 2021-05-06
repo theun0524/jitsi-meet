@@ -62,3 +62,22 @@ export default class AbstractMuteRemoteParticipantDialog<P:Props = Props>
         return true;
     }
 }
+
+/**
+ * Function that maps parts of Redux state tree into component props.
+ *
+ * @param {Object} state - Redux state.
+ * @param {Object} ownProps - Properties of component.
+ * @private
+ * @returns {{
+ *      _audioTrackMuted: boolean
+ *  }}
+ */
+export function _mapStateToProps(state: Object, ownProps: Props) {
+    const tracks = state['features/base/tracks'];
+
+    return {
+        _audioTrackMuted: isRemoteTrackMuted(
+            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID)
+    };
+}

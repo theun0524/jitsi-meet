@@ -1,9 +1,9 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { useState } from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 import {
     Icon,
     IconArrowDownSmall,
@@ -13,7 +13,9 @@ import {
     IconOutlook,
     IconYahoo
 } from '../../../../base/icons';
+import { Tooltip } from '../../../../base/tooltip';
 import { copyText, openURLInBrowser } from '../../../../base/util';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../../../notifications';
 
 type Props = {
 
@@ -38,7 +40,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
+function InviteByEmailSection({ dispatch, inviteSubject, inviteText, t }: Props) {
     const [ isActive, setIsActive ] = useState(false);
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
     const encodedInviteText = encodeURIComponent(inviteText);
@@ -50,6 +52,10 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
      */
     function _onCopyText() {
         copyText(inviteText);
+        dispatch(
+            showNotification({
+                titleKey: 'addPeople.linkCopied'
+            }, NOTIFICATION_TIMEOUT));
     }
 
     /**
@@ -150,4 +156,4 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
     );
 }
 
-export default translate(InviteByEmailSection);
+export default translate(connect()(InviteByEmailSection));

@@ -45,14 +45,14 @@ export function isToolboxVisible(state: Object) {
     const { iAmSipGateway } = state['features/base/config'];
     const {
         alwaysVisible,
-        timeoutID,
+        timer,
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
     const { isOpen } = state['features/chat'];
     const isMobileChatOpen = isMobileBrowser() && isOpen;
 
-    return Boolean(!isMobileChatOpen && !iAmSipGateway && (timeoutID || visible || alwaysVisible
+    return Boolean(!isMobileChatOpen && !iAmSipGateway && (timer || visible || alwaysVisible
                                       || audioSettingsVisible || videoSettingsVisible));
 }
 

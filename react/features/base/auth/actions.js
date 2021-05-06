@@ -1,3 +1,5 @@
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
 import { setJWT } from '../jwt';
 
@@ -13,6 +15,7 @@ export function loadCurrentUser() {
         try {
             const token = tokenLocalStorage.getItem(getState());
             if (token) {
+                jitsiLocalStorage.removeItem('background');
                 dispatch(setJWT(token));
             }
         } catch (e) {

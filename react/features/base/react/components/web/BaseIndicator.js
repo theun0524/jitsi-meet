@@ -1,10 +1,10 @@
 /* @flow */
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
 import { Icon } from '../../../icons';
+import { Tooltip } from '../../../tooltip';
 
 import s from './BaseIndicator.module.scss';
 

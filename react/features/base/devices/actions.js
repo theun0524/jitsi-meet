@@ -143,11 +143,6 @@ export function getAvailableDevices() {
                 dispatch(updateDeviceList(devices));
 
                 resolve(devices);
-
-                setAudioOutputDeviceId(
-                    getUserSelectedOutputDeviceId(getState()),
-                    dispatch
-                );
             });
         } else {
             resolve([]);

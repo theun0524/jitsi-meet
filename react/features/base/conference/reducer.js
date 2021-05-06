@@ -13,6 +13,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
+    CONFERENCE_TIME_REMAINED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
@@ -20,12 +21,14 @@ import {
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
+    SET_NOTICE_MESSAGE,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    DEVICE_ACCESS_DISABLED
 } from './actionTypes';
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
@@ -63,6 +66,9 @@ ReducerRegistry.register(
 
         case CONFERENCE_SUBJECT_CHANGED:
             return set(state, 'subject', action.subject);
+
+        case CONFERENCE_TIME_REMAINED:
+            return set(state, 'conferenceTimeRemained', action.timeRemained);
 
         case CONFERENCE_TIMESTAMP_CHANGED:
             return set(state, 'conferenceTimestamp', action.conferenceTimestamp);
@@ -122,11 +128,27 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+        
+        case DEVICE_ACCESS_DISABLED:
+            return  {
+                ...state, 
+                roomInfo : { 
+                    ...state.roomInfo, 
+                    userDeviceAccessDisabled: action.userDeviceAccessDisabled },
+                userDeviceAccessDisabled: action.userDeviceAccessDisabled
+            };
+
         case SET_PUBLIC_SCOPE_ENABLED:
             return set(
                 state,
                 'roomInfo',
                 { ...state.roomInfo, scope: action.enabled }
+            );
+        case SET_NOTICE_MESSAGE:
+            return set(
+                state,
+                'noticeMessage',
+                action.noticeMessage
             );
         }
 

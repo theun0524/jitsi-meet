@@ -5,12 +5,14 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { openDialog } from '../../base/dialog';
-import { IconMicDisabled } from '../../base/icons';
+import { IconMicDisabled, IconMicrophone } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { isRemoteTrackMuted } from '../../base/tracks';
 
 import { MuteRemoteParticipantDialog } from '.';
+import { muteRemote } from '../actions';
+import { showConfirmDialog } from '../../notifications';
 
 export type Props = AbstractButtonProps & {
 
@@ -41,10 +43,15 @@ export type Props = AbstractButtonProps & {
  * An abstract remote video menu button which mutes the remote participant.
  */
 export default class AbstractMuteButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.remoteMute';
-    icon = IconMicDisabled;
-    label = 'videothumbnail.domute';
-    toggledLabel = 'videothumbnail.muted';
+    constructor(props) {
+        super(props);
+
+        const { mute } = props;
+        this.accessibilityLabel = `toolbar.accessibilityLabel.${mute ? 'remoteMute' : 'remoteUnmute'}`;
+        this.icon = mute ? IconMicDisabled : IconMicrophone;
+        this.label = `videothumbnail.do${mute ? '' : 'un'}mute`;
+        this.toggledLabel = `videothumbnail.${mute ? '' : 'un'}muted`;
+    }
 
     /**
      * Handles clicking / pressing the button, and mutes the participant.
@@ -53,7 +60,7 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, participantID } = this.props;
+        const { mute, dispatch, participantID, t } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'mute.button',
@@ -61,7 +68,17 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
+        showConfirmDialog({
+            cancelButtonText: t('dialog.Cancel'),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            showCancelButton: true,
+            text: t(`dialog.${mute ? '' : 'un'}muteParticipantTitle`)
+        }).then(result => {
+            if (result.isConfirmed) {
+                dispatch(muteRemote(participantID, mute));
+            }
+        });
+        // dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
     }
 
     /**
@@ -70,7 +87,8 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @inheritdoc
      */
     _isDisabled() {
-        return this.props._audioTrackMuted;
+        const { _audioTrackMuted, _disableRemoteUnmute } = this.props;
+        return _disableRemoteUnmute ? _audioTrackMuted : false;
     }
 
     /**
@@ -79,7 +97,8 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @inheritdoc
      */
     _isToggled() {
-        return this.props._audioTrackMuted;
+        const { _audioTrackMuted, _disableRemoteUnmute } = this.props;
+        return _disableRemoteUnmute ? _audioTrackMuted : false;
     }
 }
 
@@ -95,9 +114,11 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const tracks = state['features/base/tracks'];
+    const { disableRemoteUnmute } = state['features/base/config'];
 
     return {
         _audioTrackMuted: isRemoteTrackMuted(
-            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID)
+            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID),
+        _disableRemoteUnmute: disableRemoteUnmute
     };
 }

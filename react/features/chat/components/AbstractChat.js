@@ -103,9 +103,11 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
  */
 export function _mapStateToProps(state: Object) {
     const { isOpen, messages } = state['features/chat'];
+    const { enableChatControl } = state['features/base/config'];
     const _localParticipant = getLocalParticipant(state);
 
     return {
+        _enableChatControl: Boolean(enableChatControl),
         _isOpen: isOpen,
         _messages: messages,
         _showNamePrompt: !_localParticipant?.name

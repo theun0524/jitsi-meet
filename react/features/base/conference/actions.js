@@ -41,6 +41,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     KICKED_OUT,
+    LEFT_BY_HANGUP_ALL,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
@@ -52,7 +53,13 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    PARTICIPANT_CHAT_DISABLED,
+    PARTICIPANT_CHAT_ENABLED,
+    CONFERENCE_TIME_REMAINED,
+    SET_NOTICE_MESSAGE,
+    SET_USER_DEVICE_ACCESS_DISABLED,
+    DEVICE_ACCESS_DISABLED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -80,6 +87,8 @@ declare var APP: Object;
  * @returns {void}
  */
 function _addConferenceListeners(conference, dispatch) {
+    const config = state['features/base/config'];
+
     // A simple logger for conference errors received through
     // the listener. These errors are not handled now, but logged.
     conference.on(JitsiConferenceEvents.CONFERENCE_ERROR,
@@ -108,6 +117,16 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.KICKED,
         (...args) => dispatch(kickedOut(conference, ...args)));
+
+    if (config.enableChatControl) {
+        conference.on(
+            JitsiConferenceEvents.PARTICIPANT_CHAT_DISABLED,
+            (...args) => dispatch(participantChatDisabled(conference, ...args)));
+    
+        conference.on(
+            JitsiConferenceEvents.PARTICIPANT_CHAT_ENABLED,
+            (...args) => dispatch(participantChatEnabled(conference, ...args)));
+    }
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
@@ -200,6 +219,10 @@ function _addConferenceListeners(conference, dispatch) {
             id,
             botType
         })));
+
+    conference.on(
+        JitsiConferenceEvents.NOTICE_MESSAGE,
+        (...args) => dispatch(setNoticeMessage(...args)));
 
     conference.addCommandListener(
         AVATAR_ID_COMMAND,
@@ -320,6 +343,13 @@ export function conferenceSubjectChanged(subject: string) {
     return {
         type: CONFERENCE_SUBJECT_CHANGED,
         subject
+    };
+}
+
+export function conferenceTimeRemained(timeRemained: number) {
+    return {
+        type: CONFERENCE_TIME_REMAINED,
+        timeRemained
     };
 }
 
@@ -504,6 +534,32 @@ export function kickedOut(conference: Object, participant: Object) {
         participant
     };
 }
+
+export function leftByHangupAll(conference: Object, args: Object){
+    return {
+        type: LEFT_BY_HANGUP_ALL,
+        conference,
+        args
+    };
+}
+
+// start of added portion
+export function participantChatDisabled(conference: Object, participant: String) {
+    return {
+        type: PARTICIPANT_CHAT_DISABLED,
+        conference,
+        participant
+    };
+}
+
+export function participantChatEnabled(conference: Object, participant: String) {
+    return {
+        type: PARTICIPANT_CHAT_ENABLED,
+        conference,
+        participant
+    };
+}
+// end of added portion
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.
@@ -752,7 +808,6 @@ export function setStartMutedPolicy(
         startAudioMuted: boolean, startVideoMuted: boolean) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const conference = getCurrentConference(getState());
-
         conference && conference.setStartMutedPolicy({
             audio: startAudioMuted,
             video: startVideoMuted
@@ -762,6 +817,28 @@ export function setStartMutedPolicy(
             onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
     };
 }
+
+// start of added portion
+/**
+ * Sets whether or not remote participants should be disabled to access their devices
+ *
+ * @param {boolean} userDeviceAccessDisabled - whether or not remote participants access to their device is disabled
+ * @returns {Function}
+ */
+export function setUserDeviceAccessDisabled(userDeviceAccessDisabled: boolean) {
+    return {
+        type: SET_USER_DEVICE_ACCESS_DISABLED,
+        userDeviceAccessDisabled
+    }
+}
+
+export function deviceAccessDisabled(userDeviceAccessDisabled: boolean) {
+    return {
+        type: DEVICE_ACCESS_DISABLED,
+        userDeviceAccessDisabled
+    }
+}
+// end of added portion
 
 /**
  * Changing conference subject.
@@ -781,5 +858,12 @@ export function setSubject(subject: string) {
                 subject
             });
         }
+    };
+}
+
+export function setNoticeMessage(noticeMessage: string) {
+    return {
+        type: SET_NOTICE_MESSAGE,
+        noticeMessage
     };
 }

@@ -3,6 +3,7 @@
 import 'jquery';
 import 'jquery-contextmenu';
 import 'jQuery-Impromptu';
+import 'jquery-ui-bundle';
 
 import conference from './conference';
 import API from './modules/API';

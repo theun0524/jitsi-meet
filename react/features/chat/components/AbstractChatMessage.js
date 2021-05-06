@@ -82,7 +82,7 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
         const { message, t } = this.props;
 
         return t('chat.privateNotice', {
-            recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : t('chat.you')
+            recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : t('me')
         });
     }
 }

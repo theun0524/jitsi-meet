@@ -7,9 +7,11 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
+import { isRecording, isStreaming } from '../recording';
 import { shouldDisplayTileView } from '../video-layout/functions';
 
 import { FOLLOW_ME_COMMAND } from './constants';
+import { isFollowMeEnabled } from './functions';
 
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
@@ -61,6 +63,13 @@ StateListenerRegistry.register(
     /* listener */ _sendFollowMeCommand);
 
 /**
+ * Subscribes to changes to the tile view order setting.
+ */
+ StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].order,
+    /* listener */ _sendFollowMeCommand);
+
+/**
  * selector for returning state from redux that should be respected by
  * other participants while follow me is enabled.
  *
@@ -69,13 +78,20 @@ StateListenerRegistry.register(
  */
 export function getFollowMeState(state) {
     const pinnedParticipant = getPinnedParticipant(state);
-
-    return {
+    const followMeState = {
         filmstripVisible: state['features/filmstrip'].visible,
         nextOnStage: pinnedParticipant && pinnedParticipant.id,
         sharedDocumentVisible: state['features/etherpad'].editing,
         tileViewEnabled: shouldDisplayTileView(state)
     };
+
+    // mark sendToRecorder, if followMe is disabled and jibri is running
+    if (!isFollowMeEnabled(state) &&
+        (isRecording(state, true) || isStreaming(state, true))) {
+        followMeState.sendToRecorder = true;
+    }
+
+    return followMeState;
 }
 
 /**
@@ -92,6 +108,7 @@ function _sendFollowMeCommand(
     const conference = getCurrentConference(state);
     const { chatOnlyGuestEnabled, followMeEnabled } = state['features/base/config'];
     const isGuest = !isHost(state);
+    const forceSend = isRecording(state, true) || isStreaming(state, true);
 
     if (!conference) {
         return;
@@ -112,9 +129,9 @@ function _sendFollowMeCommand(
         );
 
         return;
-    } else if (typeof followMeEnabled !== 'undefined') {
+    } if (!forceSend && typeof followMeEnabled !== 'undefined') {
         if (!followMeEnabled) return;
-    } else if (!state['features/base/conference'].followMeEnabled) {
+    } else if (!forceSend && !state['features/base/conference'].followMeEnabled) {
         return;
     } else if (chatOnlyGuestEnabled && isGuest) {
         return;
@@ -122,6 +139,9 @@ function _sendFollowMeCommand(
 
     conference.sendCommand(
         FOLLOW_ME_COMMAND,
-        { attributes: getFollowMeState(state) }
+        {
+            attributes: getFollowMeState(state),
+            value: JSON.stringify(state['features/video-layout'].order)
+        }
     );
 }

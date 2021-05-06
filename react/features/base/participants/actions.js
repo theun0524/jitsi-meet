@@ -1,4 +1,5 @@
-import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT, showNotification, showToast } from '../../notifications';
+import { i18next } from '../i18n';
 import { set } from '../redux';
 
 import {
@@ -7,15 +8,21 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    DISABLE_CHAT_FOR_ALL,
+    DISABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_FOR_ALL,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
+    MODERATOR_ROLE_GRANTED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RECV_VIDEO_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    MUTE_REMOTE_PARTICIPANT_VIDEO
 } from './actionTypes';
 import {
     getLocalParticipant,
@@ -78,6 +85,66 @@ export function kickParticipant(id) {
     return {
         type: KICK_PARTICIPANT,
         id
+    };
+}
+
+/**
+ * Create an action for disabling chat for a participant from the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+    *     type: DISABLE_CHAT_PARTICIPANT,
+    *     id: string
+    * }}
+    */
+export function disableChatForParticipant(id) {
+    return {
+        type: DISABLE_CHAT_PARTICIPANT,
+        id
+    };
+}
+
+/**
+ * Create an action for disabling chat for all participants in the conference.
+ *
+ * @param {} - NO params
+ * @returns {{
+    *     type: DISABLE_CHAT_FOR_ALL
+    * }}
+    */
+export function disableChatForAll() {
+    return {
+        type: DISABLE_CHAT_FOR_ALL
+    };
+}
+
+/**
+ * Create an action for enabling chat for a participant from the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+    *     type: ENABLE_CHAT_PARTICIPANT,
+    *     id: string
+    * }}
+    */
+export function enableChatForParticipant(id) {
+    return {
+        type: ENABLE_CHAT_PARTICIPANT,
+        id
+    };
+}
+
+/**
+ * Create an action for enabling chat for all participant in the conference.
+ *
+ * @param { No params } 
+ * @returns {{
+    *     type: ENABLE_CHAT_FOR_ALL
+    * }}
+    */
+export function enableChatForAll() {
+    return {
+        type: ENABLE_CHAT_FOR_ALL
     };
 }
 
@@ -192,13 +259,33 @@ export function localParticipantRoleChanged(role) {
  * @param {string} id - Participant's ID.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     id: string,
+ *     mute: Boolean
  * }}
  */
-export function muteRemoteParticipant(id) {
+export function muteRemoteParticipant(id, mute) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
-        id
+        id,
+        mute
+    };
+}
+
+/**
+ * Create an action for muting video another participant in the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+ *     type: MUTE_REMOTE_PARTICIPANT_VIDEO,
+ *     id: string,
+ *     mute: Boolean
+ * }}
+ */
+export function muteRemoteParticipantVideo(id, mute) {
+    return {
+        type: MUTE_REMOTE_PARTICIPANT_VIDEO,
+        id,
+        mute
     };
 }
 
@@ -408,20 +495,19 @@ export function participantUpdated(participant = {}) {
  * @param {JitsiParticipant} participant - Information about participant.
  * @returns {Promise}
  */
-export function participantMutedUs(participant) {
+export function participantMutedUs(track, participant) {
     return (dispatch, getState) => {
-        if (!participant) {
+        if (!participant || !track.isMuted()) {
             return;
         }
 
-        dispatch(showNotification({
-            descriptionKey: 'notify.mutedRemotelyDescription',
-            titleKey: 'notify.mutedRemotelyTitle',
-            titleArguments: {
+        const title = 'notify.mutedRemotelyTitle';
+        showToast({
+            title: i18next.t(title, {
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())
-            }
-        }));
+            })
+        });
     };
 }
 
@@ -441,15 +527,23 @@ export function participantKicked(kicker, kicked) {
             kicker: kicker.getId()
         });
 
-        dispatch(showNotification({
-            titleArguments: {
+        showToast({
+            title: i18next.t('notify.kickParticipant', {
                 kicked:
                     getParticipantDisplayName(getState, kicked.getId()),
                 kicker:
                     getParticipantDisplayName(getState, kicker.getId())
-            },
-            titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
+            }),
+            timeout: NOTIFICATION_TIMEOUT * 2 });
+        // dispatch(showNotification({
+        //     titleArguments: {
+        //         kicked:
+        //             getParticipantDisplayName(getState, kicked.getId()),
+        //         kicker:
+        //             getParticipantDisplayName(getState, kicker.getId())
+        //     },
+        //     titleKey: 'notify.kickParticipant'
+        // }, NOTIFICATION_TIMEOUT * 10)); // leave more time for this
     };
 }
 

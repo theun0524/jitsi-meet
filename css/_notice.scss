@@ -1,15 +1,16 @@
 .notice {
     position: absolute;
     left: 50%;
-    z-index: $zindex3;
+    z-index: 11;
     margin-top: 6px;
+    text-align: center;
 
     @include transform(translateX(-50%));
 
     &__message {
         background-color: #000000;
         color: white;
-        padding: 3px;
+        padding: 3px 6px;
         border-radius: 5px;
     }
 }

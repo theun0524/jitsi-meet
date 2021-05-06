@@ -33,6 +33,18 @@
     }
 }
 
+.searchContainer {
+    position: relative;
+
+    .closeIcon {
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        top: 8px;
+        color: gray;
+    }
+}
+
 .divider {
     border-color: rgba(255,255,255,0.3);
     border-width: 1px 0 0 0;

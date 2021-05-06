@@ -1,19 +1,18 @@
 // @flow
 
+import TrashIcon from '@atlaskit/icon/glyph/trash';
+import EditorCloseIcon from '@atlaskit/icon/glyph/editor/close';
 import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter
 } from '../../../i18n';
+import { Tooltip } from '../../../tooltip';
 
 import Container from './Container';
 import Text from './Text';
 import s from './MeetingList.module.scss';
-
-import Tooltip from '@atlaskit/tooltip';
-import TrashIcon from '@atlaskit/icon/glyph/trash';
-import EditorCloseIcon from '@atlaskit/icon/glyph/editor/close';
 
 type Props = {
 

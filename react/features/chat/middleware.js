@@ -21,7 +21,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { showToolbox } from '../toolbox/actions';
 import { isButtonEnabled } from '../toolbox/functions';
 
-import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
+import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT, HANGUP_ALL_MESSAGE } from './actionTypes';
 import { addMessage, clearMessages, toggleChat } from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
@@ -104,6 +104,17 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_PRIVATE_MESSAGE_RECIPIENT: {
         Boolean(action.participant) && dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
         _maybeFocusField();
+        break;
+    }
+
+    case HANGUP_ALL_MESSAGE: {
+        const state = store.getState();
+        const { conference } = state['features/base/conference'];
+
+        if (conference) {
+            conference.sendHangupMessage();
+        }
+
         break;
     }
     }

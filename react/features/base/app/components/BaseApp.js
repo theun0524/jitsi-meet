@@ -188,7 +188,7 @@ export default class BaseApp extends Component<*, State> {
         // - Thunk - allows us to dispatch async actions easily. For more info
         // @see https://github.com/gaearon/redux-thunk.
         const middlewares = [Thunk];
-        if (process.env.ENABLE_REDUX_LOG) {
+        if (process.env.ENABLE_REDUX_LOG === '1') {
             middlewares.push(reduxLogger);
         }
         let middleware = MiddlewareRegistry.applyMiddleware(...middlewares);

@@ -1,19 +1,18 @@
 // @flow
 
 import FieldText from '@atlaskit/field-text';
-import RefreshIcon from '@atlaskit/icon/glyph/refresh';
 import {
     HeaderComponentProps,
     ModalHeader
 } from '@atlaskit/modal-dialog';
 import Spinner from '@atlaskit/spinner';
-import Tooltip from '@atlaskit/tooltip';
 import { filter, keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { Tooltip } from '../../base/tooltip';
 import { loadSpeakerStats } from '../actions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
@@ -24,6 +23,7 @@ import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
 import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isLocalVideoTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
 import { PARTICIPANT_ROLE } from '../../base/participants';
 import { Icon, IconSearch } from '../../base/icons';
+import CrossCircleIcon from '@atlaskit/icon/glyph/cross-circle';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -132,7 +132,13 @@ class SpeakerStats extends Component<Props, State> {
      * @returns {void}
      */
     _onToggleSearch() {
-        this.setState({ showSearch: !this.state.showSearch });
+        const showSearch = !this.state.showSearch;
+
+        if (showSearch) {
+            this.setState({ showSearch });
+        } else {
+            this.setState({ showSearch, searchQuery: '' });
+        }
     }
 
     _customHeader = (props: HeaderComponentProps) => {
@@ -221,7 +227,7 @@ class SpeakerStats extends Component<Props, State> {
                 titleKey = 'speakerStats.speakerStats'>
                 
                 { this.state.showSearch && (
-                    <div className = 'speaker-stats-searchbox'>
+                    <div className = {`speaker-stats-searchbox ${s.searchContainer}`}>
                         <FieldText
                             autoFocus = { true }
                             compact = { true }
@@ -233,6 +239,11 @@ class SpeakerStats extends Component<Props, State> {
                             onChange = { this.handleSearchInput }
                             type = 'text'
                             value = { this.state.searchQuery } />
+                        <div
+                            className = { s.closeIcon }
+                            onClick = { this._onToggleSearch }>
+                            <CrossCircleIcon size = 'small' />
+                        </div>
                     </div>
                 )}
 
@@ -280,7 +291,8 @@ function _mapStateToProps(state) {
                         ? isLocalVideoTrackMuted(tracks)
                         : !videoTrack || videoTrack.muted,
                     isModerator: p.role === PARTICIPANT_ROLE.MODERATOR,
-                    isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP
+                    isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP,
+                    chat: p.role !== 'visitor'
                 }
             }
             return item;

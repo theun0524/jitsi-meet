@@ -3,9 +3,10 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
+import { getLocalParticipant, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
+import { shouldDisplayTileView } from '../../../video-layout';
 
 import {
     GrantModeratorButton,
@@ -17,6 +18,12 @@ import {
     RemoteVideoMenu,
     VolumeSlider
 } from './';
+import ChatDisableButton from './ChatDisableButton';
+import AllChatDisableButton from './AllChatDisableButton';
+import MoveToFirstButton from './MoveToFirstButton';
+import MoveToLastButton from './MoveToLastButton';
+import MuteVideoButton from './MuteVideoButton';
+import MuteVideoEveryoneElseButton from './MuteVideoEveryoneElseButton';
 
 declare var $: Object;
 declare var interfaceConfig: Object;
@@ -54,6 +61,11 @@ type Props = {
     isAudioMuted: boolean,
 
     /**
+     * Whether or not the participant video is currently muted.
+     */
+    isVideoMuted: boolean,
+
+     /**
      * Callback to invoke when the popover has been displayed.
      */
     onMenuDisplay: Function,
@@ -172,9 +184,17 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disableKick,
             _disablePrivateMessage,
             _disableRemoteMute,
+            _disableRemoteUnmute,
+            _disableRemoteMuteVideo,
+            _disableRemoteUnmuteVideo,
             _isModerator,
+            _shouldDisplayTileView,
+            _participantCount,
             initialVolumeValue,
             isAudioMuted,
+            isFirst,
+            isLast,
+            isVideoMuted,
             onRemoteControlToggle,
             onVolumeChange,
             remoteControlState,
@@ -187,15 +207,54 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             if (!_disableRemoteMute) {
                 buttons.push(
                     <MuteButton
-                        isAudioMuted = { isAudioMuted }
                         key = 'mute'
-                        participantID = { participantID } />
+                        participantID = { participantID }
+                        mute = { _disableRemoteUnmute ? true : !isAudioMuted } />
                 );
+            }
+            if (_participantCount > 2) {
+                if (!_disableRemoteMute) {
+                    buttons.push(
+                        <MuteEveryoneElseButton
+                            key = 'mute-others'
+                            participantID = { participantID }
+                            mute = { true } />
+                    );
+                }
+                if (!_disableRemoteUnmute) {
+                    buttons.push(
+                        <MuteEveryoneElseButton
+                            key = 'unmute-others'
+                            participantID = { participantID }
+                            mute = { false } />
+                    );
+                }
+            }
+            if (!_disableRemoteMuteVideo) {
                 buttons.push(
-                    <MuteEveryoneElseButton
-                        key = 'mute-others'
-                        participantID = { participantID } />
+                    <MuteVideoButton
+                        key = 'mutevideo'
+                        participantID = { participantID }
+                        mute = { _disableRemoteUnmuteVideo ? true : !isVideoMuted } />
                 );
+            }
+            if (_participantCount > 2) {
+                if (!_disableRemoteMuteVideo) {
+                    buttons.push(
+                        <MuteVideoEveryoneElseButton
+                            key = 'mutevideo-others'
+                            participantID = { participantID }
+                            mute = { true } />
+                    );
+                }
+                if (!_disableRemoteUnmuteVideo) {
+                    buttons.push(
+                        <MuteVideoEveryoneElseButton
+                            key = 'unmutevideo-others'
+                            participantID = { participantID }
+                            mute = { false } />
+                    );
+                }
             }
 
             if (!_disableGrantModerator) {
@@ -205,6 +264,20 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         participantID = { participantID } />
                 );
             }
+
+            // push a new button to show disable/enable chat option for selected remote participant
+            buttons.push(
+                <ChatDisableButton
+                    key='disable-chat'
+                    participantID = { participantID } />
+            );
+
+            // push a new button to show enable/disable chat option for all remote participants; doesn't affect moderators
+            buttons.push(
+                <AllChatDisableButton
+                    key='disable-chat-all'
+                    participantID = { participantID } />
+            );
 
             if (!_disableKick) {
                 buttons.push(
@@ -231,6 +304,23 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                     key = 'privateMessage'
                     participantID = { participantID } />
             );
+        }
+
+        if (_shouldDisplayTileView) {
+            if (!isFirst) {
+                buttons.push(
+                    <MoveToFirstButton
+                        key = 'moveToFirst'
+                        participantID = { participantID } />
+                );
+            }
+            if (!isLast) {
+                buttons.push(
+                    <MoveToLastButton
+                        key = 'moveToLast'
+                        participantID = { participantID } />
+                );
+            }
         }
 
         if (onVolumeChange) {
@@ -260,26 +350,36 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {{
- *     _isModerator: boolean
- * }}
+ * @returns {Object}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const participant = getLocalParticipant(state);
     const {
         disableGrantModerator,
         disablePrivateMessage,
         disableRemoteMute,
+        disableRemoteUnmute,
+        disableRemoteMuteVideo,
+        disableRemoteUnmuteVideo,
         remoteVideoMenu = {},
     } = state['features/base/config'];
     const { disableKick } = remoteVideoMenu;
+    const { ordered } = state['features/video-layout'];
+    const found = ordered?.indexOf(ownProps.participantID);
 
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableGrantModerator: Boolean(disableGrantModerator),
         _disableKick: Boolean(disableKick),
         _disablePrivateMessage: Boolean(disablePrivateMessage),
-        _disableRemoteMute: Boolean(disableRemoteMute)
+        _disableRemoteMute: Boolean(disableRemoteMute),
+        _disableRemoteUnmute: Boolean(disableRemoteUnmute),
+        _disableRemoteMuteVideo: Boolean(disableRemoteMuteVideo),
+        _disableRemoteUnmuteVideo: Boolean(disableRemoteUnmuteVideo),
+        _participantCount: getParticipantCount(state),
+        _shouldDisplayTileView: shouldDisplayTileView(state),
+        isFirst: ordered && found === 0,
+        isLast: ordered && found === ordered.length - 1,
     };
 }
 

@@ -3,16 +3,16 @@
 import React from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
-import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconMuteEveryoneElse } from '../../../base/icons';
+import { IconMicDisabled, IconMicrophone, IconMuteEveryoneElse } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { showConfirmDialog } from '../../../notifications';
+import { muteAllParticipants } from '../../actions';
 import AbstractMuteButton, {
     _mapStateToProps,
     type Props
 } from '../AbstractMuteButton';
 
-import MuteEveryoneDialog from './MuteEveryoneDialog';
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
 /**
@@ -39,13 +39,13 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t } = this.props;
+        const { mute, participantID, t } = this.props;
 
         return (
             <RemoteVideoMenuButton
-                buttonText = { t('videothumbnail.domuteOthers') }
+                buttonText = { t(`videothumbnail.do${mute ? '' : 'un'}muteOthers`) }
                 displayClass = { 'mutelink' }
-                icon = { IconMuteEveryoneElse }
+                icon = { mute ? IconMicDisabled : IconMicrophone }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />
@@ -61,10 +61,28 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, participantID } = this.props;
+        const { dispatch, participantID, mute, t } = this.props;
+        const conference = APP.conference;
+        const exclude = [ participantID ];
+        const whom = exclude
+            // eslint-disable-next-line no-confusing-arrow
+            .map(id => conference.isLocalId(id)
+                ? t('me')
+                : conference.getParticipantDisplayName(id))
+            .join(', ');
 
         sendAnalytics(createToolbarEvent('mute.everyoneelse.pressed'));
-        dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ] }));
+        showConfirmDialog({
+            cancelButtonText: t('dialog.Cancel'),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            showCancelButton: true,
+            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+        }).then(result => {
+            if (result.isConfirmed) {
+                dispatch(muteAllParticipants(exclude, mute));
+            }
+        });
+        // dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ], mute }));
     }
 }
 

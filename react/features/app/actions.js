@@ -23,6 +23,7 @@ import {
     storeConfig
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
+import { i18next } from '../base/i18n';
 import { setJWT } from '../base/jwt';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
@@ -38,7 +39,7 @@ import {
 import { setLicenseError } from '../billing-counter/actions';
 import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../billing-counter/constants';
 import { isVpaasMeeting } from '../billing-counter/functions';
-import { clearNotifications, showNotification } from '../notifications';
+import { clearNotifications, showToast } from '../notifications';
 import { setFatalError } from '../overlay';
 
 import {
@@ -242,7 +243,11 @@ export function appNavigate(uri: ?string) {
 
         // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
         // host가 지정된 경우, host 값이 true인 경우만 방장으로 참석한다.
-        if (room && pathname !== '/' && (!has(params, 'host') || params.host === 'true')) {
+        if (room &&
+            pathname !== '/' &&
+            window.location.pathname === pathname &&
+            (!has(params, 'host') || params.host === 'true')
+        ) {
             let apiUrl;
             let resp;
 
@@ -492,10 +497,13 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // else: show thankYou dialog only if there is no feedback
         if (options.showThankYou) {
-            dispatch(showNotification({
-                titleArguments: { appName: getName() },
-                titleKey: 'dialog.thankYou'
-            }));
+            showToast({
+                title: i18next.t('dialog.thankYou', { appName: getName() })
+            });
+            // dispatch(showNotification({
+            //     titleArguments: { appName: getName() },
+            //     titleKey: 'dialog.thankYou'
+            // }));
         }
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if

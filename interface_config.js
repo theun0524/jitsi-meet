@@ -15,7 +15,7 @@ var interfaceConfig = {
      *
      * Note: this mode is experimental and subject to breakage.
      */
-    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+    AUTO_PIN_LATEST_SCREEN_SHARE: 'all',
     BRAND_WATERMARK_LINK: '',
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
@@ -54,7 +54,7 @@ var interfaceConfig = {
     // improve the end user experience
     // with lower CPU usage and better audio quality
     DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
-    DISABLE_FOCUS_INDICATOR: true,
+    DISABLE_FOCUS_INDICATOR: false,
     DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
     DISABLE_JOIN_LEAVE_NOTIFICATION_SOUND: false,
     DISABLE_VIDEO_BACKGROUND: true,
@@ -192,7 +192,7 @@ var interfaceConfig = {
         'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
+        'tileview', 'select-background', 'download', 'help', 'security'
     ],
 
     TOOLBAR_TIMEOUT: 4000,

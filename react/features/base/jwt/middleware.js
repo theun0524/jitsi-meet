@@ -1,5 +1,6 @@
 // @flow
 
+import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 import { SET_CONFIG } from '../config';
@@ -151,6 +152,11 @@ function _setJWT(store, next, action) {
                     user && _overwriteLocalParticipant(
                         store, { ...user,
                             features: context.features });
+
+                    axios.interceptors.request.use(function(config) {
+                        config.headers.Authorization = `Bearer ${jwt}`;
+                        return config;
+                    });
                 }
             }
         } else if (typeof APP === 'undefined') {
@@ -221,7 +227,7 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin, background }) {
+function _user2participant({ avatar, avatarUrl, email, email_verified, id, name, username, isAdmin, background }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -231,6 +237,9 @@ function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdm
     }
     if (typeof email === 'string') {
         participant.email = email.trim();
+    }
+    if (typeof email_verified === 'boolean') {
+        participant.email_verified = email_verified;
     }
     if (typeof id === 'string') {
         participant.id = id.trim();

@@ -6,6 +6,9 @@ import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
     SET_OVERFLOW_MENU_VISIBLE,
+    SET_HANGUP_MENU_VISIBLE,
+    SET_MODERATOR_SELECTION_VISIBLE,
+    SET_NEXT_MODERATOR,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -26,6 +29,8 @@ declare var interfaceConfig: Object;
  *     enabled: boolean,
  *     hovered: boolean,
  *     overflowMenuVisible: boolean,
+ *     hangupOptionsMenuVisible: boolean,
+ *     selectedModerator: string, 
  *     timeoutID: number,
  *     timeoutMS: number,
  *     visible: boolean
@@ -86,6 +91,12 @@ function _getInitialState() {
          */
         overflowMenuVisible: false,
 
+        hangupOptionsMenuVisible: false,
+
+        moderatorSelectionVisible: false,
+
+        selectedModerator: '',
+
         /**
          * A number, non-zero value which identifies the timer created by a call
          * to setTimeout() with timeoutMS.
@@ -118,7 +129,7 @@ ReducerRegistry.register(
         case CLEAR_TOOLBOX_TIMEOUT:
             return {
                 ...state,
-                timeoutID: undefined
+                timer: undefined
             };
 
         case FULL_SCREEN_CHANGED:
@@ -131,6 +142,24 @@ ReducerRegistry.register(
             return {
                 ...state,
                 overflowMenuVisible: action.visible
+            };
+
+        case SET_HANGUP_MENU_VISIBLE:
+            return {
+                ...state,
+                hangupOptionsMenuVisible: action.visible
+            };
+
+        case SET_MODERATOR_SELECTION_VISIBLE:
+            return {
+                ...state,
+                moderatorSelectionVisible: action.visible
+            };
+        
+        case SET_NEXT_MODERATOR:
+            return {
+                ...state,
+                selectedModerator: action.id
             };
 
         case SET_TOOLBAR_HOVERED:
@@ -155,7 +184,7 @@ ReducerRegistry.register(
         case SET_TOOLBOX_TIMEOUT:
             return {
                 ...state,
-                timeoutID: action.timeoutID,
+                timer: action.timer,
                 timeoutMS: action.timeoutMS
             };
 

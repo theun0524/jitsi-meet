@@ -61,3 +61,15 @@ a.fUcuXK {
 .toolbox-button-wth-dialog .eYJELv {
     max-height: initial;
 }
+
+/**
+ * CSS overrides for inline dialog pop-ups in header chat control button,
+ * adjusting the top padding
+ */
+.user-chat-control-button .eCFUHs {
+    padding: 0px 24px;
+}
+
+.chat-header-control-button .eCFUHs {
+    padding: 0px 24px;
+}

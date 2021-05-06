@@ -80,7 +80,7 @@ function initCommands() {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
         },
-        'mute-everyone': () => {
+        'mute-everyone': mute => {
             sendAnalytics(createApiEvent('muted-everyone'));
             const participants = APP.store.getState()['features/base/participants'];
             const localIds = participants
@@ -88,7 +88,7 @@ function initCommands() {
                 .filter(participant => participant.role === 'moderator')
                 .map(participant => participant.id);
 
-            APP.store.dispatch(muteAllParticipants(localIds));
+            APP.store.dispatch(muteAllParticipants(localIds, mute));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));

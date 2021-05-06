@@ -71,6 +71,16 @@ export type Props = {
     startVideoMuted: boolean,
 
     /**
+     * Whether or not the user's access to their device (camera and microphone) is disabled
+     */
+    userDeviceAccessDisabled: boolean,
+
+    /**
+     * Whether or not to enable the option for userDeviceAccessDisabled in moderator tab
+     */
+    enableUserDeviceAccessDisabledOption: Boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -212,46 +222,105 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             followMeEnabled,
             startAudioMuted,
             startVideoMuted,
+            userDeviceAccessDisabled,
+            enableUserDeviceAccessDisabledOption,
             t
         } = this.props;
 
-        return (
-            <div
-                className = 'settings-sub-pane'
-                key = 'moderator'>
-                <div className = 'mock-atlaskit-label'>
-                    { t('settings.moderator') }
+        // retrieve the value of enableUserDeviceAccessDisabled option from .jitsi-meet-cfg/web/config.js
+        if(enableUserDeviceAccessDisabledOption) {
+            return (
+                <div
+                    className = 'settings-sub-pane'
+                    key = 'moderator'>
+                    <div className = 'mock-atlaskit-label'>
+                        { t('settings.moderator') }
+                    </div>
+                    <Checkbox
+                        isChecked = { startAudioMuted }
+                        label = { t('settings.startAudioMuted') }
+                        name = 'start-audio-muted'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ startAudioMuted: checked })
+                        } />
+                    <Checkbox
+                        isChecked = { startVideoMuted }
+                        label = { t('settings.startVideoMuted') }
+                        name = 'start-video-muted'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ startVideoMuted: checked })
+                        } />
+                    <Checkbox
+                        isChecked = { followMeEnabled }
+                        isDisabled = { followMeActive }
+                        label = { t('settings.followMe') }
+                        name = 'follow-me'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ followMeEnabled: checked })
+                        } />
+    
+                    {/* start of added portion */}
+                    <Checkbox 
+                        // isChecked = { conferenceUserDeviceAccessDisabled }
+                        isChecked = { userDeviceAccessDisabled }
+                        // isDisabled = { !enableUserDeviceAccessDisabledOption }
+                        label = { t('settings.disableDeviceAccess') }
+                        name = 'disable-device-access'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) => 
+                                // super._onChange({ conferenceUserDeviceAccessDisabled : checked })
+                                super._onChange({ userDeviceAccessDisabled : checked })
+                        } />
+                    {/* end of added portion */}
                 </div>
-                <Checkbox
-                    isChecked = { startAudioMuted }
-                    label = { t('settings.startAudioMuted') }
-                    name = 'start-audio-muted'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ startAudioMuted: checked })
-                    } />
-                <Checkbox
-                    isChecked = { startVideoMuted }
-                    label = { t('settings.startVideoMuted') }
-                    name = 'start-video-muted'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ startVideoMuted: checked })
-                    } />
-                <Checkbox
-                    isChecked = { followMeEnabled }
-                    isDisabled = { followMeActive }
-                    label = { t('settings.followMe') }
-                    name = 'follow-me'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ followMeEnabled: checked })
-                    } />
-            </div>
-        );
+            );
+        } else {
+            return (
+                <div
+                    className = 'settings-sub-pane'
+                    key = 'moderator'>
+                    <div className = 'mock-atlaskit-label'>
+                        { t('settings.moderator') }
+                    </div>
+                    <Checkbox
+                        isChecked = { startAudioMuted }
+                        label = { t('settings.startAudioMuted') }
+                        name = 'start-audio-muted'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ startAudioMuted: checked })
+                        } />
+                    <Checkbox
+                        isChecked = { startVideoMuted }
+                        label = { t('settings.startVideoMuted') }
+                        name = 'start-video-muted'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ startVideoMuted: checked })
+                        } />
+                    <Checkbox
+                        isChecked = { followMeEnabled }
+                        isDisabled = { followMeActive }
+                        label = { t('settings.followMe') }
+                        name = 'follow-me'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ followMeEnabled: checked })
+                        } />
+                </div>
+            );
+        }
+        
     }
 
     /**

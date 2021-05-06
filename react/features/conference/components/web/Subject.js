@@ -1,14 +1,23 @@
 /* @flow */
+/* global $ */
 
 import React, { Component } from 'react';
 
-import { getConferenceName } from '../../../base/conference/functions';
+import { getConferenceName, getConferenceTimeRemained } from '../../../base/conference/functions';
+import { Icon, IconEdit } from '../../../base/icons';
+import { isHost } from '../../../base/jwt';
 import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n';
+import { Tooltip } from '../../../base/tooltip';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import ConferenceTimer from '../ConferenceTimer';
 
 import ParticipantsCount from './ParticipantsCount';
+
+import s from './Subject.module.scss';
+import { setSubject } from '../../../base/conference';
+import { showConfirmDialog } from '../../../notifications';
 
 /**
  * The type of the React {@code Component} props of {@link Subject}.
@@ -49,6 +58,12 @@ type Props = {
  */
 class Subject extends Component<Props> {
 
+    constructor(props) {
+        super(props);
+
+        this._onEditSubject = this._onEditSubject.bind(this);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -56,15 +71,56 @@ class Subject extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _hideConferenceTimer, _showParticipantCount, _showSubject, _subject, _visible } = this.props;
+        const {
+            _hideConferenceTimer,
+            _isHost,
+            _showParticipantCount,
+            _showSubject,
+            _subject,
+            _visible,
+            t
+        } = this.props;
 
         return (
-            <div className = { `subject ${_visible ? 'visible' : ''}` }>
-                { _showSubject && <span className = 'subject-text'>{ _subject }</span>}
+            <div className = { `subject ${_visible ? 'visible' : ''} ${s.container}` }>
+                { _showSubject && (
+                    <div className = {s.textContainer}>
+                        <span className = 'subject-text'>{ _subject }</span>
+                        { _isHost && (
+                            <div
+                                className = { s.button }
+                                onClick = { this._onEditSubject }>
+                                <Tooltip content = { t('dialog.edit') } position = 'bottom'>
+                                    <Icon size = { 16 } src = { IconEdit } />
+                                </Tooltip>
+                            </div>
+                        )}
+                    </div>
+                )}
                 { _showParticipantCount && <ParticipantsCount /> }
                 { !_hideConferenceTimer && <ConferenceTimer /> }
             </div>
         );
+    }
+
+    _onEditSubject() {
+        const { _subject, dispatch, t } = this.props;
+
+        showConfirmDialog({
+            text: t('dialog.changeSubject'),
+            input: 'text',
+            inputValue: _subject,
+            showCancelButton: true,
+            confirmButtonText: t('dialog.Change'),
+            cancelButtonText: t('dialog.Cancel'),
+            didOpen: () => {
+                $('.swal2-input').select();
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                dispatch(setSubject(result.value));
+            }
+        });
     }
 }
 
@@ -84,15 +140,17 @@ class Subject extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
+    const timeRemained = getConferenceTimeRemained(state);
     const { hideConferenceTimer, hideConferenceSubject, hideParticipantsStats } = state['features/base/config'];
 
     return {
         _hideConferenceTimer: Boolean(hideConferenceTimer),
+        _isHost: isHost(state),
         _showParticipantCount: participantCount > 2 && !hideParticipantsStats,
         _showSubject: !hideConferenceSubject,
         _subject: getConferenceName(state),
-        _visible: isToolboxVisible(state) && participantCount > 1
+        _visible: Boolean(timeRemained) || isToolboxVisible(state)
     };
 }
 
-export default connect(_mapStateToProps)(Subject);
+export default translate(connect(_mapStateToProps)(Subject));

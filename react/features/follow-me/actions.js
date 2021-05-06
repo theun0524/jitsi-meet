@@ -30,9 +30,10 @@ export function setFollowMeModerator(id: ?string) {
  *     state: Object
  * }}
  */
-export function setFollowMeState(state: ?Object) {
+export function setFollowMeState(state: ?Object, value: ?string) {
     return {
         type: SET_FOLLOW_ME_STATE,
-        state
+        state,
+        value
     };
 }

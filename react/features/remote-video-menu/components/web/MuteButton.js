@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled } from '../../../base/icons';
+import { IconMicDisabled, IconMicrophone } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteButton, {
     _mapStateToProps,
@@ -41,20 +41,17 @@ class MuteButton extends AbstractMuteButton {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioTrackMuted, participantID, t } = this.props;
-        const muteConfig = _audioTrackMuted ? {
-            translationKey: 'videothumbnail.muted',
-            muteClassName: 'mutelink disabled'
-        } : {
-            translationKey: 'videothumbnail.domute',
-            muteClassName: 'mutelink'
-        };
+        const { _audioTrackMuted, _disableRemoteUnmute, mute, participantID, t } = this.props;
+        const buttonText = `videothumbnail.do${mute ? '' : 'un'}mute`;
+        const muteClassName = _audioTrackMuted && _disableRemoteUnmute
+            ? 'mutelink disabled' : 'mutelink';
+        const icon = mute ? IconMicDisabled : IconMicrophone;
 
         return (
             <RemoteVideoMenuButton
-                buttonText = { t(muteConfig.translationKey) }
-                displayClass = { muteConfig.muteClassName }
-                icon = { IconMicDisabled }
+                buttonText = { t(buttonText) }
+                displayClass = { muteClassName }
+                icon = { icon }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />

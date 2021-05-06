@@ -4,6 +4,8 @@ DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 LIBFLAC_DIR = node_modules/libflacjs/dist/min/
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
+TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
+MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models/
 NODE_SASS = ./node_modules/.bin/node-sass
 NPM = npm
 OUTPUT_DIR = .
@@ -12,6 +14,9 @@ STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 WEBPACK = ./node_modules/.bin/webpack
 WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
+LANGUAGES := $(shell node -p "Object.keys(require('./lang/languages.json')).join(' ')")
+COUNTRIES_DIR := node_modules/i18n-iso-countries/langs
+DEV_COUNTRIES_DIR := lang/countries
 
 all: compile deploy clean
 
@@ -22,7 +27,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local $(LANGUAGES)
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -47,8 +52,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
-		$(BUILD_DIR)/video-blur-effect.min.js \
-		$(BUILD_DIR)/video-blur-effect.min.map \
+		$(BUILD_DIR)/virtual-background-effect.min.js \
+		$(BUILD_DIR)/virtual-background-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
 		$(DEPLOY_DIR)
@@ -72,6 +77,16 @@ deploy-rnnoise-binary:
 		$(RNNOISE_WASM_DIR)/rnnoise.wasm \
 		$(DEPLOY_DIR)
 
+deploy-tflite:
+	cp \
+		$(TFLITE_WASM)/*.wasm \
+		$(DEPLOY_DIR)		
+
+deploy-meet-models:
+	cp \
+		$(MEET_MODELS_DIR)/*.tflite \
+		$(DEPLOY_DIR)	
+
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
 	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
@@ -80,10 +95,28 @@ deploy-css:
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
+$(LANGUAGES):
+	LOCALE=$$(echo $@ | cut -c1-2) ; \
+	if [ -f $(COUNTRIES_DIR)/$@.json ] ; \
+	then \
+		cp -f $(COUNTRIES_DIR)/$@.json ./lang/countries-$@.json; \
+	else \
+		if [ -f $(COUNTRIES_DIR)/$$LOCALE.json ] ; \
+		then \
+			cp -f $(COUNTRIES_DIR)/$$LOCALE.json ./lang/countries-$@.json; \
+		fi; \
+	fi;
+
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac $(LANGUAGES)
+	if [ ! -d $(DEV_COUNTRIES_DIR) ] ; \
+	then \
+		mkdir $(DEV_COUNTRIES_DIR); \
+	fi; \
+	cp -rf lang/countries-*.json $(DEV_COUNTRIES_DIR)/
 
 dev-start:
+	./cssmon.sh ./css &
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
@@ -92,3 +125,5 @@ source-package:
 	cp css/all.css source_package/jitsi-meet/css && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package
+
+.PHONY: $(LANGUAGES)

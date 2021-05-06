@@ -4,6 +4,8 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
 import { TOGGLE_CHAT } from './actionTypes';
 
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../features/notifications';
+
 export * from './actions.any';
 
 /**

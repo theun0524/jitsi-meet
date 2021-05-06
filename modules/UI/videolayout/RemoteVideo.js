@@ -76,10 +76,8 @@ function createContainer(spanId, userId) {
 
     const remoteVideosContainer
         = document.getElementById('filmstripRemoteVideosContainer');
-    const localVideoContainer
-        = document.getElementById('localVideoTileViewContainer');
 
-    remoteVideosContainer.insertBefore(container, localVideoContainer);
+    remoteVideosContainer.appendChild(container);
 
     return container;
 }
@@ -233,6 +231,7 @@ export default class RemoteVideo extends SmallVideo {
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
                             isAudioMuted = { this.isAudioMuted }
+                            isVideoMuted = { this.isVideoMuted }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}

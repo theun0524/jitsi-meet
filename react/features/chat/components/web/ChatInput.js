@@ -6,6 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
 import SmileysPanel from './SmileysPanel';
@@ -107,9 +108,11 @@ class ChatInput extends Component<Props, State> {
     render() {
         const smileysPanelClassName = `${this.state.showSmileysPanel
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
-
+        let localParticipant = getLocalParticipant(APP.store.getState());
+        let prole = localParticipant.role;
+        const chatInputStyleName = `${(prole === "visitor") ? 'no-display' : '' } chat-input`;
         return (
-            <div id = 'chat-input' >
+            <div key={prole} className= {chatInputStyleName}>
                 <div className = 'smiley-input'>
                     <div id = 'smileysarea'>
                         <div id = 'smileys'>

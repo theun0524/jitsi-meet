@@ -33,6 +33,44 @@ export const GRANT_MODERATOR = 'GRANT_MODERATOR';
 export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
 
 /**
+ * Create an action for disabling chat for a participant from the conference.
+ *
+ * {
+ *     type: DISABLE_CHAT_PARTICIPANT,
+ *     id: string
+ * }
+ */
+export const DISABLE_CHAT_PARTICIPANT = 'DISABLE_CHAT_PARTICIPANT';
+
+/**
+ * Create an action for disabling chat for all participants in the conference.
+ *
+ * {
+ *     type: DISABLE_CHAT_FOR_ALL
+ * }
+ */
+export const DISABLE_CHAT_FOR_ALL = 'DISABLE_CHAT_FOR_ALL';
+
+/**
+ * Create an action for enabling chat for a participant from the conference.
+ *
+ * {
+ *     type: ENABLE_CHAT_PARTICIPANT,
+ *     id: string
+ * }
+ */
+export const ENABLE_CHAT_PARTICIPANT = 'ENABLE_CHAT_PARTICIPANT';
+
+/**
+ * Create an action for enabling chat for all participants in the conference.
+ *
+ * {
+ *     type: ENABLE_CHAT_FOR_ALL
+ * }
+ */
+export const ENABLE_CHAT_FOR_ALL = 'ENABLE_CHAT_FOR_ALL';
+
+/**
  * Create an action for muting a remote participant.
  *
  * {
@@ -41,6 +79,16 @@ export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
  * }
  */
 export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
+
+/**
+ * Create an action for muting a remote participant video.
+ *
+ * {
+ *     type: MUTE_REMOTE_PARTICIPANT_VIDEO,
+ *     id: string
+ * }
+ */
+export const MUTE_REMOTE_PARTICIPANT_VIDEO = 'MUTE_REMOTE_PARTICIPANT_VIDEO';
 
 /**
  * Create an action for when the local participant's display name is updated.
@@ -103,6 +151,16 @@ export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
 export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
 
 /**
+ * Action to signal that a participant has been granted moderator role in a conference
+ *
+ * {
+ *     type: MODERATOR_ROLE_GRANTED,
+ *     participant: Object
+ * }
+ */
+export const MODERATOR_ROLE_GRANTED = 'MODERATOR_ROLE_GRANTED';
+
+/**
  * Action to handle case when participant lefts.
  *
  * {
@@ -138,7 +196,7 @@ export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
 
 /**
  * The type of the Redux action which receive/not receive
- * vieo of conference participant.
+ * video of conference participant.
  *
  * {
  *     type: RECV_VIDEO_PARTICIPANT,

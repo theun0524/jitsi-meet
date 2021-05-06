@@ -1,5 +1,6 @@
 /* global APP, JitsiMeetJS, config, interfaceConfig */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
@@ -38,12 +39,18 @@ import {
     conferenceWillLeave,
     dataChannelOpened,
     kickedOut,
+    leftByHangupAll,
+    participantChatDisabled,
+    participantChatEnabled,
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
     setDesktopSharingEnabled,
-    setStartMutedPolicy
+    setStartMutedPolicy,
+    conferenceTimeRemained,
+    setNoticeMessage,
+    deviceAccessDisabled
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -116,7 +123,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { toggleLobbyMode } from './react/features/lobby/actions';
-import { showNotification } from './react/features/notifications';
+import { showConfirmDialog, showNotification, showToast } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
@@ -135,9 +142,9 @@ import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
-import { createBackgroundEffect } from './react/features/stream-effects/background';
-import axios from 'axios';
 import { isHost } from './react/features/base/jwt';
+import { isMobileBrowser } from './react/features/base/environment/utils';
+import { i18next } from './react/features/base/i18n';
 
 const logger = Logger.getLogger(__filename);
 const apiBase = process.env.VMEETING_API_BASE;
@@ -486,8 +493,8 @@ export default {
      */
     createInitialLocalTracks(options = {}) {
         const errors = {};
-        const initialDevices = [];
-        let requestedAudio = false;
+        const initialDevices = ['audio'];
+        const requestedAudio = true;
         let requestedVideo = false;
 
         // Always get a handle on the audio input device so that we have statistics even if the user joins the
@@ -496,9 +503,6 @@ export default {
         // only after that point.
         if (options.startWithAudioMuted) {
             this.muteAudio(true, true);
-        } else {
-            initialDevices.push('audio');
-            requestedAudio = true;
         }
 
         if (!options.startWithVideoMuted
@@ -1401,30 +1405,12 @@ export default {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
 
-                const startBackgroundEffect = track => {
-                    const id = state['features/base/jwt'].user?.background;
-                    console.log('startBackgroundEffect:', id);
-                    // return;
-
-                    return id 
-                        ? createBackgroundEffect(`${apiBase}/backgrounds/${id}/hd`)
-                            .then(backgroundEffectInstance => {
-                                console.log('background Effect:', backgroundEffectInstance);
-                                newTrack.setEffect(backgroundEffectInstance);
-                            })
-                            .catch(error => {
-                                logger.error('createBackgroundEffect failed with error:', error);
-                            })
-                        : Promise.resolve();
-                };
-    
                 // When the prejoin page is displayed localVideo is not set
                 // so just replace the video track from the store with the new one.
                 if (isPrejoinPageVisible(state)) {
                     const oldTrack = getLocalJitsiVideoTrack(state);
 
                     return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
-                        .then(startBackgroundEffect)
                         .then(resolve)
                         .catch(reject)
                         .then(onFinish);
@@ -1440,7 +1426,6 @@ export default {
                         }
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
-                    .then(startBackgroundEffect)
                     .then(resolve)
                     .catch(reject)
                     .then(onFinish);
@@ -2087,14 +2072,137 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
+        room.on(JitsiConferenceEvents.AUDIO_MUTED_BY_FOCUS, (actor, mute) => {
+            if (mute === this.isLocalAudioMuted()) {
+                // NO-OP
+                return;
+            }
+
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            const doMute = (mute) => {
+                // TODO: Add a way to differentiate between commands which caused
+                // us to mute and those that did not change our state (i.e. we were
+                // already muted).
+                // sendAnalytics(createRemotelyMutedEvent());
+
+                conference.mutedByFocusActor = actor;
+
+                // set isMutedByFocus when setAudioMute Promise ends
+                conference.rtc.setAudioMute(mute).then(
+                    () => {
+                        conference.isMutedByFocus = true;
+                        conference.mutedByFocusActor = null;
+                    })
+                    .catch(
+                        error => {
+                            conference.mutedByFocusActor = null;
+                            logger.warn(
+                                'Error while audio muting due to focus request', error);
+                        });
+            };
+
+            if (mute) {
+                doMute(mute);
+            } else {
+                // ask unmute for privacy
+                showConfirmDialog({
+                    cancelButtonText: i18next.t('dialog.Cancel'),
+                    confirmButtonText: i18next.t('videothumbnail.dounmute'),
+                    showCancelButton: true,
+                    text: i18next.t('notify.unmuteByHost')
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        doMute(mute);
+                    }
+                    conference.ackMuteParticipant(actor, result.isConfirmed);
+                });
+            }
+        });
+
+        room.on(JitsiConferenceEvents.ACK_AUDIO_MUTED_BY_FOCUS, (id, ack) => {
+            if (!ack) {
+                const { conference } = APP.store.getState()['features/base/conference'];
+                const participant = conference.getParticipantById(id);
+
+                showToast({
+                    title: i18next.t('notify.refusedUnmute', {
+                        participantDisplayName: participant._displayName
+                    })
+                });
+            }
+        });
+
+        room.on(JitsiConferenceEvents.VIDEO_MUTED_BY_FOCUS, (actor, mute) => {
+            if (mute === this.isLocalVideoMuted()) {
+                // NO-OP
+                return;
+            }
+
+            if (mute) {
+                this.muteVideo(mute);
+            } else {
+                // ask unmute for privacy
+                showConfirmDialog({
+                    cancelButtonText: i18next.t('dialog.Cancel'),
+                    confirmButtonText: i18next.t('videothumbnail.dounmuteVideo'),
+                    showCancelButton: true,
+                    text: i18next.t('notify.unmuteVideoByHost')
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        this.muteVideo(mute);
+                    }
+                    const { conference } = APP.store.getState()['features/base/conference'];
+                    conference.ackMuteParticipantVideo(actor, result.isConfirmed);
+                });
+            }
+        });
+
+        room.on(JitsiConferenceEvents.ACK_VIDEO_MUTED_BY_FOCUS, (id, ack) => {
+            if (!ack) {
+                const { conference } = APP.store.getState()['features/base/conference'];
+                const participant = conference.getParticipantById(id);
+
+                showToast({
+                    title: i18next.t('notify.refusedUnmuteVideo', {
+                        participantDisplayName: participant._displayName
+                    })
+                });
+            }
+        });
+
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
-                APP.store.dispatch(participantMutedUs(participantThatMutedUs));
+                APP.store.dispatch(participantMutedUs(track, participantThatMutedUs));
             }
         });
 
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
             subject => APP.store.dispatch(conferenceSubjectChanged(subject)));
+
+        room.on(JitsiConferenceEvents.TIME_REMAINED,
+            timeRemained => APP.store.dispatch(conferenceTimeRemained(timeRemained)));
+
+        // start of added portion
+        room.on(JitsiConferenceEvents.USER_DEVICE_ACCESS_DISABLED,
+            userDeviceAccessDisabled =>  {
+                APP.store.dispatch(deviceAccessDisabled(userDeviceAccessDisabled));
+
+                // show toast message to all participants when user device access is disabled
+                if(userDeviceAccessDisabled === true) {
+                    showToast({
+                        title: i18next.t('dialog.deviceAccessDisabled')
+                    });
+                }
+
+                // show toast message to all participants once user device is re-enabled
+                else if (userDeviceAccessDisabled === false) {
+                    showToast({
+                        title: i18next.t('dialog.deviceAccessReEnabled')
+                    });
+                }
+            });
+        // end of added portion
 
         room.on(
             JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
@@ -2181,6 +2289,13 @@ export default {
                 }
             });
 
+            room.on(
+                JitsiConferenceEvents.HANGUP_ALL_MESSAGE_RECEIVED,
+                (...args) => {
+                    APP.UI.hideStats();
+                    APP.store.dispatch(leftByHangupAll(room, ...args));
+                });
+
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
@@ -2216,12 +2331,29 @@ export default {
             // FIXME close
         });
 
+        if (config.enableChatControl) {
+            // start of added portion
+            room.on(JitsiConferenceEvents.PARTICIPANT_CHAT_DISABLED, participant => {
+                APP.store.dispatch(participantChatDisabled(room, participant));
+            });
+    
+            room.on(JitsiConferenceEvents.PARTICIPANT_CHAT_ENABLED, participant => {
+                //dispatch actions here
+                APP.store.dispatch(participantChatEnabled(room, participant));
+            });
+        }
+        // end of added portion
+
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
             APP.store.dispatch(participantKicked(kicker, kicked));
         });
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
+        });
+
+        room.on(JitsiConferenceEvents.NOTICE_MESSAGE, (noticeMessage) => {
+            APP.store.dispatch(setNoticeMessage(noticeMessage));
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {

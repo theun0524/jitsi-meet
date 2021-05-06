@@ -2,6 +2,10 @@
 
 export { default as IconAdd } from './add.svg';
 export { default as IconAddPeople } from './link.svg';
+export { default as IconAngleDoubleLeft } from './angle-double-left-solid.svg';
+export { default as IconAngleDoubleRight } from './angle-double-right-solid.svg';
+export { default as IconAngleLeft } from './angle-left-solid.svg';
+export { default as IconAngleRight } from './angle-right-solid.svg';
 export { default as IconArrowBack } from './arrow_back.svg';
 export { default as IconArrowDown } from './arrow_down.svg';
 export { default as IconArrowDownSmall } from './arrow-down-small.svg';
@@ -94,6 +98,7 @@ export { default as IconVideoQualityAudioOnly } from './AUD.svg';
 export { default as IconVideoQualityHD } from './HD.svg';
 export { default as IconVideoQualityLD } from './LD.svg';
 export { default as IconVideoQualitySD } from './SD.svg';
+export { default as IconVirtualBackground } from './virtual-background.svg';
 export { default as IconVolume } from './volume.svg';
 export { default as IconVolumeEmpty } from './volume-empty.svg';
 export { default as IconVolumeOff } from './volume-off.svg';

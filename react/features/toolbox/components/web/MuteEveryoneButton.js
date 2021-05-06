@@ -1,13 +1,13 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
-import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconMuteEveryone } from '../../../base/icons';
+import { IconMicDisabled, IconMicrophone } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { MuteEveryoneDialog } from '../../../remote-video-menu';
+import { showConfirmDialog } from '../../../notifications';
+import { muteAllParticipants } from '../../../remote-video-menu/actions';
 
 type Props = AbstractButtonProps & {
 
@@ -21,6 +21,11 @@ type Props = AbstractButtonProps & {
      */
     isModerator: Boolean,
 
+    /*
+     ** Whether mute or unmute
+     */
+    mute: Boolean,
+
     /**
      * The ID of the local participant.
      */
@@ -32,10 +37,14 @@ type Props = AbstractButtonProps & {
  * every participant (except the local one)
  */
 class MuteEveryoneButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryone';
-    icon = IconMuteEveryone;
-    label = 'toolbar.muteEveryone';
-    tooltip = 'toolbar.muteEveryone';
+    constructor(props) {
+        super(props);
+
+        this.accessibilityLabel = props.mute ? 'toolbar.accessibilityLabel.muteEveryone' : 'toolbar.accessibilityLabel.unmuteEveryone';
+        this.label = props.mute ? 'toolbar.muteEveryone' : 'toolbar.unmuteEveryone';
+        this.tooltip = props.mute ? 'toolbar.muteEveryone' : 'toolbar.unmuteEveryone';
+        this.icon = props.mute ? IconMicDisabled : IconMicrophone;
+    }
 
     /**
      * Handles clicking / pressing the button, and opens a confirmation dialog.
@@ -44,12 +53,31 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, localParticipantId } = this.props;
+        const { dispatch, localParticipantId, mute, t } = this.props;
+        const conference = APP.conference;
+        const exclude = [ localParticipantId ];
+        const whom = exclude
+            // eslint-disable-next-line no-confusing-arrow
+            .map(id => conference.isLocalId(id)
+                ? t('me')
+                : conference.getParticipantDisplayName(id))
+            .join(', ');
 
         sendAnalytics(createToolbarEvent('mute.everyone.pressed'));
-        dispatch(openDialog(MuteEveryoneDialog, {
-            exclude: [ localParticipantId ]
-        }));
+        showConfirmDialog({
+            cancelButtonText: t('dialog.Cancel'),
+            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            showCancelButton: true,
+            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+        }).then(result => {
+            if (result.isConfirmed) {
+                dispatch(muteAllParticipants(exclude, mute));
+            }
+        });
+        // dispatch(openDialog(MuteEveryoneDialog, {
+        //     exclude: [ localParticipantId ],
+        //     mute
+        // }));
     }
 }
 

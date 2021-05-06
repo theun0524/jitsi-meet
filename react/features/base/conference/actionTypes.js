@@ -52,6 +52,8 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
  */
 export const CONFERENCE_SUBJECT_CHANGED = 'CONFERENCE_SUBJECT_CHANGED';
 
+export const CONFERENCE_TIME_REMAINED = 'CONFERENCE_TIME_REMAINED';
+
 /**
 * The type of (redux) action, which indicates conference UTC timestamp changes.
 *
@@ -104,6 +106,8 @@ export const DATA_CHANNEL_OPENED = 'DATA_CHANNEL_OPENED';
  * }
  */
 export const KICKED_OUT = 'KICKED_OUT';
+
+export const LEFT_BY_HANGUP_ALL = 'LEFT_BY_HANGUP_ALL';
 
 /**
  * The type of (redux) action which signals that the lock state of a specific
@@ -254,3 +258,14 @@ export const SET_SIP_GATEWAY_ENABLED = 'SET_SIP_GATEWAY_ENABLED';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+export const PARTICIPANT_CHAT_DISABLED = 'PARTICIPANT_CHAT_DISABLED';
+
+export const PARTICIPANT_CHAT_ENABLED = 'PARTICIPANT_CHAT_ENABLED';
+
+export const SET_NOTICE_MESSAGE = 'SET_NOTICE_MESSAGE';
+
+// const for setting disable on user's device access
+export const SET_USER_DEVICE_ACCESS_DISABLED = 'SET_USER_DEVICE_ACCESS_DISABLED';
+
+export const DEVICE_ACCESS_DISABLED = 'DEVICE_ACCESS_DISABLED';

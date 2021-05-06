@@ -1,6 +1,5 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { translate } from '../../base/i18n';
@@ -8,6 +7,7 @@ import { CircularLabel } from '../../base/label';
 import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
+import { Tooltip } from '../../base/tooltip';
 
 import AbstractVideoQualityLabel, {
     _abstractMapStateToProps,

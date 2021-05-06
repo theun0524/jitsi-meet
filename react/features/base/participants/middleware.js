@@ -3,7 +3,6 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
-import { getActiveSession } from '../../recording';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_JOINED,
@@ -22,11 +21,16 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    DISABLE_CHAT_PARTICIPANT,
+    DISABLE_CHAT_FOR_ALL,
+    ENABLE_CHAT_PARTICIPANT,
+    ENABLE_CHAT_FOR_ALL,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
+    PARTICIPANT_UPDATED,
+    MUTE_REMOTE_PARTICIPANT_VIDEO
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -50,6 +54,7 @@ import {
     getParticipantDisplayName
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
+import { isRecording } from '../../recording';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -91,9 +96,8 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             // 내가 방장이면 자동으로 레코딩이 시작되도록...
-            const isRecordingRunning = Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
             const conference = getCurrentConference(state);
-            if (conference && isHost && !isRecordingRunning && autoRecord) {
+            if (conference && isHost && !isRecording(state) && autoRecord) {
                 conference.startRecording({
                     mode: JitsiRecordingConstants.mode.FILE,
                     appData: JSON.stringify({
@@ -125,22 +129,49 @@ MiddlewareRegistry.register(store => next => action => {
 
     case GRANT_MODERATOR: {
         const { conference } = store.getState()['features/base/conference'];
-
         conference.grantOwner(action.id);
         break;
     }
 
     case KICK_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
-
         conference.kickParticipant(action.id);
+        break;
+    }
+
+    case DISABLE_CHAT_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.disableChatForParticipant(action.id);
+        break;
+    }
+
+    case DISABLE_CHAT_FOR_ALL: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.disableChatForAll();
+        break;
+    }
+
+    case ENABLE_CHAT_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.enableChatForParticipant(action.id);
+        break;
+    }
+
+    case ENABLE_CHAT_FOR_ALL: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.enableChatForAll();
         break;
     }
 
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
+        conference.muteParticipant(action.id, action.mute);
+        break;
+    }
 
-        conference.muteParticipant(action.id);
+    case MUTE_REMOTE_PARTICIPANT_VIDEO: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.muteParticipantVideo(action.id, action.mute);
         break;
     }
 
@@ -149,18 +180,15 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_DISPLAY_NAME_CHANGED: {
         if (typeof APP !== 'undefined') {
             const participant = getLocalParticipant(store.getState());
-
             if (participant && participant.id === action.id) {
                 APP.UI.emitEvent(UIEvents.NICKNAME_CHANGED, action.name);
             }
         }
-
         break;
     }
 
     case PARTICIPANT_JOINED: {
         _maybePlaySounds(store, action);
-
         return _participantJoinedOrUpdated(store, next, action);
     }
 
