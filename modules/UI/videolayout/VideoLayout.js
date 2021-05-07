@@ -399,6 +399,8 @@ const VideoLayout = {
         const state = APP.store.getState();
         const { order } = state['features/video-layout'];
 
+        console.log('reorderVideos:', order);
+
         // default parameter id=0 for moving all muted remote videos to end of DOM
         // when parameter id has a value, we mute only that participant and move to end of DOM
 
@@ -415,6 +417,12 @@ const VideoLayout = {
 
         // reorder videos by order settings
         if (Array.isArray(order)) {
+            const participants = getParticipants(state);
+            participants.forEach(p => {
+                if (!order.includes(p.id)) {
+                    order.push(p.id);
+                }
+            });
             ordered = filter(map(order, getParticipantById));
         } else {
             let data = [];

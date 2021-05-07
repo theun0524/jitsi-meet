@@ -11,10 +11,11 @@ import { translate } from '../../base/i18n';
 import { Icon, IconBlurBackground, IconCancelSelection } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
-import { toggleBackgroundEffect, setVirtualBackground } from '../actions';
+import { toggleBackgroundEffect, setVirtualBackground, backgroundEnabled } from '../actions';
 import logger from '../logger';
 
 type Props = {
+    _trackExist: Boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -32,7 +33,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _apiBase, _virtualSource, dispatch, t }: Props) {
+function VirtualBackground({ _apiBase, _trackExist, _virtualSource, dispatch, t }: Props) {
     const [ data, setData ] = useState({ docs: [] });
     const [ loading, isloading ] = useState(false);
     const [ images, setImages ] = useState([]);
@@ -58,8 +59,9 @@ function VirtualBackground({ _apiBase, _virtualSource, dispatch, t }: Props) {
     const [ selected, setSelected ] = useState(_virtualSource || 'none');
     const enableBlur = async () => {
         setSelected('blur');
-        await dispatch(setVirtualBackground('', false));
-        await dispatch(toggleBackgroundEffect(true));
+        await dispatch(setVirtualBackground('blur', false));
+        if(_trackExist)
+            await dispatch(toggleBackgroundEffect(true));
     };
 
     const removeBackground = async image => {
@@ -70,11 +72,15 @@ function VirtualBackground({ _apiBase, _virtualSource, dispatch, t }: Props) {
     const setImageBackground = async image => {
         setSelected(image._id);
         if (image._id === 'none') {
+            dispatch(backgroundEnabled(false));
             await dispatch(setVirtualBackground('', false));
-            await dispatch(toggleBackgroundEffect(false));
+            if(_trackExist)
+                await dispatch(toggleBackgroundEffect(false));
         } else {
+            dispatch(backgroundEnabled(true));
             await dispatch(setVirtualBackground(image._id, true));
-            await dispatch(toggleBackgroundEffect(true));
+            if(_trackExist)
+                await dispatch(toggleBackgroundEffect(true));
         }
     };
 
@@ -185,6 +191,7 @@ function VirtualBackground({ _apiBase, _virtualSource, dispatch, t }: Props) {
 function _mapStateToProps(state) {
     return {
         _apiBase: getAuthUrl(state),
+        _trackExist: state['features/base/tracks'].length === 0? false : true,
         _virtualSource: state['features/virtual-background'].virtualSource
     };
 }

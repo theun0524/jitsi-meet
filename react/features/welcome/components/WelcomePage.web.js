@@ -1,5 +1,6 @@
 /* global APP, interfaceConfig, process */
 
+import Badge from '@atlaskit/badge';
 import Banner from '@atlaskit/banner';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
@@ -14,16 +15,20 @@ import { Icon, IconWarning } from '../../base/icons';
 import { setJWT } from '../../base/jwt';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { openDialog } from '../../base/dialog';
 import { CalendarList } from '../../calendar-sync';
 import { NotificationsContainer } from '../../notifications/components';
 import { RecentList } from '../../recent-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
+import { VirtualBackgroundDialog } from '../../virtual-background';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import s from './WelcomePage.module.scss';
 import { NOTIFICATION_TYPE, showSweetAlert } from '../../notifications';
+import { getAvatarColor, getInitials } from '../../base/avatar';
+//import alarmImg from '../../../../resources/img/appstore-badge.png';
 
 /**
  * The pattern used to validate room name.
@@ -34,6 +39,7 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
 const DEFAULT_TENANT = process.env.DEFAULT_SITE_ID;
+
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -129,6 +135,7 @@ class WelcomePage extends AbstractWelcomePage {
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
+        this._onVirtualBackground = this._onVirtualBackground.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
         this._setEditTenant = this._setEditTenant.bind(this);
@@ -224,6 +231,12 @@ class WelcomePage extends AbstractWelcomePage {
         });
     }
 
+    _onVirtualBackground(){
+        const { dispatch } = this.props;
+        
+        dispatch(openDialog(VirtualBackgroundDialog));
+    }
+
     /**
      * Settings handler.
      *
@@ -233,7 +246,7 @@ class WelcomePage extends AbstractWelcomePage {
     _onOpenSettings() {
         const { dispatch } = this.props;
         const defaultTab = SETTINGS_TABS.DEVICES;
-
+       
         dispatch(openSettingsDialog(defaultTab));
     }
 
@@ -251,6 +264,7 @@ class WelcomePage extends AbstractWelcomePage {
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const buttons = [];
         const [ tenant ] = room.split('/');
+        const avatarColor = getAvatarColor(getInitials(_user?.name), 0.9);
 
         if (_user) {
             if (_user.isAdmin) {
@@ -271,13 +285,22 @@ class WelcomePage extends AbstractWelcomePage {
                     key = 'userMenu'
                     trigger = {
                         <div className = {s.userContainer}>
-                            { _user.avatarURL && (
+                            { _user.avatarURL ? (
                                 <img
                                     alt = 'avatar'
                                     className = {s.avatar}
                                     src = { _user.avatarURL } />
+                            ) : (
+                                <div className={s.avatar} style={{backgroundColor: avatarColor}}>
+                                    {_user.name?.[0] || _user.username[0]}
+                                </div>
                             )}
                             { _user.name }
+                            { (!_user.email_verified && currentTenant === DEFAULT_TENANT) && (
+                                <div className = {s.badge}>
+                                    <Badge appearance="important">{1}</Badge>
+                                </div>
+                            )}
                         </div>
                     }
                     triggerType = 'button'>
@@ -291,6 +314,16 @@ class WelcomePage extends AbstractWelcomePage {
                             className = {s.menuItem}
                             href = { `${AUTH_PAGE_BASE}/account` }>
                             { t('welcomepage.account') }
+                            {(!_user.email_verified && currentTenant === DEFAULT_TENANT) && (
+                                <div className = {s.badge}>
+                                    <Badge appearance="important">{1}</Badge>
+                                </div>
+                            )}
+                        </DropdownItem>
+                        <DropdownItem
+                            className = {s.menuItem}
+                            onClick = { this._onVirtualBackground }>
+                            { t('toolbar.selectBackground') }
                         </DropdownItem>
                         <DropdownItem
                             className = {s.menuItem}

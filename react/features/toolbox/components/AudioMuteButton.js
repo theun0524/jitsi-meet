@@ -13,6 +13,8 @@ import { AbstractAudioMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
 import { muteLocal } from '../../remote-video-menu/actions';
+import { hasAvailableDevices } from '../../base/devices';
+import { getLocalParticipant } from '../../base/participants';
 
 declare var APP: Object;
 
@@ -150,11 +152,18 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const localParticipant = getLocalParticipant(APP.store.getState());
+    let isLocalParticipantAModerator = (localParticipant.role === "moderator");
     const _disabled = state['features/base/config'].startSilent;
+
+    let isUserDeviceAccessDisabled = state['features/base/conference'].userDeviceAccessDisabled;
+    isUserDeviceAccessDisabled = false ? undefined : isUserDeviceAccessDisabled;
 
     return {
         _audioMuted,
-        _disabled
+        // we should show that the microphone is disabled when the moderator has disabled user's access to device
+        // or when the device is not available
+        _disabled: !isLocalParticipantAModerator && (!hasAvailableDevices(state, 'audioInput') || isUserDeviceAccessDisabled)
     };
 }
 

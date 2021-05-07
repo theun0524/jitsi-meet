@@ -15,7 +15,8 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-    "@atlaskit/banner": "^10.1.1",
+    "@atlaskit/badge": "10.0.1",
+    "@atlaskit/banner": "10.1.1",
     "@atlaskit/button": "10.1.1",
     "@atlaskit/checkbox": "5.0.10",
     "@atlaskit/dropdown-menu": "6.1.25",
@@ -66,7 +67,7 @@
     "js-cookie": "2.2.1",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:vmeeting-io/lib-jitsi-meet#117bdf3f51ab05a3b84b9de91773347a02afe88e",
+    "lib-jitsi-meet": "github:vmeeting-io/lib-jitsi-meet#02af21cd8241f88974613dbe9421aebff146c0a5",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.19",
     "moment": "2.19.4",

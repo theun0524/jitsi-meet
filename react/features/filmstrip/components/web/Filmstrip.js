@@ -25,6 +25,7 @@ import { getParticipantCount } from '../../../base/participants';
 import { setHorizontalViewPage, setTileViewPage } from '../../actions.web';
 
 declare var APP: Object;
+declare var config: Object;
 declare var interfaceConfig: Object;
 declare var $: Object;
 
@@ -171,8 +172,8 @@ class Filmstrip extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        if (prevProps._currentLayout !== this.props._currentLayout) {
-            console.log('current layout is changed:', this.props._currentLayout);
+        if (!config.disableSortable &&
+            prevProps._currentLayout !== this.props._currentLayout) {
             this._changeSortable();
         }
     }

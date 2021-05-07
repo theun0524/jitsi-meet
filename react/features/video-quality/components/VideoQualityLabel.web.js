@@ -13,6 +13,7 @@ import AbstractVideoQualityLabel, {
     _abstractMapStateToProps,
     type Props as AbstractProps
 } from './AbstractVideoQualityLabel';
+import { getParticipantCount, getPinnedParticipant } from '../../base/participants';
 
 type Props = AbstractProps & {
 
@@ -164,8 +165,14 @@ function _mapStateToProps(state) {
         participantId
     );
 
-    const translationKeys
-        = audioOnly ? {} : _mapResolutionToTranslationsKeys(resolution);
+    const pinned = getPinnedParticipant(state);
+    const participantCount = getParticipantCount(state);
+    const { preferredVideoQuality } = state['features/base/conference'];
+
+    const translationKeys = audioOnly ? {} : _mapResolutionToTranslationsKeys(
+        participantCount === 1 || pinned?.local
+            ? Math.min(preferredVideoQuality, resolution)
+            : resolution);
 
     return {
         ..._abstractMapStateToProps(state),

@@ -243,7 +243,11 @@ export function appNavigate(uri: ?string) {
 
         // 방 접속 전에 한번 더 불리는 것을 방지하기 위해서 pathname 체크.
         // host가 지정된 경우, host 값이 true인 경우만 방장으로 참석한다.
-        if (room && pathname !== '/' && (!has(params, 'host') || params.host === 'true')) {
+        if (room &&
+            pathname !== '/' &&
+            window.location.pathname === pathname &&
+            (!has(params, 'host') || params.host === 'true')
+        ) {
             let apiUrl;
             let resp;
 
