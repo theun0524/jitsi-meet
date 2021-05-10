@@ -1,7 +1,6 @@
 /* @flow */
 
-import Pagination from '@atlaskit/pagination';
-import { debounce, map, range } from 'lodash';
+import { debounce, map } from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -11,7 +10,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
+import { Icon, IconCaretLeft, IconCaretRight, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { getCurrentLayout, LAYOUTS, setTileViewOrder } from '../../../video-layout';
@@ -196,12 +195,11 @@ class Filmstrip extends Component<Props> {
     }
 
     _onChangePage(e, page) {
-        const index = this.props._pages.indexOf(page);
-        console.log('onChangePage:', page, index);
+        console.log('onChangePage:', page);
         if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
-            this.props.dispatch(setTileViewPage(index));
+            this.props.dispatch(setTileViewPage(page));
         } else {
-            this.props.dispatch(setHorizontalViewPage(index));
+            this.props.dispatch(setHorizontalViewPage(page));
         }
         VideoLayout.reorderVideos();
     }
@@ -220,7 +218,7 @@ class Filmstrip extends Component<Props> {
         // will get updated without replacing the DOM. If the known DOM gets
         // modified, then the views will get blown away.
 
-        const { _page, _pages } = this.props;
+        const { _page, _totalPages } = this.props;
         const filmstripStyle = {};
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
@@ -271,6 +269,14 @@ class Filmstrip extends Component<Props> {
                         onMouseOver={this._onMouseOver}>
                         <div id='filmstripLocalVideoThumbnail' />
                     </div>
+                    { _totalPages > 1 && (
+                        <div
+                            className={s.prevPageButton}
+                            onClick={() => this._onChangePage(_page - 1)}>
+                            <Icon size={24} src={IconCaretLeft} />
+                            {_page} / {_totalPages}
+                        </div>
+                    )}
                     <div
                         className={remoteVideosWrapperClassName}
                         id='filmstripRemoteVideos'>
@@ -289,12 +295,12 @@ class Filmstrip extends Component<Props> {
                             <div id='localVideoTileViewContainer' />
                         </div>
                     </div>
-                    { _pages && (
-                        <div className={s.paginationContainer}>
-                            <Pagination
-                                pages = { _pages }
-                                onChange = { this._onChangePage }
-                                selectedIndex = { _page } />
+                    { _totalPages > 1 && (
+                        <div
+                            className={s.nextPageButton}
+                            onClick={() => this._onChangePage(_page + 1)}>
+                            <Icon size={24} src={IconCaretRight} />
+                            {_page} / {_totalPages}
                         </div>
                     )}
                 </div>
@@ -432,16 +438,16 @@ function _mapStateToProps(state) {
     const videosClassName = `filmstrip__videos${isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
     const currentLayout = getCurrentLayout(state);
-    let numPage = 0;
+    let totalPages = 0;
     let page = 0;
 
     switch (currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            numPage = Math.ceil(getParticipantCount(state) / (state['features/filmstrip'].horizontalViewDimensions?.visibleRows || 1));
+            totalPages = Math.ceil(getParticipantCount(state) / (state['features/filmstrip'].horizontalViewDimensions?.visibleRows || 1));
             page = state['features/filmstrip'].horizontalViewPage || 0;
             break;
         case LAYOUTS.TILE_VIEW:
-            numPage = Math.ceil((gridDimensions.rows || 0) / (gridDimensions.visibleRows || 1));
+            totalPages = Math.ceil((gridDimensions.rows || 0) / (gridDimensions.visibleRows || 1));
             page = state['features/filmstrip'].tileViewPage || 0;
     }
 
@@ -458,7 +464,7 @@ function _mapStateToProps(state) {
         _localVideoClass: Boolean(hideLocalVideo) ? 'hide' : '',
         _rows: gridDimensions.rows,
         _page: page,
-        _pages: numPage > 1 ? range(1, numPage + 1) : null,
+        _totalPages: totalPages,
         _videosClassName: videosClassName,
         _visible: visible
     };

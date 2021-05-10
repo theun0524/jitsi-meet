@@ -193,13 +193,15 @@ class Conference extends AbstractConference<Props, *> {
                 className = { _layoutClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
-
+                
                 <Notice />
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                     { hideLabels || <Labels /> }
+                    {/* { _totalPages > 1 && <PagePrevButton totalPages = { _totalPages } page = { _page } /> }
+                    { _totalPages > 1 && <PageNextButton totalPages = { _totalPages } page = { _page } /> } */}
                 </div>
 
                 { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
