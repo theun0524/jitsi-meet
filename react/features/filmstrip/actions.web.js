@@ -59,22 +59,6 @@ export function setTileViewDimensions(dimensions: Object, windowSize: Object, is
 }
 
 /**
- * Sets the visible page of the tile view grid.
- *
- * @param {Number} page - The visible page.
- * @returns {{
- *     type: SET_TILE_VIEW_PAGE,
- *     page: Number
- * }}
- */
-export function setTileViewPage(page: Number) {
-    return {
-        type: SET_TILE_VIEW_PAGE,
-        page
-    };
-}
-
-/**
  * Sets the dimensions of the thumbnails in horizontal view.
  *
  * @param {number} clientHeight - The height of the window.
@@ -87,22 +71,6 @@ export function setHorizontalViewDimensions(clientHeight: number = 0) {
     return {
         type: SET_HORIZONTAL_VIEW_DIMENSIONS,
         dimensions: calculateThumbnailSizeForHorizontalView(clientHeight)
-    };
-}
-
-/**
- * Sets the visible page of the thumbnails in horizontal view.
- *
- * @param {Number} page - The visible page.
- * @returns {{
- *     type: SET_HORIZONTAL_VIEW_PAGE,
- *     page: Number
- * }}
- */
-export function setHorizontalViewPage(page: Number) {
-    return {
-        type: SET_HORIZONTAL_VIEW_PAGE,
-        page
     };
 }
 

@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
+import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 
 import { translate } from '../../../base/i18n';
 import {
@@ -247,6 +248,7 @@ class DisplayName extends Component<Props, State> {
             displayName: editDisplayNameValue
         }));
 
+        VideoLayout.reorderVideos();
         this.setState({
             isEditing: false,
             editDisplayNameValue: ''

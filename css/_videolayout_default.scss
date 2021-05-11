@@ -12,6 +12,48 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
+
+    .page-button {
+        display: inline-block;
+        position: absolute;
+        text-align: center;
+        cursor: pointer;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 10;
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 4px;
+
+        &:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        &.disabled {
+            cursor: default;
+
+            .jitsi-icon {
+                color: #B8C7E0;
+            }
+
+            &:hover {
+                background-color: rgba(0,0,0,0.5);
+            }
+        }
+
+        &.prev {
+            top: calc(50% - 28px);
+            left: 0;
+        }
+
+        &.next {
+            top: calc(50% - 28px);
+            right: 0;
+        }
+
+        .jitsi-icon {
+            color: aquamarine;
+        }        
+    }
 }
 
 #largeVideoBackgroundContainer,

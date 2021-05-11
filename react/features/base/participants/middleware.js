@@ -55,6 +55,7 @@ import {
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import { isRecording } from '../../recording';
+import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -472,6 +473,10 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
 
         // Force update of local video getting a new id.
         APP.UI.refreshAvatarDisplay(currentKnownId);
+    }
+
+    if (action.name !== getParticipantDisplayName(getState())) {
+        VideoLayout.reorderVideos();
     }
 
     return result;

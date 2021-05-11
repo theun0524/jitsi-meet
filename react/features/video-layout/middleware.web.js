@@ -14,6 +14,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
+import { setPageInfo, updatePageInfo } from './actions';
 import { ORDERED_TILE_VIEW, SET_TILE_VIEW_ORDER } from './actionTypes';
 import { shouldDisplayTileView } from './functions';
 
@@ -44,18 +45,23 @@ MiddlewareRegistry.register(store => next => action => {
         VideoLayout.reset();
         break;
 
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: {
+        const state = store.getState();
         if (!action.participant.local) {
             VideoLayout.addRemoteParticipantContainer(
-                getParticipantById(store.getState(), action.participant.id));
+                getParticipantById(state, action.participant.id));
             VideoLayout.reorderVideos();
+            store.dispatch(updatePageInfo());
         }
         break;
+    }
 
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: {
         VideoLayout.removeParticipantContainer(action.participant.id);
         VideoLayout.reorderVideos();
+        store.dispatch(updatePageInfo());
         break;
+    }
 
     case PARTICIPANT_UPDATED: {
         // Look for actions that triggered a change to connectionStatus. This is

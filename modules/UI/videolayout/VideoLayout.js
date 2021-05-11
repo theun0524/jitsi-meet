@@ -27,7 +27,7 @@ import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
 const logger = Logger.getLogger(__filename);
 
-const DEBOUNCE_TIMEOUT = 100;   // 100ms for debounce timer
+const DEBOUNCE_TIMEOUT = 500;   // 100ms for debounce timer
 const remoteVideos = {};
 let localVideoThumbnail = null;
 
@@ -39,6 +39,9 @@ let largeVideo;
  * flipX state of the localVideo
  */
 let localFlipX = null;
+
+let hiddenElements;
+let visibleElements;
 
 /**
  * Handler for local flip X changed event.
@@ -74,17 +77,11 @@ function getLocalParticipant() {
     return getLocalParticipantFromStore(APP.store.getState());
 }
 
-export function getVideoId(node) {
-    return node.id === 'localVideoTileViewContainer'
-        ? localVideoThumbnail.id
-        : node.id.split('_')[1];
-}
-
 const orderBy = {
     displayName: (state, ...data) =>
-        concat(...map(data, part => sortBy(part, participant => {
-            return getParticipantDisplayName(state, participant.id);
-        }))),
+        concat(...map(data, part => sortBy(part, [id => {
+            return getParticipantDisplayName(state, id);
+        }]))),
 
 };
 
@@ -413,20 +410,19 @@ const VideoLayout = {
 
         // remove the local video container from DOM
         const videosContainer = document.getElementById('filmstripRemoteVideosContainer');
+        const participants = getParticipants(state);
         let ordered;
 
         // reorder videos by order settings
         if (Array.isArray(order)) {
-            const participants = getParticipants(state);
+            ordered = [...order];
             participants.forEach(p => {
                 if (!order.includes(p.id)) {
-                    order.push(p.id);
+                    ordered.push(p.id);
                 }
             });
-            ordered = filter(map(order, getParticipantById));
         } else {
             let data = [];
-            const participants = getParticipants(state);
             if (order.videoMuted) {
                 // split videoMuted order
                 data.push([]);
@@ -434,47 +430,70 @@ const VideoLayout = {
 
                 participants.forEach(participant => {
                     if (participant.local) {
-                        data[localVideoThumbnail.isVideoMuted ? 1 : 0].push(participant);
+                        data[localVideoThumbnail.isVideoMuted ? 1 : 0].push(participant.id);
                     } else { // remoteVideo
                         const jitsiParticipant = APP.conference.getParticipantById(participant.id);
                         console.log('====> remoteVideo: isVideoMuted:', jitsiParticipant.isVideoMuted());
-                        data[jitsiParticipant.isVideoMuted() ? 1 : 0].push(participant);
+                        data[jitsiParticipant.isVideoMuted() ? 1 : 0].push(participant.id);
                     }
                 });
             } else {
-                data.push(participants);
+                data.push(map(participants, 'id'));
             }
 
             if (orderBy[order.by]) {
                 ordered = orderBy[order.by](state, ...data);
+                console.log('===> ordered:', map(ordered, 
+                    id => getParticipantDisplayName(state, id)));
             }
+        }
+
+        if (!hiddenElements) {
+            hiddenElements = document.createDocumentFragment();
+        }
+        if (!visibleElements) {
+            visibleElements = document.createDocumentFragment();
         }
 
         if (ordered) {
             const { conference } = state['features/base/conference'];
-            const { tileViewPage: page = 0 } = state['features/filmstrip'];
-            const { columns, visibleRows } = getTileViewGridDimensions(state);
-            const pageSize = columns * visibleRows;
-            const nodes = ordered.slice(page * pageSize, (page+1) * pageSize);
-            console.log('page:', nodes);
+            const { current = 1, pageSize } = state['features/video-layout'].pageInfo;
+            const visibleIDs = ordered.slice((current-1) * pageSize, current * pageSize);
 
-            conference.recvVideoParticipants(map(nodes, 'id'));
+            conference.recvVideoParticipants(visibleIDs);
 
-            // remove videoContainer innerHTML
-            videosContainer.innerHTML = '';
-            const c = document.createDocumentFragment();
-            nodes.forEach(participant => {
-                if (participant.local) {
-                    c.appendChild(localVideoThumbnail.container);
-                } else {
-                    c.appendChild(remoteVideos[participant.id].container);
+            // show visible videos
+            let target = visibleElements;
+            visibleIDs.forEach(id => {
+                if (id === localVideoThumbnail.id) {
+                    target.appendChild(localVideoThumbnail.container);
+                } else if (remoteVideos[id]) {
+                    target.appendChild(remoteVideos[id].container);
                 }
             });
-            videosContainer.appendChild(c);
 
-            APP.store.dispatch(orderedTileView(
-                map(videosContainer.childNodes, getVideoId)
-            ));
+            // hide invisible videos
+            target = hiddenElements;
+            participants.forEach(participant => {
+                if (!visibleIDs.includes(participant.id)) {
+                    if (participant.local) {
+                        target.appendChild(localVideoThumbnail.container);
+                    } else {
+                        target.appendChild(remoteVideos[participant.id].container);
+                    }
+                }
+            });
+            videosContainer.appendChild(visibleElements);
+
+            // replay hidden videos & audios
+            videosContainer.childNodes.forEach(node => {
+                const audios = node.getElementsByTagName('audio');
+                audios.length && audios[0].play();
+                const videos = node.getElementsByTagName('video');
+                videos.length && videos[0].play();
+            });
+
+            APP.store.dispatch(orderedTileView(ordered));
         }
     },
 

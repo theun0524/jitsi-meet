@@ -87,6 +87,7 @@
 
     &.hide-videos {
         .remote-videos-container,
+        .page-button,
         .hide {
             opacity: 0;
             pointer-events: none;

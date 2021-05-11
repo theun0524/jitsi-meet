@@ -11,6 +11,17 @@ export const SCREEN_SHARE_PARTICIPANTS_UPDATED
     = 'SCREEN_SHARE_PARTICIPANTS_UPDATED';
 
 /**
+ * The type of the action which set the current page info
+ * to be displayed.
+ *
+ * @returns {{
+ *     type: SET_PAGE_INFO,
+ *     pageInfo: Object,
+ * }}
+ */
+export const SET_PAGE_INFO = 'SET_PAGE_INFO';
+
+/**
  * The type of the action which enables or disables the feature for showing
  * video thumbnails in a two-axis tile view.
  *

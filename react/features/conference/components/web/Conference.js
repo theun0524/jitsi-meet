@@ -26,6 +26,8 @@ import type { AbstractProps } from '../AbstractConference';
 
 import Labels from './Labels';
 import { default as Notice } from './Notice';
+import { default as PagePrevButton } from './PagePrevButton';
+import { default as PageNextButton } from './PageNextButton';
 
 declare var APP: Object;
 declare var config: Object;
@@ -200,8 +202,8 @@ class Conference extends AbstractConference<Props, *> {
                     <KnockingParticipantList />
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                     { hideLabels || <Labels /> }
-                    {/* { _totalPages > 1 && <PagePrevButton totalPages = { _totalPages } page = { _page } /> }
-                    { _totalPages > 1 && <PageNextButton totalPages = { _totalPages } page = { _page } /> } */}
+                    <PagePrevButton />
+                    <PageNextButton />
                 </div>
 
                 { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }

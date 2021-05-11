@@ -5,6 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     ORDERED_TILE_VIEW,
     SCREEN_SHARE_PARTICIPANTS_UPDATED,
+    SET_PAGE_INFO,
     SET_TILE_VIEW,
     SET_TILE_VIEW_ORDER
 } from './actionTypes';
@@ -38,6 +39,16 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
         return {
             ...state,
             screenShares: action.participantIds
+        };
+    }
+
+    case SET_PAGE_INFO: {
+        return {
+            ...state,
+            pageInfo: {
+                ...(state.pageInfo || {}),
+                ...action.pageInfo
+            }
         };
     }
 

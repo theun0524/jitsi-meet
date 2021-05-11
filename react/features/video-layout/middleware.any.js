@@ -44,12 +44,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     // Things to update when tile view state changes
-    case SET_TILE_VIEW:
+    case SET_TILE_VIEW: {
         if (action.enabled && getPinnedParticipant(store)) {
             store.dispatch(pinParticipant(null));
         }
+        // store.dispatch(updatePageInfo());
+        break;
     }
-
+    }
 
     return result;
 });

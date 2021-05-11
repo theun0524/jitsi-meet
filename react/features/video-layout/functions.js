@@ -33,10 +33,33 @@ export function getCurrentLayout(state: Object) {
 export function getMaxColumnCount() {
     const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5; // was initially 5
 
-    console.log("InterfaceConfig.TILE_VIEW_MAX_COLUMNS is " + interfaceConfig.TILE_VIEW_MAX_COLUMNS);
-    console.log('Configured value for max number of columns for tile_view is : ', configuredMax);
+    // console.log("InterfaceConfig.TILE_VIEW_MAX_COLUMNS is " + interfaceConfig.TILE_VIEW_MAX_COLUMNS);
+    // console.log('Configured value for max number of columns for tile_view is : ', configuredMax);
 
     return Math.max(configuredMax, 1); // It should be configurable by TILE_VIEW_MAX_COLUMNS
+}
+
+/**
+ * Returns how many participant should be displayed in a page.
+ *
+ * @param {Object} state - The redux store state.
+ * @param {number} layout - The target layout to be displayed.
+ * @returns {number}
+ */
+export function getPageSize(state) {
+    const { horizontalViewDimensions, tileViewDimensions } = state['features/filmstrip'];
+    
+    const currentLayout = getCurrentLayout(state);
+    if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        console.log('getPageSize:', currentLayout, horizontalViewDimensions?.visibleRows);
+        return horizontalViewDimensions?.visibleRows || 1;
+    } else if (currentLayout === LAYOUTS.TILE_VIEW) {
+        console.log('getPageSize:', currentLayout, (tileViewDimensions?.gridDimensions?.visibleRows || 1) * getMaxColumnCount());
+        return (tileViewDimensions?.gridDimensions?.visibleRows || 1) * getMaxColumnCount();
+    }
+
+    console.error('getPageSize: Unexpected layout error!', currentLayout);
+    return 0;
 }
 
 /**

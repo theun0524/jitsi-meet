@@ -10,7 +10,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { Icon, IconCaretLeft, IconCaretRight, IconMenuDown, IconMenuUp } from '../../../base/icons';
+import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { getCurrentLayout, LAYOUTS, setTileViewOrder } from '../../../video-layout';
@@ -19,9 +19,8 @@ import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import Toolbar from './Toolbar';
 import s from './Filmstrip.module.scss';
-import VideoLayout, { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
+import { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
 import { getParticipantCount } from '../../../base/participants';
-import { setHorizontalViewPage, setTileViewPage } from '../../actions.web';
 
 declare var APP: Object;
 declare var config: Object;
@@ -136,7 +135,6 @@ class Filmstrip extends Component<Props> {
         this._isHovered = false;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onChangePage = this._onChangePage.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
@@ -192,16 +190,6 @@ class Filmstrip extends Component<Props> {
                 disabled: true
             });
         }
-    }
-
-    _onChangePage(e, page) {
-        console.log('onChangePage:', page);
-        if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
-            this.props.dispatch(setTileViewPage(page));
-        } else {
-            this.props.dispatch(setHorizontalViewPage(page));
-        }
-        VideoLayout.reorderVideos();
     }
 
     /**
@@ -269,14 +257,6 @@ class Filmstrip extends Component<Props> {
                         onMouseOver={this._onMouseOver}>
                         <div id='filmstripLocalVideoThumbnail' />
                     </div>
-                    { _totalPages > 1 && (
-                        <div
-                            className={s.prevPageButton}
-                            onClick={() => this._onChangePage(_page - 1)}>
-                            <Icon size={24} src={IconCaretLeft} />
-                            {_page} / {_totalPages}
-                        </div>
-                    )}
                     <div
                         className={remoteVideosWrapperClassName}
                         id='filmstripRemoteVideos'>
@@ -292,17 +272,8 @@ class Filmstrip extends Component<Props> {
                             onMouseOver={this._onMouseOver}
                             ref={this._videosContainer}
                             style={filmstripRemoteVideosContainerStyle}>
-                            <div id='localVideoTileViewContainer' />
                         </div>
                     </div>
-                    { _totalPages > 1 && (
-                        <div
-                            className={s.nextPageButton}
-                            onClick={() => this._onChangePage(_page + 1)}>
-                            <Icon size={24} src={IconCaretRight} />
-                            {_page} / {_totalPages}
-                        </div>
-                    )}
                 </div>
             </div>
         );

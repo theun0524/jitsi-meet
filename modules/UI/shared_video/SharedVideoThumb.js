@@ -58,10 +58,10 @@ export default class SharedVideoThumb extends SmallVideo {
         displayNameContainer.className = 'displayNameContainer';
         container.appendChild(displayNameContainer);
 
-        const remoteVideosContainer
-            = document.getElementById('filmstripRemoteVideosContainer');
+        // const remoteVideosContainer
+        //     = document.getElementById('filmstripRemoteVideosContainer');
 
-        remoteVideosContainer.appendChild(container);
+        // remoteVideosContainer.appendChild(container);
 
         return container;
     }
