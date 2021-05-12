@@ -6,7 +6,7 @@ import { Icon, IconShareDoc } from '../../../base/icons';
 import { getAuthUrl } from '../../../../api/url';
 import { getBaseUrl } from '../../../base/util';
 import { sendMessage } from '../../actions';
-
+import { getConferenceName } from '../../../base/conference';
 import { showToast } from '../../../../features/notifications';
 
 declare var interfaceConfig: Object;
@@ -44,6 +44,7 @@ export class FileUploadButton<P: Props> extends Component {
         selectedFile: null,
         fileUploaded: Boolean,
         uploadedURL: String,
+        conferenceName: String,
     }
 
     /**
@@ -82,18 +83,26 @@ export class FileUploadButton<P: Props> extends Component {
         const dispatch = APP.store.dispatch;
         const formData = new FormData();
 
+        const roomName =  getConferenceName(APP.store.getState()).replace(/\s+/g, '') // strip all spaces
+        
         // update the formdata object
         formData.append(file.name, file);
+
+        // attach the roomName to the file upload button
+        formData.append('roomName', roomName);
+        console.log("Form Data is: ", formData);
 
         // code to send to vmapi
         try {
             const resp = await axios.post(`${_apiBase}/uploads`, formData);
 
+            console.log("Response data is: ", resp);
+
             if(resp.status === 200) {
                 // the URL of the server should be adjusted accordingly
-                const fileUrl = "https://vmeeting1.postech.ac.kr:8443/auth/api/uploads/?id=".concat(resp.data.fileName);
+                const fileUrl = `https://vmeeting1.postech.ac.kr:8443/auth/api/uploads/?id=${resp.data.fileName}&roomName=${roomName}`;
                 console.log("Uploaded file URL is: ", fileUrl);
-                this.setState({ uploadedURL: fileUrl, fileUploaded: true });
+                this.setState({ uploadedURL: fileUrl, fileUploaded: true, conferenceName: roomName });
 
                 // dispatch sendMessage action to display the URL of the uploaded file as a message
                 dispatch(sendMessage(fileUrl));
