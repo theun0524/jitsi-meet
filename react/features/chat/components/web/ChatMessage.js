@@ -211,9 +211,11 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderTimestamp() {
+        const { timestamp } = this.props;
         return (
             <div className = 'timestamp'>
-                { this._getFormattedTimestamp() }
+                {/* { this._getFormattedTimestamp() } */}
+                { timestamp }
             </div>
         );
     }
