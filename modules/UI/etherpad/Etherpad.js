@@ -233,5 +233,10 @@ export default class EtherpadManager {
             ETHERPAD_CONTAINER_TYPE, !isVisible);
 
         APP.store.dispatch(setDocumentEditingState(!isVisible));
+
+        if(isVisible){
+            VideoLayout.removeLargeVideoContainer(ETHERPAD_CONTAINER_TYPE);
+            this.etherpad = null;
+        }
     }
 }
