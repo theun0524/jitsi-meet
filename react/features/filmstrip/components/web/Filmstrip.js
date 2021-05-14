@@ -22,6 +22,7 @@ import s from './Filmstrip.module.scss';
 import { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
 
 declare var APP: Object;
+declare var config: Object;
 declare var interfaceConfig: Object;
 declare var $: Object;
 
@@ -167,7 +168,8 @@ class Filmstrip extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        if (prevProps._currentLayout !== this.props._currentLayout) {
+        if (!config.disableSortable &&
+            prevProps._currentLayout !== this.props._currentLayout) {
             this._changeSortable();
         }
     }
@@ -175,6 +177,7 @@ class Filmstrip extends Component<Props> {
     _changeSortable() {
         if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
             this.$videosContainer.sortable({
+                disabled: false,
                 stop: () => {
                     this.props.dispatch(setTileViewOrder(
                         map(this.$videosContainer.children(), getVideoId)
@@ -182,7 +185,9 @@ class Filmstrip extends Component<Props> {
                 }
             });
         } else {
-            this.$videosContainer.sortable('disable');
+            this.$videosContainer.sortable({
+                disabled: true
+            });
         }
     }
 

@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { keyBy } from 'lodash';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
@@ -11,6 +12,7 @@ import {
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
+
 import {
     IconChat,
     IconCodeBlock,
@@ -30,7 +32,8 @@ import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
@@ -90,6 +93,7 @@ import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
+
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
@@ -137,6 +141,13 @@ type Props = {
     _tileViewEnabled: boolean,
 
     /**
+     * Whether or not the overflow menu is visible.
+     */
+     _hangupOptionsMenuVisible: boolean,
+
+     _isLastModerator: boolean,
+
+    /**
      * Whether or not meeting is streaming live.
      */
     _isLiveStreaming: boolean,
@@ -172,10 +183,16 @@ type Props = {
      */
     _locked: boolean,
 
+    _moderatorSelectionVisible: boolean,
+
     /**
      * Whether or not the overflow menu is visible.
      */
     _overflowMenuVisible: boolean,
+
+    _participants: Array,
+
+    _participantsById: Array,
 
     /**
      * Whether or not the local participant's hand is raised.
@@ -187,10 +204,17 @@ type Props = {
      */
     _screensharing: boolean,
 
+    _selectedModerator: string,
+
     /**
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
+
+    /**
+     * Whether or not to show hangup menu.
+     */
+    _showHangupMenu: boolean,
 
     /**
      * Flag showing whether toolbar is visible.
@@ -251,6 +275,8 @@ class Toolbox extends Component<Props, State> {
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onResize = this._onResize.bind(this);
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
+        this._onSetHangupMenuVisible = this._onSetHangupMenuVisible.bind(this);
+        this._onSetModeratorSelectionVisible = this._onSetModeratorSelectionVisible.bind(this);
 
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
         this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
@@ -347,10 +373,32 @@ class Toolbox extends Component<Props, State> {
             this._onSetOverflowVisible(false);
         }
 
+        if (prevProps._hangupOptionsMenuVisible && !this.props._visible) {
+            this._onSetHangupMenuVisible(false);
+        }
+
+        if (prevProps._moderatorSelectionVisible && !this.props._visible) {
+            this._onSetModeratorSelectionVisible(false);
+        }
+
         if (prevProps._overflowMenuVisible
             && !prevProps._dialog
             && this.props._dialog) {
             this._onSetOverflowVisible(false);
+            this.props.dispatch(setToolbarHovered(false));
+        }
+
+        if (prevProps._hangupOptionsMenuVisible
+            && !prevProps._dialog
+            && this.props._dialog) {
+            this._onSetHangupMenuVisible(false);
+            this.props.dispatch(setToolbarHovered(false));
+        }
+
+        if (prevProps._hangupOptionsMenuVisible
+            && !prevProps._dialog
+            && this.props._dialog) {
+            this._onSetModeratorSelectionVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
 
@@ -604,6 +652,49 @@ class Toolbox extends Component<Props, State> {
      */
     _onSetOverflowVisible(visible) {
         this.props.dispatch(setOverflowMenuVisible(visible));
+    }
+
+    _onSetHangupMenuVisible: (boolean) => void;
+
+    /**
+     * Sets the visibility of the hangup menu.
+     *
+     * @param {boolean} visible - Whether or not the hangup menu should be
+     * displayed.
+     * @private
+     * @returns {void}
+     */
+    _onSetHangupMenuVisible(visible) {
+        this.props.dispatch(setHangupMenuVisible(visible));
+        
+        if(!visible){
+            this.props.dispatch(setNextModerator(''));
+            this.props.dispatch(setModeratorSelectionVisible(visible));
+        }
+    }
+
+    _onSetModeratorSelectionVisible: (boolean) => void;
+
+    /**
+     * Sets the visibility of the hangup menu.
+     *
+     * @param {boolean} visible - Whether or not the hangup menu should be
+     * displayed.
+     * @private
+     * @returns {void}
+     */
+     _onSetModeratorSelectionVisible(visible) {
+        const { _participants, _localParticipantID } = this.props;
+        this.props.dispatch(setModeratorSelectionVisible(visible));
+
+        if(visible) {
+            if(_participants.length > 1){
+                let initial_select = (_participants[0].id === _localParticipantID)? 1 : 0;
+                let nextModerator = _participants[initial_select].id
+
+                this.props.dispatch(setNextModerator(nextModerator));
+            }
+        }
     }
 
     _onShortcutToggleChat: () => void;
@@ -1241,12 +1332,15 @@ class Toolbox extends Component<Props, State> {
     _renderToolboxContent() {
         const {
             _chatOpen,
+            _hangupOptionsMenuVisible,
             _overflowMenuVisible,
             _raisedHand,
             _tileViewVisible,
+            _showHangupMenu,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
+
         const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const buttonsLeft = [];
@@ -1369,8 +1463,10 @@ class Toolbox extends Component<Props, State> {
                 </div>
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
-                    <HangupButton
-                        visible = { this._shouldShowButton('hangup') } />
+                    { this._shouldShowButton('hangup') && (
+                        <HangupButton
+                            visible = { this._shouldShowButton('hangup') } />
+                    ) }
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
@@ -1439,16 +1535,23 @@ function _mapStateToProps(state) {
         disableTileView,
         hideParticipantsStats,
     } = state['features/base/config'];
-
+    const participants = state['features/base/participants'];
+    const participantsById = keyBy(state['features/base/participants'], 'id');
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
         fullScreen,
-        overflowMenuVisible
+        overflowMenuVisible,
+        hangupOptionsMenuVisible,
+        moderatorSelectionVisible,
+        selectedModerator,
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const isGuest = !isHost(state);
+    const isLastModerator = (getParticipants(state).length > 1) &&
+                            (getParticipants(state).filter(participant => participant.role === PARTICIPANT_ROLE.MODERATOR).length === 1);
+    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1457,7 +1560,7 @@ function _mapStateToProps(state) {
         // feature enabled
         desktopSharingEnabled = getParticipants(state)
             .find(({ features = {} }) =>
-                String(features['screen-sharing']) === 'true') !== undefined;
+                String(features['screen-sharing']) === PARTICIPANT_ROLE.MODERATOR) !== undefined;
 
         // we want to show button and tooltip
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
@@ -1479,7 +1582,9 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _hangupOptionsMenuVisible: hangupOptionsMenuVisible,
         _isChatOnly: isGuest && chatOnlyGuestEnabled,
+        _isLastModerator: isLastModerator,
         _isLiveStreaming: isStreaming(state),
         _isRecording: isRecording(state),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
@@ -1495,12 +1600,17 @@ function _mapStateToProps(state) {
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _locked: locked,
+        _moderatorSelectionVisible: moderatorSelectionVisible,
         _overflowMenuVisible: overflowMenuVisible,
+        _participants: participants,
+        _participantsById: participantsById,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _selectedModerator: selectedModerator,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
+        _showHangupMenu: isModerator && participants.length > 1,
         _visible: isToolboxVisible(state),
         _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
     };

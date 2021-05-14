@@ -4,7 +4,8 @@ import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     SEND_MESSAGE,
-    SET_PRIVATE_MESSAGE_RECIPIENT
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    HANGUP_ALL_MESSAGE
 } from './actionTypes';
 
 /**
@@ -81,5 +82,11 @@ export function setPrivateMessageRecipient(participant: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT
+    };
+}
+
+export function sendHangupMessage() {
+    return {
+        type: HANGUP_ALL_MESSAGE
     };
 }

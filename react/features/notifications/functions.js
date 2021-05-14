@@ -48,6 +48,7 @@ export function showSweetAlert(props) {
     const {
         appearance,
         descriptionKey : text,
+        descriptionArguments : args,
         titleKey : title,
         customClass,
     } = props;
@@ -73,7 +74,7 @@ export function showSweetAlert(props) {
         confirmButtonText: i18next.t(confirmButtonText),
         customClass,
         icon: appearance,
-        text: i18next.t(text),
+        text: i18next.t(text, args),
         title: i18next.t(title),
     });
 }

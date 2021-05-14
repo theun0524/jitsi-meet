@@ -18,7 +18,7 @@ export function loadSpeakerStats(meetingId) {
 
         try {
             const logs = await axios.get(apiUrl);
-            console.log('loadSpeakerStats:', logs.data);
+            //console.log('loadSpeakerStats:', logs.data);
             dispatch(speakerStatsLoaded(logs.data));
         } catch(err) {    
             console.log('loadSpeakerStats is failed:', err);

@@ -1,5 +1,6 @@
 // @flow
 
+import { debounce } from 'lodash';
 import React from 'react';
 
 import { FieldTextStateless } from '@atlaskit/field-text';
@@ -104,7 +105,9 @@ class Chat extends AbstractChat<Props> {
         this._onDisableChatForAll = this._onDisableChatForAll.bind(this);
         this._onEnableChatForAll = this._onEnableChatForAll.bind(this);
         this._handleKeyPress = this._handleKeyPress.bind(this);
+        this._handleKeyDown = this._handleKeyDown.bind(this);
         this._nextResult = this._nextResult.bind(this);
+        this._updateChatSearchInput = this._updateChatSearchInput.bind(this);
     }
 
     /**
@@ -115,6 +118,8 @@ class Chat extends AbstractChat<Props> {
     componentDidMount() {
         this._scrollMessageContainerToBottom(true);
         this._updateInterval = setInterval(this._updateChatStatus, 1000);
+        document.addEventListener('keypress', this._handleKeyPress);
+        document.addEventListener('keydown', this._handleKeyDown);
     }
 
     /**
@@ -128,6 +133,11 @@ class Chat extends AbstractChat<Props> {
         } else if (this.props._isOpen && !prevProps._isOpen) {
             this._scrollMessageContainerToBottom(false);
         }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keypress', this._handleKeyPress);
+        document.removeEventListener('keydown', this._handleKeyDown);
     }
 
     /**
@@ -182,10 +192,8 @@ class Chat extends AbstractChat<Props> {
 
         if (showSearch) {
             this.setState({ showSearch });
-            document.addEventListener('keyup', this._handleKeyPress);
         } else {
             this.setState({ showSearch, searchQuery: '' });
-            document.removeEventListener('keyup', this._handleKeyPress);
             this._clearHighlightText();
         }
     }
@@ -351,23 +359,31 @@ class Chat extends AbstractChat<Props> {
 
     }
 
-    _updateChatSearchInput = async(event) => {
-        await this.setState({ searchQuery: event.target.value });
-        
-        // invoke the function that scrolls to chatMessage and highlights it
-        this._clearHighlightText();
-
-        this.resetSearchResultIndex();
+    _updateChatSearchInput = event => {
+        this.setState(
+            { searchQuery: event.target.value },
+            () => {
+                // invoke the function that scrolls to chatMessage and highlights it
+                this._clearHighlightText();
+                this.resetSearchResultIndex();
+            }
+        );
     }
 
     _handleKeyPress = ev => {
+        if (!this.state.showSearch) return;
+
         if (ev.key === "Enter") {
             this._handleChatSearchInput();
 
             // count the occurences of search query
             this.countSearchOccurences();
             this._nextResult(ev);
-        } else if (ev.key === 'Escape') {
+        }
+    }
+
+    _handleKeyDown = ev => {
+        if (this.state.showSearch && ev.key === 'Escape') {
             this._onToggleSearch();
             this.resetSearchResultIndex();
         }
@@ -409,7 +425,7 @@ class Chat extends AbstractChat<Props> {
         hlClass = hlClass || "highlight-search-text";
         term = term instanceof Array ? term.join("|") : term;
         const highlighter = a => `<span class="${hlClass}">${a}</span>`;
-        const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+        // const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
         
         for (let i=0; i < usrmsgs.length; i += 1) {
             //loop for each individual chat message
@@ -418,7 +434,7 @@ class Chat extends AbstractChat<Props> {
 
             // replace the inner text with highlighted portion
             node.innerHTML = node.innerHTML.replace(re, highlighter);
-            toHtml(node.parentElement);
+            // toHtml(node.parentElement); // this line was replacing DOM for parent element which contained chat pop-up menu
         }
     }
 
@@ -444,8 +460,6 @@ class Chat extends AbstractChat<Props> {
                 animation: false });
         }
 
-        // remove event listener on key press escape
-        
     }
 
     resetSearchResultIndex = () => {
@@ -458,21 +472,23 @@ class Chat extends AbstractChat<Props> {
         document.removeEventListener('keyup', this._nextResult);
     }
 
-    _nextResult = async(ev) => {
+    _nextResult = ev => {
+        console.log('_nextResult:', ev.key);
         const { t } = this.props;
+        const { searchResultCount, searchResultIndex } = this.state;
         // get highlighted elements
         const spanTags = document.getElementsByClassName("highlight-search-text");
 
-        await this.setState({ currentIdx : this.state.searchResultIndex + 1 });
-        await this.setState({ searchResultIndex: this.state.currentIdx });
+        let currentIdx = searchResultIndex + 1;
+        let resultIndex = currentIdx;
 
-        if(this.state.searchResultCount > 0 && ev.key === "Enter") {
+        if (searchResultCount > 0 && ev.key === "Enter") {
 
             // to keep in the loop
-            if(this.state.currentIdx >= this.state.searchResultCount) {
+            if (currentIdx >= searchResultCount) {
                 
-                this.setState({ currentIdx: -1 });
-                await this.setState({ searchResultIndex: this.state.currentIdx });
+                currentIdx =  -1;
+                resultIndex = currentIdx;
 
                 // dispatch a notification pop-up when reaching end of search results
                 showToast({
@@ -483,11 +499,13 @@ class Chat extends AbstractChat<Props> {
             }
 
             // code to scroll into highlighted text area
-            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].scrollIntoView({ behavior: 'smooth' });
+            spanTags[currentIdx] && spanTags[currentIdx].scrollIntoView({ behavior: 'smooth' });
             
             // add additional highlighting style to identify the current item
-            spanTags[this.state.currentIdx] && spanTags[this.state.currentIdx].style.setProperty('background','#ec9038','')
+            spanTags[currentIdx] && spanTags[currentIdx].style.setProperty('background','#ec9038','')
         }
+
+        this.setState({ currentIdx, searchResultIndex: resultIndex });
     }
 
     _renderPanelContent: () => React$Node | null;

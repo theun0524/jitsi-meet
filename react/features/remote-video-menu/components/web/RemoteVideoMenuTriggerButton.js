@@ -18,6 +18,8 @@ import {
     RemoteVideoMenu,
     VolumeSlider
 } from './';
+import ChatDisableButton from './ChatDisableButton';
+import AllChatDisableButton from './AllChatDisableButton';
 import MoveToFirstButton from './MoveToFirstButton';
 import MoveToLastButton from './MoveToLastButton';
 import MuteVideoButton from './MuteVideoButton';
@@ -262,6 +264,20 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         participantID = { participantID } />
                 );
             }
+
+            // push a new button to show disable/enable chat option for selected remote participant
+            buttons.push(
+                <ChatDisableButton
+                    key='disable-chat'
+                    participantID = { participantID } />
+            );
+
+            // push a new button to show enable/disable chat option for all remote participants; doesn't affect moderators
+            buttons.push(
+                <AllChatDisableButton
+                    key='disable-chat-all'
+                    participantID = { participantID } />
+            );
 
             if (!_disableKick) {
                 buttons.push(

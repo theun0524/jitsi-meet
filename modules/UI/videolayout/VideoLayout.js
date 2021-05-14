@@ -398,6 +398,8 @@ const VideoLayout = {
         const state = APP.store.getState();
         const { order } = state['features/video-layout'];
 
+        console.log('reorderVideos:', order);
+
         // default parameter id=0 for moving all muted remote videos to end of DOM
         // when parameter id has a value, we mute only that participant and move to end of DOM
 
@@ -416,6 +418,16 @@ const VideoLayout = {
 
         // reorder videos by order settings
         if (Array.isArray(order)) {
+            nodes.forEach(node => {
+                const id = node.id.slice(12);
+                if (!order.includes(id)) {
+                    order.push(id);
+                }
+            });
+            if (!order.includes(localVideoThumbnail.id)) {
+                order.push(localVideoThumbnail.id);
+            }
+
             ordered = filter(map(order, id =>
                 id === localVideoThumbnail.id
                     ? localVideo
