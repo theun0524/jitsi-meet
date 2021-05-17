@@ -8,15 +8,13 @@ import {
 } from '../base/conference';
 import { hideDialog, isDialogOpen } from '../base/dialog';
 import { setActiveModalId } from '../base/modal';
-import { pinParticipant } from '../base/participants';
+import { getParticipantDisplayName, pinParticipant } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
 import { saveErrorNotification } from '../notifications';
 import { setToolboxEnabled } from '../toolbox/actions';
-
-import { notifyKickedOut } from './actions';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -47,7 +45,8 @@ MiddlewareRegistry.register(store => next => action => {
             titleKey: 'dialog.sessTerminated',
         }));
 
-        dispatch(disconnect(false));
+        dispatch(conferenceLeft(action.conference));
+        dispatch(appNavigate(undefined));
         break;
     }
     }

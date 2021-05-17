@@ -689,7 +689,7 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
 
     const localParticipant = getLocalParticipant(getState);
 
-    if (conference && participant.id === localParticipant.id) {
+    if (conference && localParticipant?.id === participant.id) {
         if ('name' in participant) {
             conference.setDisplayName(participant.name);
         }
