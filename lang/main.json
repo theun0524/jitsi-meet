@@ -216,6 +216,7 @@
         "contactSupport": "Contact support",
         "copied": "Copied",
         "copy": "Copy",
+        "destroyed_by_host": "Conference terminated by host.",
         "deviceAccessDisabled": "Device access is disabled",
         "deviceAccessReEnabled": "Device access is re-enabled",
         "disableChat": "Disable Chat for User",
