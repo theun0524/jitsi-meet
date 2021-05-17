@@ -1,6 +1,7 @@
 /* global $, APP, interfaceConfig */
 
 import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
+import { getLocalThumb, getRemoteThumbs } from './VideoLayout';
 
 const Filmstrip = {
     /**
@@ -161,8 +162,8 @@ const Filmstrip = {
             selector += ':visible';
         }
 
-        const localThumb = $('#localVideoContainer');
-        const remoteThumbs = $('#filmstripRemoteVideosContainer').children(selector);
+        let localThumb = getLocalThumb();
+        const remoteThumbs = getRemoteThumbs();
 
         // Exclude the local video container if it has been hidden.
         if (localThumb.hasClass('hidden')) {

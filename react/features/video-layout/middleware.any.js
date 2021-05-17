@@ -6,9 +6,10 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
 
 import { SET_TILE_VIEW } from './actionTypes';
-import { setTileView } from './actions';
+import { setTileView, updatePageInfo } from './actions';
 
 import './subscriber';
+import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
 let previousTileViewEnabled;
 
@@ -48,7 +49,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.enabled && getPinnedParticipant(store)) {
             store.dispatch(pinParticipant(null));
         }
-        // store.dispatch(updatePageInfo());
         break;
     }
     }

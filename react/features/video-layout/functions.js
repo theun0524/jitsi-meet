@@ -1,6 +1,7 @@
 // @flow
 
 import { getPinnedParticipant, getParticipantCount } from '../base/participants';
+import { calculateThumbnailSizeForHorizontalView } from '../filmstrip/functions.web';
 import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
@@ -47,15 +48,13 @@ export function getMaxColumnCount() {
  * @returns {number}
  */
 export function getPageSize(state) {
-    const { horizontalViewDimensions, tileViewDimensions } = state['features/filmstrip'];
-    
     const currentLayout = getCurrentLayout(state);
     if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-        console.log('getPageSize:', currentLayout, horizontalViewDimensions?.visibleRows);
-        return horizontalViewDimensions?.visibleRows || 1;
+        const clientHeight = state['features/base/responsive-ui'].clientHeight;
+        const { remote } = calculateThumbnailSizeForHorizontalView(clientHeight);
+        return remote.visibleRows;
     } else if (currentLayout === LAYOUTS.TILE_VIEW) {
-        console.log('getPageSize:', currentLayout, (tileViewDimensions?.gridDimensions?.visibleRows || 1) * getMaxColumnCount());
-        return (tileViewDimensions?.gridDimensions?.visibleRows || 1) * getMaxColumnCount();
+        return getMaxColumnCount() * getMaxColumnCount();
     }
 
     console.error('getPageSize: Unexpected layout error!', currentLayout);

@@ -3,7 +3,7 @@
 import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { StateListenerRegistry, equals } from '../base/redux';
-import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
+import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS, updatePageInfo, setPageInfo } from '../video-layout';
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
 
@@ -59,6 +59,8 @@ StateListenerRegistry.register(
                     isOpen
                 )
             );
+            store.dispatch(updatePageInfo());
+            store.dispatch(setPageInfo({ current: 1 }));
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
@@ -67,6 +69,8 @@ StateListenerRegistry.register(
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             // Once the thumbnails are reactified this should be moved there too.
             Filmstrip.resizeThumbnailsForVerticalView();
+            store.dispatch(updatePageInfo());
+            store.dispatch(setPageInfo({ current: 1 }));
             break;
         }
     });

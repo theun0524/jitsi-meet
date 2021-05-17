@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { map } from 'lodash';
 import type { Dispatch } from 'redux';
 import { getVideoId } from '../../../modules/UI/videolayout/VideoLayout';
-import { getParticipantCount, getParticipants } from '../base/participants';
+import { getParticipantCount } from '../base/participants';
 
 import {
     ORDERED_TILE_VIEW,

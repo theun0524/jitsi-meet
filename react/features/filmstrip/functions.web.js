@@ -114,7 +114,7 @@ export function calculateThumbnailSizeForTileView({
     const viewWidth = clientWidth - (sideMargins * columns);
     const viewHeight = clientHeight - topBottomPadding - verticalMargins;
     const initialWidth = viewWidth / columns;
-    const initialHeight = viewHeight / visibleRows;
+    const initialHeight = viewHeight / Math.max(visibleRows, 2);
 
     let height = Math.floor(initialHeight);
     const width = Math.floor(initialWidth);
@@ -125,9 +125,6 @@ export function calculateThumbnailSizeForTileView({
 
     if (columns > 1) {
         // adjusting the height with respect to aspect ratio in case of two participants only
-        if (columns === 2 && visibleRows === 1) {
-            height = Math.floor(Math.min(height, width / TILE_ASPECT_RATIO));
-        }
         height = Math.floor(Math.max(height, width / TILE_ASPECT_RATIO));
     }
 

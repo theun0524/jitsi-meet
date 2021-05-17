@@ -1,7 +1,7 @@
 /* global APP, $, interfaceConfig  */
 
 import Logger from 'jitsi-meet-logger';
-import { concat, debounce, filter, map, sortBy } from 'lodash';
+import { concat, debounce, flatten, map, sortBy } from 'lodash';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -15,7 +15,7 @@ import {
 } from '../../../react/features/base/participants';
 // import { clientResized } from '../../../react/features/base/responsive-ui';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
-import { getTileViewGridDimensions, orderedTileView } from '../../../react/features/video-layout';
+import { getCurrentLayout, LAYOUTS, orderedTileView } from '../../../react/features/video-layout';
 import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
@@ -30,6 +30,8 @@ const logger = Logger.getLogger(__filename);
 const DEBOUNCE_TIMEOUT = 500;   // 100ms for debounce timer
 const remoteVideos = {};
 let localVideoThumbnail = null;
+let hiddenElements;
+let visibleElements;
 
 let eventEmitter = null;
 
@@ -40,8 +42,21 @@ let largeVideo;
  */
 let localFlipX = null;
 
-let hiddenElements;
-let visibleElements;
+export function getVideoId(node) {
+    return node.id === 'localVideoContainer'
+        ? localVideoThumbnail.id
+        : node.id.split('_')[1];
+}
+
+export function getLocalThumb() {
+    return localVideoThumbnail?.$container || $('#localVideoContainer');
+}
+
+export function getRemoteThumbs() {
+    const thumbs = $(map(remoteVideos, 'container'));
+    console.log('getRemoteThumbs:', thumbs);
+    return thumbs;
+}
 
 /**
  * Handler for local flip X changed event.
@@ -459,13 +474,14 @@ const VideoLayout = {
             const { conference } = state['features/base/conference'];
             const { current = 1, pageSize } = state['features/video-layout'].pageInfo;
             const visibleIDs = ordered.slice((current-1) * pageSize, current * pageSize);
+            const layout = getCurrentLayout(state);
 
             conference.recvVideoParticipants(visibleIDs);
 
             // show visible videos
             let target = visibleElements;
             visibleIDs.forEach(id => {
-                if (id === localVideoThumbnail.id) {
+                if (id === localVideoThumbnail.id && layout === LAYOUTS.TILE_VIEW) {
                     target.appendChild(localVideoThumbnail.container);
                 } else if (remoteVideos[id]) {
                     target.appendChild(remoteVideos[id].container);
@@ -476,9 +492,9 @@ const VideoLayout = {
             target = hiddenElements;
             participants.forEach(participant => {
                 if (!visibleIDs.includes(participant.id)) {
-                    if (participant.local) {
+                    if (participant.local && layout === LAYOUTS.TILE_VIEW) {
                         target.appendChild(localVideoThumbnail.container);
-                    } else {
+                    } else if (remoteVideos[participant.id]) {
                         target.appendChild(remoteVideos[participant.id].container);
                     }
                 }

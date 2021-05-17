@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { Icon } from '../../base/icons';
+import { getCurrentLayout, LAYOUTS } from '../../video-layout';
 
 /**
  * A container to hold video status labels, including recording status and
@@ -18,10 +19,10 @@ export default class AbstractPageButton extends Component {
      * @returns {React$Element}
      */
     render() {
-        const { _current, _totalPages } = this.props;
+        const { _current, _layout, _totalPages } = this.props;
         let className = 'page-button';
 
-        if (_totalPages === 1) {
+        if (_totalPages === 1 || _layout !== LAYOUTS.TILE_VIEW) {
             return null;
         }
 
@@ -54,6 +55,7 @@ export default class AbstractPageButton extends Component {
  */
 export function _abstractMapStateToProps(state: Object) {
     return {
+        _layout: getCurrentLayout(state),
         _totalPages: state['features/video-layout'].pageInfo?.totalPages || 1,
         _current: state['features/video-layout'].pageInfo?.current || 1,
     };
