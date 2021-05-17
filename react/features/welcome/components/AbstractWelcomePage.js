@@ -1,7 +1,7 @@
 // @flow
 
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
@@ -9,6 +9,8 @@ import { appNavigate } from '../../app/actions';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { setLicenseError } from '../../billing-counter/actions';
 import { isCalendarEnabled } from '../../calendar-sync';
+import { shouldDisplayNotifications } from '../../conference/functions';
+import { NotificationsContainer } from '../../notifications/components';
 import { isRecentListEnabled } from '../../recent-list/functions';
 
 /**
@@ -250,6 +252,16 @@ export class AbstractWelcomePage extends Component<Props, *> {
         return null;
     }
 
+    renderNotificationsContainer(props: ?Object) {
+        if (this.props._notificationsVisible) {
+            return (
+                React.createElement(NotificationsContainer, props)
+            );
+        }
+
+        return null;
+    }
+
     _updateRoomname: () => void;
 
     /**
@@ -288,6 +300,7 @@ export function _mapStateToProps(state: Object) {
         _calendarEnabled: isCalendarEnabled(state),
         _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
         _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
+        _notificationsVisible: shouldDisplayNotifications(state),
         _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings'],

@@ -56,12 +56,6 @@ type Props = {
     _sendrecvVideoQuality: Number,
 
     /**
-     * Whether or not displaying video is supported in the current
-     * environment. If false, the slider will be disabled.
-     */
-    _videoSupported: Boolean,
-
-    /**
      * Invoked to request toggling of audio only mode.
      */
     dispatch: Dispatch<any>,
@@ -138,25 +132,14 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _videoSupported, t } = this.props;
+        const { t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
-        let classNames = 'video-quality-dialog';
-        let warning = null;
-
-        if (!_videoSupported) {
-            classNames += ' video-not-supported';
-            warning = this._renderAudioOnlyLockedMessage();
-        }
-
         return (
-            <div className = { classNames }>
+            <div className = { 'video-quality-dialog' }>
                 <h3 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
                 </h3>
-                <div className = { warning ? '' : 'hide-warning' }>
-                    { warning }
-                </div>
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
                         { /* FIXME: onChange and onMouseUp are both used for
@@ -165,7 +148,6 @@ class VideoQualitySlider extends Component<Props> {
                            */ }
                         <input
                             className = 'video-quality-dialog-slider'
-                            disabled = { !_videoSupported }
                             max = { this._sliderOptions.length - 1 }
                             min = '0'
                             onChange = { this._onSliderChange }
@@ -386,7 +368,6 @@ function _mapStateToProps(state) {
         _audioOnly: audioOnly,
         _p2p: p2p,
         _sendrecvVideoQuality: preferredVideoQuality,
-        _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo()
     };
 }
 

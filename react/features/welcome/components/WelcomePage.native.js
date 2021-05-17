@@ -1,3 +1,4 @@
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React from 'react';
 import {
     Animated,
@@ -35,6 +36,7 @@ import VideoSwitch from './VideoSwitch';
 import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
+import { showErrorNotification } from '../../notifications';
 
 /**
  * The native container rendering the welcome page.
@@ -52,6 +54,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         this.state._fieldFocused = false;
         this.state.hintBoxAnimation = new Animated.Value(0);
+        this.state.savedNotification = jitsiLocalStorage.getItem('saved_notification');
 
         // Bind event handlers so they are only bound once per instance.
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
@@ -88,6 +91,25 @@ class WelcomePage extends AbstractWelcomePage {
                 response === 'granted'
                     && dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
             });
+        }
+    }
+
+    componentDidUpdate() {
+        const { savedNotification } = this.state;
+        const { tReady, dispatch } = this.props;
+
+        if (savedNotification && tReady) {
+            this.setState({ savedNotification: null });
+            jitsiLocalStorage.removeItem('saved_notification');
+
+            try {
+                const notification = JSON.parse(savedNotification);
+                dispatch(showErrorNotification({
+                    ...notification.props,
+                }));
+            } catch (err) {
+                console.error(err);
+            }
         }
     }
 
@@ -311,6 +333,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 this._renderHintBox()
                             }
                         </View>
+                        { super.renderNotificationsContainer() }
                     </SafeAreaView>
                     <WelcomePageLists disabled = { this.state._fieldFocused } />
                 </View>

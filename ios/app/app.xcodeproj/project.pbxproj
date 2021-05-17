@@ -3,19 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0087C21FA5A978E98A12654C /* libPods-vmeeting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D914D91D6C415C907F5030 /* libPods-vmeeting.a */; };
 		0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F1E1EDEE6E800B1A0A6 /* ViewController.m */; };
 		0B412F211EDEE95300B1A0A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B412F201EDEE95300B1A0A6 /* Main.storyboard */; };
-		0BD6B4371EF82A6B00D1F4CD /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */; };
-		0BD6B4381EF82A6B00D1F4CD /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		39A1238826528D5D00107C19 /* WebRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39A1238726528D5D00107C19 /* WebRTC.xcframework */; };
+		39A1238926528D5D00107C19 /* WebRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39A1238726528D5D00107C19 /* WebRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4DB8302D24AB1C15003D3368 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */; };
 		4DB8302E24AB1C15003D3368 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
@@ -28,7 +28,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0BD6B4381EF82A6B00D1F4CD /* WebRTC.framework in Embed Frameworks */,
+				39A1238926528D5D00107C19 /* WebRTC.xcframework in Embed Frameworks */,
 				4DB8302E24AB1C15003D3368 /* JitsiMeet.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -54,7 +54,6 @@
 		0B5418461F7C5D8C00A2DD86 /* MeetingRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingRowController.swift; sourceTree = "<group>"; };
 		0B70016F1F7C51CC005944F4 /* InCallController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InCallController.swift; sourceTree = "<group>"; };
 		0BBD021F212EB69D00CCB19F /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
-		0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
 		0BEA5C281F7B8F73000D0AB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		0BEA5C2A1F7B8F73000D0AB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0BEA5C2C1F7B8F73000D0AB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -70,6 +69,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		39A1238726528D5D00107C19 /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = "../../node_modules/react-native-webrtc/apple/WebRTC.xcframework"; sourceTree = "<group>"; };
 		4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.debug.xcconfig"; sourceTree = "<group>"; };
 		4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6342EE7F981197A37212F6C7 /* Pods-vmeeting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-vmeeting.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-vmeeting/Pods-vmeeting.debug.xcconfig"; sourceTree = "<group>"; };
@@ -88,8 +88,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DB8302D24AB1C15003D3368 /* JitsiMeet.framework in Frameworks */,
-				0BD6B4371EF82A6B00D1F4CD /* WebRTC.framework in Frameworks */,
 				0087C21FA5A978E98A12654C /* libPods-vmeeting.a in Frameworks */,
+				39A1238826528D5D00107C19 /* WebRTC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,8 +99,8 @@
 		0B26BE711EC5BC4D00EEFB41 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39A1238726528D5D00107C19 /* WebRTC.xcframework */,
 				4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */,
-				0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */,
 				E9D914D91D6C415C907F5030 /* libPods-vmeeting.a */,
 			);
 			name = Frameworks;
@@ -201,7 +201,6 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				0B26BE701EC5BC3C00EEFB41 /* Embed Frameworks */,
 				B35383AD1DDA0083008F406A /* Adjust embedded framework architectures */,
-				DE3A859324C701EA009B7D76 /* Copy WebRTC dSYM */,
 				0BB7DA181EC9E695007AAE98 /* Adjust ATS */,
 				DEF4813D224925A2002AD03A /* Copy Google Plist file */,
 				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
@@ -354,24 +353,6 @@
 			shellPath = /bin/sh;
 			shellScript = "INFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\nGOOGLE_PLIST=\"$PROJECT_DIR/GoogleService-Info.plist\"\n\nif [[ -f $GOOGLE_PLIST ]]; then\n    REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c \"Print :REVERSED_CLIENT_ID:\" $GOOGLE_PLIST)\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleURLTypes:1:CFBundleURLSchemes:0 $REVERSED_CLIENT_ID\" $INFO_PLIST\nfi\n";
 		};
-		DE3A859324C701EA009B7D76 /* Copy WebRTC dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Copy WebRTC dSYM";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -x\n\nif [[ \"${CONFIGURATION}\" != \"Debug\" ]]; then\n    cp -r ../../node_modules/react-native-webrtc/ios/WebRTC.dSYM ${DWARF_DSYM_FOLDER_PATH}/\nfi\n";
-		};
 		DE4F6D6E22005C0400DE699E /* Setup Dropbox */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -467,9 +448,12 @@
 				);
 				INFOPLIST_FILE = src/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 20.5.9;
+				MARKETING_VERSION = 20.6.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -493,7 +477,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 628662D3Q5;
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"../../node_modules/react-native-webrtc/ios",
@@ -504,9 +488,12 @@
 				);
 				INFOPLIST_FILE = src/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 20.5.9;
+				MARKETING_VERSION = 20.6.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

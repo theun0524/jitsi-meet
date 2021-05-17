@@ -13,6 +13,7 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
+import { saveErrorNotification } from '../notifications';
 import { setToolboxEnabled } from '../toolbox/actions';
 
 import { notifyKickedOut } from './actions';
@@ -34,16 +35,19 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case KICKED_OUT: {
-        const { dispatch } = store;
+        const { dispatch, getState } = store;
 
-        dispatch(notifyKickedOut(
-            action.participant,
-            () => {
-                dispatch(conferenceLeft(action.conference));
-                dispatch(appNavigate(undefined));
-            }
-        ));
+        const args = {
+            participantDisplayName:
+                getParticipantDisplayName(getState, action.participant.getId())
+        };
+        dispatch(saveErrorNotification({
+            descriptionKey: 'dialog.kickTitle',
+            descriptionArguments: args,
+            titleKey: 'dialog.sessTerminated',
+        }));
 
+        dispatch(disconnect(false));
         break;
     }
     }
