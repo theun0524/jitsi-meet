@@ -1,9 +1,11 @@
 // @flow
 
 import InlineDialog from '@atlaskit/inline-dialog';
+import axios from 'axios';
 import { find, once } from 'lodash';
 import React from 'react';
 
+import { getAuthUrl } from '../../../api/url';
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app/actions';
 import { Avatar } from '../../base/avatar';
@@ -17,6 +19,7 @@ import { sendHangupMessage } from '../../chat';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 
 import s from './HangupButton.module.scss';
+import { isHost } from '../../base/jwt';
 
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
@@ -196,7 +199,18 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     _onHangupAll: () => void;
 
     _onHangupAll() {
-        this.props.dispatch(sendHangupMessage());
+        const { _apiBase, _roomInfo } = this.props;
+        if (_roomInfo) {
+            const apiUrl = `${_apiBase}/conferences/${_roomInfo._id}`;
+            axios.delete(apiUrl);
+        }
+
+        // FIXME: these should be unified.
+        if (navigator.product === 'ReactNative') {
+            this.props.dispatch(appNavigate(undefined));
+        } else {
+            this.props.dispatch(disconnect(true));
+        }
     }
 
     _onModeratorSelection: () => void;
@@ -280,12 +294,14 @@ class HangupButton extends AbstractHangupButton<Props, *> {
  */
  function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
-    const localParticipant = getLocalParticipant(state);
-    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+    const { roomInfo } = state['features/base/conference'];
+    const isModerator = isHost(state);
 
     return {
+        _apiBase: getAuthUrl(state),
         _participants: participants,
         _showHangupMenu: isModerator && participants.length > 1,
+        _roomInfo: roomInfo,
         _timer: state['features/toolbox'].timer,
         customClass: s.button,
     };
