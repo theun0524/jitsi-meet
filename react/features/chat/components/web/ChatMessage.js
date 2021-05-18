@@ -61,7 +61,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         });
 
         return (
-            <div className = 'chatmessage-wrapper'>
+            <div className =  {`chatmessage-wrapper ${message.messageType}` }>
                 <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
                     <div className = 'replywrapper'>
                         <div className = 'messagecontent'>

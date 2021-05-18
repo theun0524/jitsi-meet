@@ -504,6 +504,20 @@
 
         .timestamp {
             text-align: right;
+            margin-top: auto;
+            margin-right: 3px;
+        }
+    }
+
+    &.remote {
+        flex-direction: row-reverse;
+        align-items: flex-start;
+        text-align: left;
+
+        .timestamp {
+            text-align: left;
+            margin-top: auto;
+            margin-left: 3px;
         }
     }
 
@@ -520,7 +534,18 @@
     }
 
     .chatmessage-wrapper {
+        display: flex;
         max-width: 100%;
+
+        &.local {
+            flex-direction: row-reverse;
+            align-items: flex-end;
+        }
+
+        &.remote {
+            flex-direction: row;
+            align-items: flex-start;
+        }
 
         .replywrapper {
             display: flex;
