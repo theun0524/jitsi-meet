@@ -1,9 +1,7 @@
 // @flow
 
 import React from 'react';
-import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 
-import { IconCaretLeft } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { setPageInfo } from '../../../video-layout';
 import AbstractPageButton, {
@@ -12,7 +10,6 @@ import AbstractPageButton, {
 
 class PagePrevButton extends AbstractPageButton {
     className = 'prev';
-    icon = IconCaretLeft;
 
     /**
      * Updates the state for page prev button.
@@ -47,7 +44,6 @@ class PagePrevButton extends AbstractPageButton {
         const { current, disabled } = this.state;
         if (!disabled && 1 < current ) {
             this.props.dispatch(setPageInfo({ current: current - 1 }));
-            VideoLayout.reorderVideos();
         }
     }
 }

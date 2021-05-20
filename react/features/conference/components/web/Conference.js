@@ -202,8 +202,6 @@ class Conference extends AbstractConference<Props, *> {
                     <KnockingParticipantList />
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                     { hideLabels || <Labels /> }
-                    <PagePrevButton />
-                    <PageNextButton />
                 </div>
 
                 { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
@@ -214,6 +212,8 @@ class Conference extends AbstractConference<Props, *> {
                 <CalleeInfoContainer />
 
                 { !filmstripOnly && _showPrejoin && <Prejoin />}
+                <PagePrevButton />
+                <PageNextButton />
             </div>
         );
     }

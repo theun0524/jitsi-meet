@@ -6,13 +6,15 @@ import { CLIENT_RESIZED } from '../base/responsive-ui';
 import {
     getCurrentLayout,
     LAYOUTS,
-    shouldDisplayTileView
+    shouldDisplayTileView,
+    updatePageInfo
 } from '../video-layout';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
 
 import './subscriber.web';
+import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
 /**
  * The middleware of the feature Filmstrip.
@@ -45,6 +47,9 @@ MiddlewareRegistry.register(store => next => action => {
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
             store.dispatch(setHorizontalViewDimensions(state['features/base/responsive-ui'].clientHeight));
+            break;
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            store.dispatch(updatePageInfo());
             break;
         }
         break;

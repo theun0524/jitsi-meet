@@ -1,7 +1,7 @@
 /* global APP, $, interfaceConfig  */
 
 import Logger from 'jitsi-meet-logger';
-import { concat, debounce, flatten, map, sortBy } from 'lodash';
+import { concat, debounce, flatten, map, reject, sortBy } from 'lodash';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -425,12 +425,17 @@ const VideoLayout = {
 
         // remove the local video container from DOM
         const videosContainer = document.getElementById('filmstripRemoteVideosContainer');
-        const participants = getParticipants(state);
+        const layout = getCurrentLayout(state);
+        const participants = layout === LAYOUTS.TILE_VIEW
+            ? getParticipants(state)
+            : reject(getParticipants(state), p => p.id === localVideoThumbnail.id);
         let ordered;
 
         // reorder videos by order settings
         if (Array.isArray(order)) {
-            ordered = [...order];
+            ordered = layout === LAYOUTS.TILE_VIEW
+                ? [...order]
+                : reject(order, id === localVideoThumbnail.id);
             participants.forEach(p => {
                 if (!order.includes(p.id)) {
                     ordered.push(p.id);
@@ -474,14 +479,13 @@ const VideoLayout = {
             const { conference } = state['features/base/conference'];
             const { current = 1, pageSize } = state['features/video-layout'].pageInfo;
             const visibleIDs = ordered.slice((current-1) * pageSize, current * pageSize);
-            const layout = getCurrentLayout(state);
 
             conference.recvVideoParticipants(visibleIDs);
 
             // show visible videos
             let target = visibleElements;
             visibleIDs.forEach(id => {
-                if (id === localVideoThumbnail.id && layout === LAYOUTS.TILE_VIEW) {
+                if (id === localVideoThumbnail.id) {
                     target.appendChild(localVideoThumbnail.container);
                 } else if (remoteVideos[id]) {
                     target.appendChild(remoteVideos[id].container);
@@ -492,7 +496,7 @@ const VideoLayout = {
             target = hiddenElements;
             participants.forEach(participant => {
                 if (!visibleIDs.includes(participant.id)) {
-                    if (participant.local && layout === LAYOUTS.TILE_VIEW) {
+                    if (participant.local) {
                         target.appendChild(localVideoThumbnail.container);
                     } else if (remoteVideos[participant.id]) {
                         target.appendChild(remoteVideos[participant.id].container);

@@ -14,7 +14,7 @@
     overflow: hidden;
 
     .page-button {
-        display: inline-block;
+        display: inline-flex;
         position: absolute;
         text-align: center;
         cursor: pointer;
@@ -23,6 +23,16 @@
         padding: 4px 10px;
         font-size: 12px;
         border-radius: 4px;
+        align-items: center;
+        justify-content: center;
+
+        &.column {
+            flex-direction: column;
+        }
+
+        &.row {
+            flex-direction: row;
+        }
 
         &:hover {
             background-color: rgba(0,0,0,0.8);
@@ -41,12 +51,12 @@
         }
 
         &.prev {
-            top: calc(50% - 28px);
+            bottom: calc(50% + 30px);
             left: 0;
         }
 
         &.next {
-            top: calc(50% - 28px);
+            bottom: calc(50% + 30px);
             right: 0;
         }
 

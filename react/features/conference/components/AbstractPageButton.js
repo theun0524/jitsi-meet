@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Icon } from '../../base/icons';
+import { Icon, IconCaretDown, IconCaretLeft, IconCaretRight, IconCaretUp } from '../../base/icons';
 import { getCurrentLayout, LAYOUTS } from '../../video-layout';
 
 /**
@@ -21,8 +21,9 @@ export default class AbstractPageButton extends Component {
     render() {
         const { _current, _layout, _totalPages } = this.props;
         let className = 'page-button';
+        let icon;
 
-        if (_totalPages === 1 || _layout !== LAYOUTS.TILE_VIEW) {
+        if (_totalPages === 1) {
             return null;
         }
 
@@ -30,12 +31,19 @@ export default class AbstractPageButton extends Component {
         if (this.state.disabled) {
             className += ' disabled';
         }
+        if (_layout === LAYOUTS.TILE_VIEW) {
+            icon = this.className === 'prev' ? IconCaretLeft : IconCaretRight;
+            className += ' column';
+        } else {
+            icon = this.className === 'prev' ? IconCaretUp : IconCaretDown;
+            className += ' row';
+        }
 
         return (
             <div
                 className={className}
                 onClick={this.onChangePage}>
-                <Icon size={32} src={this.icon} />
+                <Icon size={20} src={icon} />
                 {_current}/{_totalPages}
             </div>
         );

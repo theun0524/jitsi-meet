@@ -47,18 +47,34 @@ export function getMaxColumnCount() {
  * @param {number} layout - The target layout to be displayed.
  * @returns {number}
  */
-export function getPageSize(state) {
+export function getPageInfo(state) {
     const currentLayout = getCurrentLayout(state);
+    const participantCount = getParticipantCount(state);
+    const current = state['features/video-layout'].pageInfo?.current || 1;
+    let pageSize = 1, totalPages = 1;
+
     if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
         const clientHeight = state['features/base/responsive-ui'].clientHeight;
-        const { remote } = calculateThumbnailSizeForHorizontalView(clientHeight);
-        return remote.visibleRows;
+        // padding(30)
+        // toolbar(64)
+        // localVideo(124)
+        // pageButton(36 * 2)
+        // toolButton(24)
+        const thumbHeight = 124;    // 120 + topBottomMargin(4)
+        const pageHeight = clientHeight - 30 - 64 - thumbHeight - 24;
+
+        pageSize = Math.floor(pageHeight < (participantCount-1) * thumbHeight
+            ? (pageHeight - (24 * 2)) / thumbHeight
+            : pageHeight / thumbHeight);
+        totalPages = Math.ceil((participantCount-1) / pageSize);
     } else if (currentLayout === LAYOUTS.TILE_VIEW) {
-        return getMaxColumnCount() * getMaxColumnCount();
+        pageSize = getMaxColumnCount() * getMaxColumnCount();
+        totalPages = Math.ceil(participantCount / pageSize);
+    } else {
+        console.error('getPageInfo: Unexpected layout error!', currentLayout);
     }
 
-    console.error('getPageSize: Unexpected layout error!', currentLayout);
-    return 0;
+    return { current, pageSize, totalPages };
 }
 
 /**

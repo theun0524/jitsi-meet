@@ -13,7 +13,8 @@ import {
     SET_TILE_VIEW,
     SET_TILE_VIEW_ORDER
 } from './actionTypes';
-import { getPageSize, shouldDisplayTileView } from './functions';
+import { LAYOUTS } from './constants';
+import { getCurrentLayout, getPageInfo, shouldDisplayTileView } from './functions';
 
 /**
  * Creates a (redux) action which signals set the page info.
@@ -188,10 +189,6 @@ export function moveToPrev(id) {
 export function updatePageInfo() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const participantCount = getParticipantCount(state);
-        const current = state['features/video-layout'].pageInfo?.current || 1;
-        const pageSize = getPageSize(state);
-        const totalPages = Math.ceil(participantCount / pageSize);
-        dispatch(setPageInfo({ current, pageSize, totalPages }));
+        dispatch(setPageInfo(getPageInfo(state)));
     };
 }

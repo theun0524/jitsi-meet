@@ -2,7 +2,7 @@
  * Rotate the hide filmstrip icon so it points towards the right edge
  * of the screen.
  */
-.vertical-filmstrip .filmstrip__toolbar {
+.vertical-filmstrip .filmstrip__toolbar svg {
     transform: rotate(-90deg);
 }
 

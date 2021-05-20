@@ -21,6 +21,8 @@ import Toolbar from './Toolbar';
 import s from './Filmstrip.module.scss';
 import { getVideoId } from '../../../../../modules/UI/videolayout/VideoLayout';
 import { getParticipantCount } from '../../../base/participants';
+import PagePrevButton from '../../../conference/components/web/PagePrevButton';
+import PageNextButton from '../../../conference/components/web/PageNextButton';
 
 declare var APP: Object;
 declare var config: Object;
@@ -230,7 +232,7 @@ class Filmstrip extends Component<Props> {
             }
         }
 
-        let remoteVideosWrapperClassName = `filmstrip__videos ${s.filmstripVideos}`;
+        let remoteVideosWrapperClassName = s.filmstripVideos;
 
         if (this.props._hideScrollbar) {
             remoteVideosWrapperClassName += ` ${hideScrollbar}`;
@@ -246,7 +248,6 @@ class Filmstrip extends Component<Props> {
             <div
                 className={`filmstrip ${this.props._className}`}
                 style={filmstripStyle}>
-                { toolbar}
                 <div
                     className={this.props._videosClassName}
                     id='remoteVideos'>
@@ -257,6 +258,7 @@ class Filmstrip extends Component<Props> {
                         onMouseOver={this._onMouseOver}>
                         <div id='filmstripLocalVideoThumbnail' />
                     </div>
+                    <PagePrevButton />
                     <div
                         className={remoteVideosWrapperClassName}
                         id='filmstripRemoteVideos'>
@@ -274,7 +276,9 @@ class Filmstrip extends Component<Props> {
                             style={filmstripRemoteVideosContainerStyle}>
                         </div>
                     </div>
+                    <PageNextButton />
                 </div>
+                { toolbar }
             </div>
         );
     }

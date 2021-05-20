@@ -2,6 +2,8 @@
 
 import debounce from 'lodash/debounce';
 
+import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+
 import { pinParticipant, getPinnedParticipant } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
@@ -70,6 +72,16 @@ StateListenerRegistry.register(
 
             _updateAutoPinnedParticipant(store);
         }
+    }, 100));
+
+/**
+ * StateListenerRegistry provides a reliable way of detecting changes to
+ * pageInfo state and reordering videos.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].pageInfo,
+    /* listener */ debounce(pageInfo => {
+        VideoLayout.reorderVideos();
     }, 100));
 
 /**
