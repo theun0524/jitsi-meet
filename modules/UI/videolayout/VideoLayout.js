@@ -435,7 +435,7 @@ const VideoLayout = {
         if (Array.isArray(order)) {
             ordered = layout === LAYOUTS.TILE_VIEW
                 ? [...order]
-                : reject(order, id === localVideoThumbnail.id);
+                : reject(order, id => id === localVideoThumbnail.id);
             participants.forEach(p => {
                 if (!order.includes(p.id)) {
                     ordered.push(p.id);
