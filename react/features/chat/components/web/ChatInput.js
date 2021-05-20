@@ -6,8 +6,11 @@ import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant, getParticipants } from '../../../base/participants';
+import { Icon, IconMenuThumb } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+
+import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -51,7 +54,12 @@ type State = {
     /**
      * Whether or not the smiley selector is visible.
      */
-    showSmileysPanel: boolean
+    showSmileysPanel: boolean,
+
+    /**
+     * Whether or not the dropdown showing the list of participants is visible or not
+     */
+    showParticipantsList: Boolean,
 };
 
 /**
@@ -84,6 +92,7 @@ class ChatInput extends Component<Props, State> {
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onToggleSmileysPanel = this._onToggleSmileysPanel.bind(this);
         this._setTextAreaRef = this._setTextAreaRef.bind(this);
+        // this._renderChatRoomParticipantsList = this._renderChatRoomParticipantsList.bind(this);
     }
 
     /**
@@ -110,6 +119,7 @@ class ChatInput extends Component<Props, State> {
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
         let localParticipant = getLocalParticipant(APP.store.getState());
         let prole = localParticipant.role;
+        const allParticipants = getParticipants(APP.store.getState());
         const chatInputStyleName = `${(prole === "visitor") ? 'no-display' : '' } chat-input`;
         return (
             <div key={prole} className= {chatInputStyleName}>
@@ -118,6 +128,7 @@ class ChatInput extends Component<Props, State> {
                         <div id = 'smileys'>
                             <Emoji
                                 onClick = { this._onToggleSmileysPanel }
+                                // onClick = { this._renderChatRoomParticipantsList }
                                 text = ':)' />
                         </div>
                     </div>
@@ -126,6 +137,9 @@ class ChatInput extends Component<Props, State> {
                             onSmileySelect = { this._onSmileySelect } />
                     </div>
                 </div>
+
+                { this._renderChatRoomParticipantsList() }
+
                 <div className = 'usrmsg-form'>
                     <TextareaAutosize
                         id = 'usermsg'
@@ -187,8 +201,45 @@ class ChatInput extends Component<Props, State> {
      */
     _onMessageChange(event) {
         this.setState({ message: event.target.value });
+        
+        
+        const allParticipants = getParticipants(APP.store.getState());
+        console.log("Name of participants are: ");
+        allParticipants.forEach((participant) => {
+            console.log(participant.name);
+        });
+
+        // code for UI dialog box
+
+        // event listener for keyup event on '@' key
+        document.addEventListener("keyup", function(ev) {
+            if(ev.key == '@') {
+                console.log("All participants are: ", allParticipants);
+            }
+        })
     }
 
+    // function to render the list of participants in a chatroom in a dropdown menu
+    _renderChatRoomParticipantsList() {
+        const allParticipants = getParticipants(APP.store.getState());
+        return(
+            <DropdownMenu
+                boundariesElement = 'scrollParent'
+                triggerButtonProps = {{ iconBefore: <Icon size = { 16 } src = { IconMenuThumb } /> }}
+                triggerType = 'button'>
+                    <DropdownItemGroup>
+                        { allParticipants.map((participant) => {
+                            return (
+                                <DropdownItem key = { participant.id } onClick = { this._onPrivateMessage }>
+                                    { participant.name } 
+                                </DropdownItem>
+                            )
+                        }) }
+                    </DropdownItemGroup>
+            </DropdownMenu>
+        )     
+    }
+    
     _onSmileySelect: (string) => void;
 
     /**
@@ -209,6 +260,8 @@ class ChatInput extends Component<Props, State> {
     }
 
     _onToggleSmileysPanel: () => void;
+
+    _renderChatRoomParticipantsList: () => void;
 
     /**
      * Callback invoked to hide or show the smileys selector.
