@@ -66,10 +66,7 @@ function VirtualBackground({ _apiBase, _trackExist, _virtualSource, dispatch, t 
 
     const removeBackground = async image => {
         if (image._id === selected) {
-            const found = images.findIndex(item => item === image);
-            const next = found > 0 ? images[found-1] : images[0];
-    
-            setImageBackground(next);
+            setImageBackground({ _id: 'none' });
         }
         setImages(images.filter(item => image !== item));
         axios.delete(`${_apiBase}/backgrounds/${image._id}`);
