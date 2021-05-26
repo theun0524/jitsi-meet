@@ -6,9 +6,11 @@ import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant, getParticipants } from '../../../base/participants';
+import { getLocalParticipant, getParticipants, getParticipantCount } from '../../../base/participants';
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+
+import { setPrivateMessageRecipient } from '../../actions';
 
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 
@@ -72,7 +74,8 @@ class ChatInput extends Component<Props, State> {
 
     state = {
         message: '',
-        showSmileysPanel: false
+        showSmileysPanel: false,
+        showParticipantsList: false,
     };
 
     /**
@@ -119,7 +122,7 @@ class ChatInput extends Component<Props, State> {
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
         let localParticipant = getLocalParticipant(APP.store.getState());
         let prole = localParticipant.role;
-        const allParticipants = getParticipants(APP.store.getState());
+        // const allParticipants = getParticipants(APP.store.getState());
         const chatInputStyleName = `${(prole === "visitor") ? 'no-display' : '' } chat-input`;
         return (
             <div key={prole} className= {chatInputStyleName}>
@@ -138,6 +141,7 @@ class ChatInput extends Component<Props, State> {
                     </div>
                 </div>
 
+                {/* this code will render a list containing chatroom participants */}
                 { this._renderChatRoomParticipantsList() }
 
                 <div className = 'usrmsg-form'>
@@ -200,44 +204,54 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onMessageChange(event) {
-        this.setState({ message: event.target.value });
+        this.setState({ message: event.target.value }, () => { console.log("Setting message to event.target.value") });
         
-        
-        const allParticipants = getParticipants(APP.store.getState());
-        console.log("Name of participants are: ");
-        allParticipants.forEach((participant) => {
-            console.log(participant.name);
-        });
-
         // code for UI dialog box
-
-        // event listener for keyup event on '@' key
-        document.addEventListener("keyup", function(ev) {
-            if(ev.key == '@') {
-                console.log("All participants are: ", allParticipants);
-            }
-        })
+        if(event.target.value.startsWith('@') || event.target.value.includes(' @')) {
+            this.setState({ showParticipantsList: true });
+            this._renderChatRoomParticipantsList(event.target.value);
+        }
     }
 
     // function to render the list of participants in a chatroom in a dropdown menu
-    _renderChatRoomParticipantsList() {
+    _renderChatRoomParticipantsList = (filterText) => {
+        // the input parameter filterText consists of @ character as well, remove it from the filterText
+        console.log("Input parameter is: ", filterText);
+        
+        const participantCount = getParticipantCount(APP.store.getState());
+
+        // remove local participant from all participants list
         const allParticipants = getParticipants(APP.store.getState());
-        return(
-            <DropdownMenu
-                boundariesElement = 'scrollParent'
-                triggerButtonProps = {{ iconBefore: <Icon size = { 16 } src = { IconMenuThumb } /> }}
-                triggerType = 'button'>
-                    <DropdownItemGroup>
-                        { allParticipants.map((participant) => {
-                            return (
-                                <DropdownItem key = { participant.id } onClick = { this._onPrivateMessage }>
-                                    { participant.name } 
-                                </DropdownItem>
-                            )
-                        }) }
-                    </DropdownItemGroup>
-            </DropdownMenu>
-        )     
+        const localParticipant = getLocalParticipant(APP.store.getState());
+        const otherParticipants = allParticipants.filter(participant => participant.id !== localParticipant.id);
+        console.log("Other participants are: ", otherParticipants)
+
+        // const filterOtherParticipants = otherParticipants.filter()
+
+        if((this.state.showParticipantsList) && (participantCount > 2)) { // we want to display that list only when there are 
+            return(
+                <DropdownMenu
+                    boundariesElement = 'scrollParent'
+                    defaultOpen >
+                        <DropdownItemGroup>
+                            { otherParticipants.map((participant) => {
+                                return (
+                                    <DropdownItem key = { participant.id } onClick = { () => this._sendPrivateMessage(participant) }>
+                                        { participant.name } 
+                                    </DropdownItem>
+                                )
+                            }) }
+                        </DropdownItemGroup>
+                </DropdownMenu>
+            );
+        } else {
+            return;
+        }
+    }
+
+    // function to call private messaging function
+    _sendPrivateMessage = (participant) => {
+        this.props.dispatch(setPrivateMessageRecipient(participant));
     }
     
     _onSmileySelect: (string) => void;
@@ -261,7 +275,7 @@ class ChatInput extends Component<Props, State> {
 
     _onToggleSmileysPanel: () => void;
 
-    _renderChatRoomParticipantsList: () => void;
+    _renderChatRoomParticipantsList: (String) => void;
 
     /**
      * Callback invoked to hide or show the smileys selector.
