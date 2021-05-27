@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { CircularLabel } from '../../../base/label';
+import { Label } from '../../../base/label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
 import AbstractRecordingLabel, {
@@ -52,7 +52,7 @@ class RecordingLabel extends AbstractRecordingLabel {
         }
 
         return (
-            <CircularLabel
+            <Label
                 label = { this.props.t(this._getLabelKey()) }
                 status = { status }
                 style = { indicatorStyle } />

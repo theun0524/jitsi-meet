@@ -1,6 +1,6 @@
 // @flow
 
-import FieldText from '@atlaskit/field-text';
+import TextField from '@atlaskit/textfield';
 import {
     HeaderComponentProps,
     ModalHeader
@@ -20,7 +20,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 import s from './SpeakerStats.module.scss';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
-import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isLocalVideoTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
+import { getLocalVideoTrack, getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isLocalCameraTrackMuted, isRemoteTrackMuted } from '../../base/tracks';
 import { PARTICIPANT_ROLE } from '../../base/participants';
 import { Icon, IconSearch } from '../../base/icons';
 import CrossCircleIcon from '@atlaskit/icon/glyph/cross-circle';
@@ -228,13 +228,11 @@ class SpeakerStats extends Component<Props, State> {
                 
                 { this.state.showSearch && (
                     <div className = {`speaker-stats-searchbox ${s.searchContainer}`}>
-                        <FieldText
+                        <TextField
                             autoFocus = { true }
-                            compact = { true }
+                            isCompact = { true }
                             id = 'searchBox'
-                            isLabelHidden = { true }
                             placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
-                            shouldFitContainer = { true }
                             // eslint-disable-next-line react/jsx-no-bind
                             onChange = { this.handleSearchInput }
                             type = 'text'
@@ -288,7 +286,7 @@ function _mapStateToProps(state) {
                         ? isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
                         : isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, item.nick),
                     videoMuted: p.local
-                        ? isLocalVideoTrackMuted(tracks)
+                        ? isLocalCameraTrackMuted(tracks)
                         : !videoTrack || videoTrack.muted,
                     isModerator: p.role === PARTICIPANT_ROLE.MODERATOR,
                     isPresenter: videoTrack?.videoType === VIDEO_TYPE.DESKTOP,

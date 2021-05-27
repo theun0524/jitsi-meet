@@ -1,14 +1,14 @@
 /**
- * The type of the action which sets the list of known participant IDs which
+ * The type of the action which sets the list of known remote participant IDs which
  * have an active screen share.
  *
  * @returns {{
- *     type: SCREEN_SHARE_PARTICIPANTS_UPDATED,
+ *     type: SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
  *     participantIds: Array<string>
  * }}
  */
-export const SCREEN_SHARE_PARTICIPANTS_UPDATED
-    = 'SCREEN_SHARE_PARTICIPANTS_UPDATED';
+export const SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
+    = 'SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED';
 
 /**
  * The type of the action which set the current page info
@@ -20,6 +20,12 @@ export const SCREEN_SHARE_PARTICIPANTS_UPDATED
  * }}
  */
 export const SET_PAGE_INFO = 'SET_PAGE_INFO';
+
+/**
+ * The type of the action which sets the list of the endpoints to be selected for video forwarding
+ * from the bridge.
+ */
+export const SELECT_ENDPOINTS = 'SELECT_ENDPOINTS';
 
 /**
  * The type of the action which enables or disables the feature for showing

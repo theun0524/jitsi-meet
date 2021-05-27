@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { IconE2EE } from '../../base/icons';
-import { CircularLabel } from '../../base/label';
+import { Label } from '../../base/label';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 
@@ -33,7 +33,7 @@ class E2EELabel extends Component<Props> {
             <Tooltip
                 content = { this.props.t('e2ee.labelToolTip') }
                 position = { 'left' }>
-                <CircularLabel
+                <Label
                     className = 'e2ee'
                     icon = { IconE2EE } />
             </Tooltip>

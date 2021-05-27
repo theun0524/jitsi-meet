@@ -551,7 +551,6 @@ export class VideoContainer extends LargeContainer {
         this.$avatar.css('visibility', show ? 'visible' : 'hidden');
         this.avatarDisplayed = show;
 
-        this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE, show);
         APP.API.notifyLargeVideoVisibilityChanged(show);
     }
 

@@ -22,10 +22,7 @@ type Props = AbstractToolbarButtonProps & {
      * From which direction the tooltip should appear, relative to the
      * button.
      */
-    tooltipPosition: string,
-
-    
-    type: string
+    tooltipPosition: string
 };
 
 /**
@@ -40,8 +37,7 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      * @static
      */
     static defaultProps = {
-        tooltipPosition: 'top',
-        type: 'default'
+        tooltipPosition: 'top'
     };
 
     /**
@@ -88,12 +84,11 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      * @returns {ReactElement} The button of this {@code ToolbarButton}.
      */
     _renderButton(children) {
-        let className = this.props.type === 'hangup' ? 'toolbox-button-hangup' : 'toolbox-button';
         return (
             <div
                 aria-label = { this.props.accessibilityLabel }
                 aria-pressed = { this.props.toggled }
-                className = {className}
+                className = 'toolbox-button'
                 onClick = { this.props.onClick }
                 onKeyDown = { this._onKeyDown }
                 role = 'button'

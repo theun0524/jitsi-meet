@@ -23,14 +23,14 @@ export default class AbstractPageButton extends Component {
         let className = 'page-button';
         let icon;
 
-        if (_totalPages === 1) {
+        if (_totalPages === 1 || this.state.disabled) {
             return null;
         }
 
         className += ` ${this.className || ''}`;
-        if (this.state.disabled) {
-            className += ' disabled';
-        }
+        // if (this.state.disabled) {
+        //     className += ' disabled';
+        // }
         if (_layout === LAYOUTS.TILE_VIEW) {
             icon = this.className === 'prev' ? IconCaretLeft : IconCaretRight;
             className += ' column';

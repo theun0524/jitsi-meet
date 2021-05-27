@@ -487,6 +487,7 @@
         "raiseHand": "Raise or lower your hand",
         "showSpeakerStats": "Show speaker stats",
         "toggleChat": "Open or close the chat",
+        "toggleParticipantsPane": "Show or hide the participants pane",
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
@@ -607,6 +608,17 @@
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!"
+    },
+    "participantsPane": {
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "Meeting participants ({{count}})"
+        },
+        "actions": {
+            "invite": "Invite Someone",
+            "muteAll": "Mute all",
+            "stopVideo": "Stop video"
+        }
     },
     "passwordSetRemotely": "set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
@@ -845,6 +857,7 @@
             "muteEveryone": "Mute everyone",
             "muteVideoEveryone": "Mute everyone video",
             "unmuteVideoEveryone": "Unmute everyone video",
+            "participants": "Participants",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
@@ -914,6 +927,7 @@
         "noisyAudioInputTitle": "Your microphone appears to be noisy!",
         "noisyAudioInputDesc": "It sounds like your microphone is making noise, please consider muting or changing the device.",
         "openChat": "Open chat",
+        "participants": "Participants",
         "pip": "Enter Picture-in-Picture mode",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",

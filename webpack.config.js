@@ -42,11 +42,27 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
  */
 function getPerformanceHints(size) {
     return {
-        hints: minimize ? 'error' : false,
+        hints: minimize && !analyzeBundle ? 'error' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
 }
+
+/**
+ * Build a BundleAnalyzerPlugin plugin instance for the given bundle name.
+ */
+function getBundleAnalyzerPlugin(name) {
+    if (!analyzeBundle) {
+        return [];
+    }
+
+    return [ new BundleAnalyzerPlugin({
+        analyzerMode: 'disabled',
+        generateStatsFile: true,
+        statsFilename: `${name}-stats.json`
+    }) ];
+}
+
 
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
@@ -83,6 +99,9 @@ const config = {
             ],
             loader: 'babel-loader',
             options: {
+                // Avoid loading babel.config.js, since we only use it for React Native.
+                configFile: false,
+
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
                 // jitsi-meet.
@@ -127,7 +146,7 @@ const config = {
             // dependencies including lib-jitsi-meet.
 
             loader: 'expose-loader?$!expose-loader?jQuery',
-            test: /\/node_modules\/jquery\/.*\.js$/
+            test: /[/\\]node_modules[/\\]jquery[/\\].*\.js$/
         }, {
             test: reStyle,
             rules: [
@@ -165,7 +184,8 @@ const config = {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
             resolve: {
                 alias: {
-                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`
+                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`,
+                    '../styled/Modal': `${__dirname}/react/features/base/dialog/components/web/ThemedDialog.js`
                 }
             }
         }, {
@@ -208,11 +228,6 @@ const config = {
         sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
     },
     plugins: [
-        analyzeBundle
-            && new BundleAnalyzerPlugin({
-                analyzerMode: 'disabled',
-                generateStatsFile: true
-            }),
         new webpack.DefinePlugin(envKeys),
         detectCircularDeps
             && new CircularDependencyPlugin({
@@ -223,6 +238,7 @@ const config = {
     ].filter(Boolean),
     resolve: {
         alias: {
+            'focus-visible': 'focus-visible/dist/focus-visible.min.js',
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
         },
         aliasFields: [
@@ -234,8 +250,7 @@ const config = {
             // Webpack defaults:
             '.js',
             '.json'
-        ],
-        symlinks: true,
+        ]
     }
 };
 
@@ -244,48 +259,72 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(5 * 1024 * 1024)
-    }),
-    Object.assign({}, config, {
-        entry: {
-            'device_selection_popup_bundle': './react/features/settings/popup.js'
-        },
-        performance: getPerformanceHints(750 * 1024)
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('app'),
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
+        performance: getPerformanceHints(4 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'alwaysontop': './react/features/always-on-top/index.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('alwaysontop')
+        ],
         performance: getPerformanceHints(400 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('dial_in_info'),
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(500 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'do_external_connect': './connection_optimization/do_external_connect.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('do_external_connect')
+        ],
         performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'flacEncodeWorker': './react/features/local-recording/recording/flac/flacEncodeWorker.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('flacEncodeWorker')
+        ],
         performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('analytics-ga')
+        ],
         performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'close3': './static/close3.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('close3')
+        ],
         performance: getPerformanceHints(128 * 1024)
     }),
 
@@ -330,7 +369,11 @@ module.exports = [
             library: 'JitsiMeetExternalAPI',
             libraryTarget: 'umd'
         }),
-        performance: getPerformanceHints(30 * 1024)
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('external_api')
+        ],
+        performance: getPerformanceHints(35 * 1024)
     })
 ];
 
@@ -358,8 +401,6 @@ if (process.env.NODE_ENV === 'development') {
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    console.log('devServerProxyBypass:', path);
-
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
             || path.startsWith('/images/')

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
+import TextField from '@atlaskit/textfield';
 import React from 'react';
 
 import { Dialog } from '../../../base/dialog';
@@ -72,22 +72,20 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
                 <div className = { s.inputContainer }>
                     <TextField
                         autoFocus = { true }
-                        compact = { true }
+                        isCompact = { true }
                         label = { t('dialog.enterDisplayName') }
                         name = 'displayName'
                         onChange = { this._onDisplayNameChange }
                         placeholder = { t('dialog.placeholderName') }
-                        shouldFitContainer = { true }
                         type = 'text'
                         value = { this.state.displayName } />
                     {/* <span className = { s.seperator }>/</span>
                     <TextField
-                        compact = { true }
+                        isCompact = { true }
                         label = { t('dialog.enterOrganizationName') }
                         name = 'organizationName'
                         onChange = { this._onOrganizationNameChange }
                         placeholder = { t('dialog.placeholderOrganization') }
-                        shouldFitContainer = { true }
                         type = 'text'
                         value = { this.state.organizationName } /> */}
                 </div>

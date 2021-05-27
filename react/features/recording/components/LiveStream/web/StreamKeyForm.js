@@ -1,6 +1,6 @@
 // @flow
 
-import { FieldTextStateless } from '@atlaskit/field-text';
+import TextField from '@atlaskit/textfield';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
@@ -40,16 +40,15 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
 
         return (
             <div className = 'stream-key-form'>
-                <FieldTextStateless
+                <TextField
                     autoFocus = { true }
-                    compact = { true }
+                    isCompact = { true }
                     isSpellCheckEnabled = { false }
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
-                    okDisabled = { !value }
+                    isDisabled = { !value }
                     onChange = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
-                    shouldFitContainer = { true }
                     type = 'text'
                     value = { this.props.value } />
                 <div className = 'form-footer'>

@@ -4,7 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconWarning } from '../../../base/icons';
-import { CircularLabel } from '../../../base/label';
+import { Label } from '../../../base/label';
 import { connect } from '../../../base/redux';
 import { Tooltip } from '../../../base/tooltip';
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
@@ -23,7 +23,7 @@ class InsecureRoomNameLabel extends AbstractInsecureRoomNameLabel {
             <Tooltip
                 content = { this.props.t('security.insecureRoomNameWarning') }
                 position = 'left'>
-                <CircularLabel
+                <Label
                     className = 'insecure'
                     icon = { IconWarning } />
             </Tooltip>

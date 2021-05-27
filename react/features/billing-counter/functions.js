@@ -1,6 +1,7 @@
 // @flow
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
+import uuid from 'uuid';
 
 import { BILLING_ID, LICENSE_ERROR, VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -28,11 +29,16 @@ export function extractVpaasTenantFromPath(path: string) {
  * @returns {boolean}
  */
 export function isVpaasMeeting(state: Object) {
+    const { billingCounterUrl, iAmRecorder, iAmSipGateway } = state['features/base/config'];
+    const { jwt } = state['features/base/jwt'];
+
+    const isAllowed = iAmRecorder || iAmSipGateway || Boolean(jwt);
+
     return Boolean(
-        state['features/base/config'].billingCounterUrl
-        && state['features/base/jwt'].jwt
+        billingCounterUrl
         && extractVpaasTenantFromPath(
             state['features/base/connection'].locationURL.pathname)
+        && isAllowed
     );
 }
 
@@ -72,22 +78,31 @@ export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
 }
 
 /**
- * Returns the stored billing id.
+ * Returns the stored billing id (or generates a new one if none is present).
  *
  * @returns {string}
  */
 export function getBillingId() {
-    return jitsiLocalStorage.getItem(BILLING_ID);
+    let billingId = jitsiLocalStorage.getItem(BILLING_ID);
+
+    if (!billingId) {
+        billingId = uuid.v4();
+        jitsiLocalStorage.setItem(BILLING_ID, billingId);
+    }
+
+    return billingId;
 }
 
 /**
- * Stores the billing id.
+ * Returns the billing id for vpaas meetings.
  *
- * @param {string} value - The id to be stored.
- * @returns {void}
+ * @param {Object} state - The state of the app.
+ * @returns {string | undefined}
  */
-export function setBillingId(value: string) {
-    jitsiLocalStorage.setItem(BILLING_ID, value);
+export function getVpaasBillingId(state: Object) {
+    if (isVpaasMeeting(state)) {
+        return getBillingId();
+    }
 }
 
 /**

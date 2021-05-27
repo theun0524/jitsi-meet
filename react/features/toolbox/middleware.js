@@ -1,6 +1,5 @@
 // @flow
 
-import Timer from '../../../modules/util/timer';
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
@@ -21,8 +20,9 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CLEAR_TOOLBOX_TIMEOUT: {
-        const { timer } = store.getState()['features/toolbox'];
-        timer?.cancel();
+        const { timeoutID } = store.getState()['features/toolbox'];
+
+        clearTimeout(timeoutID);
         break;
     }
 
@@ -30,11 +30,12 @@ MiddlewareRegistry.register(store => next => action => {
         return _setFullScreen(next, action);
 
     case SET_TOOLBOX_TIMEOUT: {
-        const { timer } = store.getState()['features/toolbox'];
+        const { timeoutID } = store.getState()['features/toolbox'];
         const { handler, timeoutMS } = action;
 
-        timer?.cancel();
-        action.timer = new Timer(handler, timeoutMS);
+        clearTimeout(timeoutID);
+        action.timeoutID = setTimeout(handler, timeoutMS);
+
         break;
     }
     }

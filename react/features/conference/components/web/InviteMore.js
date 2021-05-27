@@ -90,7 +90,7 @@ function mapStateToProps(state) {
     return {
         _isChatOpen: state['features/chat'].isOpen,
         _tileViewEnabled: shouldDisplayTileView(state),
-        _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
+        _visible: isToolboxVisible(state) && isButtonEnabled('invite', state) && isAlone && !hide
     };
 }
 

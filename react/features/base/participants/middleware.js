@@ -1,6 +1,7 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -322,6 +323,10 @@ StateListenerRegistry.register(
  */
 function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
+
+    if (e2eeEnabled) {
+        dispatch(toggleE2EE(e2eeEnabled));
+    }
 
     dispatch(participantUpdated({
         conference,

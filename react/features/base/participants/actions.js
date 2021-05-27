@@ -16,19 +16,22 @@ import {
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
-    MODERATOR_ROLE_GRANTED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RECV_VIDEO_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL,
-    MUTE_REMOTE_PARTICIPANT_VIDEO
+    SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
+import {
+    DISCO_REMOTE_CONTROL_FEATURE
+} from './constants';
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getParticipantById
 } from './functions';
+import logger from './logger';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -257,35 +260,18 @@ export function localParticipantRoleChanged(role) {
  * Create an action for muting another participant in the conference.
  *
  * @param {string} id - Participant's ID.
+ * @param {MEDIA_TYPE} mediaType - The media to mute.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
  *     id: string,
- *     mute: Boolean
+ *     mediaType: MEDIA_TYPE
  * }}
  */
-export function muteRemoteParticipant(id, mute) {
+export function muteRemoteParticipant(id, mediaType) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
         id,
-        mute
-    };
-}
-
-/**
- * Create an action for muting video another participant in the conference.
- *
- * @param {string} id - Participant's ID.
- * @returns {{
- *     type: MUTE_REMOTE_PARTICIPANT_VIDEO,
- *     id: string,
- *     mute: Boolean
- * }}
- */
-export function muteRemoteParticipantVideo(id, mute) {
-    return {
-        type: MUTE_REMOTE_PARTICIPANT_VIDEO,
-        id,
-        mute
+        mediaType
     };
 }
 
@@ -357,6 +343,48 @@ export function participantJoined(participant) {
                 participant
             });
         }
+    };
+}
+
+/**
+ * Updates the features of a remote participant.
+ *
+ * @param {JitsiParticipant} jitsiParticipant - The ID of the participant.
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: Participant
+ * }}
+ */
+export function updateRemoteParticipantFeatures(jitsiParticipant) {
+    return (dispatch, getState) => {
+        if (!jitsiParticipant) {
+            return;
+        }
+
+        const id = jitsiParticipant.getId();
+
+        jitsiParticipant.getFeatures()
+            .then(features => {
+                const supportsRemoteControl = features.has(DISCO_REMOTE_CONTROL_FEATURE);
+                const participant = getParticipantById(getState(), id);
+
+                if (!participant || participant.local) {
+                    return;
+                }
+
+                if (participant?.supportsRemoteControl !== supportsRemoteControl) {
+                    return dispatch({
+                        type: PARTICIPANT_UPDATED,
+                        participant: {
+                            id,
+                            supportsRemoteControl
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                logger.error(`Failed to get participant features for ${id}!`, error);
+            });
     };
 }
 
@@ -493,15 +521,19 @@ export function participantUpdated(participant = {}) {
  * Action to signal that a participant has muted us.
  *
  * @param {JitsiParticipant} participant - Information about participant.
+ * @param {JitsiLocalTrack} track - Information about the track that has been muted.
  * @returns {Promise}
  */
-export function participantMutedUs(track, participant) {
+export function participantMutedUs(participant, track) {
     return (dispatch, getState) => {
-        if (!participant || !track.isMuted()) {
+        if (!participant) {
             return;
         }
 
-        const title = 'notify.mutedRemotelyTitle';
+        const isAudio = track.isAudioTrack();
+
+        const title = isAudio
+            ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle';
         showToast({
             title: i18next.t(title, {
                 participantDisplayName:
@@ -535,15 +567,6 @@ export function participantKicked(kicker, kicked) {
                     getParticipantDisplayName(getState, kicker.getId())
             }),
             timeout: NOTIFICATION_TIMEOUT * 2 });
-        // dispatch(showNotification({
-        //     titleArguments: {
-        //         kicked:
-        //             getParticipantDisplayName(getState, kicked.getId()),
-        //         kicker:
-        //             getParticipantDisplayName(getState, kicker.getId())
-        //     },
-        //     titleKey: 'notify.kickParticipant'
-        // }, NOTIFICATION_TIMEOUT * 10)); // leave more time for this
     };
 }
 

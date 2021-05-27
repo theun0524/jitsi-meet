@@ -1,9 +1,8 @@
 // @flow
 
-import { debounce } from 'lodash';
 import React from 'react';
 
-import { FieldTextStateless } from '@atlaskit/field-text';
+import TextField from '@atlaskit/textfield';
 import CrossCircleIcon from '@atlaskit/icon/glyph/cross-circle';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 
@@ -27,8 +26,8 @@ import ChatDisableButtonForAll from './ChatDisableButtonForAll';
 
 import s from './Chat.module.scss';
 import { openDialog } from '../../../base/dialog';
-import EnableChatForAllParticipantsDialog from '../../../remote-video-menu/components/web/EnableChatForAllParticipantsDialog';
-import DisableChatForAllParticipantsDialog from '../../../remote-video-menu/components/web/DisableChatForAllParticipantsDialog';
+import EnableChatForAllParticipantsDialog from '../../../video-menu/components/web/EnableChatForAllParticipantsDialog';
+import DisableChatForAllParticipantsDialog from '../../../video-menu/components/web/DisableChatForAllParticipantsDialog';
 
 import { showToast } from '../../../notifications';
 
@@ -243,16 +242,13 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div className = { s.searchContainer }>
-                <FieldTextStateless
-                    compact = { true }
+                <TextField
+                    isCompact = { true }
                     id = 'chatHeaderSearchBox'
-                    autoFocus = { true }
+                    autoFocus
                     placeholder =  { t('chat.search') }
-                    shouldFitContainer = { true }
-                    isLabelHidden = { true }
                      // eslint-disable-next-line react/jsx-no-bind
-                    onChange = { this._updateChatSearchInput }
-                    type = 'text' />
+                    onChange = { this._updateChatSearchInput } />
                 <div
                     className = { s.closeIcon }
                     onClick = { this._onToggleSearch }>

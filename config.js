@@ -337,6 +337,12 @@ var config = {
     // UI
     //
 
+    // Disables responsive tiles.
+    // disableResponsiveTiles: false,
+
+    // Hides lobby button
+    // hideLobbyButton: false,
+
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
@@ -583,7 +589,12 @@ var config = {
     // Options related to the remote participant menu.
     // remoteVideoMenu: {
     //     // If set to true the 'Kick out' button will be disabled.
-    //     disableKick: true
+    //     disableKick: true,
+    //     // If set to true the 'Grant moderator' button will be disabled.
+    //     disableGrantModerator: true
+    //     disableRemoteMuteVideo: false,
+    //     disableRemoteUnmute: false,
+    //     disableRemoteUnmuteVideo: false,
     // },
 
     /**
@@ -730,9 +741,6 @@ var config = {
     // enableChatControl: true,
 
     // disableRemoteMute: true,
-    // disableRemoteMuteVideo: false,
-    // disableRemoteUnmute: false,
-    // disableRemoteUnmuteVideo: false,
     // disableSortable: false,
 
     // Allow all above example options to include a trailing comma and

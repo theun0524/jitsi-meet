@@ -1,6 +1,5 @@
 // @flow
 
-import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { Component } from 'react';
 
 import { getAvailableDevices } from '../../../base/devices';
@@ -19,7 +18,6 @@ import { getMoreTabProps, getProfileTabProps } from '../../functions';
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
-import { isMobileBrowser } from '../../../base/environment/utils';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -137,10 +135,6 @@ function _mapStateToProps(state) {
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
-    const _user = state['features/base/jwt'].user;
-    const _jwt = state['features/base/jwt'].jwt;
-    const showBackgroundSettings
-        = configuredTabs.includes('background') && !isMobileBrowser();
     const tabs = [];
 
     if (showDeviceSettings) {

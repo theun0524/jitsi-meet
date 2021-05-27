@@ -157,24 +157,15 @@ MiddlewareRegistry.register(store => next => action => {
             if (isVideoTrack) {
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
-                }
-
-                // Make sure we change the video mute state only for camera tracks.
-                if (jitsiTrack.isLocal() && jitsiTrack.videoType !== 'desktop') {
+                } else if (jitsiTrack.isLocal()) {
                     APP.conference.setVideoMuteStatus(muted);
                 } else {
-                    APP.UI.setVideoMuted(participantID, muted);
-
-                    const found = findSelectedParticipant(participantID);
-                    if (found === muted) {
-                        store.dispatch(selectParticipant());
-                    }
+                    APP.UI.setVideoMuted(participantID);
                 }
-                APP.UI.onPeerVideoTypeChanged(participantID, jitsiTrack.videoType);
             } else if (jitsiTrack.isLocal()) {
                 APP.conference.setAudioMuteStatus(muted);
             } else {
-                APP.UI.setAudioMuted(participantID, muted);
+                APP.UI.setAudioMuted(participantID);
             }
 
             return result;

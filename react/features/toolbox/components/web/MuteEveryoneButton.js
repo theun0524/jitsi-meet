@@ -7,7 +7,7 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participant
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { showConfirmDialog } from '../../../notifications';
-import { muteAllParticipants } from '../../../remote-video-menu/actions';
+import { muteAllParticipants } from '../../../video-menu/actions';
 
 type Props = AbstractButtonProps & {
 

@@ -1,5 +1,6 @@
 // @flow
 
+import { getFeatureFlag, FILMSTRIP_ENABLED } from '../base/flags';
 import { toState } from '../base/redux';
 
 /**
@@ -14,8 +15,14 @@ import { toState } from '../base/redux';
  */
 export function isFilmstripVisible(stateful: Object | Function) {
     const state = toState(stateful);
-    const { length: participantCount } = state['features/base/participants'];
-    const { hideLocalVideo, hideRemoteVideos } = state['features/base/config'];
 
-    return participantCount > 1 && !(hideLocalVideo && hideRemoteVideos);
+    const enabled = getFeatureFlag(state, FILMSTRIP_ENABLED, true);
+
+    if (!enabled) {
+        return false;
+    }
+
+    const { length: participantCount } = state['features/base/participants'];
+
+    return participantCount > 1;
 }

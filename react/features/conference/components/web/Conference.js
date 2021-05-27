@@ -13,6 +13,8 @@ import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { ParticipantsPane } from '../../../participants-pane/components';
+import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, setToolboxAlwaysVisible, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
@@ -24,10 +26,10 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import Labels from './Labels';
 import { default as Notice } from './Notice';
 import { default as PagePrevButton } from './PagePrevButton';
 import { default as PageNextButton } from './PageNextButton';
+import ConferenceInfo from './ConferenceInfo';
 
 declare var APP: Object;
 declare var config: Object;
@@ -73,6 +75,11 @@ type Props = AbstractProps & {
      * Returns true if the 'lobby screen' is visible.
      */
     _isLobbyScreenVisible: boolean,
+
+    /**
+     * If participants pane is visible or not.
+     */
+     _isParticipantsPaneVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -178,42 +185,39 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            // XXX The character casing of the name filmStripOnly utilized by
-            // interfaceConfig is obsolete but legacy support is required.
-            filmStripOnly: filmstripOnly
-        } = interfaceConfig;
-        const {
-            _iAmRecorder,
             _isLobbyScreenVisible,
+            _isParticipantsPaneVisible,
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideLabels = filmstripOnly || _iAmRecorder;
 
         return (
-            <div
-                className = { _layoutClassName }
-                id = 'videoconference_page'
-                onMouseMove = { this._onShowToolbar }>
-                
-                <Notice />
-                <div id = 'videospace'>
-                    <LargeVideo />
-                    <KnockingParticipantList />
-                    <Filmstrip filmstripOnly = { filmstripOnly } />
-                    { hideLabels || <Labels /> }
+            <div id = 'layout_wrapper'>
+                <div
+                    className = { _layoutClassName }
+                    id = 'videoconference_page'
+                    onMouseMove = { this._onShowToolbar }>
+                    <ConferenceInfo />
+
+                    <Notice />
+                    <div id = 'videospace'>
+                        <LargeVideo />
+                        {!_isParticipantsPaneVisible && <KnockingParticipantList />}
+                        <Filmstrip />
+                    </div>
+
+                    { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                    <Chat />
+
+                    { this.renderNotificationsContainer() }
+
+                    <CalleeInfoContainer />
+
+                    { _showPrejoin && <Prejoin />}
+                    <PagePrevButton />
+                    <PageNextButton />
                 </div>
-
-                { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
-                { filmstripOnly || <Chat /> }
-
-                { this.renderNotificationsContainer() }
-
-                <CalleeInfoContainer />
-
-                { !filmstripOnly && _showPrejoin && <Prejoin />}
-                <PagePrevButton />
-                <PageNextButton />
+                <ParticipantsPane />
             </div>
         );
     }
@@ -279,6 +283,7 @@ function _mapStateToProps(state) {
         ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
+        _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
         _showPrejoin: isPrejoinPageVisible(state)

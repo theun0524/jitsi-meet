@@ -1,7 +1,7 @@
 // @flow
 
-import Button from '@atlaskit/button';
-import { FieldTextStateless } from '@atlaskit/field-text';
+import Button from '@atlaskit/button/standard-button';
+import TextField from '@atlaskit/textfield';
 import React from 'react';
 
 import UIEvents from '../../../../../service/UI/UIEvents';
@@ -12,6 +12,7 @@ import {
 import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { openLogoutDialog } from '../../actions';
 
 declare var APP: Object;
 
@@ -89,9 +90,9 @@ class ProfileTab extends AbstractDialogTab<Props> {
             <div>
                 <div className = 'profile-edit'>
                     <div className = 'profile-edit-field'>
-                        <FieldTextStateless
+                        <TextField
                             autoFocus = { true }
-                            compact = { true }
+                            isCompact = { true }
                             id = 'setDisplayName'
                             label = { t('profile.setDisplayNameLabel') }
                             // eslint-disable-next-line react/jsx-no-bind
@@ -100,13 +101,12 @@ class ProfileTab extends AbstractDialogTab<Props> {
                                     super._onChange({ displayName: value })
                             }
                             placeholder = { t('settings.name') }
-                            shouldFitContainer = { true }
                             type = 'text'
                             value = { displayName } />
                     </div>
                     <div className = 'profile-edit-field'>
-                        <FieldTextStateless
-                            compact = { true }
+                        <TextField
+                            isCompact = { true }
                             id = 'setEmail'
                             label = { t('profile.setEmailLabel') }
                             // eslint-disable-next-line react/jsx-no-bind
@@ -115,7 +115,6 @@ class ProfileTab extends AbstractDialogTab<Props> {
                                     super._onChange({ email: value })
                             }
                             placeholder = { t('profile.setEmailInput') }
-                            shouldFitContainer = { true }
                             type = 'text'
                             value = { email } />
                     </div>
@@ -138,23 +137,14 @@ class ProfileTab extends AbstractDialogTab<Props> {
         if (this.props.authLogin) {
             sendAnalytics(createProfilePanelButtonEvent('logout.button'));
 
-            APP.UI.messageHandler.openTwoButtonDialog({
-                leftButtonKey: 'dialog.Yes',
-                msgKey: 'dialog.logoutQuestion',
-                submitFunction(evt, yes) {
-                    if (yes) {
-                        APP.UI.emitEvent(UIEvents.LOGOUT);
-                    }
-                },
-                titleKey: 'dialog.logoutTitle'
-            });
+            APP.store.dispatch(openLogoutDialog(
+                () => APP.UI.emitEvent(UIEvents.LOGOUT)
+            ));
         } else {
             sendAnalytics(createProfilePanelButtonEvent('login.button'));
 
             APP.UI.emitEvent(UIEvents.AUTH_CLICKED);
         }
-
-        this.props.closeDialog();
     }
 
     /**

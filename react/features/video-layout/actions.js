@@ -3,18 +3,34 @@
 import arrayMove from 'array-move';
 import { map } from 'lodash';
 import type { Dispatch } from 'redux';
-import { getVideoId } from '../../../modules/UI/videolayout/VideoLayout';
-import { getParticipantCount } from '../base/participants';
+// import { getVideoId } from '../../../modules/UI/videolayout/VideoLayout';
 
 import {
     ORDERED_TILE_VIEW,
-    SCREEN_SHARE_PARTICIPANTS_UPDATED,
+    SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+    SELECT_ENDPOINTS,
     SET_PAGE_INFO,
     SET_TILE_VIEW,
     SET_TILE_VIEW_ORDER
 } from './actionTypes';
-import { LAYOUTS } from './constants';
-import { getCurrentLayout, getPageInfo, shouldDisplayTileView } from './functions';
+import { getPageInfo, shouldDisplayTileView } from './functions';
+
+/**
+ * Creates a (redux) action which signals that a new set of remote endpoints need to be selected.
+ *
+ * @param {Array<string>} participantIds - The remote participants that are currently selected
+ * for video forwarding from the bridge.
+ * @returns {{
+ *      type: SELECT_ENDPOINTS,
+ *      particpantsIds: Array<string>
+ * }}
+ */
+export function selectEndpoints(participantIds: Array<string>) {
+    return {
+        type: SELECT_ENDPOINTS,
+        participantIds
+    };
+}
 
 /**
  * Creates a (redux) action which signals set the page info.
@@ -43,16 +59,16 @@ export function setPageInfo(pageInfo: Object) {
  * Creates a (redux) action which signals that the list of known participants
  * with screen shares has changed.
  *
- * @param {string} participantIds - The participants which currently have active
+ * @param {string} participantIds - The remote participants which currently have active
  * screen share streams.
  * @returns {{
- *     type: SCREEN_SHARE_PARTICIPANTS_UPDATED,
+ *     type: SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
  *     participantId: string
  * }}
  */
-export function setParticipantsWithScreenShare(participantIds: Array<string>) {
+export function setRemoteParticipantsWithScreenShare(participantIds: Array<string>) {
     return {
-        type: SCREEN_SHARE_PARTICIPANTS_UPDATED,
+        type: SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
         participantIds
     };
 }
@@ -122,13 +138,13 @@ export function orderedTileView(ordered) {
  */
 export function moveToFirst(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        const ordered = map(nodes, getVideoId);
-        const found = ordered.indexOf(id);
+        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
+        // const ordered = map(nodes, getVideoId);
+        // const found = ordered.indexOf(id);
 
-        if (found >= 0 && found !== 0) {
-            dispatch(setTileViewOrder(arrayMove(ordered, found, 0)));
-        }
+        // if (found >= 0 && found !== 0) {
+        //     dispatch(setTileViewOrder(arrayMove(ordered, found, 0)));
+        // }
     };
 }
 
@@ -140,13 +156,13 @@ export function moveToFirst(id) {
  */
 export function moveToLast(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        const ordered = map(nodes, getVideoId);
-        const found = ordered.indexOf(id);
+        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
+        // const ordered = map(nodes, getVideoId);
+        // const found = ordered.indexOf(id);
 
-        if (found >= 0 && found !== nodes.length - 1) {
-            dispatch(setTileViewOrder(arrayMove(ordered, found, nodes.length - 1)));
-        }
+        // if (found >= 0 && found !== nodes.length - 1) {
+        //     dispatch(setTileViewOrder(arrayMove(ordered, found, nodes.length - 1)));
+        // }
     };
 }
 
@@ -158,13 +174,13 @@ export function moveToLast(id) {
  */
 export function moveToNext(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        const ordered = map(nodes, getVideoId);
-        const found = ordered.indexOf(id);
+        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
+        // const ordered = map(nodes, getVideoId);
+        // const found = ordered.indexOf(id);
 
-        if (found >= 0 && found !== nodes.length - 1) {
-            dispatch(setTileViewOrder(arrayMove(ordered, found, found + 1)));
-        }
+        // if (found >= 0 && found !== nodes.length - 1) {
+        //     dispatch(setTileViewOrder(arrayMove(ordered, found, found + 1)));
+        // }
     };
 }
 
@@ -176,13 +192,13 @@ export function moveToNext(id) {
  */
 export function moveToPrev(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        const ordered = map(nodes, getVideoId);
-        const found = ordered.indexOf(id);
+        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
+        // const ordered = map(nodes, getVideoId);
+        // const found = ordered.indexOf(id);
 
-        if (found > 0) {
-            dispatch(setTileViewOrder(arrayMove(ordered, found, found - 1)));
-        }
+        // if (found > 0) {
+        //     dispatch(setTileViewOrder(arrayMove(ordered, found, found - 1)));
+        // }
     };
 }
 

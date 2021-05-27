@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { InviteMore, Subject } from '../../conference';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
+import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 import s from './LargeVideo.module.scss';
 
@@ -71,10 +71,7 @@ class LargeVideo extends Component<Props> {
                 className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
-                <Subject />
-                <div id = 'sharedVideo'>
-                    <div id = 'sharedVideoIFrame' />
-                </div>
+                <SharedVideo />
                 <div id = 'etherpad' />
 
                 <Watermarks className = { s.watermark } />

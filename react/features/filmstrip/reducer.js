@@ -4,12 +4,9 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SET_FILMSTRIP_ENABLED,
-    SET_FILMSTRIP_HOVERED,
     SET_FILMSTRIP_VISIBLE,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
-    SET_HORIZONTAL_VIEW_PAGE,
-    SET_TILE_VIEW_DIMENSIONS,
-    SET_TILE_VIEW_PAGE
+    SET_TILE_VIEW_DIMENSIONS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -56,20 +53,6 @@ ReducerRegistry.register(
                 enabled: action.enabled
             };
 
-        case SET_FILMSTRIP_HOVERED:
-            return {
-                ...state,
-
-                /**
-                 * The indicator which determines whether the {@link Filmstrip}
-                 * is being hovered (over).
-                 *
-                 * @public
-                 * @type {boolean}
-                 */
-                hovered: action.hovered
-            };
-
         case SET_FILMSTRIP_VISIBLE:
             return {
                 ...state,
@@ -85,16 +68,6 @@ ReducerRegistry.register(
             return {
                 ...state,
                 tileViewDimensions: action.dimensions
-            };
-        case SET_TILE_VIEW_PAGE:
-            return {
-                ...state,
-                tileViewPage: action.page
-            };
-        case SET_HORIZONTAL_VIEW_PAGE:
-            return {
-                ...state,
-                horizontalViewPage: action.page
             };
         }
 

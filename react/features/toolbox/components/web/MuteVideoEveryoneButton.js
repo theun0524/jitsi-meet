@@ -3,11 +3,12 @@
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconCamera, IconCameraDisabled } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { showConfirmDialog } from '../../../notifications';
-import { muteAllParticipantsVideo } from '../../../remote-video-menu/actions';
+import { muteAllParticipants } from '../../../video-menu/actions.any';
 
 type Props = AbstractButtonProps & {
 
@@ -72,7 +73,7 @@ class MuteVideoEveryoneButton extends AbstractButton<Props, *> {
             text: t(`dialog.${mute ? '' : 'un'}muteVideoEveryoneElseTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteAllParticipantsVideo(exclude, mute));
+                dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
             }
         });
         // dispatch(openDialog(MuteEveryoneDialog, {

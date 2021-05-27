@@ -20,7 +20,7 @@ import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
-import { RemoteVideoMenu } from '../../../remote-video-menu';
+import { RemoteVideoMenu } from '../../../video-menu';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
 
 import AudioMutedIndicator from './AudioMutedIndicator';

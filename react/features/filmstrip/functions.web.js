@@ -1,15 +1,35 @@
 // @flow
-/* global APP */
 
+import { JitsiParticipantConnectionStatus } from '../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../base/media';
 import {
+    getLocalParticipant,
+    getParticipantById,
     getParticipantCountWithFake,
     getPinnedParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
+import {
+    getLocalVideoTrack,
+    getTrackByMediaTypeAndParticipant,
+    isLocalTrackMuted,
+    isRemoteTrackMuted
+} from '../base/tracks/functions';
 
-import { TILE_ASPECT_RATIO } from './constants';
+import {
+    DISPLAY_AVATAR,
+    DISPLAY_AVATAR_WITH_NAME,
+    DISPLAY_BLACKNESS_WITH_NAME,
+    DISPLAY_VIDEO,
+    DISPLAY_VIDEO_WITH_NAME,
+} from './constants';
 
 declare var interfaceConfig: Object;
+
+// Minimum space to keep between the sides of the tiles and the sides
+// of the window.
+const TILE_VIEW_HORZ_MARGINS = 20;
+const TILE_VIEW_VERT_MARGINS = 160;
 
 /**
  * Returns true if the filmstrip on mobile is visible, false otherwise.
@@ -23,9 +43,7 @@ declare var interfaceConfig: Object;
  * @returns {boolean}
  */
 export function isFilmstripVisible(stateful: Object | Function) {
-    const { hideLocalVideo, hideRemoteVideos } = toState(stateful)['features/base/config'];
-    return toState(stateful)['features/filmstrip'].visible &&
-        !(hideLocalVideo && hideRemoteVideos);
+    return toState(stateful)['features/filmstrip'].visible;
 }
 
 /**
@@ -47,23 +65,51 @@ export function shouldRemoteVideosBeVisible(state: Object) {
     const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
 
-    return !state['features/base/config'].hideRemoteVideos &&
-        Boolean(
-            participantCount > 2
+    return Boolean(
+        participantCount > 2
 
             // Always show the filmstrip when there is another participant to
-            // show and the filmstrip is hovered, or local video is pinned, or
-            // the toolbar is displayed.
+            // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
-                && (state['features/filmstrip'].hovered
-                    || state['features/toolbox'].visible
+                && (state['features/toolbox'].visible
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
-            || (typeof interfaceConfig === 'object'
-                && interfaceConfig.filmStripOnly)
-
             || state['features/base/config'].disable1On1Mode);
+}
+
+/**
+ * Checks whether there is a playable video stream available for the user associated with the passed ID.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @param {string} id - The id of the participant.
+ * @returns {boolean} <tt>true</tt> if there is a playable video stream available
+ * or <tt>false</tt> otherwise.
+ */
+export function isVideoPlayable(stateful: Object | Function, id: String) {
+    const state = toState(stateful);
+    const tracks = state['features/base/tracks'];
+    const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
+    const isLocal = participant?.local ?? true;
+    const { connectionStatus } = participant || {};
+    const videoTrack
+        = isLocal ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const isAudioOnly = Boolean(state['features/base/audio-only'].enabled);
+    let isPlayable = false;
+
+    if (isLocal) {
+        const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly;
+    } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+        const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
+
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
+            && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE;
+    }
+
+    return isPlayable;
 }
 
 /**
@@ -84,8 +130,7 @@ export function calculateThumbnailSizeForHorizontalView(clientHeight: number = 0
         },
         remote: {
             height,
-            width: Math.floor(interfaceConfig.REMOTE_THUMBNAIL_RATIO * height),
-            visibleRows: Math.floor(clientHeight / height),
+            width: Math.floor(interfaceConfig.REMOTE_THUMBNAIL_RATIO * height)
         }
     };
 }
@@ -98,48 +143,19 @@ export function calculateThumbnailSizeForHorizontalView(clientHeight: number = 0
  */
 export function calculateThumbnailSizeForTileView({
     columns,
-    rows,
     visibleRows,
     clientWidth,
-    clientHeight
+    clientHeight,
 }: Object) {
-    // The distance from the top and bottom of the screen, as set by CSS, to
-    // avoid overlapping UI elements.
-    const topBottomPadding = (28 + 82); // was initially 200
-
-    // Minimum space to keep between the sides of the tiles and the sides
-    // of the window.
-    const sideMargins = 4; // was initailly 30 * 2
-    const verticalMargins = visibleRows * 4;
-    const viewWidth = clientWidth - (sideMargins * columns);
-    const viewHeight = clientHeight - topBottomPadding - verticalMargins;
+    const viewWidth = clientWidth - TILE_VIEW_HORZ_MARGINS;
+    const viewHeight = clientHeight - TILE_VIEW_VERT_MARGINS;
     const initialWidth = viewWidth / columns;
-    const initialHeight = viewHeight / Math.max(visibleRows, 2);
-
-    let height = Math.floor(initialHeight);
+    const height = Math.floor(viewHeight / visibleRows);
     const width = Math.floor(initialWidth);
-    let lastRowWidth = width;
-
-    const participants = getParticipantCountWithFake(APP.store.getState());
-    const unbalancedThumbNailCount = participants % columns;
-
-    if (columns > 1) {
-        // adjusting the height with respect to aspect ratio in case of two participants only
-        height = Math.floor(Math.max(height, width / TILE_ASPECT_RATIO));
-    }
-
-    if (visibleRows > 1) {
-        height = Math.floor(Math.min(height, initialHeight));
-        if (unbalancedThumbNailCount !== 0) {
-            lastRowWidth = (clientWidth - (sideMargins * unbalancedThumbNailCount)) / unbalancedThumbNailCount;
-        }
-    }
 
     return {
         height,
-        width,
-        lastRowWidth,
-        unbalancedThumbNailCount
+        width
     };
 }
 
@@ -158,4 +174,37 @@ export function getVerticalFilmstripVisibleAreaWidth() {
     const filmstripMaxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 18;
 
     return Math.min(filmstripMaxWidth, window.innerWidth);
+}
+
+/**
+ * Computes information that determine the display mode.
+ *
+ * @param {Object} input - Obejct containing all necessary information for determining the display mode for
+ * the thumbnail.
+ * @returns {number} - One of <tt>DISPLAY_VIDEO</tt>, <tt>DISPLAY_AVATAR</tt> or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
+*/
+export function computeDisplayMode(input: Object) {
+    const {
+        isAudioOnly,
+        isCurrentlyOnLargeVideo,
+        isScreenSharing,
+        canPlayEventReceived,
+        isHovered,
+        isRemoteParticipant,
+        tileViewActive
+    } = input;
+    const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
+
+    if (!tileViewActive && isScreenSharing && isRemoteParticipant) {
+        return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+    } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
+        // Display name is always and only displayed when user is on the stage
+        return adjustedIsVideoPlayable && !isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
+    } else if (adjustedIsVideoPlayable && !isAudioOnly) {
+        // check hovering and change state to video with name
+        return isHovered ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
+    }
+
+    // check hovering and change state to avatar with name
+    return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
 }

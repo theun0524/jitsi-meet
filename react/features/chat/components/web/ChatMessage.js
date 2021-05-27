@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import BanRemoteParticipantDialog from '../../../remote-video-menu/components/web/BanRemoteParticipantDialog';
+import BanRemoteParticipantDialog from '../../../video-menu/components/web/BanRemoteParticipantDialog';
 
 import AbstractChatMessage, {
     type Props
@@ -16,12 +16,10 @@ import AbstractChatMessage, {
 import PrivateMessageButton from '../PrivateMessageButton';
 import { getLocalParticipant, getParticipantById, getParticipants } from '../../../base/participants';
 
-import ChatMessageBanButton from './ChatMessageBanButton';
-import ChatMessageDisableButton from './ChatMessageDisableButton';
 import s from './ChatMessage.module.scss';
 import { openDialog } from '../../../base/dialog';
-import EnableChatForRemoteParticipantDialog from '../../../remote-video-menu/components/web/EnableChatForRemoteParticipantDialog';
-import DisableChatForRemoteParticipantDialog from '../../../remote-video-menu/components/web/DisableChatForRemoteParticipantDialog';
+import EnableChatForRemoteParticipantDialog from '../../../video-menu/components/web/EnableChatForRemoteParticipantDialog';
+import DisableChatForRemoteParticipantDialog from '../../../video-menu/components/web/DisableChatForRemoteParticipantDialog';
 import { setPrivateMessageRecipient } from '../../actions'
 
 declare var APP: Object;

@@ -1,5 +1,13 @@
 #videoconference_page {
     min-height: 100%;
+    position: relative;
+    transform: translate3d(0, 0, 0);
+    width: 100%;
+}
+
+#layout_wrapper {
+    display: flex;
+    height: 100%;
 }
 
 #videospace {
@@ -12,58 +20,6 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
-
-    .page-button {
-        display: inline-flex;
-        position: absolute;
-        text-align: center;
-        cursor: pointer;
-        background-color: rgba(0,0,0,0.5);
-        z-index: 10;
-        padding: 4px 10px;
-        font-size: 12px;
-        border-radius: 4px;
-        align-items: center;
-        justify-content: center;
-
-        &.column {
-            flex-direction: column;
-        }
-
-        &.row {
-            flex-direction: row;
-        }
-
-        &:hover {
-            background-color: rgba(0,0,0,0.8);
-        }
-
-        &.disabled {
-            cursor: default;
-
-            .jitsi-icon {
-                color: #B8C7E0;
-            }
-
-            &:hover {
-                background-color: rgba(0,0,0,0.5);
-            }
-        }
-
-        &.prev {
-            bottom: calc(50% + 30px);
-            left: 0;
-        }
-
-        &.next {
-            bottom: calc(50% + 30px);
-            right: 0;
-        }
-
-        .jitsi-icon {
-            color: aquamarine;
-        }        
-    }
 }
 
 #largeVideoBackgroundContainer,
@@ -234,10 +190,12 @@
         z-index: $zindex2;
     }
 
-    &.shift-right {
-        &#largeVideoContainer {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
+    @media (min-width: 581px) {
+        &.shift-right {
+            &#largeVideoContainer {
+                margin-left: $sidebarWidth;
+                width: calc(100% - #{$sidebarWidth});
+            }
         }
     }
 }
@@ -282,6 +240,15 @@
     object-fit: cover;
 }
 
+#sharedVideo video {
+    width: 100%;
+    height: 100%;
+}
+
+#sharedVideo.disable-pointer {
+    pointer-events: none;
+}
+
 #sharedVideo,
 #etherpad,
 #localVideoWrapper video,
@@ -306,7 +273,6 @@
 
 #etherpad {
     z-index: $zindex0;
-    margin-top: 56px;
 }
 
 /**
@@ -456,7 +422,9 @@
     }
 }
 
+.local-video-menu-trigger,
 .remote-video-menu-trigger,
+.localvideomenu,
 .remotevideomenu
 {
     display: inline-block;
@@ -474,6 +442,7 @@
         cursor: hand;
     }
 }
+.local-video-menu-trigger,
 .remote-video-menu-trigger {
     margin-top: 7px;
 }
@@ -534,14 +503,6 @@
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
     z-index: $reloadZ; /*The reload button should appear on top of the header!*/
-}
-
-.audiolevel {
-    display: inline-block;
-    position: absolute;
-    z-index: $zindex0;
-    border-radius:1px;
-    pointer-events: none;
 }
 
 #dominantSpeaker {
@@ -690,7 +651,7 @@
     }
 
     .videocontainer__hoverOverlay {
-        visibility: hidden;
+        visibility: visible;
     }
 
     video {
@@ -705,11 +666,11 @@
     }
 
     .displayNameContainer {
-        visibility: hidden;
+        visibility: visible;
     }
 
     .videocontainer__hoverOverlay {
-        visibility: hidden;
+        visibility: visible;
     }
 
     video {
@@ -741,11 +702,11 @@
     }
 
     .displayNameContainer {
-        visibility: hidden;
+        visibility: visible;
     }
 
     .videocontainer__hoverOverlay {
-        visibility: hidden;
+        visibility: visible;
     }
 
     video {

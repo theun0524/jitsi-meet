@@ -478,6 +478,7 @@
         "keyboardShortcuts": "키보드 단축키",
         "localRecording": "로컬 녹음 컨트롤 표시 또는 숨기기",
         "mute": "마이크 음소거 또는 음소거 해제",
+        "toggleParticipantsPane": "참가자 목록 열기/닫기",
         "pushToTalk": "대화 요청",
         "raiseHand": "말하기 요청/해제",
         "showSpeakerStats": "접속자 통계 표시",
@@ -602,6 +603,17 @@
         "oldElectronClientDescription1": "보안 취약점이 알려진 이전 버전의 클라이언트를 사용하고있는 것 같습니다. 지금 업데이트하십시오",
         "oldElectronClientDescription2": "최근 빌드",
         "oldElectronClientDescription3": " 지금!"
+    },
+    "participantsPane": {
+        "headings": {
+            "lobby": "로비 ({{count}})",
+            "participantsList": "참가자 ({{count}})"
+        },
+        "actions": {
+            "invite": "초대하기",
+            "muteAll": "모두 음소거",
+            "stopVideo": "카메라 끄기"
+        }
     },
     "passwordSetRemotely": "다른 참가자가 설정",
     "passwordDigitsOnly": "최대 {{number}} 자리",
@@ -839,6 +851,7 @@
             "muteEveryone": "모두 음소거",
             "muteVideoEveryone": "모두 카메라 끄기",
             "unmuteVideoEveryone": "모두 카메라 켜기",
+            "participants": "참가자 목록",
             "pip": "PIP 모드 토글",
             "privateMessage": "개인메시지 보내기",
             "profile": "프로필 편집",
@@ -908,6 +921,7 @@
         "noisyAudioInputTitle": "마이크 잡음이 있습니다!",
         "noisyAudioInputDesc": "마이크 잡음이 있습니다. 장치를 음소거하거나 변경하세요.",
         "openChat": "대화 열기",
+        "participants": "참가자 목록",
         "pip": "PIP 모드 시작",
         "privateMessage": "개인메시지 보내기",
         "profile": "프로필 편집",

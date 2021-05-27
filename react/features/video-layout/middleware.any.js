@@ -6,10 +6,9 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
 
 import { SET_TILE_VIEW } from './actionTypes';
-import { setTileView, updatePageInfo } from './actions';
+import { setTileView } from './actions';
 
 import './subscriber';
-import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
 let previousTileViewEnabled;
 
@@ -45,13 +44,12 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     // Things to update when tile view state changes
-    case SET_TILE_VIEW: {
+    case SET_TILE_VIEW:
         if (action.enabled && getPinnedParticipant(store)) {
             store.dispatch(pinParticipant(null));
         }
-        break;
     }
-    }
+
 
     return result;
 });

@@ -1,6 +1,6 @@
 // @flow
 
-import { FieldTextStateless } from '@atlaskit/field-text';
+import TextField from '@atlaskit/textfield';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -72,12 +72,11 @@ class DisplayNameForm extends Component<Props, State> {
             <div id = 'nickname'>
                 <span>{ this.props.t('chat.nickname.title') }</span>
                 <form onSubmit = { this._onSubmit }>
-                    <FieldTextStateless
-                        autoFocus = { true }
+                    <TextField
+                        autoFocus
                         id = 'nickinput'
                         onChange = { this._onDisplayNameChange }
                         placeholder = { t('chat.nickname.popover') }
-                        type = 'text'
                         value = { this.state.displayName } />
                 </form>
             </div>

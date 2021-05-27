@@ -4,20 +4,22 @@ declare var JitsiMeetJS: Object;
 
 import uuid from 'uuid';
 
-import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
+import { isVideoMutedByUser } from '../base/media';
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     trackAdded,
     replaceLocalTrack
 } from '../base/tracks';
+import { createLocalTracksF } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications';
 
 import {
+    PREJOIN_INITIALIZED,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
@@ -25,6 +27,7 @@ import {
     SET_DIALOUT_STATUS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_SKIP_PREJOIN,
+    SET_SKIP_PREJOIN_RELOAD,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
@@ -195,7 +198,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function(dispatch: Function) {
         dispatch(setPrejoinDeviceErrors(errors));
-
+        dispatch(prejoinInitialized());
 
         tracks.forEach(track => dispatch(trackAdded(track)));
     };
@@ -242,11 +245,14 @@ export function joinConferenceWithoutAudio() {
  */
 export function makePrecallTest(conferenceOptions: Object) {
     return async function(dispatch: Function) {
-        await JitsiMeetJS.precallTest.init(conferenceOptions);
+        try {
+            await JitsiMeetJS.precallTest.init(conferenceOptions);
+            const results = await JitsiMeetJS.precallTest.execute();
 
-        const results = await JitsiMeetJS.precallTest.execute();
-
-        dispatch(setPrecallTestResults(results));
+            dispatch(setPrecallTestResults(results));
+        } catch (error) {
+            logger.debug('Failed to execute pre call test - ', error);
+        }
     };
 }
 
@@ -257,12 +263,20 @@ export function makePrecallTest(conferenceOptions: Object) {
  */
 export function openDialInPage() {
     return function(dispatch: Function, getState: Function) {
-        const state = getState();
-        const locationURL = state['features/base/connection'].locationURL;
-        const roomName = getRoomName(state);
-        const dialInPage = getDialInfoPageURL(roomName, locationURL);
+        const dialInPage = getDialInfoPageURL(getState());
 
         openURLInBrowser(dialInPage, true);
+    };
+}
+
+/**
+ * Action used to signal that the prejoin page has been initialized.
+ *
+ * @returns {Object}
+ */
+function prejoinInitialized() {
+    return {
+        type: PREJOIN_INITIALIZED
     };
 }
 
@@ -297,10 +311,17 @@ export function replaceVideoTrackById(deviceId: Object) {
     return async (dispatch: Function, getState: Function) => {
         try {
             const tracks = getState()['features/base/tracks'];
-            const newTrack = await createLocalTrack('video', deviceId);
+            const wasVideoMuted = isVideoMutedByUser(getState());
+            const [ newTrack ] = await createLocalTracksF(
+                { cameraDeviceId: deviceId,
+                    devices: [ 'video' ] },
+                { dispatch,
+                    getState }
+            );
             const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
             dispatch(replaceLocalTrack(oldTrack, newTrack));
+            wasVideoMuted && newTrack.mute();
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
             logger.log('Error replacing video track', err);
@@ -404,6 +425,20 @@ export function setSkipPrejoin(value: boolean) {
 }
 
 /**
+ * Sets the visibility of the prejoin page when a client reload
+ * is triggered as a result of call migration initiated by Jicofo.
+ *
+ * @param {boolean} value - The visibility value.
+ * @returns {Object}
+ */
+export function setSkipPrejoinOnReload(value: boolean) {
+    return {
+        type: SET_SKIP_PREJOIN_RELOAD,
+        value
+    };
+}
+
+/**
  * Action used to set the visiblitiy of the 'JoinByPhoneDialog'.
  *
  * @param {boolean} value - The value.
@@ -443,7 +478,7 @@ export function setPrejoinDeviceErrors(value: Object) {
 }
 
 /**
- * Action used to set the visiblity of the prejoin page.
+ * Action used to set the visibility of the prejoin page.
  *
  * @param {boolean} value - The value.
  * @returns {Object}

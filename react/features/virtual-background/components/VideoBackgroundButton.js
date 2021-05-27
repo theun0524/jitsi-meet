@@ -6,7 +6,6 @@ import { IconVirtualBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { isLocalVideoTrackMuted } from '../../base/tracks';
 
 import { VirtualBackgroundDialog } from './index';
 
@@ -63,17 +62,6 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
     _isToggled() {
         return this.props._isBackgroundEnabled;
     }
-
-    /**
-     * Returns {@code boolean} value indicating if disabled state is
-     * enabled or not.
-     *
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return this.props._videoMuted;
-    }
 }
 
 /**
@@ -91,7 +79,6 @@ function _mapStateToProps(state): Object {
 
     return {
         _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
-        _videoMuted: isLocalVideoTrackMuted(tracks)
     };
 }
 
