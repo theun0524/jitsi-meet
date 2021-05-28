@@ -187,7 +187,8 @@ function authenticate(room: Object, lockPassword: string) {
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function requireAuth(room: Object, lockPassword: string) {
-    if (isDialogOpen(APP.store, WaitForOwnerDialog)) {
+    console.log('===> requireAuth:', room);
+    if (!isDialogOpen(APP.store, WaitForOwnerDialog)) {
         return;
     }
 

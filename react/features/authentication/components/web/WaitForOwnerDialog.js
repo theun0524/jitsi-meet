@@ -1,5 +1,6 @@
 // @flow
 
+import axios from 'axios';
 import React, { PureComponent } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -105,6 +106,10 @@ class WaitForOwnerDialog extends PureComponent<Props> {
             t,
             ...dialogProps
         } = this.props;
+
+        if (!room) {
+            return null;
+        }
 
         return (
             <Dialog
