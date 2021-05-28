@@ -216,6 +216,7 @@
         "contactSupport": "Contact support",
         "copied": "Copied",
         "copy": "Copy",
+        "destroyed_by_host": "Conference terminated by host.",
         "deviceAccessDisabled": "Device access is disabled",
         "deviceAccessReEnabled": "Device access is re-enabled",
         "disableChat": "Disable Chat for User",
@@ -761,6 +762,7 @@
         "more": "More",
         "name": "Name",
         "noDevice": "None",
+        "sameAsSystem": "Same as system ({{label}})",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",
@@ -1091,6 +1093,7 @@
         "header": "Help center"
     },
     "lobby": {
+        "admit": "Admit",
         "knockingParticipantList": "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "No password, ask to join instead",

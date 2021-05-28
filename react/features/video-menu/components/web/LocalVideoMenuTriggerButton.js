@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
@@ -16,6 +16,7 @@ import MuteVideoEveryoneElseButton from './MuteVideoEveryoneElseButton';
 
 import FlipLocalVideoButton from './FlipLocalVideoButton';
 import VideoMenu from './VideoMenu';
+import { findIndex } from 'lodash';
 
 /**
  * The type of the React {@code Component} props of
@@ -48,6 +49,8 @@ type Props = {
  * @extends {Component}
  */
 function LocalVideoMenuTriggerButton(props: Props) {
+    const [ state, setState ] = useState({});
+
     /**
      * Creates a new {@code LocalVideoMenu} with buttons for interacting with
      * the local participant.
@@ -117,6 +120,7 @@ function LocalVideoMenuTriggerButton(props: Props) {
                 buttons.push(
                     <MoveToFirstButton
                         key = 'moveToFirst'
+                        onClick = { _closeMenu }
                         participantID = { participantID } />
                 );
             }
@@ -124,6 +128,7 @@ function LocalVideoMenuTriggerButton(props: Props) {
                 buttons.push(
                     <MoveToLastButton
                         key = 'moveToLast'
+                        onClick = { _closeMenu }
                         participantID = { participantID } />
                 );
             }
@@ -140,6 +145,14 @@ function LocalVideoMenuTriggerButton(props: Props) {
         return null;
     }
 
+    function _onMenuOpen(doMenuClose) {
+        setState({ doMenuClose });
+    }
+
+    function _closeMenu() {
+        state.doMenuClose && state.doMenuClose();
+    }
+
     const content = _renderLocalVideoMenu();
 
     if (!content) {
@@ -150,6 +163,7 @@ function LocalVideoMenuTriggerButton(props: Props) {
         <Popover
             content = { content }
             overflowDrawer = { props._overflowDrawer }
+            onPopoverOpen = { _onMenuOpen }
             position = { props._menuPosition }>
             <span
                 className = 'popover-trigger local-video-menu-trigger'>
@@ -172,8 +186,8 @@ function LocalVideoMenuTriggerButton(props: Props) {
  */
 function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
-    const { ordered } = state['features/video-layout'];
-    const found = ordered?.indexOf(participant?.id);
+    const { data } = state['features/video-layout'].pageInfo || {};
+    const found = findIndex(data, p => p.id === participant?.id);
     const currentLayout = getCurrentLayout(state);
     const { disableLocalVideoFlip, disableRemoteMute, remoteVideoMenu = {} } = state['features/base/config'];
     const {
@@ -203,8 +217,8 @@ function _mapStateToProps(state) {
         _disableRemoteUnmuteVideo: Boolean(disableRemoteUnmuteVideo),
         _participantCount: getParticipantCount(state),
         _menuPosition,
-        isFirst: ordered && found === 0,
-        isLast: ordered && found === ordered.length - 1,
+        isFirst: data && found === 0,
+        isLast: data && found === data.length - 1,
         participant,
         _shouldDisplayTileView: shouldDisplayTileView(state),
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',

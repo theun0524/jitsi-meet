@@ -5,7 +5,9 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SELECT_ENDPOINTS,
-    SET_TILE_VIEW
+    SET_PAGE_INFO,
+    SET_PAGE_ORDER,
+    SET_TILE_VIEW,
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -21,7 +23,12 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    tileViewEnabled: undefined
+    tileViewEnabled: undefined,
+
+    order: {
+        videoMuted: true,
+        by: 'displayName'
+    }
 };
 
 const STORE_NAME = 'features/video-layout';
@@ -47,6 +54,26 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             ...state,
             tileViewEnabled: action.enabled
         };
+
+    case SET_PAGE_ORDER: {
+        return {
+            ...state,
+            order: {
+                ...(state.order || {}),
+                ...action.order
+            }
+        };
+    }
+
+    case SET_PAGE_INFO: {
+        return {
+            ...state,
+            pageInfo: {
+                ...(state.pageInfo || {}),
+                ...action.pageInfo
+            }
+        };
+    }
     }
 
     return state;

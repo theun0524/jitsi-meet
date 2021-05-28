@@ -130,7 +130,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     }
 
     _renderModeratorSelectionItem(props) {
-        const { accessibilityLabel, disabled, elementAfter, id, text } = props;
+        const { accessibilityLabel, disabled, elementAfter, id, key, text } = props;
         const selected = id === this.state.selected;
 
         let className = selected ? s.menuItemSelected : s.menuItem;
@@ -140,7 +140,8 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             <li
                 aria-label = { accessibilityLabel }
                 className = { className }
-                onClick = { disabled ? null : () => this._onModeratorSelection(id) }>
+                onClick = { disabled ? null : () => this._onModeratorSelection(id) }
+                key = { key } >
                 <div className = { s.avatar }>
                     <Avatar participantId = { id } size = { 24 } />
                 </div>
@@ -179,7 +180,8 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             <li
                 aria-label = { t('toolbar.accessibilityLabel.grantModerator') }
                 className = { s.menuItemWarning }
-                onClick =  { this._onSubmitModeratorSelection }>
+                onClick =  { this._onSubmitModeratorSelection }
+                key = 'close'>
                 <div className = 'text'>
                     { t('toolbar.selectModeratorAndLeave') }
                 </div>
@@ -252,7 +254,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
                     content = { children }
                     isOpen = { isOpen }
                     onClose = { this._onCloseDialog }
-                    position = { 'top center' }>
+                    placement = { 'top' }>
                     { super.render() }
                 </InlineDialog>
             </div>

@@ -1,20 +1,16 @@
 // @flow
 
-import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import { CONFERENCE_WILL_LEAVE } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media/index.js';
 import {
+    getLocalParticipant,
     PARTICIPANT_JOINED,
-    PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
-import { updatePageInfo } from './actions';
-import { ORDERED_TILE_VIEW, SET_TILE_VIEW_ORDER } from './actionTypes';
-import { shouldDisplayTileView } from './functions';
 import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes.js';
 
 import './middleware.any';
@@ -44,15 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         if (!action.participant.local) {
             VideoLayout.updateVideoMutedForNoTracks(action.participant.id);
-            VideoLayout.reorderVideos();
-            store.dispatch(updatePageInfo());
         }
-        break;
-    }
-
-    case PARTICIPANT_LEFT: {
-        VideoLayout.reorderVideos();
-        store.dispatch(updatePageInfo());
         break;
     }
 
@@ -73,25 +61,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case ORDERED_TILE_VIEW: {
-        const state = store.getState();
-        if (shouldDisplayTileView(state)) {
-            const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
-
-            // Once the thumbnails are reactified this should be moved there too.
-            // Filmstrip.resizeThumbnailsForTileView(width, height, true);
-        }
-        break;
-    }
-
     case PARTICIPANTS_PANE_CLOSE:
     case PARTICIPANTS_PANE_OPEN:
     case SET_FILMSTRIP_VISIBLE:
         VideoLayout.resizeVideoArea();
-        break;
-
-    case SET_TILE_VIEW_ORDER:
-        VideoLayout.reorderVideos();
         break;
 
     case TRACK_ADDED:

@@ -43,11 +43,33 @@
     border-radius: 3px 0px 0px 3px;
     font-size: 14px;
     line-height: 24px;
-    padding: 2px 8px 2px 16px;
+    padding: 2px 16px;
     height: 24px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    position: relative;
+
+    &.editable {
+        pointer-events: auto;
+        cursor: pointer;
+    }
+    
+    .button {
+        padding: 4px;
+        border-radius: 5px;
+        position: absolute;
+        right: 4;
+        visibility: hidden;
+    }
+
+    &:hover {
+        padding-right: 34px;
+
+        .button {
+            visibility: visible;
+        }
+    }
 }
 
 .subject-timer {

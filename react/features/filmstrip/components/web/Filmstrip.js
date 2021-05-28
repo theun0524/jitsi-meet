@@ -1,6 +1,6 @@
 /* @flow */
 
-import { map } from 'lodash';
+import { keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -16,7 +16,7 @@ import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
-import { getCurrentLayout, LAYOUTS, setTileViewOrder } from '../../../video-layout';
+import { getCurrentLayout, getPageData, LAYOUTS, setPageInfo, setPageOrder } from '../../../video-layout';
 import { setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -106,7 +106,7 @@ type Props = {
  *
  * @extends Component
  */
-class Filmstrip extends Component<Props> {
+class Filmstrip extends Component <Props> {
 
     /**
      * Initializes a new {@code Filmstrip} instance.
@@ -159,9 +159,14 @@ class Filmstrip extends Component<Props> {
             this.$videosContainer.sortable({
                 disabled: false,
                 stop: () => {
-                    // this.props.dispatch(setTileViewOrder(
-                    //     map(this.$videosContainer.children(), getVideoId)
-                    // ));
+                    const { data, current, pageSize } = this.props._pageInfo;
+                    const mapData = keyBy(data, 'id');
+                    const page = map(this.$videosContainer.children(), el =>
+                        mapData[el.id]);
+                    console.log(data, page);
+                    data.splice((current - 1) * pageSize, pageSize, ...page);
+                    this.props.dispatch(setPageInfo({ data }));
+                    this.props.dispatch(setPageOrder({ by: 'userDefined' }));
                 }
             });
         } else {
@@ -178,42 +183,39 @@ class Filmstrip extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const filmstripStyle = {};
+        const filmstripStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
-        const { _currentLayout, _participants } = this.props;
-        const remoteParticipants = _participants.filter(p => !p.local);
-        const localParticipant = getLocalParticipant(_participants);
-        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        const { _currentLayout, _participants, _localParticipant, tileViewActive } = this.props;
 
-        switch (this.props._currentLayout) {
-            case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-                // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
-                // Also adding 7px for the scrollbar.
-                filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
-                break;
-            case LAYOUTS.TILE_VIEW: {
-                // The size of the side margins for each tile as set in CSS.
-                const { _columns, _rows, _filmstripWidth } = this.props;
+        switch (_currentLayout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+            // Also adding 7px for the scrollbar.
+            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+            break;
+        case LAYOUTS.TILE_VIEW: {
+            // The size of the side margins for each tile as set in CSS.
+            const { _columns, _rows, _filmstripWidth } = this.props;
 
-                // if (_rows > _columns) {
-                //     remoteVideoContainerClassName += ' has-overflow';
-                // }
+            // if (_rows > _columns) {
+            //     remoteVideoContainerClassName += ' has-overflow';
+            // }
 
-                filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
-                break;
-            }
+            filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
+            break;
+        }
         }
 
         let remoteVideosWrapperClassName = 'filmstrip__videos';
 
         if (this.props._hideScrollbar) {
-            remoteVideosWrapperClassName += ` hide-scrollbar`;
+            remoteVideosWrapperClassName += ' hide-scrollbar';
         }
 
         let toolbar = null;
 
-        if (!this.props._hideToolbar && this._isFilmstripButtonEnabled) {
+        if (!this.props._hideToolbar && this.props._isFilmstripButtonEnabled) {
             toolbar = this._renderToggleButton();
         }
 
@@ -221,7 +223,6 @@ class Filmstrip extends Component<Props> {
             <div
                 className = { `filmstrip ${this.props._className}` }
                 style = { filmstripStyle }>
-                { toolbar }
                 <div
                     className = { this.props._videosClassName }
                     id = 'remoteVideos'>
@@ -232,7 +233,7 @@ class Filmstrip extends Component<Props> {
                             {
                                 !tileViewActive && <Thumbnail
                                     key = 'local'
-                                    participantID = { localParticipant.id } />
+                                    participantID = { _localParticipant.id } />
                             }
                         </div>
                     </div>
@@ -251,10 +252,10 @@ class Filmstrip extends Component<Props> {
                             ref={this._videosContainer}
                             style = { filmstripRemoteVideosContainerStyle }>
                             {
-                                remoteParticipants.map(
+                                _participants.map(
                                     p => (
                                         <Thumbnail
-                                            key = { `remote_${p.id}` }
+                                            key = { p.id }
                                             participantID = { p.id } />
                                     ))
                             }
@@ -262,6 +263,7 @@ class Filmstrip extends Component<Props> {
                     </div>
                     <PageNextButton />
                 </div>
+                { toolbar }
             </div>
         );
     }
@@ -326,12 +328,12 @@ class Filmstrip extends Component<Props> {
         const { _hideFilmstrip, t } = this.props;
 
         return !_hideFilmstrip && (
-            <div className='filmstrip__toolbar'>
+            <div className = 'filmstrip__toolbar'>
                 <button
-                    aria-label={t('toolbar.accessibilityLabel.toggleFilmstrip')}
-                    id='toggleFilmstripButton'
-                    onClick={this._onToolbarToggleFilmstrip}>
-                    <Icon src={icon} />
+                    aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                    id = 'toggleFilmstripButton'
+                    onClick = { this._onToolbarToggleFilmstrip }>
+                    <Icon src = { icon } />
                 </button>
             </div>
         );
@@ -358,22 +360,27 @@ function _mapStateToProps(state) {
     } ${shiftRight ? 'shift-right' : ''}`.trim();
     const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
-    const currentLayout = getCurrentLayout(state);
+    const _currentLayout = getCurrentLayout(state);
+    const localParticipant = getLocalParticipant(state);
+    const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
     return {
         _className: className,
         _columns: gridDimensions.columns,
-        _currentLayout: currentLayout,
+        _currentLayout,
         _disableSortable: disableSortable,
         _filmstripWidth: filmstripWidth,
         _hideFilmstrip: Boolean(hideRemoteVideos && hideLocalVideo),
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
+        _localParticipant: localParticipant,
+        _pageInfo: state['features/video-layout'].pageInfo,
+        _participants: getPageData(state),
         _rows: gridDimensions.rows,
-        _participants: state['features/base/participants'],
         _videosClassName: videosClassName,
-        _visible: visible
+        _visible: visible,
+        tileViewActive,
     };
 }
 

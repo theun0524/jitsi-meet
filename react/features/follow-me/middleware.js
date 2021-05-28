@@ -1,8 +1,8 @@
 // @flow
 
+import { keyBy, map } from 'lodash';
 import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
-    getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
     isLocalParticipantModerator,
@@ -12,8 +12,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
-import { isRecording, isStreaming } from '../recording';
-import { setTileView, setTileViewOrder } from '../video-layout';
+import { setTileView, setPageOrder, setPageInfo } from '../video-layout';
 
 import {
     setFollowMeModerator,
@@ -199,7 +198,12 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
     }
 
     if (oldValue !== value) {
-        store.dispatch(setTileViewOrder(JSON.parse(value)));
+        const { data, ...order } = JSON.parse(value);
+        store.dispatch(setPageOrder(order));
+        if (order.by === 'userDefined') {
+            const mapData = keyBy(store.getState()['features/base/participants'], 'id');
+            store.dispatch(setPageInfo({ data: map(data, id => mapData[id]) }));
+        }
     }
 }
 

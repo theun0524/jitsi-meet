@@ -67,40 +67,15 @@ export function getMaxColumnCount(state: Object) {
 }
 
 /**
- * Returns how many participant should be displayed in a page.
+ * Returns ID array of in a page.
  *
  * @param {Object} state - The redux store state.
- * @param {number} layout - The target layout to be displayed.
  * @returns {number}
  */
-export function getPageInfo(state) {
-    const currentLayout = getCurrentLayout(state);
-    const participantCount = getParticipantCount(state);
-    const current = state['features/video-layout'].pageInfo?.current || 1;
-    let pageSize = 1, totalPages = 1;
+export function getPageData(state) {
+    const { data = [], current = 1, pageSize } = state['features/video-layout'].pageInfo || {};
 
-    if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-        const clientHeight = state['features/base/responsive-ui'].clientHeight;
-        // padding(30)
-        // toolbar(64)
-        // localVideo(124)
-        // pageButton(36 * 2)
-        // toolButton(24)
-        const thumbHeight = 124;    // 120 + topBottomMargin(4)
-        const pageHeight = clientHeight - 30 - 64 - thumbHeight - 24;
-
-        pageSize = Math.floor(pageHeight < (participantCount-1) * thumbHeight
-            ? (pageHeight - (24 * 2)) / thumbHeight
-            : pageHeight / thumbHeight);
-        totalPages = Math.ceil((participantCount-1) / pageSize);
-    } else if (currentLayout === LAYOUTS.TILE_VIEW) {
-        pageSize = getMaxColumnCount(state) * getMaxColumnCount(state);
-        totalPages = Math.ceil(participantCount / pageSize);
-    } else {
-        console.error('getPageInfo: Unexpected layout error!', currentLayout);
-    }
-
-    return { current, pageSize, totalPages };
+    return data.slice((current-1) * pageSize, current * pageSize);
 }
 
 /**

@@ -22,7 +22,6 @@ import ParticipantsCount from './ParticipantsCount';
 
 import { InsecureRoomNameLabel } from '.';
 
-import s from './ConferenceInfo.module.scss';
 import { setSubject } from '../../../base/conference';
 import { showConfirmDialog } from '../../../notifications';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
@@ -91,18 +90,22 @@ class ConferenceInfo extends Component<Props> {
                     { !_hideConferenceNameAndTimer && (
                         <div className = 'subject-info'>
                             { _subject && (
-                                <span className = 'subject-text'>
-                                    { _subject }
-                                    { _isHost && (
-                                        <div
-                                            className = { s.button }
+                                _isHost ? (
+                                    <Tooltip content = { t('dialog.edit') } position = 'bottom'>
+                                        <span
+                                            className = 'subject-text editable'
                                             onClick = { this._onEditSubject }>
-                                            <Tooltip content = { t('dialog.edit') } position = 'bottom'>
+                                            { _subject }
+                                            <div className = 'button'>
                                                 <Icon size = { 16 } src = { IconEdit } />
-                                            </Tooltip>
-                                        </div>
-                                    )}
-                                </span> 
+                                            </div>
+                                        </span>
+                                    </Tooltip>
+                                ) : (
+                                    <span className = 'subject-text'>
+                                        { _subject }
+                                    </span>
+                                )
                             )}
                             { !_hideConferenceTimer && <ConferenceTimer /> }
                         </div>

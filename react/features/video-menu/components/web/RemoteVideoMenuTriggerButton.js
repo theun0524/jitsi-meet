@@ -24,6 +24,7 @@ import MoveToFirstButton from './MoveToFirstButton';
 import MoveToLastButton from './MoveToLastButton';
 import MuteVideoButton from './MuteVideoButton';
 import MuteVideoEveryoneElseButton from './MuteVideoEveryoneElseButton';
+import { findIndex } from 'lodash';
 
 /**
  * The type of the React {@code Component} props of
@@ -105,6 +106,14 @@ type Props = {
  * @extends {Component}
  */
 class RemoteVideoMenuTriggerButton extends Component<Props> {
+    constructor(props) {
+        super(props);
+
+        this.state = {};
+        this._closeMenu = this._closeMenu.bind(this);
+        this._onMenuOpen = this._onMenuOpen.bind(this);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -121,6 +130,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         return (
             <Popover
                 content = { content }
+                id = { `remotemenu_${this.props.participantID}` }
+                onPopoverOpen = { this._onMenuOpen }
                 position = { this.props._menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
@@ -272,6 +283,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 buttons.push(
                     <MoveToFirstButton
                         key = 'moveToFirst'
+                        onClick = { this._closeMenu }
                         participantID = { participantID } />
                 );
             }
@@ -279,6 +291,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 buttons.push(
                     <MoveToLastButton
                         key = 'moveToLast'
+                        onClick = { this._closeMenu }
                         participantID = { participantID } />
                 );
             }
@@ -303,6 +316,14 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 
         return null;
     }
+
+    _onMenuOpen(doMenuClose) {
+        this.setState({ doMenuClose });
+    }
+
+    _closeMenu() {
+        this.state.doMenuClose && this.state.doMenuClose();
+    }
 }
 
 /**
@@ -326,8 +347,8 @@ function _mapStateToProps(state, ownProps) {
         disableRemoteUnmuteVideo,
     } = remoteVideoMenu;
     const { overflowDrawer } = state['features/toolbox'];
-    const { ordered } = state['features/video-layout'];
-    const found = ordered?.indexOf(participantID);
+    const { data } = state['features/video-layout'].pageInfo || {};
+    const found = findIndex(data, p => p.id === participantID);
 
     const currentLayout = getCurrentLayout(state);
     let _menuPosition;
@@ -356,8 +377,8 @@ function _mapStateToProps(state, ownProps) {
         _overflowDrawer: overflowDrawer,
         _participantCount: getParticipantCount(state),
         _shouldDisplayTileView: shouldDisplayTileView(state),
-        isFirst: ordered && found === 0,
-        isLast: ordered && found === ordered.length - 1,
+        isFirst: data && found === 0,
+        isLast: data && found === data.length - 1,
     };
 }
 

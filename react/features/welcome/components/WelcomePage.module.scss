@@ -85,10 +85,21 @@ body {
                 }
             }
 
+            .menuContainer {
+                background-color: white;
+            }
+
             .menuItem {
                 min-width: 100px;
                 min-height: 40px;
                 text-align: left;
+                background: white;
+                fill: white;
+                color: $welcomePageButtonTextColor;
+
+                &:hover {
+                    background: rgba(0,0,0,.1);
+                }
 
                 .badge {
                     margin-left: 5px;
@@ -107,6 +118,7 @@ body {
             button, .button {
                 color: $welcomePageButtonTextColor !important;
                 height: 40px;
+                line-height: 40px;
 
                 &:hover {
                     color: $welcomePageButtonTextColor !important;
@@ -138,19 +150,9 @@ body {
                 padding-right: 0;
             }
 
-            :global .cksvax {
+            :global .iwHKVI {
                 background: white;
                 border: 1px solid #d2d2d2;
-            }
-
-            :global .jxcBAF, :global .jXQlZM {
-                background: white;
-                fill: white;
-                color: $welcomePageButtonTextColor;
-
-                &:hover {
-                    background: rgba(0,0,0,.1);
-                }
             }
         }
     }

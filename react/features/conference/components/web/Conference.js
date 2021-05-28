@@ -27,8 +27,6 @@ import {
 import type { AbstractProps } from '../AbstractConference';
 
 import { default as Notice } from './Notice';
-import { default as PagePrevButton } from './PagePrevButton';
-import { default as PageNextButton } from './PageNextButton';
 import ConferenceInfo from './ConferenceInfo';
 
 declare var APP: Object;
@@ -214,8 +212,6 @@ class Conference extends AbstractConference<Props, *> {
                     <CalleeInfoContainer />
 
                     { _showPrejoin && <Prejoin />}
-                    <PagePrevButton />
-                    <PageNextButton />
                 </div>
                 <ParticipantsPane />
             </div>

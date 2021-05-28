@@ -36,8 +36,8 @@ export const ParticipantsPane = () => {
         <ThemeProvider theme = { theme }>
             <div
                 className = { classList(
-          'participants_pane',
-          !paneOpen && 'participants_pane--closed'
+                    'participants_pane',
+                    !paneOpen && 'participants_pane--closed'
                 ) }>
                 <div className = 'participants_pane-content'>
                     <Header>

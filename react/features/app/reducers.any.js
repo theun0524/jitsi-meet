@@ -1,6 +1,7 @@
 // @flow
 
 import '../analytics/reducer';
+import '../authentication/reducer';
 import '../base/app/reducer';
 import '../base/audio-only/reducer';
 import '../base/color-scheme/reducer';
@@ -45,6 +46,7 @@ import '../recording/reducer';
 import '../settings/reducer';
 import '../speaker-stats/reducer';
 import '../subtitles/reducer';
+import '../screen-share/reducer';
 import '../toolbox/reducer';
 import '../transcribing/reducer';
 import '../video-layout/reducer';

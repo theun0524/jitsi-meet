@@ -1,19 +1,49 @@
 // @flow
 
 import arrayMove from 'array-move';
-import { map } from 'lodash';
+import { concat, debounce, findIndex, keyBy, map, sortBy } from 'lodash';
 import type { Dispatch } from 'redux';
-// import { getVideoId } from '../../../modules/UI/videolayout/VideoLayout';
+import { getCurrentConference } from '../base/conference';
+import { getParticipantCount, getParticipants } from '../base/participants';
+import { isLocalCameraTrackMuted } from '../base/tracks';
 
 import {
-    ORDERED_TILE_VIEW,
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SELECT_ENDPOINTS,
     SET_PAGE_INFO,
-    SET_TILE_VIEW,
-    SET_TILE_VIEW_ORDER
+    SET_PAGE_ORDER,
+    SET_TILE_VIEW
 } from './actionTypes';
-import { getPageInfo, shouldDisplayTileView } from './functions';
+import { LAYOUTS } from './constants';
+import { getCurrentLayout, getMaxColumnCount, getPageData, shouldDisplayTileView } from './functions';
+
+declare var interfaceConfig;
+
+const orderBy = {
+    displayName: (...data) =>
+        concat(...map(data, part => sortBy(part, [p => {
+            return getParticipantDisplayName(p);
+        }]))),
+    userDefined: (...data) => concat(...data),
+};
+
+function getParticipantDisplayName(participant) {
+    if (participant) {
+        if (participant.name) {
+            return participant.name;
+        }
+
+        if (participant.local) {
+            return typeof interfaceConfig === 'object'
+                ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
+                : 'me';
+        }
+    }
+
+    return typeof interfaceConfig === 'object'
+        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
+        : 'Vmeeter';
+}
 
 /**
  * Creates a (redux) action which signals that a new set of remote endpoints need to be selected.
@@ -105,28 +135,14 @@ export function toggleTileView() {
 }
 
 /**
- * Creates a (redux) action which signals to reorder the video thumbnails
- * for tile view.
+ * Creates a (redux) action which set page order.
  *
  * @returns {Function}
  */
-export function setTileViewOrder(order) {
+export function setPageOrder(order) {
     return {
-        type: SET_TILE_VIEW_ORDER,
+        type: SET_PAGE_ORDER,
         order
-    };
-}
-
-/**
- * Creates a (redux) action which signals to save the video thumbnails orders
- * for tile view.
- *
- * @returns {Function}
- */
-export function orderedTileView(ordered) {
-    return {
-        type: ORDERED_TILE_VIEW,
-        ordered
     };
 }
 
@@ -138,13 +154,12 @@ export function orderedTileView(ordered) {
  */
 export function moveToFirst(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        // const ordered = map(nodes, getVideoId);
-        // const found = ordered.indexOf(id);
+        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const found = findIndex(data, p => p.id === id);
 
-        // if (found >= 0 && found !== 0) {
-        //     dispatch(setTileViewOrder(arrayMove(ordered, found, 0)));
-        // }
+        if (found > 0) {
+            dispatch(setPageInfo({ data: arrayMove(data, found, 0) }));
+        }
     };
 }
 
@@ -156,13 +171,12 @@ export function moveToFirst(id) {
  */
 export function moveToLast(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        // const ordered = map(nodes, getVideoId);
-        // const found = ordered.indexOf(id);
+        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const found = findIndex(data, p => p.id === id);
 
-        // if (found >= 0 && found !== nodes.length - 1) {
-        //     dispatch(setTileViewOrder(arrayMove(ordered, found, nodes.length - 1)));
-        // }
+        if (found >= 0 && found !== data.length - 1) {
+            dispatch(setPageInfo({ data: arrayMove(data, found, data.length - 1) }));
+        }
     };
 }
 
@@ -174,13 +188,12 @@ export function moveToLast(id) {
  */
 export function moveToNext(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        // const ordered = map(nodes, getVideoId);
-        // const found = ordered.indexOf(id);
+        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const found = findIndex(data, p => p.id === id);
 
-        // if (found >= 0 && found !== nodes.length - 1) {
-        //     dispatch(setTileViewOrder(arrayMove(ordered, found, found + 1)));
-        // }
+        if (found >= 0 && found !== data.length - 1) {
+            dispatch(setPageInfo({ data: arrayMove(data, found, found + 1) }));
+        }
     };
 }
 
@@ -192,19 +205,84 @@ export function moveToNext(id) {
  */
 export function moveToPrev(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // const nodes = document.getElementById('filmstripRemoteVideosContainer')?.childNodes;
-        // const ordered = map(nodes, getVideoId);
-        // const found = ordered.indexOf(id);
+        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const found = findIndex(data, p => p.id === id);
 
-        // if (found > 0) {
-        //     dispatch(setTileViewOrder(arrayMove(ordered, found, found - 1)));
-        // }
+        if (found > 0) {
+            dispatch(setPageInfo({ data: arrayMove(data, found, found - 1) }));
+        }
     };
 }
 
 export function updatePageInfo() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return debounce((dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        dispatch(setPageInfo(getPageInfo(state)));
-    };
+        const currentLayout = getCurrentLayout(state);
+        const participantCount = getParticipantCount(state);
+        const participants = getParticipants(state);
+        const { current = 1 } = state['features/video-layout'].pageInfo || {};
+        let pageSize = 1, totalPages = 1;
+        let data = [];
+
+        if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+            const { clientHeight } = state['features/base/responsive-ui'];
+            // padding(30)
+            // localVideo(124)
+            // pageButton(24 * 2)
+            // toolButton(24)
+            const thumbHeight = 124;    // 120 + topBottomMargin(4)
+            const pageHeight = clientHeight - 30 - thumbHeight - 24;
+    
+            pageSize = Math.floor(pageHeight < (participantCount-1) * thumbHeight
+                ? (pageHeight - (24 * 2)) / thumbHeight
+                : pageHeight / thumbHeight);
+            totalPages = Math.ceil((participantCount-1) / pageSize);
+            data = participants.filter(p => !p.local);
+        } else if (currentLayout === LAYOUTS.TILE_VIEW) {
+            pageSize = getMaxColumnCount(state) * getMaxColumnCount(state);
+            totalPages = Math.ceil(participantCount / pageSize);
+            data = participants;
+        } else {
+            console.error('ERROR: (getPageInfo) Unexpected layout!', currentLayout);
+            return;
+        }
+
+        const conference = getCurrentConference(state);
+        let ordered = data;
+        if (conference) {
+            // sort
+            const { order } = state['features/video-layout'];
+            const dataMap = keyBy(data, 'id');
+            const isTileViewActive = currentLayout === LAYOUTS.TILE_VIEW;
+            let part = [];
+            
+            if (order.videoMuted) {
+                const tracks = state['features/base/tracks'];
+
+                // split videoMuted order
+                part.push([]);
+                part.push([]);
+
+                data.forEach(p => {
+                    const isVideoMuted = p.local
+                        ? isLocalCameraTrackMuted(tracks)
+                        : conference.getParticipantById(p.id)?.isVideoMuted();
+                    part[isVideoMuted ? 1 : 0].push(p);
+                });
+            } else {
+                part = data;
+            }
+
+            if (orderBy[order.by]) {
+                ordered = orderBy[order.by](...part);
+            }
+    
+            // save page information
+            dispatch(setPageInfo({ data: ordered, current, pageSize, totalPages }));
+
+            // notify video list to video bridge
+            const page = getPageData(state);
+            conference.recvVideoParticipants(map(page, 'id'));
+        }
+    }, 300);
 }

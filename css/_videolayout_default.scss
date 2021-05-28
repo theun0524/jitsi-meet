@@ -20,6 +20,58 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
+
+    .page-button {
+        display: inline-flex;
+        position: absolute;
+        text-align: center;
+        cursor: pointer;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 10;
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 4px;
+        align-items: center;
+        justify-content: center;
+
+        &.column {
+            flex-direction: column;
+        }
+
+        &.row {
+            flex-direction: row;
+        }
+
+        &:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        &.disabled {
+            cursor: default;
+
+            .jitsi-icon {
+                color: #B8C7E0;
+            }
+
+            &:hover {
+                background-color: rgba(0,0,0,0.5);
+            }
+        }
+
+        &.prev {
+            bottom: calc(50% + 30px);
+            left: 0;
+        }
+
+        &.next {
+            bottom: calc(50% + 30px);
+            right: 0;
+        }
+
+        .jitsi-icon {
+            color: aquamarine;
+        }        
+    }
 }
 
 #largeVideoBackgroundContainer,
@@ -318,7 +370,7 @@
     padding: 0;
 }
 
-#localVideoContainer .displayname:hover {
+.localVideoContainer .displayname:hover {
     cursor: text;
 }
 

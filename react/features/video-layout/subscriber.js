@@ -9,7 +9,7 @@ import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
 import { selectParticipant } from '../large-video';
 
-import { setRemoteParticipantsWithScreenShare } from './actions';
+import { setRemoteParticipantsWithScreenShare, updatePageInfo } from './actions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -24,6 +24,7 @@ StateListenerRegistry.register(
         const { dispatch } = store;
 
         dispatch(selectParticipant());
+        dispatch(updatePageInfo());
     }
 );
 
@@ -129,8 +130,8 @@ function _updateAutoPinnedParticipant(screenShares, { dispatch, getState }) {
  * pageInfo state and reordering videos.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/video-layout'].pageInfo,
-    /* listener */ debounce(pageInfo => {
-        VideoLayout.reorderVideos();
+    /* selector */ state => state['features/base/participants'],
+    /* listener */ debounce((participants, store) => {
+        store.dispatch(updatePageInfo());
     }, 100));
 

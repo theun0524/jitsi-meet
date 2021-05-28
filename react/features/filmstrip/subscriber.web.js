@@ -15,7 +15,6 @@ import {
     SINGLE_COLUMN_BREAKPOINT,
     TWO_COLUMN_BREAKPOINT
 } from './constants';
-import { isVideoPlayable } from './functions.web';
 
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.

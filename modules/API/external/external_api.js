@@ -404,7 +404,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             return iframe.contentWindow.document.getElementById('localVideo_container');
         }
 
-        return iframe.contentWindow.document.querySelector(`#participant_${participantId} video`);
+        return iframe.contentWindow.document.querySelector(`#${participantId} video`);
     }
 
     /**

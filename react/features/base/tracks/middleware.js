@@ -36,6 +36,7 @@ import {
     setTrackMuted
 } from './functions';
 import { findSelectedParticipant } from '../../large-video/functions';
+import { updatePageInfo } from '../../video-layout';
 
 declare var APP: Object;
 
@@ -56,6 +57,10 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(getAvailableDevices());
         }
 
+        const { order } = store.getState()['features/video-layout'];
+        if (order?.videoMuted && action.track.mediaType === MEDIA_TYPE.VIDEO) {
+            store.dispatch(updatePageInfo());
+        }
         break;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
@@ -67,6 +72,10 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case TRACK_REMOVED: {
         _removeNoDataFromSourceNotification(store, action.track);
+        const { order } = store.getState()['features/video-layout'];
+        if (order?.videoMuted && action.track.mediaType === MEDIA_TYPE.VIDEO) {
+            store.dispatch(updatePageInfo());
+        }
         break;
     }
     case SET_AUDIO_MUTED:
@@ -98,14 +107,19 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_VIDEO_MUTED:
+    case SET_VIDEO_MUTED: {
         if (!action.muted
                 && isUserInteractionRequiredForUnmute(store.getState())) {
             return;
         }
 
         _setMuted(store, action, action.mediaType);
+        const { order } = store.getState()['features/video-layout'];
+        if (order?.videoMuted) {
+            store.dispatch(updatePageInfo());
+        }
         break;
+    }
 
     case TOGGLE_CAMERA_FACING_MODE: {
         const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
@@ -161,6 +175,11 @@ MiddlewareRegistry.register(store => next => action => {
                     APP.conference.setVideoMuteStatus(muted);
                 } else {
                     APP.UI.setVideoMuted(participantID);
+
+                    const { order } = store.getState()['features/video-layout'];
+                    if (order?.videoMuted) {
+                        store.dispatch(updatePageInfo());
+                    }
                 }
             } else if (jitsiTrack.isLocal()) {
                 APP.conference.setAudioMuteStatus(muted);

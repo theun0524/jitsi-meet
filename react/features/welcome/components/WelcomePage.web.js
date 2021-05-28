@@ -304,7 +304,7 @@ class WelcomePage extends AbstractWelcomePage {
                         </div>
                     }
                     triggerType = 'button'>
-                    <DropdownItemGroup>
+                    <DropdownItemGroup className = { s.menuContainer }>
                         <DropdownItem 
                             className = {`${s.menuItem} ${s.mobile}`}
                             href = { `${AUTH_PAGE_BASE}/features` }>

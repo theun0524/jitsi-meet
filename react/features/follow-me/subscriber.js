@@ -1,5 +1,6 @@
 // @flow
 
+import { map } from 'lodash';
 import { getCurrentConference } from '../base/conference';
 import { isHost } from '../base/jwt';
 import {
@@ -141,7 +142,10 @@ function _sendFollowMeCommand(
         FOLLOW_ME_COMMAND,
         {
             attributes: getFollowMeState(state),
-            value: JSON.stringify(state['features/video-layout'].order)
+            value: JSON.stringify({
+                ...state['features/video-layout'].order,
+                data: map(state['features/video-layout'].pageInfo?.data || [], 'id')
+            })
         }
     );
 }

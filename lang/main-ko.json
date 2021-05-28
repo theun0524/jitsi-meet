@@ -215,6 +215,7 @@
         "contactSupport": "문의하기",
         "copied": "복사됨",
         "copy": "복사",
+        "destroyed_by_host": "호스트가 회의를 종료했습니다.",
         "disableChat": "채팅 차단",
         "disableChatForAll": "전원 채팅 차단",
         "disableChatButton": "차단",
@@ -607,7 +608,7 @@
     "participantsPane": {
         "headings": {
             "lobby": "로비 ({{count}})",
-            "participantsList": "참가자 ({{count}})"
+            "participantsList": "참석자 ({{count}})"
         },
         "actions": {
             "invite": "초대하기",
@@ -756,6 +757,7 @@
         "more": "기타",
         "name": "이름",
         "noDevice": "없음",
+        "sameAsSystem": "시스템과 동일 ({{label}})",
         "selectAudioOutput": "오디오 출력",
         "selectCamera": "카메라",
         "selectMic": "오디오",
@@ -1087,8 +1089,9 @@
         "header": "도움말 센터"
     },
     "lobby": {
-        "knockingParticipantList": "참가자 목록 요청",
-        "allow": "허용",
+        "admit": "수락",
+        "knockingParticipantList": "참석 요청",
+        "allow": "수락",
         "backToKnockModeButton": "암호 없음, 대신 가입 요청",
         "dialogTitle": "로비 모드",
         "disableDialogContent": "현재 로비 모드가 활성화되어 있습니다. 이 기능은 원치 않는 참가자가 회의에 참여할 수 없도록합니다. 비활성화 하시겠습니까?",

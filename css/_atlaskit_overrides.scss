@@ -51,7 +51,7 @@
 /**
  * Override @atlaskit/modal-dialog footer styling.
  */
- .atlaskit-portal [role="dialog"] footer {
+.atlaskit-portal [role="dialog"] footer {
      box-shadow: none;
  }
 
@@ -139,4 +139,26 @@ div.Tooltip {
     font-size: 12px;
     line-height: 14px;
     padding: 8px;
+}
+
+.atlaskit-portal {
+    #modal-dialog-ok-button {
+        background: rgb(76, 154, 255);
+        color: rgb(27, 38, 56) !important;
+    }
+
+    #modal-dialog-cancel-button {
+        color: rgb(159, 176, 204) !important;
+    }
+}
+
+.participants_pane {
+    // footer
+    .iVeuAw {
+        padding: 16px;
+    }
+}
+
+.kAFMTM {
+    max-width: initial !important;
 }

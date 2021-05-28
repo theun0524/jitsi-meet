@@ -3,13 +3,10 @@
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { ConfirmDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { cancelWaitForOwner, _openLoginDialog, stopWaitForOwner } from '../actions';
-import { getLocationURL } from '../../../api/url';
-import { Linking } from 'react-native';
-import { appNavigate } from '../../app/actions';
+import { ConfirmDialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
+import { openLoginDialog, cancelWaitForOwner } from '../../actions.native';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -70,7 +67,7 @@ class WaitForOwnerDialog extends Component<Props> {
                 contentKey = {
                     {
                         key: 'dialog.WaitForHostMsgWOk',
-                        params: { room: decodeURI(room) }
+                        params: { room }
                     }
                 }
                 okKey = 'dialog.Ok'
@@ -100,10 +97,7 @@ class WaitForOwnerDialog extends Component<Props> {
      * @returns {void}
      */
     _onLogin() {
-        const { _room: room } = this.props;
-        const url = `${this.props._loginURL}?next=%2F${room}`;
-
-        this.props.dispatch(_openLoginDialog());
+        this.props.dispatch(openLoginDialog());
     }
 }
 
@@ -113,10 +107,7 @@ class WaitForOwnerDialog extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _room: string,
- *     _loginURL: string
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];

@@ -48,7 +48,8 @@ class MoveToLastButton extends AbstractButton {
     _handleClick: () => void
 
     _handleClick() {
-        const { dispatch, participantID } = this.props;
+        const { dispatch, participantID, onClick } = this.props;
+        onClick && onClick();
         dispatch(moveToLast(participantID));
     }
 }

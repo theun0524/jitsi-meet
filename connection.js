@@ -97,8 +97,9 @@ function getUserCredentials(state) {
  * @returns {Promise<JitsiConnection>} connection if
  * everything is ok, else error.
  */
-function connect(id, password, roomName) {
+export function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
+    const { jwt } = APP.store.getState()['features/base/jwt'];
 
     // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
     // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
@@ -110,11 +111,14 @@ function connect(id, password, roomName) {
     //  in future). It's included for the time being for Jitsi Meet and lib-jitsi-meet versions interoperability.
     connectionConfig.serviceUrl = connectionConfig.bosh = serviceUrl;
 
+    if (connectionConfig.websocketKeepAliveUrl) {
+        connectionConfig.websocketKeepAliveUrl += `?room=${roomName}`;
+    }
+
     const connection = new JitsiMeetJS.JitsiConnection(
         'vmeeting_app_id',
-        getUserCredentials(APP.store.getState()),
-        connectionConfig
-    );
+        jwt,
+        connectionConfig);
 
     if (config.iAmRecorder) {
         connection.addFeature(DISCO_JIBRI_FEATURE);

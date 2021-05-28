@@ -679,6 +679,10 @@ class Thumbnail extends Component<Props, State> {
             className += ' audio-only';
         }
 
+        if (!isRemoteParticipant) {
+            className += ' localVideoContainer';
+        }
+
         return className;
     }
 
@@ -708,7 +712,7 @@ class Thumbnail extends Component<Props, State> {
         return (
             <span
                 className = { containerClassName }
-                id = 'localVideoContainer'
+                id = { id }
                 onClick = { this._onClick }
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
@@ -827,7 +831,7 @@ class Thumbnail extends Component<Props, State> {
         return (
             <span
                 className = { containerClassName }
-                id = { `participant_${id}` }
+                id = { id }
                 onClick = { this._onClick }
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
@@ -946,7 +950,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
-    const { id } = participant;
+    const { id } = participant || {};
     const isLocal = participant?.local ?? true;
     const tracks = state['features/base/tracks'];
     const _videoTrack = isLocal
