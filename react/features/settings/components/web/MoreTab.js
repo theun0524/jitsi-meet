@@ -235,45 +235,42 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             t
         } = this.props;
 
-        // retrieve the value of enableUserDeviceAccessDisabled option from .jitsi-meet-cfg/web/config.js
-        if(enableUserDeviceAccessDisabledOption) {
-            return (
-                <div
-                    className = 'settings-sub-pane'
-                    key = 'moderator'>
-                    <div className = 'mock-atlaskit-label'>
-                        { t('settings.moderator') }
-                    </div>
-                    <Checkbox
-                        isChecked = { startAudioMuted }
-                        label = { t('settings.startAudioMuted') }
-                        name = 'start-audio-muted'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ startAudioMuted: checked })
-                        } />
-                    <Checkbox
-                        isChecked = { startVideoMuted }
-                        label = { t('settings.startVideoMuted') }
-                        name = 'start-video-muted'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ startVideoMuted: checked })
-                        } />
-                    <Checkbox
-                        isChecked = { followMeEnabled }
-                        isDisabled = { followMeActive }
-                        label = { t('settings.followMe') }
-                        name = 'follow-me'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ followMeEnabled: checked })
-                        } />
-    
-                    {/* start of added portion */}
+        return (
+            <div
+                className = 'settings-sub-pane'
+                key = 'moderator'>
+                <div className = 'mock-atlaskit-label'>
+                    { t('settings.moderator') }
+                </div>
+                <Checkbox
+                    isChecked = { startAudioMuted }
+                    label = { t('settings.startAudioMuted') }
+                    name = 'start-audio-muted'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ startAudioMuted: checked })
+                    } />
+                <Checkbox
+                    isChecked = { startVideoMuted }
+                    label = { t('settings.startVideoMuted') }
+                    name = 'start-video-muted'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ startVideoMuted: checked })
+                    } />
+                <Checkbox
+                    isChecked = { followMeEnabled }
+                    isDisabled = { followMeActive }
+                    label = { t('settings.followMe') }
+                    name = 'follow-me'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ followMeEnabled: checked })
+                    } />
+                { enableUserDeviceAccessDisabledOption && (
                     <Checkbox 
                         // isChecked = { conferenceUserDeviceAccessDisabled }
                         isChecked = { userDeviceAccessDisabled }
@@ -286,49 +283,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                                 // super._onChange({ conferenceUserDeviceAccessDisabled : checked })
                                 super._onChange({ userDeviceAccessDisabled : checked })
                         } />
-                    {/* end of added portion */}
-                </div>
-            );
-        } else {
-            return (
-                <div
-                    className = 'settings-sub-pane'
-                    key = 'moderator'>
-                    <div className = 'mock-atlaskit-label'>
-                        { t('settings.moderator') }
-                    </div>
-                    <Checkbox
-                        isChecked = { startAudioMuted }
-                        label = { t('settings.startAudioMuted') }
-                        name = 'start-audio-muted'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ startAudioMuted: checked })
-                        } />
-                    <Checkbox
-                        isChecked = { startVideoMuted }
-                        label = { t('settings.startVideoMuted') }
-                        name = 'start-video-muted'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ startVideoMuted: checked })
-                        } />
-                    <Checkbox
-                        isChecked = { followMeEnabled }
-                        isDisabled = { followMeActive }
-                        label = { t('settings.followMe') }
-                        name = 'follow-me'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ followMeEnabled: checked })
-                        } />
-                </div>
-            );
-        }
-        
+                )}
+            </div>
+        );
     }
 
     /**

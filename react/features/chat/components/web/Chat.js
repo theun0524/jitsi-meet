@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import TextField from '@atlaskit/textfield';
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import CrossCircleIcon from '@atlaskit/icon/glyph/cross-circle';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 
@@ -243,12 +243,15 @@ class Chat extends AbstractChat<Props> {
         return (
             <div className = { s.searchContainer }>
                 <TextField
-                    isCompact = { true }
+                    compact = { true }
                     id = 'chatHeaderSearchBox'
                     autoFocus
                     placeholder =  { t('chat.search') }
-                     // eslint-disable-next-line react/jsx-no-bind
-                    onChange = { this._updateChatSearchInput } />
+                    shouldFitContainer = { true }
+                    isLabelHidden = { true }
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = { this._updateChatSearchInput }
+                    type = 'text' />
                 <div
                     className = { s.closeIcon }
                     onClick = { this._onToggleSearch }>

@@ -1,6 +1,6 @@
 // @flow
 
-import TextField from '@atlaskit/textfield';
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -256,7 +256,7 @@ class LoginDialog extends Component<Props, State> {
                 <TextField
                     autoFocus = { true }
                     className = 'input-control'
-                    isCompact = { false }
+                    compact = { false }
                     label = { t('dialog.user') }
                     name = 'username'
                     onChange = { this._onChange }
@@ -266,7 +266,7 @@ class LoginDialog extends Component<Props, State> {
                     value = { username } />
                 <TextField
                     className = 'input-control'
-                    isCompact = { false }
+                    compact = { false }
                     label = { t('dialog.userPassword') }
                     name = 'password'
                     onChange = { this._onChange }

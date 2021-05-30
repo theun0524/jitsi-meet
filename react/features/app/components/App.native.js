@@ -1,8 +1,8 @@
 // @flow
 
 import React from 'react';
-
 import SplashScreen from 'react-native-splash-screen';
+
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { updateFlags } from '../../base/flags/actions';
@@ -11,6 +11,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import JitsiThemePaperProvider from '../../base/ui/components/JitsiThemeProvider.native';
 import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
@@ -86,7 +87,7 @@ export class App extends AbstractApp {
         super.componentDidMount();
 
         SplashScreen.hide();
-        
+
         this._init.then(() => {
             const { dispatch, getState } = this.state.store;
 
@@ -127,10 +128,12 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged }>
-                { super._createMainElement(component, props) }
-            </DimensionsDetector>
+            <JitsiThemePaperProvider>
+                <DimensionsDetector
+                    onDimensionsChanged = { this._onDimensionsChanged }>
+                    { super._createMainElement(component, props) }
+                </DimensionsDetector>
+            </JitsiThemePaperProvider>
         );
     }
 
@@ -157,7 +160,7 @@ export class App extends AbstractApp {
             // it is preferred because it is at a later step of the
             // error/exception handling and it is specific to fatal
             // errors/exceptions which were observed to kill the app. The
-            // solution implemented bellow was tested on Android only so it is
+            // solution implemented below was tested on Android only so it is
             // considered safest to use it there only.
             return;
         }

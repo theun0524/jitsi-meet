@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled, IconMicrophone } from '../../../base/icons';
+import { IconMuteEveryone } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -40,10 +40,10 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
     constructor(props) {
         super(props);
 
-        this.accessibilityLabel = props.mute ? 'toolbar.accessibilityLabel.muteEveryone' : 'toolbar.accessibilityLabel.unmuteEveryone';
-        this.label = props.mute ? 'toolbar.muteEveryone' : 'toolbar.unmuteEveryone';
-        this.tooltip = props.mute ? 'toolbar.muteEveryone' : 'toolbar.unmuteEveryone';
-        this.icon = props.mute ? IconMicDisabled : IconMicrophone;
+        this.accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryone';
+        this.label = 'toolbar.muteEveryone';
+        this.tooltip = 'toolbar.muteEveryone';
+        this.icon = IconMuteEveryone;
     }
 
     /**
@@ -66,9 +66,9 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
         sendAnalytics(createToolbarEvent('mute.everyone.pressed'));
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            confirmButtonText: t(`videothumbnail.domute`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+            text: t(`dialog.muteEveryoneElseTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
                 dispatch(muteAllParticipants(exclude, mute));

@@ -1,6 +1,6 @@
 // @flow
 
-import TextField from '@atlaskit/textfield';
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -99,11 +99,12 @@ class PasswordRequiredPrompt extends Component<Props, State> {
             <div>
                 <TextField
                     autoFocus = { true }
-                    isCompact = { true }
+                    compact = { true }
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }
-                    type = 'text'
+                    shouldFitContainer = { true }
+                    type = 'password'
                     value = { this.state.password } />
             </div>
         );

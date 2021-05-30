@@ -77,7 +77,7 @@ class MuteVideoEveryoneElseButton extends AbstractMuteVideoButton {
             cancelButtonText: t('dialog.Cancel'),
             confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}muteVideo`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteVideoEveryoneElseTitle`, { whom })
+            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElsesVideoTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
                 dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));

@@ -1,6 +1,6 @@
 // @flow
 
-import TextField from '@atlaskit/textfield';
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import {
     HeaderComponentProps,
     ModalHeader
@@ -230,9 +230,11 @@ class SpeakerStats extends Component<Props, State> {
                     <div className = {`speaker-stats-searchbox ${s.searchContainer}`}>
                         <TextField
                             autoFocus = { true }
-                            isCompact = { true }
+                            compact = { true }
                             id = 'searchBox'
                             placeholder =  { this.props.t('speakerStats.searchPlaceholder') }
+                            shouldFitContainer = { true }
+                            isLabelHidden = { true }
                             // eslint-disable-next-line react/jsx-no-bind
                             onChange = { this.handleSearchInput }
                             type = 'text'

@@ -8,16 +8,10 @@
         position: fixed;
         z-index: $overlayZ;
         background: $defaultBackground;
-        &.filmstrip-only {
-            @include transparentBg($filmstripOnlyOverlayBg, 0.8);
-        }
     }
 
     &__container-light {
         @include transparentBg($defaultBackground, 0.7);
-        &.filmstrip-only {
-            @include transparentBg($filmstripOnlyOverlayBg, 0.2);
-        }
     }
 
     &__content {

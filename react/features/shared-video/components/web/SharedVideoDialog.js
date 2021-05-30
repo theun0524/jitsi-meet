@@ -1,6 +1,6 @@
 // @flow
 
-import TextField from '@atlaskit/textfield';
+import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
 import { Dialog } from '../../../base/dialog';
@@ -78,14 +78,15 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 onSubmit = { this._onSubmitValue }
                 titleKey = { t('dialog.shareVideoTitle') }
                 width = { 'small' }>
-                <TextField
+                <FieldTextStateless
                     autoFocus = { true }
                     className = 'input-control'
-                    isCompact = { false }
+                    compact = { false }
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
                     onChange = { this._onChange }
                     placeholder = { defaultSharedVideoLink }
+                    shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
             </Dialog>

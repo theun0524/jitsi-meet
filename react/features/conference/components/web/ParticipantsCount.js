@@ -3,15 +3,12 @@
 import React, { PureComponent } from 'react';
 import type { Dispatch } from 'redux';
 
+import { openDialog } from '../../../base/dialog';
 import { IconUserGroups } from '../../../base/icons';
 import { Label } from '../../../base/label';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import {
-    close as closeParticipantsPane,
-    open as openParticipantsPane
-} from '../../../participants-pane/actions';
-import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
+import { SpeakerStats } from '../../../speaker-stats';
 
 
 /**
@@ -63,13 +60,9 @@ class ParticipantsCount extends PureComponent<Props> {
      * @returns {void}
      */
     _onClick() {
-        const { dispatch, _participantsPaneOpen, conference } = this.props;
+        const { dispatch, conference } = this.props;
 
-        if (_participantsPaneOpen) {
-            dispatch(closeParticipantsPane());
-        } else {
-            dispatch(openParticipantsPane());
-        }
+        dispatch(openDialog(SpeakerStats, { conference }));
     }
 
     /**
@@ -103,7 +96,6 @@ class ParticipantsCount extends PureComponent<Props> {
  */
 function mapStateToProps(state) {
     return {
-        _participantsPaneOpen: getParticipantsPaneOpen(state),
         conference: state['features/base/conference'].conference,
         count: getParticipantCount(state)
     };

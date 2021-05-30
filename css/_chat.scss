@@ -168,6 +168,10 @@
             color: rgba(255, 255, 255, 0.8);
         }
     }
+
+    .jitsi-icon {
+        cursor: pointer;
+    }
 }
 
 .chat-input-container {
@@ -260,7 +264,7 @@
     border-radius:0;
     box-shadow: none;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     padding: 10px;
     overflow-y: auto;
     resize: none;

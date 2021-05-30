@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconCamera, IconCameraDisabled } from '../../../base/icons';
+import { IconCamera, IconCameraDisabled, IconMuteVideoEveryone } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -37,15 +37,14 @@ type Props = AbstractButtonProps & {
  * Implements a React {@link Component} which displays a button for video muting
  * every participant (except the local one)
  */
-class MuteVideoEveryoneButton extends AbstractButton<Props, *> {
+class MuteEveryonesVideoButton extends AbstractButton<Props, *> {
     constructor(props) {
         super(props);
 
-        const { mute } = props;
-        this.accessibilityLabel = `toolbar.accessibilityLabel.${mute ? '' : 'un'}muteVideoEveryone`;
-        this.label = `toolbar.${mute ? '' : 'un'}muteVideoEveryone`;
-        this.tooltip = `toolbar.${mute ? '' : 'un'}muteVideoEveryone`;
-        this.icon = mute ? IconCameraDisabled : IconCamera;
+        this.accessibilityLabel = `toolbar.accessibilityLabel.muteEveryonesVideo`;
+        this.label = `toolbar.muteEveryonesVideo`;
+        this.tooltip = `toolbar.muteEveryonesVideo`;
+        this.icon = IconMuteVideoEveryone;
     }
 
     /**
@@ -68,9 +67,9 @@ class MuteVideoEveryoneButton extends AbstractButton<Props, *> {
         sendAnalytics(createToolbarEvent('mutevideo.everyone.pressed'));
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}muteVideo`),
+            confirmButtonText: t(`videothumbnail.domuteVideo`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteVideoEveryoneElseTitle`, { whom })
+            text: t(`dialog.muteEveryoneElsesVideoTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
                 dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
@@ -103,4 +102,4 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(MuteVideoEveryoneButton));
+export default translate(connect(_mapStateToProps)(MuteEveryonesVideoButton));

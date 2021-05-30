@@ -384,10 +384,47 @@ var config = {
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
     prejoinPageEnabled: false,
 
+    // If etherpad integration is enabled, setting this to true will
+    // automatically open the etherpad when a participant joins.  This
+    // does not affect the mobile app since opening an etherpad
+    // obscures the conference controls -- it's better to let users
+    // choose to open the pad on their own in that case.
+    // openSharedDocumentOnJoin: false,
+
     // If true, shows the unsafe room name warning label when a room name is
     // deemed unsafe (due to the simplicity in the name) and a password is not
     // set or the lobby is not enabled.
     // enableInsecureRoomNameWarning: false,
+
+    // Whether to automatically copy invitation URL after creating a room.
+    // Document should be focused for this option to work
+    // enableAutomaticUrlCopy: false,
+
+    // Base URL for a Gravatar-compatible service. Defaults to libravatar.
+    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/',
+
+    // App name to be displayed in the invitation email subject, as an alternative to
+    // interfaceConfig.APP_NAME.
+    // inviteAppName: null,
+
+    // Moved from interfaceConfig(TOOLBAR_BUTTONS).
+    // The name of the toolbar buttons to display in the toolbar, including the
+    // "More actions" menu. If present, the button will display. Exceptions are
+    // "livestreaming" and "recording" which also require being a moderator and
+    // some other values in config.js to be enabled. Also, the "profile" button will
+    // not display for users with a JWT.
+    // Notes:
+    // - it's impossible to choose which buttons go in the "More actions" menu
+    // - it's impossible to control the placement of buttons
+    // - 'desktop' controls the "Share your screen" button
+    // - if `toolbarButtons` is undefined, we fallback to enabling all buttons on the UI
+    toolbarButtons: [
+       'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+       'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+       'livestreaming', 'etherpad', 'sharedvideo', 'shareaudio', 'settings', 'raisehand',
+       'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+       'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
+    ],
 
     // Stats
     //

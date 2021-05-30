@@ -1,7 +1,7 @@
 // @flow
 
 import Button from '@atlaskit/button/standard-button';
-import TextField from '@atlaskit/textfield';
+import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
 import UIEvents from '../../../../../service/UI/UIEvents';
@@ -90,9 +90,9 @@ class ProfileTab extends AbstractDialogTab<Props> {
             <div>
                 <div className = 'profile-edit'>
                     <div className = 'profile-edit-field'>
-                        <TextField
+                        <FieldTextStateless
                             autoFocus = { true }
-                            isCompact = { true }
+                            compact = { true }
                             id = 'setDisplayName'
                             label = { t('profile.setDisplayNameLabel') }
                             // eslint-disable-next-line react/jsx-no-bind
@@ -101,12 +101,13 @@ class ProfileTab extends AbstractDialogTab<Props> {
                                     super._onChange({ displayName: value })
                             }
                             placeholder = { t('settings.name') }
+                            shouldFitContainer = { true }
                             type = 'text'
                             value = { displayName } />
                     </div>
                     <div className = 'profile-edit-field'>
-                        <TextField
-                            isCompact = { true }
+                        <FieldTextStateless
+                            compact = { true }
                             id = 'setEmail'
                             label = { t('profile.setEmailLabel') }
                             // eslint-disable-next-line react/jsx-no-bind
@@ -115,6 +116,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                                     super._onChange({ email: value })
                             }
                             placeholder = { t('profile.setEmailInput') }
+                            shouldFitContainer = { true }
                             type = 'text'
                             value = { email } />
                     </div>

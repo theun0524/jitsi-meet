@@ -193,19 +193,19 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                             mute = { true } />
                     );
                 }
-                if (!_disableRemoteUnmute) {
-                    buttons.push(
-                        <MuteEveryoneElseButton
-                            key = 'unmute-others'
-                            participantID = { participantID }
-                            mute = { false } />
-                    );
-                }
+                // if (!_disableRemoteUnmute) {
+                //     buttons.push(
+                //         <MuteEveryoneElseButton
+                //             key = 'unmute-others'
+                //             participantID = { participantID }
+                //             mute = { false } />
+                //     );
+                // }
             }
             if (!_disableRemoteMuteVideo) {
                 buttons.push(
                     <MuteVideoButton
-                        key = 'mutevideo'
+                        key = 'mute-video'
                         participantID = { participantID }
                         mute = { _disableRemoteUnmuteVideo ? true : !isVideoMuted } />
                 );
@@ -214,19 +214,19 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 if (!_disableRemoteMuteVideo) {
                     buttons.push(
                         <MuteVideoEveryoneElseButton
-                            key = 'mutevideo-others'
+                            key = 'mute-others-video'
                             participantID = { participantID }
                             mute = { true } />
                     );
                 }
-                if (!_disableRemoteUnmuteVideo) {
-                    buttons.push(
-                        <MuteVideoEveryoneElseButton
-                            key = 'unmutevideo-others'
-                            participantID = { participantID }
-                            mute = { false } />
-                    );
-                }
+                // if (!_disableRemoteUnmuteVideo) {
+                //     buttons.push(
+                //         <MuteVideoEveryoneElseButton
+                //             key = 'unmutevideo-others'
+                //             participantID = { participantID }
+                //             mute = { false } />
+                //     );
+                // }
             }
 
             if (!_disableGrantModerator) {
