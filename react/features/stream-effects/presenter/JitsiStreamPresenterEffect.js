@@ -75,8 +75,8 @@ export default class JitsiStreamPresenterEffect {
 
         // Set the video element properties
         this._frameRate = parseInt(frameRate, 10);
-        this._videoElement.width = Math.min(parseInt(width, 10), maxWidth);
-        this._videoElement.height = Math.min(parseInt(height, 10), maxHeight);
+        this._videoElement.width = pipMode ? parseInt(width, 10) : Math.min(parseInt(width, 10), maxWidth);
+        this._videoElement.height = pipMode ? parseInt(height, 10) : Math.min(parseInt(height, 10), maxHeight);
         this._videoElement.autoplay = true;
         this._videoElement.srcObject = videoStream;
 

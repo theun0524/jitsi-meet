@@ -47,7 +47,7 @@ function VirtualBackground({ _apiBase, _trackExist, _virtualSource, dispatch, t 
             try {
                 const resp = await axios.get(`${_apiBase}/backgrounds?pagination=false`);
                 setData(resp.data);
-                setImages([...images, ...resp.data.docs]);
+                setImages([...resp.data.docs, ...images]);
                 isloading(false);
             } catch {
                 isloading(false);
@@ -65,6 +65,9 @@ function VirtualBackground({ _apiBase, _trackExist, _virtualSource, dispatch, t 
     };
 
     const removeBackground = async image => {
+        if (image._id === selected) {
+            setImageBackground({ _id: 'none' });
+        }
         setImages(images.filter(item => image !== item));
         axios.delete(`${_apiBase}/backgrounds/${image._id}`);
     };
