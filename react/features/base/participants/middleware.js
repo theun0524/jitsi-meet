@@ -100,11 +100,16 @@ MiddlewareRegistry.register(store => next => action => {
             // 내가 방장이면 자동으로 레코딩이 시작되도록...
             const conference = getCurrentConference(state);
             if (conference && isHost && !isRecording(state) && autoRecord) {
+                recorder_user = state['features/base/jwt'].user;
                 conference.startRecording({
                     mode: JitsiRecordingConstants.mode.FILE,
                     appData: JSON.stringify({
                         'file_recording_metadata': {
-                            'share': true
+                            'share': true,
+                            'recorder_identity': {
+                                'email': recorder_user.email,
+                                'name': recorder_user.name,
+                            }
                         }
                     })
                 });
