@@ -110,11 +110,11 @@ class MuteEveryoneDialog extends AbstractMuteRemoteParticipantDialog<Props> {
             .join(', ');
 
         return whom.length ? {
-            content: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseDialog`),
-            title: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+            content: t(`dialog.muteEveryoneElseDialog`),
+            title: t(`dialog.muteEveryoneElseTitle`, { whom })
         } : {
-            content: t(`dialog.${mute ? '' : 'un'}muteEveryoneDialog`),
-            title: t(`dialog.${mute ? '' : 'un'}muteEveryoneTitle`)
+            content: t(`dialog.muteEveryoneDialog`),
+            title: t(`dialog.muteEveryoneTitle`)
         };
     }
 }

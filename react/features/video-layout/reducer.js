@@ -25,9 +25,12 @@ const DEFAULT_STATE = {
      */
     tileViewEnabled: undefined,
 
-    order: {
-        videoMuted: true,
-        by: 'displayName'
+    pageInfo: {
+        order: {
+            videoMuted: true,
+            by: 'displayName'
+        },
+        data: []
     }
 };
 
@@ -54,16 +57,6 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             ...state,
             tileViewEnabled: action.enabled
         };
-
-    case SET_PAGE_ORDER: {
-        return {
-            ...state,
-            order: {
-                ...(state.order || {}),
-                ...action.order
-            }
-        };
-    }
 
     case SET_PAGE_INFO: {
         return {

@@ -1,6 +1,7 @@
 // @flow
 
 import { keyBy, map } from 'lodash';
+import { getCurrentConference } from '../base/conference';
 import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
     getParticipantById,
@@ -12,7 +13,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
-import { setTileView, setPageOrder, setPageInfo } from '../video-layout';
+import { setTileView, setPageInfo } from '../video-layout';
 
 import {
     setFollowMeModerator,
@@ -73,6 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_JOINED: {
         const state = store.getState();
+        const conference = getCurrentConference(state);
 
         if (!action.participant.local &&
             isLocalParticipantModerator(state) &&
@@ -199,11 +201,8 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
 
     if (oldValue !== value) {
         const { data, ...order } = JSON.parse(value);
-        store.dispatch(setPageOrder(order));
-        if (order.by === 'userDefined') {
-            const mapData = keyBy(store.getState()['features/base/participants'], 'id');
-            store.dispatch(setPageInfo({ data: map(data, id => mapData[id]) }));
-        }
+        const mapData = keyBy(store.getState()['features/base/participants'], 'id');
+        store.dispatch(setPageInfo({ order, data: map(data, id => mapData[id]) }));
     }
 }
 

@@ -1020,7 +1020,7 @@
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "domuteVideo": "Mute video",
-        "domuteVideoOthers": "Mute video everyone else",
+        "domuteVideoOfOthers": "Mute video everyone else",
         "dounmute": "Unmute",
         "dounmuteVideo": "Unmute video",
         "flip": "Flip",

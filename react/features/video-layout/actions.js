@@ -11,11 +11,10 @@ import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SELECT_ENDPOINTS,
     SET_PAGE_INFO,
-    SET_PAGE_ORDER,
     SET_TILE_VIEW
 } from './actionTypes';
 import { LAYOUTS } from './constants';
-import { getCurrentLayout, getMaxColumnCount, getPageData, shouldDisplayTileView } from './functions';
+import { getCurrentLayout, getMaxColumnCount, shouldDisplayTileView } from './functions';
 
 declare var interfaceConfig;
 
@@ -24,7 +23,7 @@ const orderBy = {
         concat(...map(data, part => sortBy(part, [p => {
             return getParticipantDisplayName(p);
         }]))),
-    userDefined: (...data) => concat(...data),
+    // userDefined: (...data) => concat(...data),
 };
 
 function getParticipantDisplayName(participant) {
@@ -135,18 +134,6 @@ export function toggleTileView() {
 }
 
 /**
- * Creates a (redux) action which set page order.
- *
- * @returns {Function}
- */
-export function setPageOrder(order) {
-    return {
-        type: SET_PAGE_ORDER,
-        order
-    };
-}
-
-/**
  * Create a (redux) action which signals to move participant video to first
  * in tileview
  * 
@@ -154,11 +141,14 @@ export function setPageOrder(order) {
  */
 export function moveToFirst(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const { data = [], order } = getState()['features/video-layout'].pageInfo;
         const found = findIndex(data, p => p.id === id);
 
         if (found > 0) {
-            dispatch(setPageInfo({ data: arrayMove(data, found, 0) }));
+            dispatch(setPageInfo({
+                order: { ...order, by: 'userDefined' },
+                data: arrayMove(data, found, 0)
+            }));
         }
     };
 }
@@ -171,11 +161,14 @@ export function moveToFirst(id) {
  */
 export function moveToLast(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const { data = [], order } = getState()['features/video-layout'].pageInfo;
         const found = findIndex(data, p => p.id === id);
 
         if (found >= 0 && found !== data.length - 1) {
-            dispatch(setPageInfo({ data: arrayMove(data, found, data.length - 1) }));
+            dispatch(setPageInfo({
+                order: { ...order, by: 'userDefined' },
+                data: arrayMove(data, found, data.length - 1)
+            }));
         }
     };
 }
@@ -188,11 +181,14 @@ export function moveToLast(id) {
  */
 export function moveToNext(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const { data = [], order } = getState()['features/video-layout'].pageInfo;
         const found = findIndex(data, p => p.id === id);
 
         if (found >= 0 && found !== data.length - 1) {
-            dispatch(setPageInfo({ data: arrayMove(data, found, found + 1) }));
+            dispatch(setPageInfo({
+                order: { ...order, by: 'userDefined' },
+                data: arrayMove(data, found, found + 1)
+            }));
         }
     };
 }
@@ -205,12 +201,32 @@ export function moveToNext(id) {
  */
 export function moveToPrev(id) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { data = [] } = getState()['features/video-layout'].pageInfo;
+        const { data = [], order } = getState()['features/video-layout'].pageInfo;
         const found = findIndex(data, p => p.id === id);
 
         if (found > 0) {
-            dispatch(setPageInfo({ data: arrayMove(data, found, found - 1) }));
+            dispatch(setPageInfo({
+                order: { ...order, by: 'userDefined' },
+                data: arrayMove(data, found, found - 1)
+            }));
         }
+    };
+}
+
+export function changePageOrder(ids) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const { order, data, current, pageSize } = getState()['features/video-layout'].pageInfo;
+        const mapData = keyBy(data, 'id');
+        const page = map(ids, id => mapData[id]);
+
+        dispatch(setPageInfo({
+            order: { ...order, by: 'userDefined' },
+            data: [
+                ...data.slice(0, (current - 1) * pageSize),
+                ...page,
+                ...data.slice((current + 1) * pageSize, (current + 2) * pageSize)
+            ]
+        }));
     };
 }
 
@@ -251,38 +267,49 @@ export function updatePageInfo() {
         let ordered = data;
         if (conference) {
             // sort
-            const { order } = state['features/video-layout'];
-            const dataMap = keyBy(data, 'id');
-            const isTileViewActive = currentLayout === LAYOUTS.TILE_VIEW;
+            const { order } = state['features/video-layout'].pageInfo;
             let part = [];
             
-            if (order.videoMuted) {
-                const tracks = state['features/base/tracks'];
+            if (order.by !== 'userDefined') {
+                const dataMap = keyBy(data, 'id');
+                const isTileViewActive = currentLayout === LAYOUTS.TILE_VIEW;
 
-                // split videoMuted order
-                part.push([]);
-                part.push([]);
-
-                data.forEach(p => {
-                    const isVideoMuted = p.local
-                        ? isLocalCameraTrackMuted(tracks)
-                        : conference.getParticipantById(p.id)?.isVideoMuted();
-                    part[isVideoMuted ? 1 : 0].push(p);
-                });
-            } else {
-                part = data;
-            }
-
-            if (orderBy[order.by]) {
-                ordered = orderBy[order.by](...part);
-            }
+                if (order.videoMuted) {
+                    const tracks = state['features/base/tracks'];
     
-            // save page information
-            dispatch(setPageInfo({ data: ordered, current, pageSize, totalPages }));
+                    // split videoMuted order
+                    part.push([]);
+                    part.push([]);
+    
+                    data.forEach(p => {
+                        const isVideoMuted = p.local
+                            ? isLocalCameraTrackMuted(tracks)
+                            : conference.getParticipantById(p.id)?.isVideoMuted();
+                        part[isVideoMuted ? 1 : 0].push(p);
+                    });
+                } else {
+                    part = data;
+                }
+    
+                if (orderBy[order.by]) {
+                    ordered = orderBy[order.by](...part);
+                }
 
-            // notify video list to video bridge
-            const page = getPageData(state);
-            conference.recvVideoParticipants(map(page, 'id'));
+                // save page information
+                dispatch(setPageInfo({ data: ordered, current, pageSize, totalPages }));
+            } else {
+                // check exists in data and add participants
+                const { data: origin } = state['features/video-layout'].pageInfo;
+                const dataMap = keyBy(origin, 'id');
+
+                part = [...origin];
+                data.forEach(p => {
+                    if (!dataMap[p.id]) part.push(p);
+                });
+        
+                // save page information
+                dispatch(setPageInfo({ data: part, current, pageSize, totalPages }));
+            }
         }
     }, 300);
 }

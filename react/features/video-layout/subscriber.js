@@ -1,8 +1,8 @@
 // @flow
 
-import debounce from 'lodash/debounce';
+import { debounce, map } from 'lodash';
 
-import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { getCurrentConference } from '../base/conference';
 
 import { pinParticipant, getPinnedParticipant } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
@@ -10,6 +10,7 @@ import { isFollowMeActive } from '../follow-me';
 import { selectParticipant } from '../large-video';
 
 import { setRemoteParticipantsWithScreenShare, updatePageInfo } from './actions';
+import { getPageData } from './functions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -73,6 +74,8 @@ StateListenerRegistry.register(
 
             _updateAutoPinnedParticipant(oldScreenSharesOrder, store);
         }
+
+        store.dispatch(updatePageInfo());
     }, 100));
 
 /**
@@ -131,7 +134,19 @@ function _updateAutoPinnedParticipant(screenShares, { dispatch, getState }) {
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'],
-    /* listener */ debounce((participants, store) => {
+    /* listener */ (participants, store) => {
         store.dispatch(updatePageInfo());
-    }, 100));
+    });
 
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].pageInfo,
+    /* listener */ (pageInfo, store) => {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (conference) {
+            // notify video list to video bridge
+            const page = getPageData(state);
+            conference.recvVideoParticipants(map(page, 'id'));
+        }
+    });

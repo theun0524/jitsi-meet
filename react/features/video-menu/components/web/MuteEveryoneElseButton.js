@@ -43,7 +43,7 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
 
         return (
             <RemoteVideoMenuButton
-                buttonText = { t(`videothumbnail.do${mute ? '' : 'un'}muteOthers`) }
+                buttonText = { t(`videothumbnail.domuteOthers`) }
                 displayClass = { 'mutelink' }
                 icon = { mute ? IconMicDisabled : IconMicrophone }
                 id = { `mutelink_${participantID}` }
@@ -74,9 +74,9 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
         sendAnalytics(createToolbarEvent('mute.everyoneelse.pressed'));
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            confirmButtonText: t(`videothumbnail.domute`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteEveryoneElseTitle`, { whom })
+            text: t(`dialog.muteEveryoneElseTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
                 dispatch(muteAllParticipants(exclude, mute));

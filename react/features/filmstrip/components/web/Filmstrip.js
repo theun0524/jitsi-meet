@@ -16,7 +16,7 @@ import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
-import { getCurrentLayout, getPageData, LAYOUTS, setPageInfo, setPageOrder } from '../../../video-layout';
+import { changePageOrder, getCurrentLayout, getPageData, LAYOUTS, setPageInfo } from '../../../video-layout';
 import { setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -148,25 +148,23 @@ class Filmstrip extends Component <Props> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        if (!this.props._disableSortable &&
-            prevProps._currentLayout !== this.props._currentLayout) {
+        if (!this.props._disableSortable && (
+            prevProps._currentLayout !== this.props._currentLayout ||
+            prevProps._pageInfo !== this.props._pageInfo
+        )) {
             this._changeSortable();
         }
     }
 
     _changeSortable() {
-        if (this.props._currentLayout === LAYOUTS.TILE_VIEW) {
+        const { _currentLayout, dispatch } = this.props;
+
+        if (_currentLayout === LAYOUTS.TILE_VIEW) {
             this.$videosContainer.sortable({
                 disabled: false,
                 stop: () => {
-                    const { data, current, pageSize } = this.props._pageInfo;
-                    const mapData = keyBy(data, 'id');
-                    const page = map(this.$videosContainer.children(), el =>
-                        mapData[el.id]);
-                    console.log(data, page);
-                    data.splice((current - 1) * pageSize, pageSize, ...page);
-                    this.props.dispatch(setPageInfo({ data }));
-                    this.props.dispatch(setPageOrder({ by: 'userDefined' }));
+                    const ids = map(this.$videosContainer.children(), 'id');
+                    dispatch(changePageOrder(ids));
                 }
             });
         } else {

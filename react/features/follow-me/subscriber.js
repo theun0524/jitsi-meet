@@ -67,7 +67,7 @@ StateListenerRegistry.register(
  * Subscribes to changes to the tile view order setting.
  */
  StateListenerRegistry.register(
-    /* selector */ state => state['features/video-layout'].order,
+    /* selector */ state => state['features/video-layout'].pageInfo,
     /* listener */ _sendFollowMeCommand);
 
 /**
@@ -138,13 +138,14 @@ function _sendFollowMeCommand(
         return;
     }
 
+    const { order, data = [] } = state['features/video-layout']?.pageInfo || {};
     conference.sendCommand(
         FOLLOW_ME_COMMAND,
         {
             attributes: getFollowMeState(state),
             value: JSON.stringify({
-                ...state['features/video-layout'].order,
-                data: map(state['features/video-layout'].pageInfo?.data || [], 'id')
+                ...order,
+                data: map(data, 'id')
             })
         }
     );
