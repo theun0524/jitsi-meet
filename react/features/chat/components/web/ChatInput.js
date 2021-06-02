@@ -6,8 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant, getParticipants, getParticipantCount } from '../../../base/participants';
-import { Icon, IconMenuThumb } from '../../../base/icons';
+import { getLocalParticipant, getParticipants, getParticipantCount, getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
 import { setPrivateMessageRecipient } from '../../actions';
@@ -95,7 +94,7 @@ class ChatInput extends Component<Props, State> {
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onToggleSmileysPanel = this._onToggleSmileysPanel.bind(this);
         this._setTextAreaRef = this._setTextAreaRef.bind(this);
-        // this._renderChatRoomParticipantsList = this._renderChatRoomParticipantsList.bind(this);
+        this._renderChatRoomParticipantsList = this._renderChatRoomParticipantsList.bind(this);
     }
 
     /**
@@ -122,7 +121,6 @@ class ChatInput extends Component<Props, State> {
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
         let localParticipant = getLocalParticipant(APP.store.getState());
         let prole = localParticipant.role;
-        // const allParticipants = getParticipants(APP.store.getState());
         const chatInputStyleName = `${(prole === "visitor") ? 'no-display' : '' } chat-input`;
         return (
             <div key={prole} className= {chatInputStyleName}>
@@ -131,7 +129,6 @@ class ChatInput extends Component<Props, State> {
                         <div id = 'smileys'>
                             <Emoji
                                 onClick = { this._onToggleSmileysPanel }
-                                // onClick = { this._renderChatRoomParticipantsList }
                                 text = ':)' />
                         </div>
                     </div>
@@ -204,40 +201,79 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onMessageChange(event) {
-        this.setState({ message: event.target.value }, () => { console.log("Setting message to event.target.value") });
+        event.preventDefault();
+        event.persist();
+        this.setState({ message: event.target.value });
         
-        // code for UI dialog box
-        if(event.target.value.startsWith('@') || event.target.value.includes(' @')) {
+        // perform a check to see that input message starts with or contains @, if so display a list containing participants in chatroom
+        // we also check to ensure that there is only one @ character when we want to show the participant list
+        if((event.target.value.includes('@')) && (event.target.value.split('@').length == 2)) {
             this.setState({ showParticipantsList: true });
-            this._renderChatRoomParticipantsList(event.target.value);
+        } else {
+            this.setState({ showParticipantsList: false });
         }
     }
 
     // function to render the list of participants in a chatroom in a dropdown menu
-    _renderChatRoomParticipantsList = (filterText) => {
-        // the input parameter filterText consists of @ character as well, remove it from the filterText
-        console.log("Input parameter is: ", filterText);
+    _renderChatRoomParticipantsList = () => {
         
+        // from the input message, once @ is encountered, we select all the character after @, and use it to filter the list of participants
+        let filterText = '';
+
+        if(this.state.message.includes('@')) {
+            filterText = this.state.message.split('@')[1];
+        }
+
+        // use last character from message input to ensure private messaging is selected only on pressing space character
+        const lastChar = this.state.message.slice(-1);
+
+        // total participants in the chatroom
         const participantCount = getParticipantCount(APP.store.getState());
 
-        // remove local participant from all participants list
+        // remove local participant from all participants list and store it in a variable called otherParticipants
         const allParticipants = getParticipants(APP.store.getState());
         const localParticipant = getLocalParticipant(APP.store.getState());
         const otherParticipants = allParticipants.filter(participant => participant.id !== localParticipant.id);
-        console.log("Other participants are: ", otherParticipants)
 
-        // const filterOtherParticipants = otherParticipants.filter()
+        // filter participants dynamically with typed filter text (input message) from otherParticipants
+        const filteredParticipants = otherParticipants.filter(participant => participant.name.startsWith(filterText.trimEnd())); // we use trimEnd here, so that it still shows the list even when pressing space char
 
-        if((this.state.showParticipantsList) && (participantCount > 2)) { // we want to display that list only when there are 
+        // in case filtered text matches that of a participant's name, it will replace the current message to private message type
+        if(filterText !== '') {
+            if((filteredParticipants.length >= 1)) {
+                
+                filteredParticipants.forEach((participant) => {
+                    // once input text (filterText) matches with name of participant and space character is pressed, invoke private messaging function
+                    if((filterText.trimEnd() === participant.name) && (lastChar === ' ')) {
+    
+                        const toBeParticipant = getParticipantById(APP.store.getState(), participant.id);
+                        this._sendPrivateMessage(toBeParticipant);
+    
+                        // reset message state and hide participant popup list since we defined private message recipient
+                        this.setState({ message : '', showParticipantsList: false });                    
+                    }
+                });
+            }
+        }
+        
+
+        if((this.state.showParticipantsList) && (participantCount > 2)) { // we want to display that list only when there are at least 3 participants
             return(
                 <DropdownMenu
                     boundariesElement = 'scrollParent'
                     defaultOpen >
                         <DropdownItemGroup>
-                            { otherParticipants.map((participant) => {
+                            { filteredParticipants.map((participant) => {
                                 return (
-                                    <DropdownItem key = { participant.id } onClick = { () => this._sendPrivateMessage(participant) }>
-                                        { participant.name } 
+                                    <DropdownItem 
+                                        key = { participant.id } 
+                                        onClick = { 
+                                            () =>  { 
+                                                this._sendPrivateMessage(participant);
+                                                this.setState({ message: '', showParticipantsList: false });
+                                            }
+                                        }>
+                                        { participant.name }
                                     </DropdownItem>
                                 )
                             }) }
@@ -275,7 +311,7 @@ class ChatInput extends Component<Props, State> {
 
     _onToggleSmileysPanel: () => void;
 
-    _renderChatRoomParticipantsList: (String) => void;
+    _renderChatRoomParticipantsList: () => void;
 
     /**
      * Callback invoked to hide or show the smileys selector.
