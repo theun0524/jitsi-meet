@@ -259,26 +259,28 @@ class ChatInput extends Component<Props, State> {
 
         if((this.state.showParticipantsList) && (participantCount > 2)) { // we want to display that list only when there are at least 3 participants
             return(
-                <DropdownMenu
-                    boundariesElement = 'scrollParent'
-                    defaultOpen >
-                        <DropdownItemGroup>
-                            { filteredParticipants.map((participant) => {
-                                return (
-                                    <DropdownItem 
-                                        key = { participant.id } 
-                                        onClick = { 
-                                            () =>  { 
-                                                this._sendPrivateMessage(participant);
-                                                this.setState({ message: '', showParticipantsList: false });
-                                            }
-                                        }>
-                                        { participant.name }
-                                    </DropdownItem>
-                                )
-                            }) }
-                        </DropdownItemGroup>
-                </DropdownMenu>
+                <div className="chat-participant-list">
+                    <DropdownMenu
+                        boundariesElement = 'scrollParent'
+                        defaultOpen >
+                            <DropdownItemGroup>
+                                { filteredParticipants.map((participant) => {
+                                    return (
+                                        <DropdownItem 
+                                            key = { participant.id } 
+                                            onClick = { 
+                                                () =>  { 
+                                                    this._sendPrivateMessage(participant);
+                                                    this.setState({ message: '', showParticipantsList: false });
+                                                }
+                                            }>
+                                            { participant.name }
+                                        </DropdownItem>
+                                    )
+                                }) }
+                            </DropdownItemGroup>
+                    </DropdownMenu>
+                </div>
             );
         } else {
             return;

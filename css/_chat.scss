@@ -97,6 +97,14 @@
     }
 }
 
+.chat-participant-list {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 .chat-header {
     background-color: $chatHeaderBackgroundColor;
     height: 70px;
