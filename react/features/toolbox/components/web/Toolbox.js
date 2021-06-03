@@ -1118,6 +1118,7 @@ class Toolbox extends Component<Props, State> {
             _isRecording,
             _isStatsVisible,
             _screensharing,
+            _selectBackgroundVisible,
             _sharingVideo,
             t
         } = this.props;
@@ -1161,6 +1162,7 @@ class Toolbox extends Component<Props, State> {
                     closeOverflowMenu = { () => this._onSetOverflowVisible(false) }
                     showLabel = { true } />,
             (this._shouldShowButton('select-background') || this._shouldShowButton('videobackgroundblur'))
+                && _selectBackgroundVisible
                 && <VideoBackgroundButton
                     key = { 'select-background' }
                     showLabel = { true }
@@ -1534,6 +1536,7 @@ function _mapStateToProps(state) {
         disableDesktopSharing,
         disableTileView,
         hideParticipantsStats,
+        hideSelectBackground,
     } = state['features/base/config'];
     const participants = state['features/base/participants'];
     const participantsById = keyBy(state['features/base/participants'], 'id');
@@ -1606,6 +1609,10 @@ function _mapStateToProps(state) {
         _participantsById: participantsById,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _selectBackgroundVisible: !(
+            hideSelectBackground === true ||
+            (hideSelectBackground === 'guest' && isGuest)
+        ),
         _selectedModerator: selectedModerator,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'

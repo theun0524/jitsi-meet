@@ -333,14 +333,16 @@ class WelcomePage extends AbstractWelcomePage {
                 </DropdownMenu>
             );
         } else {
-            buttons.push(
-                <Button
-                    className = {`${s.primary} ${s.button}`}
-                    href = { `${AUTH_PAGE_BASE}/register` }
-                    key = 'register'>
-                    { t('toolbar.Register') }
-                </Button>
-            );
+            if (!config.disableUserRegistration) {
+                buttons.push(
+                    <Button
+                        className = {`${s.primary} ${s.button}`}
+                        href = { `${AUTH_PAGE_BASE}/register` }
+                        key = 'register'>
+                        { t('toolbar.Register') }
+                    </Button>
+                );
+            }
             buttons.push(
                 <Button
                     appearance = 'subtle'
@@ -445,7 +447,7 @@ class WelcomePage extends AbstractWelcomePage {
                                             className = {s.welcomePageButton}
                                             id = 'enter_room_button'
                                             onClick = { this._onFormSubmit }>
-                                            { t('welcomepage.go') }
+                                            { _user ? t('welcomepage.go') : t('welcomepage.join') }
                                         </div>
                                     )}
                                     { _moderatedRoomServiceUrl && (

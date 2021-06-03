@@ -215,6 +215,7 @@
         "contactSupport": "문의하기",
         "copied": "복사됨",
         "copy": "복사",
+        "destroyed_by_host": "호스트가 회의를 종료했습니다.",
         "disableChat": "채팅 차단",
         "disableChatForAll": "전원 채팅 차단",
         "disableChatButton": "차단",
