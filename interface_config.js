@@ -277,7 +277,7 @@ var interfaceConfig = {
      REGISTRATION_BLACKLIST // 정의된 경우, 목록에 포함된 도메인이나 이메일만 등록 불가능하도록
     */
 
-    // SSO_AUTH_KEYS: ['otp'],
+    // SSO_AUTH_KEYS: ['user_id'],
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
