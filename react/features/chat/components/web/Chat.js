@@ -97,9 +97,6 @@ class Chat extends AbstractChat<Props> {
         // Bind event handlers so they are only bound once for every instance.
         this._onChatInputResize = this._onChatInputResize.bind(this);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._updateChatStatus = this._updateChatStatus.bind(this);
-
         this._onToggleSearch = this._onToggleSearch.bind(this);
         this._onDisableChatForAll = this._onDisableChatForAll.bind(this);
         this._onEnableChatForAll = this._onEnableChatForAll.bind(this);
@@ -116,7 +113,6 @@ class Chat extends AbstractChat<Props> {
      */
     componentDidMount() {
         this._scrollMessageContainerToBottom(true);
-        this._updateInterval = setInterval(this._updateChatStatus, 1000);
         document.addEventListener('keypress', this._handleKeyPress);
         document.addEventListener('keydown', this._handleKeyDown);
     }
@@ -197,20 +193,6 @@ class Chat extends AbstractChat<Props> {
         }
     }
 
-    _updateChatStatus: () => void;
-
-    _updateChatStatus() {
-        let localParticipant = getLocalParticipant(APP.store.getState());
-        if (!localParticipant) return;
-
-        let prole = localParticipant.role;
-        if(prole === "visitor") {
-            this.setState({ showChatInput: false});
-        } else {
-            this.setState({ showChatInput: true });
-        }
-    }
-
     /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
@@ -219,13 +201,15 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
+        const { _showChatInput } = this.props;
+
         return (
             <>
                 <MessageContainer
                     messages = { this.props._messages }
                     ref = { this._messageContainerRef } />
                 <MessageRecipient />
-                { this.state.showChatInput
+                { _showChatInput
                     ? <ChatInput onResize = { this._onChatInputResize } onSend = { this.props._onSendMessage } />
                     : <> </>
                 }

@@ -186,8 +186,7 @@ function LocalVideoMenuTriggerButton(props: Props) {
  */
 function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
-    const { data } = state['features/video-layout'].pageInfo || {};
-    const found = findIndex(data, p => p.id === participant?.id);
+    const participants = state['features/base/participants'];
     const currentLayout = getCurrentLayout(state);
     const { disableLocalVideoFlip, disableRemoteMute, remoteVideoMenu = {} } = state['features/base/config'];
     const {
@@ -217,8 +216,8 @@ function _mapStateToProps(state) {
         _disableRemoteUnmuteVideo: Boolean(disableRemoteUnmuteVideo),
         _participantCount: getParticipantCount(state),
         _menuPosition,
-        isFirst: data && found === 0,
-        isLast: data && found === data.length - 1,
+        isFirst: participants[0] === participant,
+        isLast: participants[participants.length - 1] === participant,
         participant,
         _shouldDisplayTileView: shouldDisplayTileView(state),
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',

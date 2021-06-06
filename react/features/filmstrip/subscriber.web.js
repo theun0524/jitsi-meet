@@ -6,7 +6,7 @@ import { clientResized } from '../base/responsive-ui';
 import { setFilmstripVisible } from '../filmstrip/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
-import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
+import { getCurrentLayout, getTileViewGridDimensions, setPagination, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
 import {
@@ -43,15 +43,6 @@ StateListenerRegistry.register(
                 );
             }
         }
-        const visibleIDs = filter(map(
-            state['features/base/participants'],
-            p => !p.local ? p.id : null
-        ));
-        const { conference } = state['features/base/conference'];
-        if (conference) {
-            console.log('=====> visibleIDs:', visibleIDs);
-            conference?.recvVideoParticipants(visibleIDs);
-        }
     });
 
 /**
@@ -82,6 +73,8 @@ StateListenerRegistry.register(
             store.dispatch(setHorizontalViewDimensions(state['features/base/responsive-ui'].clientHeight));
             break;
         }
+
+        store.dispatch(setPagination());
     });
 
 /**

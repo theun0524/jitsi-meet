@@ -16,7 +16,7 @@ import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
-import { changePageOrder, getCurrentLayout, getPageData, LAYOUTS, setPageInfo } from '../../../video-layout';
+import { changePageOrder, getCurrentLayout, getCurrentPage, LAYOUTS } from '../../../video-layout';
 import { setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -45,11 +45,6 @@ type Props = {
     _currentLayout: string,
 
     /**
-     * The number of columns in tile view.
-     */
-    _columns: number,
-
-    /**
      * The width of the filmstrip.
      */
     _filmstripWidth: number,
@@ -73,11 +68,6 @@ type Props = {
      * The participants in the call.
      */
     _participants: Array<Object>,
-
-    /**
-     * The number of rows in tile view.
-     */
-    _rows: number,
 
     /**
      * Additional CSS class names to add to the container of all the thumbnails.
@@ -150,7 +140,7 @@ class Filmstrip extends Component <Props> {
     componentDidUpdate(prevProps: Props) {
         if (!this.props._disableSortable && (
             prevProps._currentLayout !== this.props._currentLayout ||
-            prevProps._pageInfo !== this.props._pageInfo
+            prevProps._pagination !== this.props._pagination
         )) {
             this._changeSortable();
         }
@@ -194,12 +184,7 @@ class Filmstrip extends Component <Props> {
             break;
         case LAYOUTS.TILE_VIEW: {
             // The size of the side margins for each tile as set in CSS.
-            const { _columns, _rows, _filmstripWidth } = this.props;
-
-            // if (_rows > _columns) {
-            //     remoteVideoContainerClassName += ' has-overflow';
-            // }
-
+            const { _filmstripWidth } = this.props;
             filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
             break;
         }
@@ -357,14 +342,14 @@ function _mapStateToProps(state) {
         reduceHeight ? 'reduce-height' : ''
     } ${shiftRight ? 'shift-right' : ''}`.trim();
     const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
-    const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
+    const { filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
     const localParticipant = getLocalParticipant(state);
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+    const { pagination } = state['features/video-layout'];
 
     return {
         _className: className,
-        _columns: gridDimensions.columns,
         _currentLayout,
         _disableSortable: disableSortable,
         _filmstripWidth: filmstripWidth,
@@ -373,9 +358,8 @@ function _mapStateToProps(state) {
         _hideToolbar: Boolean(iAmSipGateway),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _localParticipant: localParticipant,
-        _pageInfo: state['features/video-layout'].pageInfo,
-        _participants: getPageData(state),
-        _rows: gridDimensions.rows,
+        _pagination: pagination,
+        _participants: getCurrentPage(state),
         _videosClassName: videosClassName,
         _visible: visible,
         tileViewActive,

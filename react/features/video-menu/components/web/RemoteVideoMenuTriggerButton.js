@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
-import { getLocalParticipant, getParticipantById, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
+import { getParticipantById, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS, shouldDisplayTileView } from '../../../video-layout';
@@ -336,7 +336,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
-    const localParticipant = getLocalParticipant(state);
+    const participant = getParticipantById(state, participantID);
+    const participants = state['features/base/participants'];
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const {
         disableKick,
@@ -347,8 +348,6 @@ function _mapStateToProps(state, ownProps) {
         disableRemoteUnmuteVideo,
     } = remoteVideoMenu;
     const { overflowDrawer } = state['features/toolbox'];
-    const { data } = state['features/video-layout'].pageInfo || {};
-    const found = findIndex(data, p => p.id === participantID);
 
     const currentLayout = getCurrentLayout(state);
     let _menuPosition;
@@ -365,7 +364,7 @@ function _mapStateToProps(state, ownProps) {
     }
     
     return {
-        _isModerator: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR),
+        _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableGrantModerator: Boolean(disableGrantModerator),
         _disableKick: Boolean(disableKick),
         _disablePrivateMessage: Boolean(disablePrivateMessage),
@@ -377,8 +376,8 @@ function _mapStateToProps(state, ownProps) {
         _overflowDrawer: overflowDrawer,
         _participantCount: getParticipantCount(state),
         _shouldDisplayTileView: shouldDisplayTileView(state),
-        isFirst: data && found === 0,
-        isLast: data && found === data.length - 1,
+        isFirst: participants[0] === participant,
+        isLast: participants[participants.length - 1] === participant,
     };
 }
 

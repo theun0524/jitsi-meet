@@ -64,7 +64,7 @@ export default class AbstractPageButton extends Component {
 export function _abstractMapStateToProps(state: Object) {
     return {
         _layout: getCurrentLayout(state),
-        _totalPages: state['features/video-layout'].pageInfo?.totalPages || 1,
-        _current: state['features/video-layout'].pageInfo?.current || 1,
+        _totalPages: state['features/video-layout'].pagination?.totalPages || 1,
+        _current: state['features/video-layout'].pagination?.current || 1,
     };
 }

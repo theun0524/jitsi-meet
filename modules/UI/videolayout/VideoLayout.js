@@ -1,7 +1,6 @@
 /* global APP  */
 
 import Logger from 'jitsi-meet-logger';
-import { debounce } from 'lodash';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -14,8 +13,6 @@ import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
 const logger = Logger.getLogger(__filename);
-
-const DEBOUNCE_TIMEOUT = 500;   // 100ms for debounce timer
 
 let largeVideo;
 
@@ -104,20 +101,6 @@ const VideoLayout = {
         const { id } = getPinnedParticipant(APP.store.getState()) || {};
 
         return id || null;
-    },
-
-    /**
-     * When someone mutes their video, the video being rendered as remote video in other participants
-     * will be moved to the end using DOM manipulation
-     * 
-     * Core Logic
-     *  i. Get the muted participants thumbnail id
-     *  ii. Remove the local video container first from the DOM
-     *  iii. Append a muted video to the end of DOM
-     *  iv. Identify the position to insert local thumbnail and insert it
-     */
-    _reorderVideos() {
-        return;
     },
 
     /**
@@ -341,9 +324,5 @@ const VideoLayout = {
         VideoLayout.resizeVideoArea();
     }
 };
-
-VideoLayout.reorderVideos = debounce(
-    VideoLayout._reorderVideos,
-    DEBOUNCE_TIMEOUT);
 
 export default VideoLayout;

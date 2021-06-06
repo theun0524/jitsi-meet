@@ -4,13 +4,12 @@ import { debounce, map } from 'lodash';
 
 import { getCurrentConference } from '../base/conference';
 
-import { pinParticipant, getPinnedParticipant } from '../base/participants';
+import { pinParticipant, getPinnedParticipant, refreshParticipants } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
 import { selectParticipant } from '../large-video';
 
-import { setRemoteParticipantsWithScreenShare, updatePageInfo } from './actions';
-import { getPageData } from './functions';
+import { setRemoteParticipantsWithScreenShare } from './actions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -25,7 +24,6 @@ StateListenerRegistry.register(
         const { dispatch } = store;
 
         dispatch(selectParticipant());
-        dispatch(updatePageInfo());
     }
 );
 
@@ -74,8 +72,6 @@ StateListenerRegistry.register(
 
             _updateAutoPinnedParticipant(oldScreenSharesOrder, store);
         }
-
-        store.dispatch(updatePageInfo());
     }, 100));
 
 /**
@@ -127,26 +123,32 @@ function _updateAutoPinnedParticipant(screenShares, { dispatch, getState }) {
     }
 }
 
+// /**
+//  * StateListenerRegistry provides a reliable way of detecting changes to
+//  * participants state and reordering videos.
+//  */
+// StateListenerRegistry.register(
+//     /* selector */ state => state['features/base/participants'],
+//     /* listener */ (participants, store) => {
+//         const state = store.getState();
+//         const conference = getCurrentConference(state);
 
-/**
- * StateListenerRegistry provides a reliable way of detecting changes to
- * pageInfo state and reordering videos.
- */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/base/participants'],
-    /* listener */ (participants, store) => {
-        store.dispatch(updatePageInfo());
-    });
+//         if (conference) {
+//             // notify video list to video bridge
+//             const page = getCurrentPage(state);
+//             conference.recvVideoParticipants(map(page, 'id'));
+//         }
+//     });
 
-StateListenerRegistry.register(
-    /* selector */ state => state['features/video-layout'].pageInfo,
-    /* listener */ (pageInfo, store) => {
-        const state = store.getState();
-        const conference = getCurrentConference(state);
+// StateListenerRegistry.register(
+//     /* selector */ state => state['features/video-layout'].pagination,
+//     /* listener */ (pagination, store) => {
+//         const state = store.getState();
+//         const conference = getCurrentConference(state);
 
-        if (conference) {
-            // notify video list to video bridge
-            const page = getPageData(state);
-            conference.recvVideoParticipants(map(page, 'id'));
-        }
-    });
+//         if (conference) {
+//             // notify video list to video bridge
+//             const page = getCurrentPage(state);
+//             conference.recvVideoParticipants(map(page, 'id'));
+//         }
+//     });

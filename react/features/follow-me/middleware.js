@@ -9,11 +9,12 @@ import {
     isLocalParticipantModerator,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    pinParticipant
+    pinParticipant,
+    setParticipants
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
-import { setTileView, setPageInfo } from '../video-layout';
+import { setTileView, setPagination } from '../video-layout';
 
 import {
     setFollowMeModerator,
@@ -199,10 +200,11 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
         store.dispatch(pinParticipant(null));
     }
 
-    if (oldValue !== value) {
-        const { data, ...order } = JSON.parse(value);
+    if (value && oldValue !== value) {
+        const { data, ...pagination } = JSON.parse(value.replace(/&quot;/g, '"'));
         const mapData = keyBy(store.getState()['features/base/participants'], 'id');
-        store.dispatch(setPageInfo({ order, data: map(data, id => mapData[id]) }));
+        store.dispatch(setParticipants(map(data, id => mapData[id])));
+        store.dispatch(setPagination(pagination));
     }
 }
 

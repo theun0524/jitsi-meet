@@ -1,14 +1,16 @@
 // @flow
 
 import { getCurrentConference } from '../base/conference';
-import { PIN_PARTICIPANT, pinParticipant, getPinnedParticipant } from '../base/participants';
+import { PIN_PARTICIPANT, pinParticipant, getPinnedParticipant, getParticipants } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
 
-import { SET_TILE_VIEW } from './actionTypes';
+import { SET_PAGINATION, SET_TILE_VIEW } from './actionTypes';
 import { setTileView } from './actions';
 
 import './subscriber';
+import { filter, map } from 'lodash';
+import { getCurrentPage } from './functions';
 
 let previousTileViewEnabled;
 
@@ -43,13 +45,24 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
+    case SET_PAGINATION: {
+        const state = store.getState();
+        const page = getCurrentPage(state);
+        const conference = getCurrentConference(state);
+        if (conference) {
+            conference.recvVideoParticipants(
+                map(filter(page, p => !p.local), 'id')
+            );
+        }
+        break;
+    }
+
     // Things to update when tile view state changes
     case SET_TILE_VIEW:
         if (action.enabled && getPinnedParticipant(store)) {
             store.dispatch(pinParticipant(null));
         }
     }
-
 
     return result;
 });

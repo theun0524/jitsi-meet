@@ -20,7 +20,8 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RECV_VIDEO_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    SET_PARTICIPANTS
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -511,6 +512,7 @@ export function participantUpdated(participant = {}) {
         participantToUpdate.name = getNormalizedDisplayName(participant.name);
     }
 
+    // console.error('participantUpdated:', participant);
     return {
         type: PARTICIPANT_UPDATED,
         participant: participantToUpdate
@@ -633,5 +635,12 @@ export function setLoadableAvatarUrl(participantId, url) {
             id: participantId,
             loadableAvatarUrl: url
         }
+    };
+}
+
+export function setParticipants(participants) {
+    return {
+        type: SET_PARTICIPANTS,
+        participants
     };
 }

@@ -6,7 +6,6 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import InView from 'react-native-component-inview';
 import type { Dispatch } from 'redux';
 
 import { recvVideoParticipant } from '../../../base/participants';
@@ -77,12 +76,6 @@ const TILE_ASPECT_RATIO = 1;
  * @extends Component
  */
 class TileView extends Component<Props> {
-    constructor(props) {
-        super(props);
-
-        this._visibles = new Set();
-    }
-
     /**
      * Implements React's {@link Component#componentDidMount}.
      *
@@ -254,34 +247,14 @@ class TileView extends Component<Props> {
 
         return this._getSortedParticipants()
             .map(participant => (
-                <InView
-                    collapsable = { false }
+                <Thumbnail
+                    disableTint = { true }
                     key = { participant.id }
-                    onChange = { visible => this._checkVisible(participant.id, visible) }>
-                    <Thumbnail
-                        disableTint = { true }
-                        participant = { participant }
-                        renderDisplayName = { true }
-                        styleOverrides = { styleOverrides }
-                        tileView = { true } />
-                </InView>));
-    }
-
-    /**
-     * Handle thumbnail entered in viewport
-     */
-    _checkVisible(userId, visible) {
-        if ((visible && !this._visibles.has(userId))
-            || (!visible && this._visibles.has(userId))) {
-            if (visible) {
-                this._visibles.add(userId);
-            } else {
-                this._visibles.delete(userid);
-            }
-            
-            console.log('_checkVisible:', userId, visible);
-            this.props.dispatch(recvVideoParticipant(userId, visible));
-        }
+                    participant = { participant }
+                    renderDisplayName = { true }
+                    styleOverrides = { styleOverrides }
+                    tileView = { true } />
+            ));
     }
 
     /**

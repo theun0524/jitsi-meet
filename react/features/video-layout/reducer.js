@@ -5,8 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SELECT_ENDPOINTS,
-    SET_PAGE_INFO,
-    SET_PAGE_ORDER,
+    SET_PAGINATION,
     SET_TILE_VIEW,
 } from './actionTypes';
 
@@ -25,12 +24,11 @@ const DEFAULT_STATE = {
      */
     tileViewEnabled: undefined,
 
-    pageInfo: {
-        order: {
-            videoMuted: true,
-            by: 'displayName'
-        },
-        data: []
+    pagination: {
+        order: ['video.muted', 'name'],
+        current: 1,
+        pageSize: 1,
+        totalPages: 1
     }
 };
 
@@ -58,13 +56,10 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             tileViewEnabled: action.enabled
         };
 
-    case SET_PAGE_INFO: {
+    case SET_PAGINATION: {
         return {
             ...state,
-            pageInfo: {
-                ...(state.pageInfo || {}),
-                ...action.pageInfo
-            }
+            pagination: action.pagination
         };
     }
     }

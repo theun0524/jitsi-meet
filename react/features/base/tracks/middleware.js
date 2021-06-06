@@ -4,7 +4,6 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { hideNotification } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getAvailableDevices } from '../devices/actions';
-import { selectParticipant } from '../../large-video/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -35,8 +34,6 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
-import { findSelectedParticipant } from '../../large-video/functions';
-import { updatePageInfo } from '../../video-layout';
 
 declare var APP: Object;
 
@@ -56,11 +53,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.track.local) {
             store.dispatch(getAvailableDevices());
         }
-
-        const { order } = store.getState()['features/video-layout'];
-        if (order?.videoMuted && action.track.mediaType === MEDIA_TYPE.VIDEO) {
-            store.dispatch(updatePageInfo());
-        }
         break;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
@@ -72,10 +64,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case TRACK_REMOVED: {
         _removeNoDataFromSourceNotification(store, action.track);
-        const { order } = store.getState()['features/video-layout'];
-        if (order?.videoMuted && action.track.mediaType === MEDIA_TYPE.VIDEO) {
-            store.dispatch(updatePageInfo());
-        }
         break;
     }
     case SET_AUDIO_MUTED:
@@ -114,10 +102,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         _setMuted(store, action, action.mediaType);
-        const { order } = store.getState()['features/video-layout'];
-        if (order?.videoMuted) {
-            store.dispatch(updatePageInfo());
-        }
         break;
     }
 
@@ -175,11 +159,6 @@ MiddlewareRegistry.register(store => next => action => {
                     APP.conference.setVideoMuteStatus(muted);
                 } else {
                     APP.UI.setVideoMuted(participantID);
-
-                    const { order } = store.getState()['features/video-layout'];
-                    if (order?.videoMuted) {
-                        store.dispatch(updatePageInfo());
-                    }
                 }
             } else if (jitsiTrack.isLocal()) {
                 APP.conference.setAudioMuteStatus(muted);

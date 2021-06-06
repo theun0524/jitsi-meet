@@ -17,6 +17,7 @@ import {
 } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
+import { getTrackByJitsiTrack, TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from '../tracks';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -56,7 +57,9 @@ import {
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import { isRecording } from '../../recording';
-import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
+import { find, omit, orderBy } from 'lodash';
+import { setPagination } from '../../video-layout';
+import { getParticipants, setParticipants } from '.';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -191,20 +194,37 @@ MiddlewareRegistry.register(store => next => action => {
                 APP.UI.emitEvent(UIEvents.NICKNAME_CHANGED, action.name);
             }
         }
-        break;
+        const result = next(action);
+        store.dispatch(setPagination());
+        return result;
     }
 
     case PARTICIPANT_JOINED: {
         _maybePlaySounds(store, action);
-        return _participantJoinedOrUpdated(store, next, action);
+        const result = _participantJoinedOrUpdated(store, next, action);
+        store.dispatch(setPagination());
+        return result;
     }
 
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: {
         _maybePlaySounds(store, action);
-        break;
+        const result = next(action);
+        store.dispatch(setPagination());
+        return result;
+    }
 
-    case PARTICIPANT_UPDATED:
-        return _participantJoinedOrUpdated(store, next, action);
+    case PARTICIPANT_UPDATED: {
+        const result = _participantJoinedOrUpdated(store, next, action);
+        if (action.name) {
+            store.dispatch(setPagination());
+        }
+        return result;
+    }
+
+    case TRACK_ADDED:
+    case TRACK_REMOVED:
+    case TRACK_UPDATED:
+        return _trackUpdated(store, next, action);
     }
 
     return next(action);
@@ -486,7 +506,7 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
     }
 
     if (action.name !== getParticipantDisplayName(getState())) {
-        VideoLayout.reorderVideos();
+        // dispatch(reorderParticipants());
     }
 
     return result;
@@ -543,4 +563,33 @@ function _registerSounds({ dispatch }) {
 function _unregisterSounds({ dispatch }) {
     dispatch(unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
     dispatch(unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
+}
+
+function _trackUpdated({ dispatch, getState }, next, action) {
+    const result = next(action);
+
+    const state = getState();
+    const { jitsiTrack } = action.track;
+    const participantId = jitsiTrack.getParticipantId();
+    
+    switch (action.type) {
+    case TRACK_REMOVED: {
+        const participant = getParticipantById(state, participantId);
+        dispatch(participantUpdated(omit(participant, jitsiTrack.type)));
+        dispatch(setPagination());
+        break;
+    }
+    case TRACK_ADDED:
+    case TRACK_UPDATED: {
+        const track = getTrackByJitsiTrack(state['features/base/tracks'], jitsiTrack);
+        dispatch(participantUpdated({
+            id: participantId,
+            [jitsiTrack.type]: track,
+        }));
+        dispatch(setPagination());
+        break;
+    }
+    }
+
+    return result;
 }

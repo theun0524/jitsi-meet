@@ -15,11 +15,11 @@ export const SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
  * to be displayed.
  *
  * @returns {{
- *     type: SET_PAGE_INFO,
- *     pageInfo: Object,
+ *     type: SET_PAGINATION,
+ *     pagination: Object,
  * }}
  */
-export const SET_PAGE_INFO = 'SET_PAGE_INFO';
+export const SET_PAGINATION = 'SET_PAGINATION';
 
 /**
  * The type of the action which sets the list of the endpoints to be selected for video forwarding

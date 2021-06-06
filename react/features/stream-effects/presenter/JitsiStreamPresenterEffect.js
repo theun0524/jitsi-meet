@@ -51,6 +51,7 @@ export default class JitsiStreamPresenterEffect {
         const { height, width, frameRate } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
         const localParticipant = getLocalParticipant(APP.store.getState());
         const [name, ...title] = localParticipant.name.split('/').map(trim);
+        console.log('firstVideoTrack:', width, height, frameRate);
 
         this._name = name;
         this._title = title;

@@ -10,7 +10,8 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RECV_VIDEO_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    SET_PARTICIPANTS
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
 
@@ -73,6 +74,8 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case RECV_VIDEO_PARTICIPANT:
         return state.map(p => _participant(p, action));
 
+    // case PARTICIPANTS_UPDATED:
+    //     return action.participants.map(p => _participant())
     case PARTICIPANT_JOINED:
         return [ ...state, _participantJoined(action) ];
 
@@ -95,6 +98,9 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
                     && p.conference === conference
                     && (conference || p.local)));
     }
+
+    case SET_PARTICIPANTS:
+        return action.participants;
     }
 
     return state;

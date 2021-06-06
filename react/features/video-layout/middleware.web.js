@@ -36,15 +36,13 @@ MiddlewareRegistry.register(store => next => action => {
         VideoLayout.reset();
         break;
 
-    case PARTICIPANT_JOINED: {
-        const state = store.getState();
+    case PARTICIPANT_JOINED:
         if (!action.participant.local) {
             VideoLayout.updateVideoMutedForNoTracks(action.participant.id);
         }
         break;
-    }
 
-    case PARTICIPANT_UPDATED: {
+    case PARTICIPANT_UPDATED:
         // Look for actions that triggered a change to connectionStatus. This is
         // done instead of changing the connection status change action to be
         // explicit in order to minimize changes to other code.
@@ -53,13 +51,7 @@ MiddlewareRegistry.register(store => next => action => {
                 action.participant.id,
                 action.participant.connectionStatus);
         }
-
-        // move muted videos to the end of DOM, default id=0, no parameter passed
-        if (typeof action.participant.name !== 'undefined') {
-            VideoLayout.reorderVideos();
-        }
         break;
-    }
 
     case PARTICIPANTS_PANE_CLOSE:
     case PARTICIPANTS_PANE_OPEN:

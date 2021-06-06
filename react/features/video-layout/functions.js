@@ -1,5 +1,6 @@
 // @flow
 
+import { filter } from 'lodash';
 import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
 import { getPinnedParticipant, getParticipantCount } from '../base/participants';
 import {
@@ -67,15 +68,25 @@ export function getMaxColumnCount(state: Object) {
 }
 
 /**
- * Returns ID array of in a page.
+ * Returns participants of in the current page.
  *
  * @param {Object} state - The redux store state.
  * @returns {number}
  */
-export function getPageData(state) {
-    const { data = [], current = 1, pageSize } = state['features/video-layout'].pageInfo || {};
+export function getCurrentPage(state) {
+    const { current = 1, pageSize } = state['features/video-layout'].pagination || {};
+    const participants = state['features/base/participants'];
+    const currentLayout = getCurrentLayout(state);
+    const pageStart = (current - 1) * pageSize;
+    const pageEnd = current * pageSize;
 
-    return data.slice((current-1) * pageSize, current * pageSize);
+    if (currentLayout === LAYOUTS.TILE_VIEW) {
+        return filter(participants, (p, index) =>
+            index >= pageStart && index < pageEnd && !p.isFakeParticipant);
+    } else {
+        return filter(participants, (p, index) =>
+            index >= pageStart && index < pageEnd && !p.isFakeParticipant && !p.local);
+    }
 }
 
 /**

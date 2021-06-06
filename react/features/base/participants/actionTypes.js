@@ -236,9 +236,18 @@ export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
  *     type: SET_LOADABLE_AVATAR_URL,
  *     participant: {
  *         id: string,
-           loadableAvatarUrl: string
+ *         loadableAvatarUrl: string
  *     }
  * }
  */
 export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
 
+/**
+ * The type of Redux action which notifies the app that the participants has changed.
+ *
+ * {
+ *     type: SET_PARTICIPANTS,
+ *     participants: array of Participant
+ * }
+ */
+export const SET_PARTICIPANTS = 'SET_PARTICIPANTS';

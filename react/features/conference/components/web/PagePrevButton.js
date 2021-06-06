@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { connect } from '../../../base/redux';
-import { setPageInfo } from '../../../video-layout';
+import { setPagination } from '../../../video-layout';
 import AbstractPageButton, {
     _abstractMapStateToProps as _mapStateToProps,
 } from '../AbstractPageButton';
@@ -43,7 +43,7 @@ class PagePrevButton extends AbstractPageButton {
     onChangePage = () => {
         const { current, disabled } = this.state;
         if (!disabled && 1 < current ) {
-            this.props.dispatch(setPageInfo({ current: current - 1 }));
+            this.props.dispatch(setPagination({ current: current - 1 }));
         }
     }
 }

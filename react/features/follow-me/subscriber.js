@@ -4,6 +4,7 @@ import { map } from 'lodash';
 import { getCurrentConference } from '../base/conference';
 import { isHost } from '../base/jwt';
 import {
+    getParticipants,
     getPinnedParticipant,
     isLocalParticipantModerator
 } from '../base/participants';
@@ -66,8 +67,18 @@ StateListenerRegistry.register(
 /**
  * Subscribes to changes to the tile view order setting.
  */
- StateListenerRegistry.register(
-    /* selector */ state => state['features/video-layout'].pageInfo,
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].pagination,
+    /* listener */ _sendFollowMeCommand);
+
+/**
+ * Subscribes to changes to the tile view order setting.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const participants = getParticipants(state);
+        return map(participants, 'id');
+    },
     /* listener */ _sendFollowMeCommand);
 
 /**
@@ -138,14 +149,17 @@ function _sendFollowMeCommand(
         return;
     }
 
-    const { order, data = [] } = state['features/video-layout']?.pageInfo || {};
+    const { pagination = {} } = state['features/video-layout'] || {};
+    const participants = state['features/base/participants'];
+    const data = map(participants, 'id');
+
     conference.sendCommand(
         FOLLOW_ME_COMMAND,
         {
             attributes: getFollowMeState(state),
             value: JSON.stringify({
-                ...order,
-                data: map(data, 'id')
+                ...pagination,
+                data
             })
         }
     );

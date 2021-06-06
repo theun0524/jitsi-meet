@@ -1,6 +1,7 @@
 // @flow
 
 import axios from 'axios';
+import { debounce } from 'lodash';
 
 import {
     ACTION_PINNED,
@@ -102,7 +103,7 @@ MiddlewareRegistry.register(store => next => action => {
         return _pinParticipant(store, next, action);
 
     case RECV_VIDEO_PARTICIPANT:
-        return _recvVideoParticipantDebounced(store, next, action);
+        return _recvVideoParticipant(store, next, action);
 
     case SEND_TONES:
         return _sendTones(store, next, action);
@@ -498,20 +499,12 @@ function _pinParticipant({ getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _recvVideoParticipantDebounced({ getState }, next, action) {
-    if (recvVideoParCallbackId !== null) {
-        clearTimeout(recvVideoParCallbackId);
-    }
-    const config = getState()['features/base/config'];
-    const debounceTimeout = config.inViewportDebounceTimeout === 'undefined' ?
-                        100 : config.inViewportDebounceTimeout;
-
-    recvVideoParCallbackId = setTimeout(() => (_recvVideoParCallback({ getState }, next, action)),
-                                                debounceTimeout);
+function _recvVideoParticipant({ getState }, next, action) {
+    _recvVideoParticipantDebounced({ getState }, next, action);
     return next(action);
 }
 
-function _recvVideoParCallback({ getState }, next, action) {
+const _recvVideoParticipantDebounced = debounce(function ({ getState }, next, action) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -535,7 +528,7 @@ function _recvVideoParCallback({ getState }, next, action) {
     // recvVideoPars.add(largeVideoId)
 
     conference.recvVideoParticipants(Array.from(recvVideoPars));
-}
+}, 300);
 
 /**
  * Requests the specified tones to be played.

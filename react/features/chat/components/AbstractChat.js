@@ -110,6 +110,7 @@ export function _mapStateToProps(state: Object) {
         _enableChatControl: Boolean(enableChatControl),
         _isOpen: isOpen,
         _messages: messages,
+        _showChatInput: _localParticipant?.role !== 'visitor',
         _showNamePrompt: !_localParticipant?.name
     };
 }
