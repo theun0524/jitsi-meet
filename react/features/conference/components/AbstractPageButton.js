@@ -20,8 +20,10 @@ export default class AbstractPageButton extends Component {
      */
     render() {
         const { _current, _layout, _totalPages } = this.props;
+
         let className = 'page-button';
         let icon;
+        let current;
 
         if (_totalPages === 1 || this.state.disabled) {
             return null;
@@ -38,13 +40,14 @@ export default class AbstractPageButton extends Component {
             icon = this.className === 'prev' ? IconCaretUp : IconCaretDown;
             className += ' row';
         }
+        current = this.className === 'prev' ? _current - 1 : _current + 1;
 
         return (
             <div
-                className={className}
-                onClick={this.onChangePage}>
-                <Icon size={20} src={icon} />
-                {_current}/{_totalPages}
+                className = { className }
+                onClick = { this.onChangePage }>
+                <Icon size = { 20 } src = { icon } />
+                { current }/{ _totalPages }
             </div>
         );
     }
@@ -62,9 +65,11 @@ export default class AbstractPageButton extends Component {
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
+    const { pagination } = state['features/video-layout'] || {};
+
     return {
         _layout: getCurrentLayout(state),
-        _totalPages: state['features/video-layout'].pagination?.totalPages || 1,
-        _current: state['features/video-layout'].pagination?.current || 1,
+        _totalPages: pagination?.totalPages || 1,
+        _current: pagination?.current || 1,
     };
 }

@@ -112,11 +112,6 @@ export function setPagination(pagination: Object) {
             newState.current = newState.totalPages;
         }
 
-        dispatch({
-            type: SET_PAGINATION,
-            pagination: newState,
-        });
-
         if (newState.order) {
             const orderedBefore = map(participants, 'id').join(',');
             const ordered = sortBy(participants, ...newState.order);
@@ -126,6 +121,11 @@ export function setPagination(pagination: Object) {
                 dispatch(setParticipants(ordered));
             }
         }
+
+        dispatch({
+            type: SET_PAGINATION,
+            pagination: newState,
+        });
     };
 }
 

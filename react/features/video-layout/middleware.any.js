@@ -50,6 +50,7 @@ MiddlewareRegistry.register(store => next => action => {
         const page = getCurrentPage(state);
         const conference = getCurrentConference(state);
         if (conference) {
+            // console.error('SET_PAGINATION:', page, getParticipants(state));
             conference.recvVideoParticipants(
                 map(filter(page, p => !p.local), 'id')
             );

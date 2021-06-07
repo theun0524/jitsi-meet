@@ -1,6 +1,7 @@
 /* @flow */
 
-import { keyBy, map } from 'lodash';
+import arrayMove from 'array-move';
+import { filter, keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -13,7 +14,7 @@ import {
 import { getToolbarButtons } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant, getParticipants, setParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { changePageOrder, getCurrentLayout, getCurrentPage, LAYOUTS } from '../../../video-layout';
@@ -24,6 +25,7 @@ import PagePrevButton from '../../../conference/components/web/PagePrevButton';
 import PageNextButton from '../../../conference/components/web/PageNextButton';
 
 import Thumbnail from './Thumbnail';
+import AudioTrack from '../../../base/media/components/web/AudioTrack';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -111,6 +113,7 @@ class Filmstrip extends Component <Props> {
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
         this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
         this._videosContainer = React.createRef();
+        this._renderAudioTrack = this._renderAudioTrack.bind(this);
     }
 
     /**
@@ -140,21 +143,30 @@ class Filmstrip extends Component <Props> {
     componentDidUpdate(prevProps: Props) {
         if (!this.props._disableSortable && (
             prevProps._currentLayout !== this.props._currentLayout ||
-            prevProps._pagination !== this.props._pagination
+            prevProps._pagination !== this.props._pagination ||
+            prevProps._participants !== this.props._participants
         )) {
             this._changeSortable();
         }
     }
 
     _changeSortable() {
-        const { _currentLayout, dispatch } = this.props;
+        const { _currentLayout, _participants, _pagination, dispatch } = this.props;
 
         if (_currentLayout === LAYOUTS.TILE_VIEW) {
             this.$videosContainer.sortable({
                 disabled: false,
-                stop: () => {
-                    const ids = map(this.$videosContainer.children(), 'id');
-                    dispatch(changePageOrder(ids));
+                start: (evt, ui) => {
+                    ui.item.data('index', ui.item.index());
+                },
+                stop: (evt, ui) => {
+                    const { current, pageSize } = _pagination;
+                    const pageStart = (current - 1) * pageSize;
+                    const src = ui.item.data('index');
+                    const dst = ui.item.index();
+                    dispatch(setParticipants(arrayMove(
+                        _participants, pageStart + src, pageStart + dst
+                    )));
                 }
             });
         } else {
@@ -162,6 +174,20 @@ class Filmstrip extends Component <Props> {
                 disabled: true
             });
         }
+    }
+
+    _renderAudioTrack(track) {
+        const { _startSilent } = this.props;
+        const jitsiAudioTrack = track?.jitsiTrack;
+        const audioTrackId = jitsiAudioTrack && jitsiAudioTrack.getId();
+
+        return (
+            <AudioTrack
+                key = { audioTrackId }
+                audioTrack = { track }
+                id = { `remoteAudio_${audioTrackId || ''}` }
+                muted = { _startSilent } />
+        );
     }
 
     /**
@@ -174,7 +200,7 @@ class Filmstrip extends Component <Props> {
         const filmstripStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
-        const { _currentLayout, _participants, _localParticipant, tileViewActive } = this.props;
+        const { _audioTracks, _currentLayout, _currentPage, _localParticipant, tileViewActive } = this.props;
 
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -235,7 +261,7 @@ class Filmstrip extends Component <Props> {
                             ref={this._videosContainer}
                             style = { filmstripRemoteVideosContainerStyle }>
                             {
-                                _participants.map(
+                                _currentPage.map(
                                     p => (
                                         <Thumbnail
                                             key = { p.id }
@@ -243,6 +269,9 @@ class Filmstrip extends Component <Props> {
                                     ))
                             }
                         </div>
+                    </div>
+                    <div className = 'remoteAudioTracks'>
+                        { _audioTracks.map(this._renderAudioTrack) }
                     </div>
                     <PageNextButton />
                 </div>
@@ -331,7 +360,13 @@ class Filmstrip extends Component <Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { iAmSipGateway, disableSortable, hideLocalVideo, hideRemoteVideos } = state['features/base/config'];
+    const {
+        iAmSipGateway,
+        disableSortable,
+        hideLocalVideo,
+        hideRemoteVideos,
+        startSilent,
+    } = state['features/base/config'];
     const toolbarButtons = getToolbarButtons(state);
     const { visible } = state['features/filmstrip'];
     const reduceHeight
@@ -347,8 +382,12 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     const { pagination } = state['features/video-layout'];
+    const currentPage = getCurrentPage(state);
+    const participants = getParticipants(state);
+    const pageMap = keyBy(currentPage, 'id');
 
     return {
+        _audioTracks: map(filter(participants, p => !pageMap[p.id] && !p.local && p.audio), 'audio'),
         _className: className,
         _currentLayout,
         _disableSortable: disableSortable,
@@ -359,7 +398,9 @@ function _mapStateToProps(state) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _localParticipant: localParticipant,
         _pagination: pagination,
-        _participants: getCurrentPage(state),
+        _participants: participants,
+        _currentPage: currentPage,
+        _startSilent: Boolean(startSilent),
         _videosClassName: videosClassName,
         _visible: visible,
         tileViewActive,
