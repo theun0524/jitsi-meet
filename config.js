@@ -58,7 +58,7 @@ var config = {
         // enable octo
         octo: {
             probability: 1
-        }
+        },
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -72,7 +72,7 @@ var config = {
         // on while screensharing is in progress, the max bitrate is automatically
         // adjusted to 2.5 Mbps. This takes a value between 0 and 1 which determines
         // the probability for this to be enabled.
-        // capScreenshareBitrate: 1 // 0 to disable
+        capScreenshareBitrate: 1 // 0 to disable
     },
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
