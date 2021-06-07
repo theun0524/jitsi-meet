@@ -89,6 +89,8 @@
     flex-direction: row;
     font-weight: 100;
     padding: 10px;
+    margin: 0 16px;
+    border-radius: 4px;
 
     span {
         color: white;
@@ -110,6 +112,10 @@
     flex-direction: row;
     font-size: 14px;
     font-weight: bold;
+
+    .participant-item {
+        min-width: 180px;
+    }
 }
 
 .chat-header {
@@ -219,9 +225,9 @@
         border: 1px solid #619CF4;
     }
 
-    * {
-        background-color: transparent;
-    }
+    // * {
+    //     background: transparent;
+    // }
 }
 
 .send-button-container {
@@ -278,6 +284,7 @@
     resize: none;
     width: 100%;
     word-break: break-word;
+    background-color: transparent;
 }
 
 #usermsg:hover {
@@ -450,6 +457,7 @@
         margin: 8px;
         max-width: 100%;
         overflow: hidden;
+        flex-grow: 1;
     }
 }
 
@@ -595,6 +603,8 @@
 
                 .toolbox-icon {
                     cursor: pointer;
+                    height: 32px;
+                    width: 32px;
                 }
             }
         }

@@ -14,6 +14,7 @@ import { setPrivateMessageRecipient } from '../../actions';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 
 import SmileysPanel from './SmileysPanel';
+import { Icon, IconPlane, IconSmile } from '../../../base/icons';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -142,6 +143,10 @@ class ChatInput extends Component<Props, State> {
                                 onSmileySelect = { this._onSmileySelect } />
                         </div>
                     </div>
+
+                    {/* this code will render a list containing chatroom participants */}
+                    { this._renderChatRoomParticipantsList() }
+
                     <div className = 'usrmsg-form'>
                         <TextareaAutosize
                             id = 'usermsg'
@@ -160,21 +165,6 @@ class ChatInput extends Component<Props, State> {
                             <Icon src = { IconPlane } />
                         </div>
                     </div>
-                </div>
-
-                {/* this code will render a list containing chatroom participants */}
-                { this._renderChatRoomParticipantsList() }
-
-                <div className = 'usrmsg-form'>
-                    <TextareaAutosize
-                        id = 'usermsg'
-                        inputRef = { this._setTextAreaRef }
-                        maxRows = { 5 }
-                        onChange = { this._onMessageChange }
-                        onHeightChange = { this.props.onResize }
-                        onKeyDown = { this._onDetectSubmit }
-                        placeholder = { this.props.t('chat.messagebox') }
-                        value = { this.state.message } />
                 </div>
             </div>
         );
@@ -240,6 +230,7 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onMessageChange(event) {
+        console.error('_onMessageChange:', event.target.value);
         event.preventDefault();
         event.persist();
         this.setState({ message: event.target.value });
@@ -290,7 +281,7 @@ class ChatInput extends Component<Props, State> {
         }
         
         // we want to display that list only when there are at least 3 participants
-        if((this.state.showParticipantsList) && (_participantCount > 2)) { 
+        if((this.state.showParticipantsList) && (_participantCount >= 2)) { 
             return(
                 <div className="chat-participant-list">
                     <DropdownMenu
@@ -301,6 +292,7 @@ class ChatInput extends Component<Props, State> {
                                     return (
                                         <DropdownItem 
                                             key = { participant.id } 
+                                            className = 'participant-item'
                                             onClick = { 
                                                 () =>  { 
                                                     this._sendPrivateMessage(participant);
