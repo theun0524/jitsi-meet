@@ -289,6 +289,7 @@
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
         "micNotSendingDataTitle": "Your mic is muted by your system settings",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
+        "micTimeoutError": "Could not start audio source. Timeout occured!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "muteVideoEveryoneElseTitle": "Mute everyone video except {{whom}}?",
         "muteVideoEveryoneTitle": "Mute everyone video?",
@@ -826,6 +827,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "The meeting needs to use your microphone and camera.",
         "title": "{{app}} needs to use your microphone and camera."
     },
     "suspendedoverlay": {
