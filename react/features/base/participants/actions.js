@@ -639,6 +639,7 @@ export function setLoadableAvatarUrl(participantId, url) {
 }
 
 export function setParticipants(participants) {
+    // console.error('SET_PARTICIPANTS:', (new Date()).toJSON());
     return {
         type: SET_PARTICIPANTS,
         participants

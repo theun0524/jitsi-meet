@@ -1,7 +1,7 @@
 // @flow
 
 import arrayMove from 'array-move';
-import { findIndex, keyBy, map, sortBy } from 'lodash';
+import { debounce, findIndex, keyBy, map, sortBy } from 'lodash';
 import type { Dispatch } from 'redux';
 import { getParticipantCount, getParticipants, setParticipants } from '../base/participants';
 
@@ -71,63 +71,78 @@ export function setPagination(pagination: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const newState = state['features/video-layout'].pagination;
-        const participants = getParticipants(state);
 
-        if (!pagination) {
-            // reset pagination.
-            const currentLayout = getCurrentLayout(state);
-            const participantCount = participants.length;
-
-            if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-                const { clientHeight } = state['features/base/responsive-ui'];
-                // padding(30)
-                // localVideo(124)
-                // pageButton(24 * 2)
-                // toolButton(24)
-                const thumbHeight = 124;    // 120 + topBottomMargin(4)
-                const pageHeight = clientHeight - 30 - thumbHeight - 24;
-        
-                newState.pageSize = Math.floor(pageHeight < (participantCount-1) * thumbHeight
-                    ? (pageHeight - (24 * 2)) / thumbHeight
-                    : pageHeight / thumbHeight);
-                newState.totalPages = Math.max(Math.ceil((participantCount-1) / newState.pageSize), 1);
-                // data = participants.filter(p => !p.local);
-            } else if (currentLayout === LAYOUTS.TILE_VIEW) {
-                newState.pageSize = getMaxColumnCount(state) * getMaxColumnCount(state);
-                newState.totalPages = Math.max(Math.ceil(participantCount / newState.pageSize), 1);
-                // data = participants;
-            } else {
-                console.error('ERROR: (updateParticipants) Unexpected layout!', currentLayout);
-                return;
-            }
-        } else {
+        if (pagination) {
             for (const key in pagination) {
                 if (pagination.hasOwnProperty(key)) {
                     newState[key] = pagination[key];
                 }
             }
+            dispatch({
+                type: SET_PAGINATION,
+                pagination: newState,
+            });
+            console.error('SET_PAGINATION:', (new Date()).toJSON(), pagination);
+        } else {
+            debouncedSetPagination(dispatch, getState());
         }
+    };
+}
 
-        if (newState.totalPages < newState.current) {
-            newState.current = newState.totalPages;
+const debouncedSetPagination = debounce(function (dispatch, state) {
+    const newState = state['features/video-layout'].pagination;
+    const beforeState = JSON.stringify(newState);
+    const participants = getParticipants(state);
+
+    // reset pagination.
+    const currentLayout = getCurrentLayout(state);
+    const participantCount = participants.length;
+
+    if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        const { clientHeight } = state['features/base/responsive-ui'];
+        // padding(30)
+        // localVideo(124)
+        // pageButton(24 * 2)
+        // toolButton(24)
+        const thumbHeight = 124;    // 120 + topBottomMargin(4)
+        const pageHeight = clientHeight - 30 - thumbHeight - 24;
+
+        newState.pageSize = Math.floor(pageHeight < (participantCount-1) * thumbHeight
+            ? (pageHeight - (24 * 2)) / thumbHeight
+            : pageHeight / thumbHeight);
+        newState.totalPages = Math.max(Math.ceil((participantCount-1) / newState.pageSize), 1);
+        // data = participants.filter(p => !p.local);
+    } else if (currentLayout === LAYOUTS.TILE_VIEW) {
+        newState.pageSize = getMaxColumnCount(state) * getMaxColumnCount(state);
+        newState.totalPages = Math.max(Math.ceil(participantCount / newState.pageSize), 1);
+        // data = participants;
+    } else {
+        console.error('ERROR: (updateParticipants) Unexpected layout!', currentLayout);
+        return;
+    }
+
+    if (newState.totalPages < newState.current) {
+        newState.current = newState.totalPages;
+    }
+
+    if (newState.order) {
+        const orderedBefore = map(participants, 'id').join(',');
+        const ordered = sortBy(participants, ...newState.order);
+        const orderedAfter = map(ordered, 'id').join(',');
+
+        if (orderedBefore !== orderedAfter) {
+            dispatch(setParticipants(ordered));
         }
+    }
 
-        if (newState.order) {
-            const orderedBefore = map(participants, 'id').join(',');
-            const ordered = sortBy(participants, ...newState.order);
-            const orderedAfter = map(ordered, 'id').join(',');
-
-            if (orderedBefore !== orderedAfter) {
-                dispatch(setParticipants(ordered));
-            }
-        }
-
+    if (beforeState !== JSON.stringify(newState)) {
         dispatch({
             type: SET_PAGINATION,
             pagination: newState,
         });
-    };
-}
+        console.error('SET_PAGINATION:', (new Date()).toJSON(), newState);
+    }
+}, 500);
 
 /**
  * Creates a (redux) action which signals that the list of known participants

@@ -204,7 +204,9 @@ function _onFollowMeCommand(attributes = {}, value, id, store) {
         const { data, ...pagination } = JSON.parse(value.replace(/&quot;/g, '"'));
         const mapData = keyBy(store.getState()['features/base/participants'], 'id');
         store.dispatch(setParticipants(map(data, id => mapData[id])));
-        store.dispatch(setPagination(pagination));
+        store.dispatch(setPagination({ order: pagination.order }));
+        // force repagination
+        store.dispatch(setPagination());
     }
 }
 

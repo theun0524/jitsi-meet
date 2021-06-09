@@ -6,7 +6,8 @@ import { CLIENT_RESIZED } from '../base/responsive-ui';
 import { SETTINGS_UPDATED } from '../base/settings';
 import {
     getCurrentLayout,
-    LAYOUTS
+    LAYOUTS,
+    setPagination
 } from '../video-layout';
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
@@ -39,6 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
                     store
                 )
             );
+            store.dispatch(setPagination());
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:

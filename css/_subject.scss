@@ -53,6 +53,14 @@
     &.editable {
         pointer-events: auto;
         cursor: pointer;
+
+        &:hover {
+            padding-right: 34px;
+    
+            .button {
+                visibility: visible;
+            }
+        }
     }
     
     .button {
@@ -61,14 +69,6 @@
         position: absolute;
         right: 4;
         visibility: hidden;
-    }
-
-    &:hover {
-        padding-right: 34px;
-
-        .button {
-            visibility: visible;
-        }
     }
 }
 

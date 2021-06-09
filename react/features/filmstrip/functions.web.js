@@ -29,7 +29,7 @@ declare var interfaceConfig: Object;
 // Minimum space to keep between the sides of the tiles and the sides
 // of the window.
 const TILE_VIEW_HORZ_MARGINS = 20;
-const TILE_VIEW_VERT_MARGINS = 160;
+const TILE_VIEW_VERT_MARGINS = 20;
 
 /**
  * Returns true if the filmstrip on mobile is visible, false otherwise.
