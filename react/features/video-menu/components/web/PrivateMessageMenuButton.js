@@ -5,14 +5,14 @@ import React, { Component } from 'react';
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { openChat } from '../../../chat/';
 import {
-    _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../../../chat/components/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 declare var interfaceConfig: Object;
 
@@ -56,7 +56,7 @@ class PrivateMessageMenuButton extends Component<Props> {
         }
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t('toolbar.privateMessage') }
                 icon = { IconMessage }
                 id = { `privmsglink_${participantID}` }
@@ -72,9 +72,9 @@ class PrivateMessageMenuButton extends Component<Props> {
      * @returns {void}
      */
     _onClick() {
-        const { _participant, _setPrivateMessageRecipient } = this.props;
+        const { dispatch, _participant } = this.props;
 
-        _setPrivateMessageRecipient(_participant);
+        dispatch(openChat(_participant));
     }
 }
 
@@ -90,8 +90,9 @@ function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
 
     return {
         ..._abstractMapStateToProps(state, ownProps),
-        _hidden: Boolean(disablePrivateMessage) || !isButtonEnabled('chat', state)
+        _hidden: typeof interfaceConfig !== 'undefined'
+            && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat', state))
     };
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(PrivateMessageMenuButton));
+export default translate(connect(_mapStateToProps)(PrivateMessageMenuButton));

@@ -9,27 +9,20 @@ import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
-import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 declare var interfaceConfig: Object;
 
 type Props = {
 
     /**
-     * Whether tile view is enabled.
+     * Whether to show the option to invite more people.
      */
-    _tileViewEnabled: Boolean,
+    _shouldShow: boolean,
 
     /**
-     * Whether to show the option to invite more people
-     * instead of the subject.
+     * Whether the toolbox is visible.
      */
-    _visible: boolean,
-
-    /**
-     * Whether to open chat window
-     */
-    _isChatOpen: boolean,
+    _toolboxVisible: boolean,
 
     /**
      * Handler to open the invite dialog.
@@ -50,24 +43,25 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function InviteMore({
-    _isChatOpen,
-    _tileViewEnabled,
-    _visible,
+    _shouldShow,
+    _toolboxVisible,
     onClick,
     t
 }: Props) {
     return (
-        _visible
-            ? <div className = { `invite-more-container${_tileViewEnabled ? ' elevated' : ''} ${_isChatOpen ? 'slideInExt' : ''}` }>
-                <div className = 'invite-more-header'>
-                    {t('addPeople.inviteMoreHeader')}
-                </div>
-                <div
-                    className = 'invite-more-button'
-                    onClick = { onClick }>
-                    <Icon src = { IconInviteMore } />
-                    <div className = 'invite-more-button-text'>
-                        {t('addPeople.inviteMorePrompt')}
+        _shouldShow
+            ? <div className = { `invite-more-container${_toolboxVisible ? '' : ' elevated'}` }>
+                <div className = 'invite-more-content'>
+                    <div className = 'invite-more-header'>
+                        {t('addPeople.inviteMoreHeader')}
+                    </div>
+                    <div
+                        className = 'invite-more-button'
+                        onClick = { onClick }>
+                        <Icon src = { IconInviteMore } />
+                        <div className = 'invite-more-button-text'>
+                            {t('addPeople.inviteMorePrompt')}
+                        </div>
                     </div>
                 </div>
             </div> : null
@@ -88,9 +82,8 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        _isChatOpen: state['features/chat'].isOpen,
-        _tileViewEnabled: shouldDisplayTileView(state),
-        _visible: isToolboxVisible(state) && isButtonEnabled('invite', state) && isAlone && !hide
+        _shouldShow: isButtonEnabled('invite', state) && isAlone && !hide,
+        _toolboxVisible: isToolboxVisible(state)
     };
 }
 

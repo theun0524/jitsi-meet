@@ -18,10 +18,10 @@ import { translate } from '../../../base/i18n';
 import {
     IconChat,
     IconCodeBlock,
+    IconDeviceDocument,
     IconExitFullScreen,
     IconFeedback,
     IconFullScreen,
-    IconOpenInNew,
     IconParticipants,
     IconPresentation,
     IconRaisedHand,
@@ -80,6 +80,8 @@ import {
     VideoQualityDialog
 } from '../../../video-quality';
 import { VideoBackgroundButton } from '../../../virtual-background';
+import { toggleBackgroundEffect } from '../../../virtual-background/actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
 import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
@@ -108,6 +110,11 @@ import VideoSettingsButton from './VideoSettingsButton';
 type Props = {
 
     /**
+     * String showing if the virtual background type is desktop-share.
+     */
+    _backgroundType: String,
+
+    /**
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
@@ -117,7 +124,7 @@ type Props = {
      */
     _clientWidth: number,
 
-     /**
+    /**
      * The {@code JitsiConference} for the current conference.
      */
     _conference: Object,
@@ -149,24 +156,19 @@ type Props = {
     _fullScreen: boolean,
 
     /**
-     * Whether or not the tile view is enabled.
+     * Whether or not the app is running in mobile browser.
      */
-    _tileViewEnabled: boolean,
-
-    /**
-     * Whether or not meeting is streaming live.
-     */
-    _isLiveStreaming: boolean,
+    _isMobile: boolean,
 
     /**
      * Whether or not the profile is disabled.
      */
     _isProfileDisabled: boolean,
-    
+
     /**
-     * Whether or not meeting is recording.
+     * Whether or not the tile view is enabled.
      */
-    _isRecording: boolean,
+    _tileViewEnabled: boolean,
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
@@ -190,9 +192,19 @@ type Props = {
     _locked: boolean,
 
     /**
+     * The JitsiLocalTrack to display.
+     */
+    _localVideo: Object,
+
+    /**
      * Whether or not the overflow menu is visible.
      */
     _overflowMenuVisible: boolean,
+
+    /**
+     * Whether or not the participants pane is open.
+     */
+    _participantsPaneOpen: boolean,
 
     /**
      * Whether or not the local participant's hand is raised.
@@ -210,9 +222,19 @@ type Props = {
     _visible: boolean,
 
     /**
-     * Set with the buttons which this Toolbox should display.
+     * Array with the buttons which this Toolbox should display.
      */
-    _visibleButtons: Set<string>,
+    _visibleButtons: Array<string>,
+
+    /**
+     * Handler to check if a button is enabled.
+     */
+     _shouldShowButton: Function,
+
+    /**
+     * Returns the selected virtual source object.
+     */
+     _virtualSource: Object,
 
     /**
      * Invoked to active other features of the app.
@@ -232,7 +254,7 @@ declare var APP: Object;
  *
  * @extends Component
  */
-class Toolbox extends Component<Props, State> {
+class Toolbox extends Component<Props> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -488,6 +510,7 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleRaiseHand() {
         const { _localParticipantID, _raisedHand } = this.props;
+        const newRaisedStatus = !_raisedHand;
 
         this.props.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -498,30 +521,24 @@ class Toolbox extends Component<Props, State> {
 
             id: _localParticipantID,
             local: true,
-            raisedHand: !_raisedHand
+            raisedHand: newRaisedStatus
         }));
+
+        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
     }
 
     /**
      * Dispatches an action to toggle screensharing.
      *
      * @private
+     * @param {boolean} enabled - The state to toggle screen sharing to.
+     * @param {boolean} audioOnly - Only share system audio.
      * @returns {void}
      */
-    _doToggleScreenshare() {
+    _doToggleScreenshare(enabled, audioOnly = false) {
         if (this.props._desktopSharingEnabled) {
-            this.props.dispatch(toggleScreensharing());
+            this.props.dispatch(toggleScreensharing(enabled, audioOnly));
         }
-    }
-
-    /**
-     * Dispatches an action to toggle YouTube video sharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSharedVideo() {
-        this.props.dispatch(toggleSharedVideo());
     }
 
     /**
@@ -701,13 +718,28 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onShortcutToggleScreenshare() {
+        const enable = !this.props._screensharing;
+
         sendAnalytics(createToolbarEvent(
             'screen.sharing',
             {
-                enable: !this.props._screensharing
+                enable
             }));
 
-        this._doToggleScreenshare();
+        this._doToggleScreenshare(enable);
+    }
+
+    _onTabIn: () => void;
+
+    /**
+     * Toggle the toolbar visibility when tabbing into it.
+     *
+     * @returns {void}
+     */
+    _onTabIn() {
+        if (!this.props._visible) {
+            this.props.dispatch(showToolbox());
+        }
     }
 
     _onTabIn: () => void;
@@ -831,7 +863,10 @@ class Toolbox extends Component<Props, State> {
             {
                 enable: !this.props._chatOpen
             }));
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/master
         this._closeOverflowMenuIfOpen();
         this._doToggleChat();
     }
@@ -851,7 +886,10 @@ class Toolbox extends Component<Props, State> {
                 {
                     enable: !this.props._fullScreen
                 }));
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/master
         this._closeOverflowMenuIfOpen();
         this._doToggleFullScreen();
     }
@@ -898,16 +936,33 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onToolbarToggleScreenshare() {
+        if (this.props._backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            const noneOptions = {
+                enabled: false,
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.NONE,
+                selectedThumbnail: VIRTUAL_BACKGROUND_TYPE.NONE,
+                backgroundEffectEnabled: false
+            };
+
+            this.props._virtualSource.dispose();
+
+            this.props.dispatch(toggleBackgroundEffect(noneOptions, this.props._localVideo));
+
+            return;
+        }
         if (!this.props._desktopSharingEnabled) {
             return;
         }
 
+        const enable = !this.props._screensharing;
+
         sendAnalytics(createShortcutEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._screensharing }));
+            { enable }));
 
-        this._doToggleScreenshare();
+        this._closeOverflowMenuIfOpen();
+        this._doToggleScreenshare(enable);
     }
 
     _onToolbarToggleShareAudio: () => void;
@@ -958,7 +1013,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the profile button is visible and false otherwise.
+     * Returns true if the embed meeting button is visible and false otherwise.
      *
      * @returns {boolean}
      */
@@ -974,7 +1029,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean}
      */
     _isProfileVisible() {
-        return this.props._isProfileDisabled && this.props._shouldShowButton('profile');
+        return !this.props._isProfileDisabled && this.props._shouldShowButton('profile');
     }
 
     /**
@@ -982,7 +1037,7 @@ class Toolbox extends Component<Props, State> {
      *
      * @private
      * @param {Array<React$Element>} additionalButtons - Additional buttons to be displayed.
-     * @returns {Array<ReactElement>}
+     * @returns {Array<React$Element>}
      */
     _renderOverflowMenuContent(additionalButtons: Array<React$Element<any>>) {
         const {
@@ -1017,13 +1072,13 @@ class Toolbox extends Component<Props, State> {
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
             (this.props._shouldShowButton('security') || this.props._shouldShowButton('info'))
-                && <SecurityDialogButton
-                    key = 'security'
-                    showLabel = { true } />,
+            && <SecurityDialogButton
+                key = 'security'
+                showLabel = { true } />,
             this.props._shouldShowButton('closedcaptions')
-                && <ClosedCaptionButton
-                    key = 'closed-captions'
-                    showLabel = { true } />,
+            && <ClosedCaptionButton
+                key = 'closed-captions'
+                showLabel = { true } />,
             this.props._shouldShowButton('recording')
                 && <RecordButton
                     key = 'record'
@@ -1109,12 +1164,12 @@ class Toolbox extends Component<Props, State> {
                 && !_isChatOnly
                 && <SettingsButton
                     key = 'settings'
-                    showLabel = { true }
-                    visible = { this.props._shouldShowButton('settings') } />,
+                    showLabel = { true } />,
             this.props._shouldShowButton('shortcuts')
+                && !_isMobile
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.shortcuts') }
-                    icon = { IconOpenInNew }
+                    icon = { IconDeviceDocument }
                     key = 'shortcuts'
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
                     text = { t('toolbar.shortcuts') } />,
@@ -1291,7 +1346,7 @@ class Toolbox extends Component<Props, State> {
     /**
      * Renders the toolbox content.
      *
-     * @returns {Array<ReactElement>}
+     * @returns {ReactElement}
      */
     _renderToolboxContent() {
         const {
@@ -1337,7 +1392,8 @@ class Toolbox extends Component<Props, State> {
                             visible = { this.props._shouldShowButton('hangup') } />
                     </div>
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
 
@@ -1360,9 +1416,6 @@ function _mapStateToProps(state) {
         disableTileView,
         hideParticipantsStats,
     } = state['features/base/config'];
-    const participants = state['features/base/participants'];
-    const participantsById = keyBy(state['features/base/participants'], 'id');
-    const sharedVideoStatus = state['features/shared-video'].status;
     const {
         fullScreen,
         overflowMenuVisible,
@@ -1372,7 +1425,6 @@ function _mapStateToProps(state) {
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const isGuest = !isHost(state);
-    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
     const { clientWidth } = state['features/base/responsive-ui'];
 
     let desktopSharingDisabledTooltipKey;
@@ -1382,15 +1434,8 @@ function _mapStateToProps(state) {
         // feature enabled
         desktopSharingEnabled = getParticipants(state)
             .find(({ features = {} }) =>
-                String(features['screen-sharing']) === PARTICIPANT_ROLE.MODERATOR) !== undefined;
-
-        // we want to show button and tooltip
+                String(features['screen-sharing']) === 'true') !== undefined;
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
-    } else if (desktopSharingEnabled && Boolean(disableDesktopSharing)) {
-        desktopSharingEnabled = !(
-            disableDesktopSharing === true ||
-            (disableDesktopSharing === 'guest' && isGuest)
-        );
     }
 
     return {
@@ -1398,6 +1443,8 @@ function _mapStateToProps(state) {
         _clientWidth: clientWidth,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
+        _backgroundType: state['features/virtual-background'].backgroundType,
+        _virtualSource: state['features/virtual-background'].virtualSource,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
@@ -1416,12 +1463,13 @@ function _mapStateToProps(state) {
             state['features/etherpad']?.editing
         ),
         _localParticipantID: localParticipant.id,
+        _localVideo: localVideo,
         _localRecState: localRecordingStates,
         _locked: locked,
         _overflowMenuVisible: overflowMenuVisible,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
-        _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state),
         _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)

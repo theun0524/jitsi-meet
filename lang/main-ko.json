@@ -17,7 +17,7 @@
         "inviteMorePrompt": "다른 사람 초대",
         "linkCopied": "링크가 클립보드에 복사되었습니다",
         "loading": "사람 및 전화번호 검색",
-        "loadingNumber": "전화번호 확인 중",
+        "loadingNumber": "전화번호 확인중",
         "loadingPeople": "초대할 사람 찾기",
         "noResults": "일치하는 검색 결과 없음",
         "noValidNumbers": "전화 번호를 입력하십시오.",
@@ -91,10 +91,10 @@
     },
     "connection": {
         "ATTACHED": "첨부",
-        "AUTHENTICATING": "인증 중",
+        "AUTHENTICATING": "인증중",
         "AUTHFAIL": "인증 실패",
-        "CONNECTED": "연결 됨",
-        "CONNECTING": "연결 중",
+        "CONNECTED": "연결됨",
+        "CONNECTING": "연결중",
         "CONNFAIL": "연결 실패",
         "DISCONNECTED": "연결 끊김",
         "DISCONNECTING": "연결 종료 중",
@@ -185,10 +185,10 @@
         "unbanUser": "사용자 허용",
         "cameraConstraintFailedError": "카메라가 필요한 제약 조건 중 일부를 만족하지 못합니다",
         "cameraNotFoundError": "카메라를 찾을 수 없습니다",
-        "cameraNotSendingData": "카메라에 액세스 할 수 없습니다. 다른 응용 프로그램이이 장치를 사용하고 있는지 확인한 후 설정 메뉴에서 다른 장치를 선택하거나 응용 프로그램을 다시로드하십시오.",
+        "cameraNotSendingData": "카메라에 액세스 할 수 없습니다. 다른 응용 프로그램이 장치를 사용하고 있는지 확인한 후 설정 메뉴에서 다른 장치를 선택하거나 응용 프로그램을 다시 로드하십시오.",
         "cameraNotSendingDataTitle": "카메라에 액세스 할 수 없습니다",
         "cameraPermissionDeniedError": "카메라 사용 권한을 부여하지 않았습니다. 회의에 계속 참여할 수 있지만 다른 참석자는 귀하를 볼 수 없습니다. 검색 주소창의 카메라 버튼을 사용하여 문제를 해결하십시오.",
-        "cameraUnknownError": "알 수없는 이유로 카메라를 사용할 수 없습니다",
+        "cameraUnknownError": "알 수 없는 이유로 카메라를 사용할 수 없습니다",
         "cameraUnsupportedResolutionError": "카메라가 필요한 비디오 해상도를 지원하지 않습니다",
         "Cancel": "취소",
         "Change": "변경",
@@ -366,11 +366,11 @@
         "shareYourScreenDisabled": "화면 공유가 비활성화되었습니다.",
         "shareYourScreenDisabledForGuest": "손님은 화면을 공유할 수 없습니다.",
         "startLiveStreaming": "라이브 스트리밍 시작",
-        "startRecording": "레코딩 시작",
+        "startRecording": "녹화 시작",
         "startRemoteControlErrorMessage": "원격 제어 세션을 시작하는 동안 오류가 발생했습니다",
         "stopLiveStreaming": "라이브 스트리밍 종료",
-        "stopRecording": "레코딩 종료",
-        "stopRecordingWarning": "레코딩을 중단하고 싶으십니까?",
+        "stopRecording": "녹화 종료",
+        "stopRecordingWarning": "녹화를 중단하고 싶으십니까?",
         "stopStreamingWarning": "라이브 스트리밍을 중단하고 싶으십니까?",
         "streamKey": "라이브 방송 URL 또는 YouTube 실시간 스트리밍 키",
         "Submit": "제출",
@@ -495,7 +495,8 @@
         "toggleFilmstrip": "동영상 표시 또는 숨기기",
         "toggleScreensharing": "카메라와 화면 공유간에 전환",
         "toggleShortcuts": "도움말 메뉴 표시 또는 숨기기",
-        "videoMute": "카메라 시작 또는 중지"
+        "videoMute": "카메라 시작 또는 중지",
+        "videoQuality": "비디오 품질"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "높은 수요로 인해 스트리밍이 {{limit}} 분으로 제한됩니다. 무제한 스트리밍의 경우 <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>을 사용해보세요.",
@@ -688,17 +689,17 @@
     },
     "presenceStatus": {
         "busy": "바쁨",
-        "calling": "전화 거는 중",
-        "connected": "연결 됨",
-        "connecting": "연결 중",
-        "connecting2": "연결 중*",
+        "calling": "전화 거는중",
+        "connected": "연결됨",
+        "connecting": "연결중",
+        "connecting2": "연결중*",
         "disconnected": "연결 끊김",
-        "expired": "만료 됨",
-        "ignored": "무시 됨",
-        "initializingCall": "통화 초기화 중",
-        "invited": "초대 됨",
-        "rejected": "거부 됨",
-        "ringing": "전화 중"
+        "expired": "만료됨",
+        "ignored": "무시됨",
+        "initializingCall": "통화 초기화중",
+        "invited": "초대됨",
+        "rejected": "거부됨",
+        "ringing": "전화중"
     },
     "profile": {
         "setDisplayNameLabel": "이름 설정",
@@ -713,7 +714,7 @@
         "authDropboxText": "Dropbox로 업로드",
         "availableSpace": "여유 공간: {{spaceLeft}} MB (약 {{duration}} 분 레코딩)",
         "beta": "베타",
-        "busy": "레코딩 자원을 확보하고 있습니다. 몇 분 후에 다시 시도하십시오.",
+        "busy": "녹화 자원을 확보하고 있습니다. 몇 분 후에 다시 시도하십시오.",
         "busyTitle": "모든 레코더가 현재 사용 중입니다",
         "error": "레코딩이 실패했습니다. 다시 시도하십시오.",
         "expandedOff": "레코딩이 중지됨",
@@ -734,7 +735,7 @@
         "signIn": "로그인",
         "signOut": "로그아웃",
         "unavailable": "죄송합니다. {{serviceName}}은 현재 사용할 수 없습니다. 저희는 문제를 해결하기 위해 노력하고 있습니다. 나중에 다시 시도 해주십시오.",
-        "unavailableTitle": "레코딩을 사용할 수 없습니다"
+        "unavailableTitle": "녹화를 사용할 수 없습니다"
     },
     "sectionList": {
         "pullToRefresh": "당겨서 새로고침"
@@ -892,7 +893,7 @@
         "audioOnlyOff": "영상회의로 전환",
         "audioOnlyOn": "음성회의로 전환",
         "audioRoute": "음성 장비 선택하기",
-        "authenticate": "인증 중",
+        "authenticate": "인증중",
         "callQuality": "품질 설정하기",
         "chat": "채팅창 열기/닫기",
         "closeChat": "대화 종료",
@@ -1132,3 +1133,4 @@
         "toggleLabel": "로비 활성화"
     }
 }
+

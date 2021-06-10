@@ -213,6 +213,37 @@
             }
         }
     }
+
+    .jitsi-icon {
+        cursor: pointer;
+    }
+}
+
+.chat-input-container {
+    padding: 0 16px 16px;
+
+    &.populated {
+        #chat-input {
+            .send-button {
+                background: #1B67EC;
+                cursor: pointer;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background: #3D82FB;
+                    }
+                }
+
+                &:active {
+                    background: #0852D4;
+                }
+
+                path {
+                    fill: #fff;
+                }
+            }
+        }
+    }
 }
 
 #chat-input {
@@ -228,6 +259,41 @@
     // * {
     //     background: transparent;
     // }
+}
+
+.send-button-container {
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+
+    path {
+        fill: $chatInputSeparatorColor;
+    }
+}
+
+.smiley-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+}
+
+#chat-input .smiley-button {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: #484A4F;
+        }
+    }
 }
 
 .send-button-container {

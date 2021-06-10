@@ -72,6 +72,7 @@ const config = {
         disableHostCheck: true,
         hot: true,
         https: true,
+        host: '127.0.0.1',
         inline: true,
         watchContentBase: true,
         host: '0.0.0.0',

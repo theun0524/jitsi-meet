@@ -183,7 +183,7 @@ class Popover extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, className, content, id, popoverRef, overflowDrawer, position } = this.props;
+        const { children, className, content, id, overflowDrawer, position } = this.props;
 
         if (overflowDrawer) {
             return (

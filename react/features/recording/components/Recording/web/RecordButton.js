@@ -8,8 +8,6 @@ import AbstractRecordButton, {
     type Props
 } from '../AbstractRecordButton';
 
-declare var interfaceConfig: Object;
-
 /**
  * Maps (parts of) the redux state to the associated props for the
  * {@code RecordButton} component.
@@ -34,7 +32,7 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     }
 
     if (typeof visible === 'undefined') {
-        visible = abstractProps.visible;
+        visible = toolbarButtons.includes('recording') && abstractProps.visible;
     }
 
     return {

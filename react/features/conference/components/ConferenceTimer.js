@@ -20,6 +20,11 @@ type Props = {
     _startTimestamp: ?number,
 
     /**
+     * Style to be applied to the rendered text.
+     */
+    textStyle: ?Object,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -100,7 +105,7 @@ class ConferenceTimer extends Component<Props, State> {
      */
     render() {
         const { timerValue } = this.state;
-        const { _startTimestamp, _timeRemained, t } = this.props;
+        const { _startTimestamp, _timeRemained, t, textStyle } = this.props;
 
         if (!_startTimestamp && !_timeRemained) {
             return null;
@@ -116,7 +121,7 @@ class ConferenceTimer extends Component<Props, State> {
             )
         }
 
-        return renderConferenceTimer(timerValue);
+        return renderConferenceTimer(timerValue, textStyle);
     }
 
     /**
@@ -128,7 +133,6 @@ class ConferenceTimer extends Component<Props, State> {
      * @returns {void}
      */
     _setStateFromUTC(refValueUTC, currentValueUTC) {
-
         if (!refValueUTC || !currentValueUTC) {
             return;
         }

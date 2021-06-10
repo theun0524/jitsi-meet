@@ -29,6 +29,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_CONFIG:
     case SET_LOCATION_URL:
+        // XXX The JSON Web Token (JWT) is not the only piece of state that we
         // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
 
@@ -136,7 +137,7 @@ function _setJWT(store, next, action) {
             }
 
             if (jwtPayload) {
-                const { context, iss } = jwtPayload;
+                const { context, iss, sub } = jwtPayload;
 
                 action.jwt = jwt;
                 action.issuer = iss;
@@ -146,7 +147,7 @@ function _setJWT(store, next, action) {
                     action.callee = context.callee;
                     action.group = context.group;
                     action.server = context.server;
-                    action.tenant = context.tenant;
+                    action.tenant = context.tenant || sub || undefined;
                     action.user = user;
 
                     user && _overwriteLocalParticipant(

@@ -24,6 +24,9 @@ all: compile deploy clean
 compile:
 	node --max-old-space-size=4096 $(WEBPACK) -p
 
+compile-load-test:
+	${NPM} install --prefix resources/load-test && ${NPM} run build --prefix resources/load-test
+
 clean:
 	rm -fr $(BUILD_DIR)
 

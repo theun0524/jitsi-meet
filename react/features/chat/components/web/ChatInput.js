@@ -7,6 +7,7 @@ import type { Dispatch } from 'redux';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, getParticipants, getParticipantCount } from '../../../base/participants';
+import { Icon, IconPlane, IconSmile } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 
 import { setPrivateMessageRecipient } from '../../actions';

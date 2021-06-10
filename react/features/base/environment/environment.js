@@ -46,7 +46,7 @@ export function isBrowsersOptimal(browserName: string) {
  *
  * @returns {boolean}
  */
- export function isMacOS() {
+export function isMacOS() {
     return Platform.OS === 'macos';
 }
 
@@ -113,7 +113,7 @@ export function isSupportedMobileBrowser() {
 
     return (Platform.OS === 'android' && browser.isChromiumBased())
         || (Platform.OS === 'android' && browser.isFirefox())
-        || (Platform.OS === 'ios' && browser.isSafari());
+        || (Platform.OS === 'ios' && browser.isWebKitBased());
 }
 
 /**

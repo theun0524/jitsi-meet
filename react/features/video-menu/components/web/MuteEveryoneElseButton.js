@@ -8,21 +8,20 @@ import { IconMicDisabled, IconMicrophone, IconMuteEveryoneElse } from '../../../
 import { connect } from '../../../base/redux';
 import { showConfirmDialog } from '../../../notifications';
 import { muteAllParticipants } from '../../actions';
-import AbstractMuteButton, {
-    _mapStateToProps,
+import AbstractMuteEveryoneElseButton, {
     type Props
-} from '../AbstractMuteButton';
+} from '../AbstractMuteEveryoneElseButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 /**
  * Implements a React {@link Component} which displays a button for audio muting
  * every participant in the conference except the one with the given
  * participantID
  */
-class MuteEveryoneElseButton extends AbstractMuteButton {
+class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
     /**
-     * Instantiates a new {@code MuteEveryoneElseButton}.
+     * Instantiates a new {@code Component}.
      *
      * @inheritdoc
      */
@@ -42,8 +41,8 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
         const { mute, participantID, t } = this.props;
 
         return (
-            <RemoteVideoMenuButton
-                buttonText = { t(`videothumbnail.domuteOthers`) }
+            <VideoMenuButton
+                buttonText = { t('videothumbnail.domuteOthers') }
                 displayClass = { 'mutelink' }
                 icon = { mute ? IconMicDisabled : IconMicrophone }
                 id = { `mutelink_${participantID}` }
@@ -86,4 +85,4 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
     }
 }
 
-export default translate(connect(_mapStateToProps)(MuteEveryoneElseButton));
+export default translate(connect()(MuteEveryoneElseButton));

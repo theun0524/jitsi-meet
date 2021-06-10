@@ -7,6 +7,10 @@
 		<string>applinks:devmeet.postech.ac.kr</string>
 		<string>applinks:vmeeting.io</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.org.jitsi.meet.appgroup</string>
+	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>
 </dict>

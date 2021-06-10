@@ -11,13 +11,15 @@ import { Icon, IconClose, IconMenu, IconMenuThumb, IconSearch } from '../../../b
 import { connect } from '../../../base/redux';
 import { Tooltip } from '../../../base/tooltip';
 import AbstractChat, {
-    _mapDispatchToProps,
     _mapStateToProps,
     type Props
 } from '../AbstractChat';
 
+import ChatDialog from './ChatDialog';
+import Header from './ChatDialogHeader';
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
+import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import InlineDialog from '@atlaskit/inline-dialog/dist/cjs/InlineDialog';
@@ -30,6 +32,7 @@ import EnableChatForAllParticipantsDialog from '../../../video-menu/components/w
 import DisableChatForAllParticipantsDialog from '../../../video-menu/components/web/DisableChatForAllParticipantsDialog';
 
 import { showToast } from '../../../notifications';
+import TouchmoveHack from './TouchmoveHack';
 
 declare var APP: Object;
 
@@ -93,8 +96,6 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
-
-        // Bind event handlers so they are only bound once for every instance.
         this._onChatInputResize = this._onChatInputResize.bind(this);
 
         this._onToggleSearch = this._onToggleSearch.bind(this);
@@ -205,14 +206,20 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <>
-                <MessageContainer
-                    messages = { this.props._messages }
-                    ref = { this._messageContainerRef } />
+                <TouchmoveHack isModal = { this.props._isModal }>
+                    <MessageContainer
+                        messages = { this.props._messages }
+                        ref = { this._messageContainerRef } />
+                </TouchmoveHack>
                 <MessageRecipient />
-                { _showChatInput
-                    ? <ChatInput onResize = { this._onChatInputResize } onSend = { this.props._onSendMessage } />
-                    : <> </>
-                }
+                { _showChatInput && (
+                    <>
+                        <ChatInput
+                            onResize = { this._onChatInputResize }
+                            onSend = { this._onSendMessage } />
+                        <KeyboardAvoider />
+                    </>
+                )}
             </>
         );
     }
@@ -499,16 +506,25 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const { _isOpen, _showNamePrompt } = this.props;
-        const ComponentToRender = _isOpen
-            ? (
-                <>
-                    { this._renderChatHeader() }
-                    { _showNamePrompt
-                        ? <DisplayNameForm /> : this._renderChat() }
-                </>
-            )
-            : null;
+        const { _isModal, _isOpen, _showNamePrompt } = this.props;
+        let ComponentToRender = null;
+
+        if (_isOpen) {
+            if (_isModal) {
+                ComponentToRender = (
+                    <ChatDialog>
+                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                    </ChatDialog>
+                );
+            } else {
+                ComponentToRender = (
+                    <>
+                        { this._renderChatHeader() }
+                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                    </>
+                );
+            }
+        }
         let className = '';
 
         if (_isOpen) {
@@ -539,6 +555,8 @@ class Chat extends AbstractChat<Props> {
             this._messageContainerRef.current.scrollToBottom(withAnimation);
         }
     }
+
+    _onSendMessage: (string) => void;
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(Chat));
+export default translate(connect(_mapStateToProps)(Chat));

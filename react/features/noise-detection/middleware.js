@@ -43,16 +43,8 @@ MiddlewareRegistry.register(store => next => action => {
                     title: i18next.t('toolbar.noisyAudioInputDesc'),
                     timeout: NOTIFICATION_TIMEOUT * 2,
                     icon: 'warning' });
-                // const notification = showNotification({
-                //     titleKey: 'toolbar.noisyAudioInputTitle',
-                //     descriptionKey: 'toolbar.noisyAudioInputDesc'
-                // });
 
-                // dispatch(notification);
                 dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
-
-                // // we store the last notification id so we can hide it if the mic is muted
-                // dispatch(setNoisyAudioInputNotificationUid(notification.uid));
             });
         break;
     }

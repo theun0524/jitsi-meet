@@ -2,6 +2,13 @@
 /* eslint-disable no-unused-vars, no-var, max-len */
 /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
 
+/**
+ * !!!IMPORTANT!!!
+ *
+ * This file is considered deprecated. All options will eventually be moved to
+ * config.js, and no new options should be added here.
+ */
+
 var interfaceConfig = {
     APP_NAME: 'Vmeeting',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
@@ -53,10 +60,10 @@ var interfaceConfig = {
 
     // improve the end user experience
     // with lower CPU usage and better audio quality
-    DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
     DISABLE_FOCUS_INDICATOR: false,
     DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-    DISABLE_JOIN_LEAVE_NOTIFICATION_SOUND: false,
+    DISABLE_JOIN_LEAVE_NOTIFICATION_SOUND: true,
     DISABLE_VIDEO_BACKGROUND: true,
     DISABLE_MUTED_NOTIFICATION: false,
 
@@ -82,7 +89,9 @@ var interfaceConfig = {
     DISABLE_TRANSCRIPTION_SUBTITLES: false,
 
 
-    DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_FOOTER: true,
+    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+    DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
@@ -90,11 +99,6 @@ var interfaceConfig = {
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
     FILM_STRIP_MAX_HEIGHT: 120,
-
-    /**
-     * Whether to only show the filmstrip (and hide the toolbar).
-     */
-    filmStripOnly: false,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
@@ -152,6 +156,13 @@ var interfaceConfig = {
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+
+    /**
+     * Specify which sharing features should be displayed. If the value is not set
+     * all sharing features will be shown. You can set [] to disable all.
+     */
+    // SHARING_FEATURES: ['email', 'url', 'dial-in', 'embed'],
+
     SHOW_BRAND_WATERMARK: false,
 
     /**
@@ -185,7 +196,7 @@ var interfaceConfig = {
     //     'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
     //     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
     //     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-    //     'tileview', 'select-background', 'download', 'help', 'security'
+    //     'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
     // ],
 
     TOOLBAR_TIMEOUT: 4000,
@@ -212,11 +223,6 @@ var interfaceConfig = {
      * @type {boolean}
      */
     VIDEO_QUALITY_LABEL_DISABLED: false,
-
-    /**
-     * When enabled, the kick participant button will not be presented for users without a JWT
-     */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
 
     /**
      * How many columns the tile view can expand to. The respected range is

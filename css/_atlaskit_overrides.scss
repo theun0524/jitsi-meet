@@ -1,7 +1,7 @@
 /**
  * Mixins that mimic the way Atlaskit fills the screen with modals at low screen widths.
  */
- @mixin full-size-modal-positioner() {
+@mixin full-size-modal-positioner() {
     height: 100%;
     left: 0;
     position: fixed;
@@ -52,8 +52,8 @@
  * Override @atlaskit/modal-dialog footer styling.
  */
 .atlaskit-portal [role="dialog"] footer {
-     box-shadow: none;
- }
+    box-shadow: none;
+}
 
 /**
  * Make header close button more easily tappable on mobile.
@@ -109,6 +109,36 @@
     .shift-right .focus-lock [role="dialog"] {
         @include full-size-modal-dialog();
     }
+}
+
+@media (min-width: 480px) and (max-width: 580px) {
+    .shift-right .focus-lock > div > div {
+        @include full-size-modal-positioner();
+    }
+
+    .shift-right .focus-lock [role="dialog"] {
+        @include full-size-modal-dialog();
+    }
+}
+
+@media (max-width: 580px) {
+    // Override Atlaskit inline style for the modal background.
+    // Important is unfortunately needed for that.
+    .shift-right .focus-lock [role="dialog"][style] {
+        background-color: $chatBackgroundColor !important;
+    }
+
+    // Remove Atlaskit padding from the chat dialog.
+    .shift-right .focus-lock [role="dialog"] > div:first-child > div:nth-child(2) {
+        padding: 0;
+    }
+}
+
+div.Tooltip {
+    color: #fff;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 8px;
 }
 
 @media (min-width: 480px) and (max-width: 580px) {

@@ -35,7 +35,7 @@ type Props = {
  *
  * @extends Component
  */
- class FlipLocalVideoButton extends PureComponent<Props> {
+class FlipLocalVideoButton extends PureComponent<Props> {
     /**
      * Initializes a new {@code FlipLocalVideoButton} instance.
      *

@@ -72,6 +72,11 @@ type Props = {
     _participants: Array<Object>,
 
     /**
+     * The participants in the call.
+     */
+    _participants: Array<Object>,
+
+    /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
     _videosClassName: string,

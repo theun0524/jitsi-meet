@@ -2,11 +2,11 @@
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import { CONFERENCE_WILL_LEAVE } from '../base/conference';
-import { MEDIA_TYPE } from '../base/media/index.js';
+import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
     PARTICIPANT_JOINED,
-    PARTICIPANT_UPDATED,
+    PARTICIPANT_UPDATED
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks';
@@ -42,7 +42,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
-    case PARTICIPANT_UPDATED:
+    case PARTICIPANT_UPDATED: {
         // Look for actions that triggered a change to connectionStatus. This is
         // done instead of changing the connection status change action to be
         // explicit in order to minimize changes to other code.
@@ -52,6 +52,7 @@ MiddlewareRegistry.register(store => next => action => {
                 action.participant.connectionStatus);
         }
         break;
+    }
 
     case PARTICIPANTS_PANE_CLOSE:
     case PARTICIPANTS_PANE_OPEN:

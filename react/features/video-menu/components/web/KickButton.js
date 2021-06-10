@@ -10,9 +10,7 @@ import AbstractKickButton, {
     type Props
 } from '../AbstractKickButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
-
-declare var interfaceConfig: Object;
+import VideoMenuButton from './VideoMenuButton';
 
 /**
  * Implements a React {@link Component} which displays a button for kicking out
@@ -43,14 +41,10 @@ class KickButton extends AbstractKickButton {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, visible } = this.props;
-
-        if (!visible) {
-            return null;
-        }
+        const { participantID, t } = this.props;
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t('videothumbnail.kick') }
                 displayClass = 'kicklink'
                 icon = { IconKick }

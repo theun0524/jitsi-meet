@@ -32,9 +32,19 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 type Props = {
 
     /**
+     * Whether the info should span across the full width.
+     */
+    _fullWidth: boolean,
+
+    /**
+     * Whether the conference name and timer should be displayed or not.
+     */
+    _hideConferenceNameAndTimer: boolean,
+
+    /**
      * Whether the conference timer should be shown or not.
      */
-    _hideConferenceTimer: Boolean,
+    _hideConferenceTimer: boolean,
 
     /**
      * Whether the participant count should be shown or not.

@@ -82,7 +82,7 @@ declare var APP: Object;
  * @private
  * @returns {void}
  */
-function _addConferenceListeners(conference, dispatch) {
+function _addConferenceListeners(conference, dispatch, state) {
     const config = state['features/base/config'];
 
     // A simple logger for conference errors received through

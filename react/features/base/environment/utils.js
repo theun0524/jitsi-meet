@@ -17,7 +17,7 @@ export function isMobileBrowser() {
  *
  * @returns {boolean}
  */
- export function isIosMobileBrowser() {
+export function isIosMobileBrowser() {
     return Platform.OS === 'ios';
 }
 

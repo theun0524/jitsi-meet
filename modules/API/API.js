@@ -2,7 +2,6 @@
 
 import Logger from 'jitsi-meet-logger';
 
-import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import {
     createApiEvent,
     sendAnalytics
@@ -41,7 +40,7 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo,
     selectParticipantInLargeVideo
-} from '../../react/features/large-video/actions';
+} from '../../react/features/large-video';
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -61,14 +60,6 @@ declare var APP: Object;
  * List of the available commands.
  */
 let commands = {};
-
-/**
- * The state of screen sharing(started/stopped) before the screen sharing is
- * enabled and initialized.
- * NOTE: This flag help us to cache the state and use it if toggle-share-screen
- * was received before the initialization.
- */
-let initialScreenSharingState = false;
 
 /**
  * The transport instance used for communication with external apps.
@@ -197,6 +188,10 @@ function initCommands() {
 
             APP.store.dispatch(updateSettings({ localFlipX: !currentFlipX }));
         },
+        'toggle-chat': () => {
+            sendAnalytics(createApiEvent('chat.toggled'));
+            APP.store.dispatch(toggleChat());
+        },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
 
@@ -280,8 +275,21 @@ function initCommands() {
             APP.store.dispatch(stopSharedVideo());
         },
 
+        'start-share-video': url => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.start'));
+            APP.store.dispatch(playSharedVideo(url));
+        },
+
+        'stop-share-video': () => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.stop'));
+            APP.store.dispatch(stopSharedVideo());
+        },
+
         /**
-         * Starts a file recording or streaming depending on the passed on params.
+         * Starts a file recording or streaming session depending on the passed on params.
+         * For RTMP streams, `rtmpStreamKey` must be passed on. `rtmpBroadcastID` is optional.
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
@@ -289,13 +297,23 @@ function initCommands() {
          *
          * @param { string } arg.mode - Recording mode, either `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
+         * @param { string } arg.rtmpStreamKey - The RTMP stream key.
+         * @param { string } arg.rtmpBroadcastID - The RTMP braodcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
          * @returns {void}
          */
-        'start-recording': ({ mode, dropboxToken, shouldShare, youtubeStreamKey, youtubeBroadcastID }) => {
+        'start-recording': ({
+            mode,
+            dropboxToken,
+            shouldShare,
+            rtmpStreamKey,
+            rtmpBroadcastID,
+            youtubeStreamKey,
+            youtubeBroadcastID
+        }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -311,8 +329,8 @@ function initCommands() {
                 return;
             }
 
-            if (mode === JitsiRecordingConstants.mode.STREAM && !youtubeStreamKey) {
-                logger.error('Failed starting recording: missing youtube stream key');
+            if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
+                logger.error('Failed starting recording: missing youtube or RTMP stream key');
 
                 return;
             }
@@ -344,9 +362,9 @@ function initCommands() {
                 }
             } else if (mode === JitsiRecordingConstants.mode.STREAM) {
                 recordingConfig = {
-                    broadcastId: youtubeBroadcastID,
+                    broadcastId: youtubeBroadcastID || rtmpBroadcastID,
                     mode: JitsiRecordingConstants.mode.STREAM,
-                    streamId: youtubeStreamKey
+                    streamId: youtubeStreamKey || rtmpStreamKey
                 };
             } else {
                 logger.error('Invalid recording mode provided');
@@ -643,7 +661,7 @@ class API {
      * @param {boolean} isOpen - True if the chat panel is open.
      * @returns {void}
      */
-     notifyChatUpdated(unreadCount: number, isOpen: boolean) {
+    notifyChatUpdated(unreadCount: number, isOpen: boolean) {
         this._sendEvent({
             name: 'chat-updated',
             unreadCount,
@@ -672,7 +690,7 @@ class API {
      * @param {number} videoQuality - The video quality. The number represents the maximum height of the video streams.
      * @returns {void}
      */
-     notifyVideoQualityChanged(videoQuality: number) {
+    notifyVideoQualityChanged(videoQuality: number) {
         this._sendEvent({
             name: 'video-quality-changed',
             videoQuality
@@ -687,8 +705,8 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, ts }: {
-                body: *, id: string, nick: string, ts: *
+            { body, id, nick, privateMessage, ts }: {
+                body: *, id: string, nick: string, privateMessage: boolean, ts: *
             } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
@@ -699,6 +717,7 @@ class API {
             from: id,
             message: body,
             nick,
+            privateMessage,
             stamp: ts
         });
     }
@@ -785,7 +804,7 @@ class API {
      * @param {Object} data - The event data.
      * @returns {void}
      */
-     notifySharingParticipantsChanged(data: Object) {
+    notifySharingParticipantsChanged(data: Object) {
         this._sendEvent({
             name: 'content-sharing-participants-changed',
             data
@@ -852,7 +871,7 @@ class API {
      * @param {Array} args - Array of strings composing the log message.
      * @returns {void}
      */
-     notifyLog(logLevel: string, args: Array<string>) {
+    notifyLog(logLevel: string, args: Array<string>) {
         this._sendEvent({
             name: 'log',
             logLevel,
@@ -880,8 +899,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that user changed their
-     * nickname.
+     * Notify external application (if API is enabled) that local user has left the conference.
      *
      * @param {string} roomName - User id.
      * @returns {void}
@@ -1152,7 +1170,7 @@ class API {
      * @param {string} localStorageContent - The new localStorageContent.
      * @returns {void}
      */
-     notifyLocalStorageChanged(localStorageContent: string) {
+    notifyLocalStorageChanged(localStorageContent: string) {
         this._sendEvent({
             name: 'local-storage-changed',
             localStorageContent
@@ -1199,9 +1217,6 @@ class API {
     dispose() {
         if (this._enabled) {
             this._enabled = false;
-            APP.conference.removeListener(
-                JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
-                onDesktopSharingEnabledChanged);
         }
     }
 }

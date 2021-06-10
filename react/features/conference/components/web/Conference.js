@@ -8,6 +8,7 @@ import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
+import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
@@ -16,7 +17,7 @@ import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
 import { ParticipantsPane } from '../../../participants-pane/components';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
-import { fullScreenChanged, setToolboxAlwaysVisible, showToolbox } from '../../../toolbox/actions.web';
+import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
@@ -26,11 +27,10 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import { default as Notice } from './Notice';
 import ConferenceInfo from './ConferenceInfo';
+import { default as Notice } from './Notice';
 
 declare var APP: Object;
-declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -65,9 +65,9 @@ const LAYOUT_CLASSNAMES = {
 type Props = AbstractProps & {
 
     /**
-     * Whether the local participant is recording the conference.
+     * The alpha(opacity) of the background
      */
-    _iAmRecorder: boolean,
+    _backgroundAlpha: number,
 
     /**
      * Returns true if the 'lobby screen' is visible.
@@ -77,7 +77,7 @@ type Props = AbstractProps & {
     /**
      * If participants pane is visible or not.
      */
-     _isParticipantsPaneVisible: boolean,
+    _isParticipantsPaneVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -106,6 +106,7 @@ class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
+    _setBackground: Function;
 
     /**
      * Initializes a new Conference instance.
@@ -129,6 +130,7 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
+        this._setBackground = this._setBackground.bind(this);
     }
 
     /**
@@ -194,7 +196,8 @@ class Conference extends AbstractConference<Props, *> {
                 <div
                     className = { _layoutClassName }
                     id = 'videoconference_page'
-                    onMouseMove = { this._onShowToolbar }>
+                    onMouseMove = { this._onShowToolbar }
+                    ref = { this._setBackground }>
                     <ConferenceInfo />
 
                     <Notice />
@@ -216,6 +219,35 @@ class Conference extends AbstractConference<Props, *> {
                 <ParticipantsPane />
             </div>
         );
+    }
+
+    /**
+     * Sets custom background opacity based on config. It also applies the
+     * opacity on parent element, as the parent element is not accessible directly,
+     * only though it's child.
+     *
+     * @param {Object} element - The DOM element for which to apply opacity.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setBackground(element) {
+        if (!element) {
+            return;
+        }
+
+        if (this.props._backgroundAlpha !== undefined) {
+            const elemColor = element.style.background;
+            const alphaElemColor = setColorAlpha(elemColor, this.props._backgroundAlpha);
+
+            element.style.background = alphaElemColor;
+            if (element.parentElement) {
+                const parentColor = element.parentElement.style.background;
+                const alphaParentColor = setColorAlpha(parentColor, this.props._backgroundAlpha);
+
+                element.parentElement.style.background = alphaParentColor;
+            }
+        }
     }
 
     /**
@@ -260,9 +292,6 @@ class Conference extends AbstractConference<Props, *> {
         dispatch(connect());
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
-
-        interfaceConfig.filmStripOnly
-            && dispatch(setToolboxAlwaysVisible(true));
     }
 }
 
@@ -277,7 +306,7 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
-        _iAmRecorder: state['features/base/config'].iAmRecorder,
+        _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],

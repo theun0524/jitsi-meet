@@ -3,18 +3,18 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconCamera, IconCameraDisabled } from '../../../base/icons';
+import { IconCameraDisabled } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteVideoButton, {
     _mapStateToProps,
     type Props
 } from '../AbstractMuteVideoButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 /**
- * Implements a React {@link Component} which displays a button for video muting
- * a participant in the conference.
+ * Implements a React {@link Component} which displays a button for disabling
+ * the camera of a participant in the conference.
  *
  * NOTE: At the time of writing this is a button that doesn't use the
  * {@code AbstractButton} base component, but is inherited from the same
@@ -41,17 +41,20 @@ class MuteVideoButton extends AbstractMuteVideoButton {
      * @returns {ReactElement}
      */
     render() {
-        const { _videoTrackMuted, _disableRemoteUnmuteVideo, mute, participantID, t } = this.props;
-        const buttonText = `videothumbnail.do${mute ? '' : 'un'}muteVideo`;
-        const muteClassName = _videoTrackMuted && _disableRemoteUnmuteVideo
-            ? 'mutelink disabled' : 'mutelink';
-        const icon = mute ? IconCameraDisabled : IconCamera;
+        const { _videoTrackMuted, participantID, t } = this.props;
+        const muteConfig = _videoTrackMuted ? {
+            translationKey: 'videothumbnail.videoMuted',
+            muteClassName: 'mutelink disabled'
+        } : {
+            translationKey: 'videothumbnail.domuteVideo',
+            muteClassName: 'mutelink'
+        };
 
         return (
-            <RemoteVideoMenuButton
-                buttonText = { t(buttonText) }
-                displayClass = { muteClassName }
-                icon = { icon }
+            <VideoMenuButton
+                buttonText = { t(muteConfig.translationKey) }
+                displayClass = { muteConfig.muteClassName }
+                icon = { IconCameraDisabled }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />

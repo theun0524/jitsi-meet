@@ -2,7 +2,11 @@
 
 import { openDialog } from '../../../base/dialog';
 import { IconLiveStreaming } from '../../../base/icons';
-import { getLocalParticipant, isLocalParticipantModerator } from '../../../base/participants';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import {
+    getLocalParticipant,
+    isLocalParticipantModerator
+} from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isRecording, isStreaming } from '../../functions';
 
@@ -140,13 +144,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
             if (!visible && !_disabled) {
                 _disabled = true;
                 visible = true;
-
-                // button and tooltip
-                if (!state['features/base/jwt'].jwt) {
-                    _tooltip = 'dialog.liveStreamingDisabledForGuestTooltip';
-                } else {
-                    _tooltip = 'dialog.liveStreamingDisabledTooltip';
-                }
+                _tooltip = 'dialog.liveStreamingDisabledTooltip';
             }
         }
     }

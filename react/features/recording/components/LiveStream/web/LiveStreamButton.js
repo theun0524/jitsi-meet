@@ -8,8 +8,6 @@ import AbstractLiveStreamButton, {
     type Props
 } from '../AbstractLiveStreamButton';
 
-declare var interfaceConfig: Object;
-
 /**
  * Maps (parts of) the redux state to the associated props for the
  * {@code LiveStreamButton} component.
@@ -34,7 +32,7 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     }
 
     if (typeof visible === 'undefined') {
-        visible = abstractProps.visible;
+        visible = toolbarButtons.includes('livestreaming') && abstractProps.visible;
     }
 
     return {

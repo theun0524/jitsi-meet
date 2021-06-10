@@ -15,4 +15,3 @@ export const FEEDBACK_REQUEST_IN_PROGRESS = 'FeedbackRequestInProgress';
  * @type {{AUDIO_ONLY_SCREEN_SHARE_NO_TRACK: string}}
  */
 export const AUDIO_ONLY_SCREEN_SHARE_NO_TRACK = 'AudioOnlyScreenShareNoTrack';
- 

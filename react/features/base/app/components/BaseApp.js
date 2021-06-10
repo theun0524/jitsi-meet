@@ -144,7 +144,7 @@ export default class BaseApp extends Component<*, State> {
     }
 
     /**
-     * Creates an extra {@link ReactElement}s to be added (unconditionaly)
+     * Creates an extra {@link ReactElement}s to be added (unconditionally)
      * alongside the main element.
      *
      * @returns {ReactElement}

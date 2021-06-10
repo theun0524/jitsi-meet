@@ -35,6 +35,8 @@ import {
     setTrackMuted
 } from './functions';
 
+import './subscriber';
+
 declare var APP: Object;
 
 /**
@@ -133,7 +135,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, action.audioOnly);
         }
         break;
 
@@ -153,6 +155,7 @@ MiddlewareRegistry.register(store => next => action => {
             const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
 
             if (isVideoTrack) {
+                // Do not change the video mute state for local presenter tracks.
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
                 } else if (jitsiTrack.isLocal()) {

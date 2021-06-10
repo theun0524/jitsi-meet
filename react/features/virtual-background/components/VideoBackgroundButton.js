@@ -20,11 +20,6 @@ type Props = AbstractButtonProps & {
     _isBackgroundEnabled: boolean,
 
     /**
-     * Whether video is currently muted or not.
-     */
-    _videoMuted: boolean,
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -75,10 +70,9 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const tracks = state['features/base/tracks'];
 
     return {
-        _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
+        _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled)
     };
 }
 

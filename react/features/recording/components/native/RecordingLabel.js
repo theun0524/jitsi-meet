@@ -53,9 +53,9 @@ class RecordingLabel extends AbstractRecordingLabel {
 
         return (
             <Label
-                label = { this.props.t(this._getLabelKey()) }
                 status = { status }
-                style = { indicatorStyle } />
+                style = { indicatorStyle }
+                text = { this.props.t(this._getLabelKey()) } />
         );
     }
 

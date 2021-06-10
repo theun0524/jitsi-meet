@@ -14,7 +14,7 @@ import {
     IconYahoo
 } from '../../../../base/icons';
 import { Tooltip } from '../../../../base/tooltip';
-import { copyText, openURLInBrowser } from '../../../../base/util';
+import { copyText } from '../../../../base/util';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../../../notifications';
 
 type Props = {
@@ -56,18 +56,6 @@ function InviteByEmailSection({ dispatch, inviteSubject, inviteText, t }: Props)
             showNotification({
                 titleKey: 'addPeople.linkCopied'
             }, NOTIFICATION_TIMEOUT));
-    }
-
-    /**
-     * Opens an email provider containing the conference invite.
-     *
-     * @param {string} url - The url to be opened.
-     * @returns {Function}
-     */
-    function _onSelectProvider(url) {
-        return function() {
-            openURLInBrowser(url, true);
-        };
     }
 
     /**
@@ -118,10 +106,13 @@ function InviteByEmailSection({ dispatch, inviteSubject, inviteText, t }: Props)
                             content = { t(tooltipKey) }
                             key = { idx }
                             position = 'top'>
-                            <div
-                                onClick = { _onSelectProvider(url) }>
+                            <a
+                                className = 'provider-icon'
+                                href = { url }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
                                 <Icon src = { icon } />
-                            </div>
+                            </a>
                         </Tooltip>
                     ))
                 }

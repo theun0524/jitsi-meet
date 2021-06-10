@@ -55,7 +55,6 @@ type Props = {
      * Whether it's a vpaas meeting or not.
      */
     isVpaas: boolean,
-    
     /**
      * Invoked to obtain translated strings.
      */
@@ -152,7 +151,9 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
     _isSupportedEnvironment() {
         return interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
             && browser.isChrome()
-            && !isMobileBrowser();
+            && !browser.isTwa()
+            && !isMobileBrowser()
+            && !this.props.isVpaas;
     }
 
     _onClosePressed: () => void;

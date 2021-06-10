@@ -1,9 +1,8 @@
 /* @flow */
 
-import { toState } from '../redux';
-
 import jwtDecode from 'jwt-decode';
 
+import { toState } from '../redux';
 import { parseURLParams } from '../util';
 
 import { MEET_FEATURES } from './constants';

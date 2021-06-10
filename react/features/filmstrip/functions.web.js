@@ -17,11 +17,14 @@ import {
 } from '../base/tracks/functions';
 
 import {
+    ASPECT_RATIO_BREAKPOINT,
     DISPLAY_AVATAR,
     DISPLAY_AVATAR_WITH_NAME,
     DISPLAY_BLACKNESS_WITH_NAME,
     DISPLAY_VIDEO,
     DISPLAY_VIDEO_WITH_NAME,
+    SQUARE_TILE_ASPECT_RATIO,
+    TILE_ASPECT_RATIO
 } from './constants';
 
 declare var interfaceConfig: Object;

@@ -22,11 +22,6 @@
     &--full-width {
         max-width: 100%;
     }
-
-    @media (max-width: 500px) {
-        flex-wrap: wrap;
-        max-width: 100%;
-    }
 }
 
 .subject-info {
@@ -62,6 +57,11 @@
             }
         }
     }
+
+    @media (max-width: 500px) {
+        flex-wrap: wrap;
+        max-width: 100%;
+    }
     
     .button {
         padding: 4px;
@@ -70,6 +70,36 @@
         right: 4;
         visibility: hidden;
     }
+}
+
+.subject-timer {
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 0px 3px 3px 0px;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 16px;
+    min-width: 34px;
+    padding: 6px 8px;
+}
+
+.subject-info {
+    align-items: center;
+    display: flex;
+    margin-bottom: 4px;
+    max-width: 80%;
+    height: 28px;
+}
+
+.subject-text {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 3px 0px 0px 3px;
+    font-size: 14px;
+    line-height: 24px;
+    padding: 2px 16px;
+    height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .subject-timer {

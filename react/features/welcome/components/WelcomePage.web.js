@@ -42,12 +42,6 @@ const DEFAULT_TENANT = process.env.DEFAULT_SITE_ID;
 
 
 /**
- * Maximum number of pixels corresponding to a mobile layout.
- * @type {number}
- */
-const WINDOW_WIDTH_THRESHOLD = 425;
-
-/**
  * The Web container rendering the welcome page.
  *
  * @extends AbstractWelcomePage
@@ -103,6 +97,17 @@ class WelcomePage extends AbstractWelcomePage {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalToolbarContentRef = null;
+
+        this._additionalCardRef = null;
+
+        /**
+         * The template to use as the additional card displayed near the main one.
+         *
+         * @private
+         * @type {HTMLTemplateElement|null}
+         */
+        this._additionalCardTemplate = document.getElementById(
+            'welcome-page-additional-card-template');
 
         /**
          * The template to use as the main content for the welcome page. If
@@ -502,6 +507,7 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                 </div>
             </div>
+
         );
     }
 
@@ -622,6 +628,45 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
+     * Renders the footer.
+     *
+     * @returns {ReactElement}
+     */
+    _renderFooter() {
+        const { t } = this.props;
+        const {
+            MOBILE_DOWNLOAD_LINK_ANDROID,
+            MOBILE_DOWNLOAD_LINK_F_DROID,
+            MOBILE_DOWNLOAD_LINK_IOS
+        } = interfaceConfig;
+
+        return (<footer className = 'welcome-footer'>
+            <div className = 'welcome-footer-centered'>
+                <div className = 'welcome-footer-padded'>
+                    <div className = 'welcome-footer-row-block welcome-footer--row-1'>
+                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
+                        <a
+                            className = 'welcome-badge'
+                            href = { MOBILE_DOWNLOAD_LINK_IOS }>
+                            <img src = './images/app-store-badge.png' />
+                        </a>
+                        <a
+                            className = 'welcome-badge'
+                            href = { MOBILE_DOWNLOAD_LINK_ANDROID }>
+                            <img src = './images/google-play-badge.png' />
+                        </a>
+                        <a
+                            className = 'welcome-badge'
+                            href = { MOBILE_DOWNLOAD_LINK_F_DROID }>
+                            <img src = './images/f-droid-badge.png' />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>);
+    }
+
+    /**
      * Renders tabs to show previous meetings and upcoming calendar events. The
      * tabs are purposefully hidden on mobile browsers.
      *
@@ -662,6 +707,19 @@ class WelcomePage extends AbstractWelcomePage {
 
     /**
      * Sets the internal reference to the HTMLDivElement used to hold the
+     * additional card shown near the tabs card.
+     *
+     * @param {HTMLDivElement} el - The HTMLElement for the div that is the root
+     * of the welcome page content.
+     * @private
+     * @returns {void}
+     */
+    _setAdditionalCardRef(el) {
+        this._additionalCardRef = el;
+    }
+
+    /**
+     * Sets the internal reference to the HTMLDivElement used to hold the
      * welcome page content.
      *
      * @param {HTMLDivElement} el - The HTMLElement for the div that is the root
@@ -696,6 +754,19 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _setRoomInputRef(el) {
         this._roomInputRef = el;
+    }
+
+    /**
+     * Returns whether or not an additional card should be displayed near the tabs.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _shouldShowAdditionalCard() {
+        return interfaceConfig.DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD
+            && this._additionalCardTemplate
+            && this._additionalCardTemplate.content
+            && this._additionalCardTemplate.innerHTML.trim();
     }
 
     /**

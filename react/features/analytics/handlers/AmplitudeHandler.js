@@ -1,3 +1,7 @@
+import amplitude from 'amplitude-js';
+
+import logger from '../logger';
+
 import AbstractHandler from './AbstractHandler';
 import { fixDeviceID } from './amplitude';
 
@@ -18,7 +22,7 @@ export default class AmplitudeHandler extends AbstractHandler {
         const { amplitudeAPPKey, host, user } = options;
 
         this._enabled = true;
-        this._host = host;
+        this._host = host; // Only used on React Native.
 
         const onError = e => {
             logger.error('Error initializing Amplitude', e);

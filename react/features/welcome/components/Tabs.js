@@ -47,9 +47,9 @@ export default class Tabs extends Component<Props> {
             : {};
 
         return (
-            <div className = {s.tabContainer}>
+            <div className = 'tab-container'>
                 { tabs.length > 1 ? (
-                    <div className = {s.tabButtons}>
+                    <div className = 'tab-buttons'>
                         {
                             tabs.map((tab, index) => (
                                 <Tab
@@ -62,7 +62,7 @@ export default class Tabs extends Component<Props> {
                         }
                     </div>) : null
                 }
-                <div className = {s.tabContent}>
+                <div className = 'tab-content'>
                     { content }
                 </div>
             </div>

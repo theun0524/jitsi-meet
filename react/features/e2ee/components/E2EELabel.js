@@ -32,9 +32,9 @@ class E2EELabel extends Component<Props> {
         return (
             <Tooltip
                 content = { this.props.t('e2ee.labelToolTip') }
-                position = { 'left' }>
+                position = { 'bottom' }>
                 <Label
-                    className = 'e2ee'
+                    className = 'label--green'
                     icon = { IconE2EE } />
             </Tooltip>
         );

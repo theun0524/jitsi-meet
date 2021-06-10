@@ -25,7 +25,7 @@ const Filmstrip = {
      */
     getVerticalFilmstripWidth() {
         return isFilmstripVisible(APP.store) ? getVerticalFilmstripVisibleAreaWidth() : 0;
-    },
+    }
 };
 
 export default Filmstrip;

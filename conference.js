@@ -1996,7 +1996,12 @@ export default {
 
         room.on(
             JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET,
-            (...args) => APP.store.dispatch(conferenceUniqueIdSet(room, ...args)));
+            (...args) => {
+                // Preserve the sessionId so that the value is accessible even after room
+                // is disconnected.
+                room.sessionId = room.getMeetingUniqueId();
+                APP.store.dispatch(conferenceUniqueIdSet(room, ...args));
+            });
 
         room.on(
             JitsiConferenceEvents.AUTH_STATUS_CHANGED,
@@ -2971,15 +2976,11 @@ export default {
             requestFeedbackPromise = Promise.resolve(true);
         }
 
-        let feedbackResult;
-
-        requestFeedbackPromise
-        .then(res => {
-            feedbackResult = res;
-
-            return this.leaveRoomAndDisconnect();
-        })
-        .then(() => {
+        Promise.all([
+            requestFeedbackPromise,
+            this.leaveRoomAndDisconnect()
+        ])
+        .then(values => {
             this._room = undefined;
             room = undefined;
 

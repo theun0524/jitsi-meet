@@ -5,7 +5,7 @@ import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_LICENSE_ERROR } from './actionTypes';
 import { countEndpoint } from './actions';
-import { isVpaasMeeting, extractVpaasTenantFromPath, setBillingId, setLicenseError } from './functions';
+import { isVpaasMeeting, extractVpaasTenantFromPath, setLicenseError } from './functions';
 
 /**
  * The redux middleware for billing counter.

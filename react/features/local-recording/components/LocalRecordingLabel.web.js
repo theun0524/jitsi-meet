@@ -45,10 +45,10 @@ class LocalRecordingLabel extends Component<Props> {
         return (
             <Tooltip
                 content = { this.props.t('localRecording.labelToolTip') }
-                position = { 'left' }>
+                position = { 'bottom' }>
                 <Label
                     className = 'local-rec'
-                    label = { this.props.t('localRecording.label') } />
+                    text = { this.props.t('localRecording.label') } />
             </Tooltip>
         );
     }
