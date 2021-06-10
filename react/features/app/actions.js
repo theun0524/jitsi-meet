@@ -468,18 +468,10 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
                 redirectToStaticPage('/');
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/master
                 return;
             }
 
             const { jwt } = getState()['features/base/jwt'];
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/master
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,

@@ -38,7 +38,7 @@ import {
     PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox/components';
+import { OverflowMenuItem } from '../../../base/toolbox/components/web';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
@@ -863,10 +863,6 @@ class Toolbox extends Component<Props> {
             {
                 enable: !this.props._chatOpen
             }));
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream/master
         this._closeOverflowMenuIfOpen();
         this._doToggleChat();
     }
@@ -886,10 +882,6 @@ class Toolbox extends Component<Props> {
                 {
                     enable: !this.props._fullScreen
                 }));
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream/master
         this._closeOverflowMenuIfOpen();
         this._doToggleFullScreen();
     }

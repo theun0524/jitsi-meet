@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 
 import Tab from './Tab';
-import s from './Tabs.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link Tabs}

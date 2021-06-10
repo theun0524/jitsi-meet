@@ -35,23 +35,6 @@ function getParticipantDisplayName(participant) {
 }
 
 /**
- * Creates a (redux) action which signals that a new set of remote endpoints need to be selected.
- *
- * @param {Array<string>} participantIds - The remote participants that are currently selected
- * for video forwarding from the bridge.
- * @returns {{
- *      type: SELECT_ENDPOINTS,
- *      particpantsIds: Array<string>
- * }}
- */
-export function selectEndpoints(participantIds: Array<string>) {
-    return {
-        type: SELECT_ENDPOINTS,
-        participantIds
-    };
-}
-
-/**
  * Creates a (redux) action which signals set the page info.
  *
  * @param {number} pagination - The pagination to be displayed.

@@ -352,17 +352,10 @@ export function participantJoined(participant) {
  *
  * @param {JitsiParticipant} jitsiParticipant - The ID of the participant.
  * @returns {{
-<<<<<<< HEAD
  *     type: PARTICIPANT_UPDATED,
  *     participant: Participant
  * }}
  */
-=======
-*     type: PARTICIPANT_UPDATED,
-*     participant: Participant
-* }}
-*/
->>>>>>> upstream/master
 export function updateRemoteParticipantFeatures(jitsiParticipant) {
     return (dispatch, getState) => {
         if (!jitsiParticipant) {
@@ -541,17 +534,10 @@ export function participantMutedUs(participant, track) {
 
         const isAudio = track.isAudioTrack();
 
-<<<<<<< HEAD
         const title = isAudio
             ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle';
         showToast({
             title: i18next.t(title, {
-=======
-        dispatch(showNotification({
-            descriptionKey: isAudio ? 'notify.mutedRemotelyDescription' : 'notify.videoMutedRemotelyDescription',
-            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
-            titleArguments: {
->>>>>>> upstream/master
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())
             })

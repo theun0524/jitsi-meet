@@ -1,5 +1,6 @@
 // @flow
 
+import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import React, { Component } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
@@ -12,10 +13,8 @@ import { connect } from '../../../base/redux';
 
 import { setPrivateMessageRecipient } from '../../actions';
 
-import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 
 import SmileysPanel from './SmileysPanel';
-import { Icon, IconPlane, IconSmile } from '../../../base/icons';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
