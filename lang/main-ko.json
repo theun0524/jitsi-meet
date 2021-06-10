@@ -407,12 +407,15 @@
         "title": "이 회의 삽입"
     },
     "virtualBackground": {
-        "title": "배경 선택",
-        "enableBlur": "배경 흐리게",
+        "apply": "적용",
+        "title": "배경",
+        "blur": "흐리게",
+        "slightBlur": "조금 흐리게",
+        "pleaseWait": "로딩 중...",
         "removeBackground": "배경 삭제",
-        "uploadImage": "이미지 업로드",
-        "pleaseWait": "로딩중...",
-        "none": "없음"
+        "addBackground": "배경 추가",
+        "none": "없음",
+        "desktopShareError": "화면 공유 생성 오류"
     },
     "feedback": {
         "average": "보통",

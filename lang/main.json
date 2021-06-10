@@ -415,12 +415,13 @@
         "title": "Embed this meeting"
     },
     "virtualBackground": {
-        "title": "Backgrounds",
-        "enableBlur": "Enable blur",
+        "apply": "Apply",
+        "title": "Virtual backgrounds",
+        "blur": "Blur",
+        "slightBlur": "Slight Blur",
         "removeBackground": "Remove background",
-        "uploadImage": "Upload image",
-        "pleaseWait": "Please wait...",
         "addBackground": "Add background",
+        "pleaseWait": "Please wait...",
         "none": "None",
         "desktopShareError": "Could not create desktop share"
     },

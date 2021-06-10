@@ -1,9 +1,12 @@
 // @flow
 
+import { getAuthUrl } from '../../api/url';
 import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
 
 import { toggleBackgroundEffect } from './actions';
 let filterSupport;
+
+declare var APP: Object;
 
 /**
  * Checks context filter support.
@@ -60,7 +63,7 @@ export const toDataURL = async (url: string) => {
  * @returns {Promise<string>}
  *
  */
-export function resizeImage(base64image: any, width: number = 1920, height: number = 1080): Promise<string> {
+export function resizeImage(base64image: any, width: number = 1920, height: number = 1080, contentType: string = 'image/jpeg'): Promise<string> {
 
     // In order to work on Firefox browser we need to handle the asynchronous nature of image loading;  We need to use
     // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
@@ -111,4 +114,14 @@ export function localTrackStopped(dispatch: Function, desktopTrack: Object, curr
     && desktopTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
         dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
     });
+}
+
+export function getRemoteImageUrl(image, resolution = 'hd') {
+    if (!APP?.store || !image?._id) {
+        console.error('getRemoteImageUrl ERROR: invalid params!', image);
+        throw new Error('getRemoteImageUrl ERROR: invalid params!')
+    }
+
+    const apiBase = getAuthUrl(APP.store.getState());
+    return `${apiBase}/backgrounds/${image._id}/${resolution}`;
 }
