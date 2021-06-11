@@ -1,5 +1,6 @@
 // @flow
 
+import { getCurrentConference } from '../base/conference';
 import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
     getLocalParticipant,
@@ -74,6 +75,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_JOINED: {
         const state = store.getState();
+        const conference = getCurrentConference(state);
 
         if (!action.participant.local &&
             isLocalParticipantModerator(state) &&
