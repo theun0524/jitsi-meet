@@ -2,6 +2,7 @@
 
 import React, { Component, useState } from 'react';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCount, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
@@ -16,7 +17,6 @@ import MuteVideoEveryoneElseButton from './MuteVideoEveryoneElseButton';
 
 import FlipLocalVideoButton from './FlipLocalVideoButton';
 import VideoMenu from './VideoMenu';
-import { findIndex } from 'lodash';
 
 /**
  * The type of the React {@code Component} props of
@@ -39,7 +39,12 @@ type Props = {
     /**
      * Shows/hides the local video flip button.
      */
-    _showLocalVideoFlipButton: boolean
+    _showLocalVideoFlipButton: boolean,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -160,19 +165,24 @@ function LocalVideoMenuTriggerButton(props: Props) {
     }
 
     return (
-        <Popover
-            content = { content }
-            overflowDrawer = { props._overflowDrawer }
-            onPopoverOpen = { _onMenuOpen }
-            position = { props._menuPosition }>
-            <span
-                className = 'popover-trigger local-video-menu-trigger'>
-                <Icon
-                    size = '1em'
-                    src = { IconMenuThumb }
-                    title = 'Local user controls' />
-            </span>
-        </Popover>
+        props._showLocalVideoFlipButton
+            ? <Popover
+                content = { content }
+                overflowDrawer = { props._overflowDrawer }
+                onPopoverOpen = { _onMenuOpen }
+                position = { props._menuPosition }>
+                <span
+                    className = 'popover-trigger local-video-menu-trigger'>
+                    <Icon
+                        ariaLabel = { props.t('dialog.localUserControls') }
+                        role = 'button'
+                        size = '1em'
+                        src = { IconMenuThumb }
+                        tabIndex = { 0 }
+                        title = { props.t('dialog.localUserControls') } />
+                </span>
+            </Popover>
+            : null
     );
 }
 
@@ -225,4 +235,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(LocalVideoMenuTriggerButton);
+export default translate(connect(_mapStateToProps)(LocalVideoMenuTriggerButton));

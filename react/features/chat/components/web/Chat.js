@@ -130,6 +130,21 @@ class Chat extends AbstractChat<Props> {
             this._scrollMessageContainerToBottom(false);
         }
     }
+    _onEscClick: (KeyboardEvent) => void;
+
+    /**
+     * Click handler for the chat sidenav.
+     *
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
+     * @returns {void}
+     */
+    _onEscClick(event) {
+        if (event.key === 'Escape' && this.props._isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this._onToggleChat();
+        }
+    }
 
     componentWillUnmount() {
         document.removeEventListener('keypress', this._handleKeyPress);
@@ -535,8 +550,10 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div
+                aria-haspopup = 'true'
                 className = { `sideToolbarContainer ${className}` }
-                id = 'sideToolbarContainer'>
+                id = 'sideToolbarContainer'
+                onKeyDown = { this._onEscClick } >
                 { ComponentToRender }
             </div>
         );
@@ -557,6 +574,18 @@ class Chat extends AbstractChat<Props> {
     }
 
     _onSendMessage: (string) => void;
+
+    _onToggleChat: () => void;
+
+    /**
+    * Toggles the chat window.
+    *
+    * @returns {Function}
+    */
+    _onToggleChat() {
+        this.props.dispatch(toggleChat());
+    }
+
 }
 
 export default translate(connect(_mapStateToProps)(Chat));

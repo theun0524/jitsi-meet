@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconVolume } from '../../../base/icons';
 
 import s from './RemoteVideoMenuButton.module.scss';
@@ -28,7 +29,12 @@ type Props = {
     /**
      * The callback to invoke when the audio slider value changes.
      */
-    onChange: Function
+    onChange: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -76,17 +82,23 @@ class VolumeSlider extends Component<Props, State> {
      */
     render() {
         return (
-            <li className = 'popupmenu__item' onClick = { this._clickHandler }>
-                <div className = { `popupmenu__contents ${s.menuContainer}` }>
+            <li
+                aria-label = { this.props.t('volumeSlider') }
+                className = 'popupmenu__item'>
+                <div className = 'popupmenu__contents'>
                     <span className = 'popupmenu__icon'>
                         <Icon src = { IconVolume } />
                     </span>
                     <div className = 'popupmenu__slider_container'>
                         <input
+                            aria-valuemax = { VOLUME_SLIDER_SCALE }
+                            aria-valuemin = { 0 }
+                            aria-valuenow = { this.state.volumeLevel }
                             className = 'popupmenu__slider'
                             max = { VOLUME_SLIDER_SCALE }
                             min = { 0 }
                             onChange = { this._onVolumeChange }
+                            tabIndex = { 0 }
                             type = 'range'
                             value = { this.state.volumeLevel } />
                     </div>
@@ -119,4 +131,4 @@ class VolumeSlider extends Component<Props, State> {
     }
 }
 
-export default VolumeSlider;
+export default translate(VolumeSlider);

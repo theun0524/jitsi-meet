@@ -87,6 +87,11 @@ type Props = {
     _visible: boolean,
 
     /**
+     * Whether or not the toolbox is displayed.
+     */
+    _isToolboxVisible: Boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Dispatch<any>,
@@ -285,6 +290,19 @@ class Filmstrip extends Component <Props> {
         );
     }
 
+    _onTabIn: () => void;
+
+    /**
+     * Toggle the toolbar visibility when tabbing into it.
+     *
+     * @returns {void}
+     */
+    _onTabIn() {
+        if (!this.props._isToolboxVisible && this.props._visible) {
+            this.props.dispatch(showToolbox());
+        }
+    }
+
     /**
      * Dispatches an action to change the visibility of the filmstrip.
      *
@@ -347,10 +365,15 @@ class Filmstrip extends Component <Props> {
         return !_hideFilmstrip && (
             <div className = 'filmstrip__toolbar'>
                 <button
+                    aria-expanded = { this.props._visible }
                     aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
                     id = 'toggleFilmstripButton'
-                    onClick = { this._onToolbarToggleFilmstrip }>
-                    <Icon src = { icon } />
+                    onClick = { this._onToolbarToggleFilmstrip }
+                    onFocus = { this._onTabIn }
+                    tabIndex = { 0 }>
+                    <Icon
+                        aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                        src = { icon } />
                 </button>
             </div>
         );
