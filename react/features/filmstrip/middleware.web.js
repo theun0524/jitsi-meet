@@ -46,6 +46,9 @@ MiddlewareRegistry.register(store => next => action => {
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
             store.dispatch(setHorizontalViewDimensions(state['features/base/responsive-ui'].clientHeight));
             break;
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            store.dispatch(setPagination());
+            break;
         }
         break;
     }

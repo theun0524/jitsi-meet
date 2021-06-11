@@ -1034,6 +1034,7 @@
         "moveToPrev": "이전으로 이동",
         "mute": "참가자가 음소거 되었음",
         "muted": "음소거됨",
+        "videoMuted": "카메라 꺼짐",
         "remoteControl": "원격 제어 시작 / 종료",
         "show": "화면에 표시",
         "videomute": "카메라 꺼짐",

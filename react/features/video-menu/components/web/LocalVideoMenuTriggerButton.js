@@ -94,14 +94,14 @@ function LocalVideoMenuTriggerButton(props: Props) {
                         mute = { true } />
                 );
             }
-            if (!_disableRemoteUnmute) {
-                buttons.push(
-                    <MuteEveryoneElseButton
-                        key = 'unmute-others'
-                        participantID = { participantID }
-                        mute = { false } />
-                );
-            }
+            // if (!_disableRemoteUnmute) {
+            //     buttons.push(
+            //         <MuteEveryoneElseButton
+            //             key = 'unmute-others'
+            //             participantID = { participantID }
+            //             mute = { false } />
+            //     );
+            // }
             if (!_disableRemoteMuteVideo) {
                 buttons.push(
                     <MuteVideoEveryoneElseButton
@@ -110,14 +110,14 @@ function LocalVideoMenuTriggerButton(props: Props) {
                         mute = { true } />
                 );
             }
-            if (!_disableRemoteUnmuteVideo) {
-                buttons.push(
-                    <MuteVideoEveryoneElseButton
-                        key = 'unmutevideo-others'
-                        participantID = { participantID }
-                        mute = { false } />
-                );
-            }
+            // if (!_disableRemoteUnmuteVideo) {
+            //     buttons.push(
+            //         <MuteVideoEveryoneElseButton
+            //             key = 'unmutevideo-others'
+            //             participantID = { participantID }
+            //             mute = { false } />
+            //     );
+            // }
         }
 
         if (_shouldDisplayTileView) {

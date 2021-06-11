@@ -2,9 +2,13 @@
 
 import React from 'react';
 
+import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconMuteVideoEveryoneElse } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import { connect } from '../../../base/redux';
+import { showConfirmDialog } from '../../../notifications';
+import { muteAllParticipants } from '../../actions.any';
 import AbstractMuteEveryoneElsesVideoButton, {
     type Props
 } from '../AbstractMuteEveryoneElsesVideoButton';
@@ -49,6 +53,37 @@ class MuteEveryoneElsesVideoButton extends AbstractMuteEveryoneElsesVideoButton 
     }
 
     _handleClick: () => void;
+
+    /**
+     * Handles clicking / pressing the button, and opens a confirmation dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        const { dispatch, participantID, t } = this.props;
+        const conference = APP.conference;
+        const exclude = [ participantID ];
+        const whom = exclude
+            // eslint-disable-next-line no-confusing-arrow
+            .map(id => conference.isLocalId(id)
+                ? t('me')
+                : conference.getParticipantDisplayName(id))
+            .join(', ');
+
+        sendAnalytics(createToolbarEvent('mute.everyoneelsesvideo.pressed'));
+        showConfirmDialog({
+            cancelButtonText: t('dialog.Cancel'),
+            confirmButtonText: t(`videothumbnail.domuteVideoOfOthers`),
+            showCancelButton: true,
+            text: t(`dialog.muteEveryoneElsesVideoTitle`, { whom })
+        }).then(result => {
+            if (result.isConfirmed) {
+                dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
+            }
+        });
+        // dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ], mute }));
+    }
 }
 
 export default translate(connect()(MuteEveryoneElsesVideoButton));

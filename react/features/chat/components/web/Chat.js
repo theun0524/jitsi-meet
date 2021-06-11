@@ -10,6 +10,7 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconMenu, IconMenuThumb, IconSearch } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { Tooltip } from '../../../base/tooltip';
+import { toggleChat } from '../../actions.web';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -97,6 +98,8 @@ class Chat extends AbstractChat<Props> {
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
         this._onChatInputResize = this._onChatInputResize.bind(this);
+        this._onEscClick = this._onEscClick.bind(this);
+        this._onToggleChat = this._onToggleChat.bind(this);
 
         this._onToggleSearch = this._onToggleSearch.bind(this);
         this._onDisableChatForAll = this._onDisableChatForAll.bind(this);
@@ -310,7 +313,7 @@ class Chat extends AbstractChat<Props> {
                                 <DropdownItem onClick = { this._onEnableChatForAll }>
                                     { t('dialog.enableChatForAll') }
                                 </DropdownItem>
-                                <DropdownItem onClick = { this.props._onToggleChat }>
+                                <DropdownItem onClick = { this._onToggleChat }>
                                     { t('dialog.close') }
                                 </DropdownItem>
                             </DropdownItemGroup>
@@ -318,7 +321,7 @@ class Chat extends AbstractChat<Props> {
                     ) : (
                         <div
                             className = { s.button }
-                            onClick = { this.props._onToggleChat }>
+                            onClick = { this._onToggleChat }>
                             <Tooltip
                                 content = { t('dialog.close') }
                                 position = 'bottom'>

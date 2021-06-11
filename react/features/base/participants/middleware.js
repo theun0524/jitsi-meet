@@ -32,7 +32,6 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    MUTE_REMOTE_PARTICIPANT_VIDEO,
     SET_PARTICIPANTS
 } from './actionTypes';
 import {
@@ -60,6 +59,7 @@ import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import { isRecording } from '../../recording';
 import { filter, map, omit } from 'lodash';
 import { getCurrentPage, setPagination } from '../../video-layout';
+import { MEDIA_TYPE } from '../media';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -183,13 +183,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
-        conference.muteParticipant(action.id, action.mute);
-        break;
-    }
-
-    case MUTE_REMOTE_PARTICIPANT_VIDEO: {
-        const { conference } = store.getState()['features/base/conference'];
-        // conference.muteParticipantVideo(action.id, action.mute);
         conference.muteParticipant(action.id, action.mediaType);
         break;
     }
@@ -224,7 +217,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_UPDATED: {
         const result = _participantJoinedOrUpdated(store, next, action);
-        if (action.name) {
+        if (action.participant?.name) {
             store.dispatch(setPagination());
         }
         return result;
@@ -609,7 +602,9 @@ function _trackUpdated({ dispatch, getState }, next, action) {
     case TRACK_REMOVED: {
         const participant = getParticipantById(state, participantId);
         dispatch(participantUpdated(omit(participant, jitsiTrack.type)));
-        dispatch(setPagination());
+        if (jitsiTrack.type !== MEDIA_TYPE.AUDIO) {
+            dispatch(setPagination());
+        }
         break;
     }
     case TRACK_ADDED:
@@ -619,7 +614,9 @@ function _trackUpdated({ dispatch, getState }, next, action) {
             id: participantId,
             [jitsiTrack.type]: track,
         }));
-        dispatch(setPagination());
+        if (jitsiTrack.type !== MEDIA_TYPE.AUDIO) {
+            dispatch(setPagination());
+        }
         break;
     }
     }

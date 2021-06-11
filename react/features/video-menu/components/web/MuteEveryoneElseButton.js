@@ -4,7 +4,8 @@ import React from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled, IconMicrophone, IconMuteEveryoneElse } from '../../../base/icons';
+import { IconMicDisabled, IconMicrophone } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import { connect } from '../../../base/redux';
 import { showConfirmDialog } from '../../../notifications';
 import { muteAllParticipants } from '../../actions';
@@ -60,7 +61,7 @@ class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, participantID, mute, t } = this.props;
+        const { dispatch, participantID, t } = this.props;
         const conference = APP.conference;
         const exclude = [ participantID ];
         const whom = exclude
@@ -78,10 +79,9 @@ class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
             text: t(`dialog.muteEveryoneElseTitle`, { whom })
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteAllParticipants(exclude, mute));
+                dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
             }
         });
-        // dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ], mute }));
     }
 }
 
