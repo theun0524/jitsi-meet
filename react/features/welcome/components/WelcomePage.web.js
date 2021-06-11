@@ -365,7 +365,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         return (
             <div
-                className = { `${s.welcome} ${showAdditionalContent
+                className = { `welcome ${s.welcome} ${showAdditionalContent
                     ? 'with-content' : 'without-content'}`
                 }
                 onClick = { e => this._setEditTenant(e, false) }
