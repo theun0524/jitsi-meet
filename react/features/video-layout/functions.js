@@ -99,14 +99,23 @@ export function getCurrentPage(state) {
     const currentLayout = getCurrentLayout(state);
     const pageStart = (current - 1) * pageSize;
     const pageEnd = current * pageSize;
+    const page = [];
+    let index = 0;
 
-    if (currentLayout === LAYOUTS.TILE_VIEW) {
-        return filter(participants, (p, index) =>
-            index >= pageStart && index < pageEnd && !p.isFakeParticipant);
-    } else {
-        return filter(participants, (p, index) =>
-            index >= pageStart && index < pageEnd && !p.isFakeParticipant && !p.local);
+    for (let cursor = 0; pageSize > page.length && cursor < participants.length; cursor += 1) {
+        const p = participants[cursor];
+        if (currentLayout === LAYOUTS.TILE_VIEW) {
+            if (p.isFakeParticipant) continue;
+        } else {
+            if (p.isFakeParticipant || p.local) continue;
+        }
+        if (index >= pageStart && index < pageEnd) {
+            page.push(p);
+        }
+        index += 1;
     }
+
+    return page;
 }
 
 /**

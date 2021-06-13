@@ -162,6 +162,7 @@ class Watermarks extends Component<Props, State> {
             _showJitsiWatermark,
             className
         } = this.props;
+        const { t } = this.props;
         let reactElement = null;
 
         if (_showJitsiWatermark) {

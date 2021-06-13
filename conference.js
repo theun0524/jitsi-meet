@@ -2992,7 +2992,7 @@ export default {
             if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
                 APP.API.notifyReadyToClose();
             }
-            APP.store.dispatch(maybeRedirectToWelcomePage(feedbackResult));
+            APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
         });
     },
 

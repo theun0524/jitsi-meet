@@ -101,7 +101,7 @@
     div {
         svg {
             cursor: pointer;
-            fill: white
+            fill: white;
         }
     }
 }
@@ -124,7 +124,7 @@
     width: 100%;
     z-index: 1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 16px;
     align-items: center;
     box-sizing: border-box;
@@ -183,6 +183,17 @@
         }
     }
 
+    .message-menu-container {
+        margin-left: 16px;
+
+        button {
+            background: none;
+            padding: 6px 0;
+            height: unset;
+            line-height: unset;
+        }
+    }
+
     .jitsi-icon {
         cursor: pointer;
     }
@@ -227,6 +238,7 @@
             .send-button {
                 background: #1B67EC;
                 cursor: pointer;
+                margin-left: 0.3rem;
 
                 @media (hover: hover) and (pointer: fine) {
                     &:hover {
@@ -318,8 +330,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    width: 40px;
+    height: 38px;
+    width: 38px;
+    margin: 2px;
     border-radius: 3px;
 }
 
@@ -357,6 +370,11 @@
     border: 0px none;
     box-shadow: none;
 }
+#usermsg:focus,
+#usermsg:active {
+    border-bottom: 1px solid white;
+    padding-bottom: 8px;
+ }
 
 #nickname {
     text-align: center;
@@ -365,6 +383,16 @@
     margin: auto 0;
     padding: 0 16px;
 
+    #nickname-title {
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    label[for="nickinput"] {
+        > div > span {
+            color: #B8C7E0;
+        }
+    }
     input {
         height: 40px;
     }
@@ -385,7 +413,7 @@
         cursor: pointer;
 
         &.disabled {
-            color: #757575;
+            color: #AFB6BC;
             background: #11336E;
             pointer-events: none;
         }
@@ -481,6 +509,19 @@
     // end of added portion
 }
 
+.sr-only {
+    border: 0 !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
+}
+
 .chatmessage {
     background-color: $chatRemoteMessageBackgroundColor;
     border-radius: 0px 6px 6px 6px;
@@ -568,7 +609,7 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, .6) !important;
     height: auto;
-    max-height: 0;
+    display: none;
     overflow: hidden;
     position: absolute;
     width: calc(#{$sidebarWidth} - 32px);
@@ -584,6 +625,7 @@
     transition: max-height 0.3s;
 
     &.show-smileys {
+        display: flex;
         max-height: 500%;
     }
 
@@ -599,7 +641,7 @@
 
 .smileyContainer {
     width: 40px;
-    height: 36px;
+    height: 40px;
     display: inline-block;
     text-align: center;
 }
@@ -697,7 +739,7 @@
 
     &-header {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: center;
         margin: 16px;
         width: calc(100% - 32px);

@@ -4,13 +4,11 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../analytics';
-import { openDialog } from '../../base/dialog';
-import { IconMicDisabled, IconMicrophone } from '../../base/icons';
+import { IconMicDisabled } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { isRemoteTrackMuted } from '../../base/tracks';
 
-import { MuteRemoteParticipantDialog } from '../components';
 import { muteRemote } from '../actions';
 import { showConfirmDialog } from '../../notifications';
 
@@ -46,11 +44,10 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
     constructor(props) {
         super(props);
 
-        const { mute } = props;
-        this.accessibilityLabel = `toolbar.accessibilityLabel.${mute ? 'remoteMute' : 'remoteUnmute'}`;
-        this.icon = mute ? IconMicDisabled : IconMicrophone;
-        this.label = `videothumbnail.do${mute ? '' : 'un'}mute`;
-        this.toggledLabel = `videothumbnail.${mute ? '' : 'un'}muted`;
+        this.accessibilityLabel = `toolbar.accessibilityLabel.remoteMute'}`;
+        this.icon = IconMicDisabled;
+        this.label = `videothumbnail.domute`;
+        this.toggledLabel = `videothumbnail.muted`;
     }
 
     /**
@@ -60,7 +57,7 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { mute, dispatch, participantID, t } = this.props;
+        const { dispatch, participantID, t } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'mute.button',
@@ -70,12 +67,12 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
 
         showConfirmDialog({
             cancelButtonText: t('dialog.Cancel'),
-            confirmButtonText: t(`videothumbnail.do${mute ? '' : 'un'}mute`),
+            confirmButtonText: t(`videothumbnail.domute`),
             showCancelButton: true,
-            text: t(`dialog.${mute ? '' : 'un'}muteParticipantTitle`)
+            text: t(`dialog.muteParticipantTitle`)
         }).then(result => {
             if (result.isConfirmed) {
-                dispatch(muteRemote(participantID));
+                dispatch(muteRemote(participantID, MEDIA_TYPE.AUDIO));
             }
         });
         // dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
