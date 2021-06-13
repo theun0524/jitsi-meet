@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { recvVideoParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { setTileViewDimensions } from '../../actions.native';

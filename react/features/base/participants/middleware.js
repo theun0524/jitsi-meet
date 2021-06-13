@@ -32,8 +32,7 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    MUTE_REMOTE_PARTICIPANT_VIDEO,
-    SET_PARTICIPANTS
+    MUTE_REMOTE_PARTICIPANT_VIDEO
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -58,8 +57,8 @@ import {
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import { isRecording } from '../../recording';
-import { filter, map, omit } from 'lodash';
-import { getCurrentPage, setPagination } from '../../video-layout';
+import { omit } from 'lodash';
+import { setPagination } from '../../video-layout';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -226,20 +225,6 @@ MiddlewareRegistry.register(store => next => action => {
         const result = _participantJoinedOrUpdated(store, next, action);
         if (action.name) {
             store.dispatch(setPagination());
-        }
-        return result;
-    }
-
-    case SET_PARTICIPANTS: {
-        const result = next(action);
-        const state = store.getState();
-        const page = getCurrentPage(state);
-        const conference = getCurrentConference(state);
-        if (conference) {
-            // console.error('recvVideoParticipants:', page);
-            conference.recvVideoParticipants(
-                map(filter(page, p => !p.local), 'id')
-            );
         }
         return result;
     }
@@ -604,7 +589,7 @@ function _trackUpdated({ dispatch, getState }, next, action) {
     const state = getState();
     const { jitsiTrack } = action.track;
     const participantId = jitsiTrack.getParticipantId();
-    
+
     switch (action.type) {
     case TRACK_REMOVED: {
         const participant = getParticipantById(state, participantId);

@@ -24,8 +24,7 @@ import {
     getPinnedParticipant,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT,
-    RECV_VIDEO_PARTICIPANT
+    PIN_PARTICIPANT
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
@@ -65,11 +64,6 @@ declare var APP: Object;
 let beforeUnloadHandler;
 
 /**
- * parameters for RECV_VIDEO_PARTICIPANT action.
- */
-let recvVideoParCallbackId = null;
-
-/**
  * Implements the middleware of the feature base/conference.
  *
  * @param {Store} store - The redux store.
@@ -102,9 +96,6 @@ MiddlewareRegistry.register(store => next => action => {
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
 
-    case RECV_VIDEO_PARTICIPANT:
-        return _recvVideoParticipant(store, next, action);
-
     case SEND_TONES:
         return _sendTones(store, next, action);
 
@@ -117,7 +108,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_USER_DEVICE_ACCESS_DISABLED:
         // retrieve JitsiConference object
         const { conference } = store.getState()['features/base/conference'];
-        
+
         // update conference database information to set userDeviceAccessDisabled field
         const room = store.getState()['features/base/conference'].roomInfo;
         const baseURL = store.getState()['features/base/connection'].locationURL;
@@ -132,7 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
                 console.log("Response data is: ", resp.data);
                 data = resp.data;
             });
-        } catch(err) {    
+        } catch(err) {
             console.log(err);
         }
 
@@ -486,51 +477,6 @@ function _pinParticipant({ getState }, next, action) {
 }
 
 /**
- * Notifies the feature base/conference that the action {@code RECV_VIDEO_PARTICIPANT}
- * is being dispatched within a specific redux store. Pins the specified remote
- * participant in the associated conference, ignores the local participant.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code RECV_VIDEO_PARTICIPANT} which is
- * being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _recvVideoParticipant({ getState }, next, action) {
-    _recvVideoParticipantDebounced({ getState }, next, action);
-    return next(action);
-}
-
-const _recvVideoParticipantDebounced = debounce(function ({ getState }, next, action) {
-    const state = getState();
-    const { conference } = state['features/base/conference'];
-
-    if (!conference) {
-        return;
-    }
-
-    const participants = state['features/base/participants'];
-    const recvVideoPars = new Set(participants
-                                    .filter(p => p.toRecvVideo === true || p.pinned === true)
-                                    .map(p => p.id));
-
-    // Because the data is written to redux AFTER this function happen, we need to
-    // consider the current user id separatedly
-    const id = action.participant.id;
-    const toRecvVideo = action.participant.toRecvVideo;
-    (toRecvVideo === true) ? recvVideoPars.add(id) : recvVideoPars.delete(id);
-
-    // alway receive large-video id
-    // const largeVideoId = state['features/large-video'].participantId;
-    // recvVideoPars.add(largeVideoId)
-
-    conference.recvVideoParticipants(Array.from(recvVideoPars));
-}, 300);
-
-/**
  * Requests the specified tones to be played.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
@@ -580,7 +526,7 @@ function _setPassword({ getState }, next, action) {
 
             try {
                 axios.patch(`${apiBaseUrl}/conferences/${room._id}`, { password });
-            } catch(err) {    
+            } catch(err) {
                 console.log(err);
             }
         }

@@ -12,13 +12,12 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
 import { isFollowMeActive } from '../follow-me';
 
-import { SET_PAGINATION, SET_TILE_VIEW } from './actionTypes';
+import { SET_TILE_VIEW } from './actionTypes';
 import { setTileView } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 import './subscriber';
-import { filter, map } from 'lodash';
-import { getCurrentPage } from './functions';
+
 
 let previousTileViewEnabled;
 
@@ -66,19 +65,6 @@ MiddlewareRegistry.register(store => next => action => {
             _restoreTileViewState(store);
         }
         break;
-
-    case SET_PAGINATION: {
-        const state = store.getState();
-        const page = getCurrentPage(state);
-        const conference = getCurrentConference(state);
-        if (conference) {
-            // console.error('SET_PAGINATION:', page, getParticipants(state));
-            conference.recvVideoParticipants(
-                map(filter(page, p => !p.local), 'id')
-            );
-        }
-        break;
-    }
 
     // Things to update when tile view state changes
     case SET_TILE_VIEW:
