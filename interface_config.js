@@ -53,6 +53,8 @@ var interfaceConfig = {
     DEFAULT_REMOTE_DISPLAY_NAME: 'Vmeeter',
     DEFAULT_WELCOME_PAGE_LOGO_URL: '/images/watermark.png?v=2',
 
+    DISABLE_LAYOUT_HEADER: true,
+
     // improve the end user experience
     // with lower CPU usage and better audio quality
     DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
