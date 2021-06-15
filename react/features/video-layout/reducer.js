@@ -25,7 +25,7 @@ const DEFAULT_STATE = {
     tileViewEnabled: undefined,
 
     pagination: {
-        order: ['video.muted', 'name'],
+        // order: ['video.muted', 'name'],
         current: 1,
         pageSize: 1,
         totalPages: 1

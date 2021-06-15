@@ -1,5 +1,6 @@
 /* global APP */
 
+import debounce from 'lodash.debounce';
 import {
     createTrackMutedEvent,
     sendAnalytics
@@ -20,6 +21,7 @@ import { updateSettings } from '../settings';
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
     TOGGLE_SCREENSHARING,
+    TRACKS_ADDED,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -38,6 +40,8 @@ import {
     getTrackByJitsiTrack
 } from './functions';
 import logger from './logger';
+
+let tracks = [];
 
 /**
  * Requests the creating of the desired media type tracks. Desire is expressed
@@ -419,6 +423,19 @@ export function trackAdded(track) {
         } else {
             participantId = track.getParticipantId();
             isReceivingData = true;
+            tracks.push({
+                jitsiTrack: track,
+                isReceivingData,
+                local,
+                mediaType,
+                mirror: _shouldMirror(track),
+                muted: track.isMuted(),
+                noDataFromSourceNotificationInfo,
+                participantId,
+                videoStarted: false,
+                videoType: track.videoType
+            });
+            return debouncedTracksAdded(dispatch);
         }
 
         return dispatch({
@@ -438,6 +455,11 @@ export function trackAdded(track) {
         });
     };
 }
+
+const debouncedTracksAdded = debounce(dispatch => {
+    dispatch({ type: TRACKS_ADDED, tracks });
+    tracks = [];
+}, 300);
 
 /**
  * Create an action for when a track's muted state has been signaled to be

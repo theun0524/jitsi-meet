@@ -129,6 +129,16 @@ export const PARTICIPANT_ROLE_CHANGED = 'PARTICIPANT_ROLE_CHANGED';
 export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
 
 /**
+ * Action to signal that participants have joined.
+ *
+ * {
+ *     type: PARTICIPANTS_JOINED,
+ *     participants: Array of Participant
+ * }
+ */
+export const PARTICIPANTS_JOINED = 'PARTICIPANTS_JOINED';
+
+/**
  * Action to signal that a participant has been removed from a conference by
  * another participant.
  *

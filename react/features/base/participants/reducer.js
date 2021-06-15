@@ -4,6 +4,7 @@ import { ReducerRegistry, set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANTS_JOINED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -76,6 +77,9 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     //     return action.participants.map(p => _participant())
     case PARTICIPANT_JOINED:
         return [ ...state, _participantJoined(action) ];
+
+    case PARTICIPANTS_JOINED:
+        return [ ...state, ...action.participants.map(p => _participantJoined({ participant: p })) ];
 
     case PARTICIPANT_LEFT: {
         // XXX A remote participant is uniquely identified by their id in a

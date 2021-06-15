@@ -31,6 +31,17 @@ export const TOGGLE_SCREENSHARING = 'TOGGLE_SCREENSHARING';
 export const TRACK_ADDED = 'TRACK_ADDED';
 
 /**
+ * The type of redux action dispatched when remote tracks has been
+ * added to the conference.
+ *
+ * {
+ *     type: TRACKS_ADDED,
+ *     tracks: Array of Track
+ * }
+ */
+export const TRACKS_ADDED = 'TRACKS_ADDED';
+
+/**
  * The type of redux action dispatched when a canceled {@code getUserMedia}
  * process completes either successfully or with an error (the error is ignored
  * and the track is immediately disposed if it has been created).

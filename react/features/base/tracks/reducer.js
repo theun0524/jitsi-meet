@@ -10,7 +10,8 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_UPDATED,
-    TRACK_WILL_CREATE
+    TRACK_WILL_CREATE,
+    TRACKS_ADDED
 } from './actionTypes';
 
 /**
@@ -134,6 +135,10 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         }
 
         return [ ...withoutTrackStub, action.track ];
+    }
+
+    case TRACKS_ADDED: {
+        return [ ...state, ...action.tracks ];
     }
 
     case TRACK_CREATE_CANCELED:

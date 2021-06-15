@@ -299,7 +299,8 @@ class ChatInput extends Component<Props, State> {
         const otherParticipants = _allParticipants.filter(participant => participant.id !== _localParticipant.id);
 
         // filter participants dynamically with typed filter text (input message) from otherParticipants
-        const filteredParticipants = otherParticipants.filter(participant => participant.name.startsWith(filterText.trimEnd())); // we use trimEnd here, so that it still shows the list even when pressing space char
+        // we use trimEnd here, so that it still shows the list even when pressing space char
+        const filteredParticipants = otherParticipants.filter(participant => participant.name?.startsWith(filterText.trimEnd()));
 
         // in case filtered text matches that of a participant's name, it will replace the current message to private message type
         if(filterText !== '') {                

@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce';
 import { NOTIFICATION_TIMEOUT, showNotification, showToast } from '../../notifications';
 import { i18next } from '../i18n';
 import { set } from '../redux';
@@ -20,7 +21,8 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL,
-    SET_PARTICIPANTS
+    SET_PARTICIPANTS,
+    PARTICIPANTS_JOINED
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -32,6 +34,8 @@ import {
     getParticipantById
 } from './functions';
 import logger from './logger';
+
+let participants = [];
 
 /**
  * Create an action for when dominant speaker changes.
@@ -338,13 +342,16 @@ export function participantJoined(participant) {
 
         if (conference === stateFeaturesBaseConference.conference
                 || conference === stateFeaturesBaseConference.joining) {
-            return dispatch({
-                type: PARTICIPANT_JOINED,
-                participant
-            });
+            participants.push(participant);
+            debouncedParticipantsJoined(dispatch);
         }
     };
 }
+
+const debouncedParticipantsJoined = debounce(dispatch => {
+    dispatch({ type: PARTICIPANTS_JOINED, participants });
+    participants = [];
+}, 300);
 
 /**
  * Updates the features of a remote participant.

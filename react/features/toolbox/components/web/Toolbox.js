@@ -35,7 +35,6 @@ import {
     getLocalParticipant,
     getParticipants,
     participantUpdated,
-    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components/web';
@@ -1426,14 +1425,12 @@ function _mapStateToProps(state) {
         callStatsID,
         chatOnlyGuestEnabled,
         enableFeaturesBasedOnToken,
-        disableDesktopSharing,
         disableTileView,
         hideParticipantsStats,
     } = state['features/base/config'];
     const {
         fullScreen,
         overflowMenuVisible,
-        selectedModerator,
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
