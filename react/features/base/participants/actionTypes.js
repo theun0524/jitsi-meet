@@ -183,6 +183,16 @@ export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
 export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
 
 /**
+ * Action to handle case when info about participants changes.
+ *
+ * {
+ *     type: PARTICIPANTS_UPDATED,
+ *     participants: Map of Participant
+ * }
+ */
+export const PARTICIPANTS_UPDATED = 'PARTICIPANTS_UPDATED';
+
+/**
  * The type of the Redux action which pins a conference participant.
  *
  * {

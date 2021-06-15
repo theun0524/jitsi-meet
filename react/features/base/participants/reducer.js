@@ -1,10 +1,12 @@
 // @flow
 
+import { map } from 'lodash';
 import { ReducerRegistry, set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANTS_JOINED,
+    PARTICIPANTS_UPDATED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -73,13 +75,14 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PIN_PARTICIPANT:
         return state.map(p => _participant(p, action));
 
-    // case PARTICIPANTS_UPDATED:
-    //     return action.participants.map(p => _participant())
+    case PARTICIPANTS_UPDATED:
+        return state.map(p => ({ ...p, ...action.participants[p.id] }));
+
     case PARTICIPANT_JOINED:
         return [ ...state, _participantJoined(action) ];
 
     case PARTICIPANTS_JOINED:
-        return [ ...state, ...action.participants.map(p => _participantJoined({ participant: p })) ];
+        return [ ...state, ...map(action.participants, p => _participantJoined({ participant: p })) ];
 
     case PARTICIPANT_LEFT: {
         // XXX A remote participant is uniquely identified by their id in a

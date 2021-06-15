@@ -22,7 +22,8 @@ import {
     PIN_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL,
     SET_PARTICIPANTS,
-    PARTICIPANTS_JOINED
+    PARTICIPANTS_JOINED,
+    PARTICIPANTS_UPDATED
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -35,7 +36,8 @@ import {
 } from './functions';
 import logger from './logger';
 
-let participants = [];
+let joinedParticipants = [];
+let updatedParticipants = {};
 
 /**
  * Create an action for when dominant speaker changes.
@@ -294,12 +296,9 @@ export function muteRemoteParticipant(id, mediaType) {
  * }}
  */
 export function participantConnectionStatusChanged(id, connectionStatus) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            connectionStatus,
-            id
-        }
+    return dispatch => {
+        updatedParticipants[id] = { connectionStatus, id };
+        debouncedParticipantsUpdated(dispatch);
     };
 }
 
@@ -342,15 +341,20 @@ export function participantJoined(participant) {
 
         if (conference === stateFeaturesBaseConference.conference
                 || conference === stateFeaturesBaseConference.joining) {
-            participants.push(participant);
+            joinedParticipants.push(participant);
             debouncedParticipantsJoined(dispatch);
         }
     };
 }
 
 const debouncedParticipantsJoined = debounce(dispatch => {
-    dispatch({ type: PARTICIPANTS_JOINED, participants });
-    participants = [];
+    dispatch({ type: PARTICIPANTS_JOINED, participants: joinedParticipants });
+    joinedParticipants = [];
+}, 300);
+
+const debouncedParticipantsUpdated = debounce(dispatch => {
+    dispatch({ type: PARTICIPANTS_UPDATED, participants: updatedParticipants });
+    updatedParticipants = {};
 }, 300);
 
 /**
@@ -510,18 +514,17 @@ export function participantRoleChanged(id, role) {
  * }}
  */
 export function participantUpdated(participant = {}) {
-    const participantToUpdate = {
-        ...participant
-    };
-
-    if (participant.name) {
-        participantToUpdate.name = getNormalizedDisplayName(participant.name);
-    }
-
-    // console.error('participantUpdated:', participant);
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: participantToUpdate
+    return dispatch => {
+        const participantToUpdate = {
+            ...participant
+        };
+    
+        if (participant.name) {
+            participantToUpdate.name = getNormalizedDisplayName(participant.name);
+        }
+    
+        updatedParticipants[participant.id] = participantToUpdate;
+        debouncedParticipantsUpdated(dispatch);
     };
 }
 
