@@ -264,7 +264,7 @@
         "kickParticipantButton": "내보내기",
         "kickParticipantDialog": "이 참가자를 내보내시겠습니까?",
         "kickParticipantTitle": "이 참가자를 내보내시겠습니까?",
-        "kickTitle": "{{participantDisplayName}}님이 회의에서 퇴장했습니다.",
+        "kickTitle": "{{participantDisplayName}}님이 회의에서 퇴장 시켰습니다.",
         "LicenseError": "라이센스 오류",
         "liveStreaming": "실시간 스트리밍",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "녹음이 활성화 된 동안에는 불가능",
