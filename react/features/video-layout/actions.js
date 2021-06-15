@@ -2,7 +2,7 @@
 
 import { debounce, findIndex, keyBy, map, sortBy } from 'lodash';
 import type { Dispatch } from 'redux';
-import { getParticipantCount, getParticipants, setParticipants } from '../base/participants';
+import { getParticipantCount, getParticipants, moveParticipant, setParticipants } from '../base/participants';
 
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
@@ -64,7 +64,7 @@ export function setPagination(pagination: Object) {
                 type: SET_PAGINATION,
                 pagination: newState,
             });
-            console.error('SET_PAGINATION:', (new Date()).toJSON(), pagination);
+            // console.error('SET_PAGINATION:', (new Date()).toJSON(), pagination);
         } else {
             debouncedSetPagination(dispatch, getState());
         }
@@ -122,7 +122,7 @@ const debouncedSetPagination = debounce(function (dispatch, state) {
             type: SET_PAGINATION,
             pagination: newState,
         });
-        console.error('SET_PAGINATION:', (new Date()).toJSON(), newState);
+        // console.error('SET_PAGINATION:', (new Date()).toJSON(), newState);
     }
 }, 500);
 

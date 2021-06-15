@@ -14,7 +14,7 @@ import {
 import { getToolbarButtons } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
-import { getLocalParticipant, getParticipants, setParticipants } from '../../../base/participants';
+import { getLocalParticipant, getParticipants, moveParticipant, setParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { changePageOrder, getCurrentLayout, getCurrentPage, LAYOUTS } from '../../../video-layout';

@@ -619,7 +619,7 @@ export function setParticipants(participants) {
     };
 }
 
-export function moveParticipants(from, to) {
+export function moveParticipant(from, to) {
     return (dispatch, getState) => {
         const participants = arrayMove(
             getState()['features/base/participants'],
