@@ -1,6 +1,5 @@
 // @flow
 
-import arrayMove from 'array-move';
 import { debounce, findIndex, keyBy, map, sortBy } from 'lodash';
 import type { Dispatch } from 'redux';
 import { getParticipantCount, getParticipants, setParticipants } from '../base/participants';
@@ -207,8 +206,7 @@ export function moveToFirst(id) {
         const found = findIndex(participants, p => p.id === id);
 
         if (found > 0) {
-            dispatch(setParticipants(arrayMove(participants, found, 0)));
-            dispatch(setPagination({ order: null }));
+            dispatch(moveParticipant(found, 0));
         }
     };
 }
@@ -227,8 +225,7 @@ export function moveToLast(id) {
         const found = findIndex(participants, p => p.id === id);
 
         if (found >= 0 && found !== participants.length - 1) {
-            dispatch(setParticipants(arrayMove(participants, found, participants.length - 1)));
-            dispatch(setPagination({ order: null }));
+            dispatch(moveParticipant(found, participants.length - 1));
         }
     };
 }
@@ -247,8 +244,7 @@ export function moveToNext(id) {
         const found = findIndex(participants, p => p.id === id);
 
         if (found >= 0 && found !== participants.length - 1) {
-            dispatch(setParticipants(arrayMove(participants, found, found + 1)));
-            dispatch(setPagination({ order: null }));
+            dispatch(moveParticipant(found, found + 1));
         }
     };
 }
@@ -267,8 +263,7 @@ export function moveToPrev(id) {
         const found = findIndex(participants, p => p.id === id);
 
         if (found > 0) {
-            dispatch(setParticipants(arrayMove(participants, found, found - 1)));
-            dispatch(setPagination({ order: null }));
+            dispatch(moveParticipant(found, found - 1));
         }
     };
 }

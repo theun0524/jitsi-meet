@@ -1,4 +1,7 @@
+import arrayMove from 'array-move';
+
 import { NOTIFICATION_TIMEOUT, showNotification, showToast } from '../../notifications';
+import { setPagination } from '../../video-layout';
 import { i18next } from '../i18n';
 import { set } from '../redux';
 
@@ -613,5 +616,15 @@ export function setParticipants(participants) {
     return {
         type: SET_PARTICIPANTS,
         participants
+    };
+}
+
+export function moveParticipants(from, to) {
+    return (dispatch, getState) => {
+        const participants = arrayMove(
+            getState()['features/base/participants'],
+            from, to);
+        dispatch(setParticipants(participants));
+        dispatch(setPagination({ order: null }));
     };
 }

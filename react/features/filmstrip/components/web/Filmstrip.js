@@ -67,16 +67,6 @@ type Props = {
     _isFilmstripButtonEnabled: boolean,
 
     /**
-     * The participants in the call.
-     */
-    _participants: Array<Object>,
-
-    /**
-     * The participants in the call.
-     */
-    _participants: Array<Object>,
-
-    /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
     _videosClassName: string,
@@ -154,14 +144,14 @@ class Filmstrip extends Component <Props> {
         if (!this.props._disableSortable && (
             prevProps._currentLayout !== this.props._currentLayout ||
             prevProps._pagination !== this.props._pagination ||
-            prevProps._participants !== this.props._participants
+            prevProps._currentPage !== this.props._currentPage
         )) {
             this._changeSortable();
         }
     }
 
     _changeSortable() {
-        const { _currentLayout, _participants, _pagination, dispatch } = this.props;
+        const { _currentLayout, _pagination, dispatch } = this.props;
 
         if (_currentLayout === LAYOUTS.TILE_VIEW) {
             this.$videosContainer.sortable({
@@ -174,9 +164,7 @@ class Filmstrip extends Component <Props> {
                     const pageStart = (current - 1) * pageSize;
                     const src = ui.item.data('index');
                     const dst = ui.item.index();
-                    dispatch(setParticipants(arrayMove(
-                        _participants, pageStart + src, pageStart + dst
-                    )));
+                    dispatch(moveParticipant(pageStart + src, pageStart + dst));
                 }
             });
         } else {
@@ -426,7 +414,6 @@ function _mapStateToProps(state) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _localParticipant: localParticipant,
         _pagination: pagination,
-        _participants: participants,
         _currentPage: currentPage,
         _startSilent: Boolean(startSilent),
         _videosClassName: videosClassName,
