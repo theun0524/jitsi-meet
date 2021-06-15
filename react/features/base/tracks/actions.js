@@ -1,6 +1,5 @@
 /* global APP */
 
-import debounce from 'lodash.debounce';
 import {
     createTrackMutedEvent,
     sendAnalytics
@@ -21,7 +20,6 @@ import { updateSettings } from '../settings';
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
     TOGGLE_SCREENSHARING,
-    TRACKS_ADDED,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -435,7 +433,6 @@ export function trackAdded(track) {
                 videoStarted: false,
                 videoType: track.videoType
             });
-            return debouncedTracksAdded(dispatch);
         }
 
         return dispatch({
@@ -455,11 +452,6 @@ export function trackAdded(track) {
         });
     };
 }
-
-const debouncedTracksAdded = debounce(dispatch => {
-    dispatch({ type: TRACKS_ADDED, tracks });
-    tracks = [];
-}, 300);
 
 /**
  * Create an action for when a track's muted state has been signaled to be

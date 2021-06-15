@@ -1,4 +1,4 @@
-import debounce from 'lodash.debounce';
+import { debounce } from 'lodash';
 import { NOTIFICATION_TIMEOUT, showNotification, showToast } from '../../notifications';
 import { i18next } from '../i18n';
 import { set } from '../redux';
@@ -296,10 +296,7 @@ export function muteRemoteParticipant(id, mediaType) {
  * }}
  */
 export function participantConnectionStatusChanged(id, connectionStatus) {
-    return dispatch => {
-        updatedParticipants[id] = { connectionStatus, id };
-        debouncedParticipantsUpdated(dispatch);
-    };
+    return participantUpdated({ connectionStatus, id });
 }
 
 /**
@@ -341,18 +338,15 @@ export function participantJoined(participant) {
 
         if (conference === stateFeaturesBaseConference.conference
                 || conference === stateFeaturesBaseConference.joining) {
-            joinedParticipants.push(participant);
-            debouncedParticipantsJoined(dispatch);
+            return dispatch({
+                type: PARTICIPANT_JOINED,
+                participant
+            });
         }
     };
 }
 
-const debouncedParticipantsJoined = debounce(dispatch => {
-    dispatch({ type: PARTICIPANTS_JOINED, participants: joinedParticipants });
-    joinedParticipants = [];
-}, 300);
-
-const debouncedParticipantsUpdated = debounce(dispatch => {
+const _debouncedParticipantsUpdated = debounce(dispatch => {
     dispatch({ type: PARTICIPANTS_UPDATED, participants: updatedParticipants });
     updatedParticipants = {};
 }, 300);
@@ -475,10 +469,7 @@ export function participantLeft(id, conference) {
  * }}
  */
 export function participantPresenceChanged(id, presence) {
-    return participantUpdated({
-        id,
-        presence
-    });
+    return debouncedParticipantsUpdated({ id, presence });
 }
 
 /**
@@ -514,24 +505,38 @@ export function participantRoleChanged(id, role) {
  * }}
  */
 export function participantUpdated(participant = {}) {
-    if (participant.local) {
-        return {
-            type: PARTICIPANT_UPDATED,
-            participant
-        };
+    const participantToUpdate = {
+        ...participant
+    };
+
+    if (participant.name) {
+        participantToUpdate.name = getNormalizedDisplayName(participant.name);
     }
 
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: participantToUpdate
+    };
+}
+
+/**
+ * Action to delayed signal that some of participant properties has been changed.
+ *
+ * @param {Participant} participant={} - Information about participant. To
+ * identify the participant the object should contain either property id with
+ * value the id of the participant or property local with value true (if the
+ * local participant hasn't joined the conference yet).
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: Participant
+ * }}
+ */
+export function debouncedParticipantUpdated(participant = {}) {
     return (dispatch, getState) => {
-        const participantToUpdate = {
-            ...participant
-        };
-    
-        if (participant.name) {
-            participantToUpdate.name = getNormalizedDisplayName(participant.name);
-        }
+        const { participant: participantToUpdate } = participantUpdated(participant);
     
         updatedParticipants[participant.id] = participantToUpdate;
-        debouncedParticipantsUpdated(dispatch);
+        _debouncedParticipantsUpdated(dispatch);
     };
 }
 

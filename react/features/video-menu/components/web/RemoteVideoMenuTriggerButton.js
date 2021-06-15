@@ -8,7 +8,7 @@ import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../..
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { requestRemoteControl, stopController } from '../../../remote-control';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout, LAYOUTS, shouldDisplayTileView } from '../../../video-layout';
 
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteEveryoneElsesVideoButton from './MuteEveryoneElsesVideoButton';
@@ -24,6 +24,8 @@ import {
     VideoMenu,
     VolumeSlider
 } from './';
+import MoveToFirstButton from './MoveToFirstButton';
+import MoveToLastButton from './MoveToLastButton';
 
 declare var $: Object;
 declare var interfaceConfig: Object;
@@ -112,6 +114,21 @@ type Props = {
  * @extends {Component}
  */
 class RemoteVideoMenuTriggerButton extends Component<Props> {
+    constructor(props) {
+        super(props);
+
+        this._onMenuOpen = this._onMenuOpen.bind(this);
+        this._closeMenu = this._closeMenu.bind(this);
+    }
+
+    _onMenuOpen(doMenuClose) {
+        this.setState({ doMenuClose });
+    }
+
+    _closeMenu() {
+        this.state.doMenuClose && this.state.doMenuClose();
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -131,6 +148,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             <Popover
                 content = { content }
                 overflowDrawer = { this.props._overflowDrawer }
+                onPopoverOpen = { this._onMenuOpen }
                 position = { this.props._menuPosition }>
                 <span className = 'popover-trigger remote-video-menu-trigger'>
                     <Icon
@@ -158,11 +176,14 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disableRemoteMute,
             _disableGrantModerator,
             _isModerator,
+            _remoteControlState,
+            _shouldDisplayTileView,
             dispatch,
             initialVolumeValue,
+            isFirst,
+            isLast,
             onVolumeChange,
-            _remoteControlState,
-            participantID
+            participantID,
         } = this.props;
 
         const buttons = [];
@@ -232,6 +253,24 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 participantID = { participantID } />
         );
 
+        if (_shouldDisplayTileView) {
+            if (!isFirst) {
+                buttons.push(
+                    <MoveToFirstButton
+                        key = 'moveToFirst'
+                        onClick = { this._closeMenu }
+                        participantID = { participantID } />
+                );
+            }
+            if (!isLast) {
+                buttons.push(
+                    <MoveToLastButton
+                        key = 'moveToLast'
+                        onClick = { this._closeMenu }
+                        participantID = { participantID } />
+                );
+            }
+        }
 
         if (onVolumeChange && typeof initialVolumeValue === 'number' && !isNaN(initialVolumeValue)) {
             buttons.push(
@@ -276,6 +315,7 @@ function _mapStateToProps(state, ownProps) {
     const { requestedParticipant, controlled } = controller;
     const activeParticipant = requestedParticipant || controlled;
     const { overflowDrawer } = state['features/toolbox'];
+    const participants = state['features/base/participants'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -310,7 +350,10 @@ function _mapStateToProps(state, ownProps) {
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participantDisplayName,
-        _disableGrantModerator: Boolean(disableGrantModerator)
+        _disableGrantModerator: Boolean(disableGrantModerator),
+        _shouldDisplayTileView: shouldDisplayTileView(state),
+        isFirst: participants[0] === participant,
+        isLast: participants[participants.length - 1] === participant,
     };
 }
 
