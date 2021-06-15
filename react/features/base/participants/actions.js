@@ -1,4 +1,3 @@
-import { debounce } from 'lodash';
 import { NOTIFICATION_TIMEOUT, showNotification, showToast } from '../../notifications';
 import { i18next } from '../i18n';
 import { set } from '../redux';
@@ -22,8 +21,6 @@ import {
     PIN_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL,
     SET_PARTICIPANTS,
-    PARTICIPANTS_JOINED,
-    PARTICIPANTS_UPDATED
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -346,11 +343,6 @@ export function participantJoined(participant) {
     };
 }
 
-const _debouncedParticipantsUpdated = debounce(dispatch => {
-    dispatch({ type: PARTICIPANTS_UPDATED, participants: updatedParticipants });
-    updatedParticipants = {};
-}, 300);
-
 /**
  * Updates the features of a remote participant.
  *
@@ -469,7 +461,7 @@ export function participantLeft(id, conference) {
  * }}
  */
 export function participantPresenceChanged(id, presence) {
-    return debouncedParticipantsUpdated({ id, presence });
+    return participantUpdated({ id, presence });
 }
 
 /**
@@ -516,27 +508,6 @@ export function participantUpdated(participant = {}) {
     return {
         type: PARTICIPANT_UPDATED,
         participant: participantToUpdate
-    };
-}
-
-/**
- * Action to delayed signal that some of participant properties has been changed.
- *
- * @param {Participant} participant={} - Information about participant. To
- * identify the participant the object should contain either property id with
- * value the id of the participant or property local with value true (if the
- * local participant hasn't joined the conference yet).
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: Participant
- * }}
- */
-export function debouncedParticipantUpdated(participant = {}) {
-    return (dispatch, getState) => {
-        const { participant: participantToUpdate } = participantUpdated(participant);
-    
-        updatedParticipants[participant.id] = participantToUpdate;
-        _debouncedParticipantsUpdated(dispatch);
     };
 }
 
