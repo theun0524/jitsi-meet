@@ -2,7 +2,6 @@
 
 import Spinner from '@atlaskit/spinner';
 import axios from 'axios';
-import { each } from 'lodash';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getAuthUrl } from '../../../api/url';
 
@@ -15,7 +14,7 @@ import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { showErrorNotification } from '../../notifications';
-import { toggleBackgroundEffect } from '../actions';
+import { backgroundEnabled, setVirtualBackground, toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { getRemoteImageUrl, toDataURL } from '../functions';
 import logger from '../logger';
@@ -96,10 +95,11 @@ const onError = event => {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
-    const [ options, setOptions ] = useState({});
+function VirtualBackground({ _apiBase, _jitsiTrack, _virtualBackground, _virtualSource, dispatch, t }: Props) {
+    const [ origin ] = useState(_virtualBackground);
+    const [ options, setOptions ] = useState(_virtualBackground);
     const [ remoteImages, setRemoteImages ] = useState([]);
-    const [ loading, isloading ] = useState(false);
+    const [ loading, setLoading ] = useState(false);
     const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
     const uploadImageButton: Object = useRef(null);
 
@@ -108,13 +108,13 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
      */
     useEffect(() => {
         async function loadRemoteImages() {
-            isloading(true);
+            setLoading(true);
             try {
                 const resp = await axios.get(`${_apiBase}/backgrounds?pagination=false`);
                 setRemoteImages([...resp.data.docs, ...remoteImages]);
-                isloading(false);
+                setLoading(false);
             } catch {
-                isloading(false);
+                setLoading(false);
             }
         }
 
@@ -199,7 +199,7 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
         const imageId = e.currentTarget.getAttribute('data-imageid');
         const image = remoteImages.find(img => img._id === imageId);
 
-        if (!image || image._id === _selectedThumbnail) {
+        if (!image || image._id === options.selectedThumbnail) {
             setOptions({
                 enabled: false,
                 selectedThumbnail: 'none'
@@ -209,7 +209,7 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
             setRemoteImages(remoteImages.filter(item => image !== item));
             axios.delete(`${_apiBase}/backgrounds/${image._id}`);
         }
-    }, [ _selectedThumbnail, remoteImages ]);
+    }, [ options, remoteImages ]);
 
     const removeBackgroundKeyPress = useCallback(e => {
         if (e.key === ' ' || e.key === 'Enter') {
@@ -239,7 +239,7 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
         const imageFile = e.target.files;
         const form = new FormData();
 
-        isloading(true);
+        setLoading(true);
         form.append(imageFile[0].name, imageFile[0]);
 
         try {
@@ -255,9 +255,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                 url: getRemoteImageUrl(image, 'hd'),
                 selectedThumbnail: image._id
             });
-            isloading(false);
+            setLoading(false);
         } catch {
-            isloading(false);
+            setLoading(false);
             logger.error('Failed to upload virtual image!');
         }
     }, [ remoteImages ]);
@@ -293,15 +293,21 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
         dispatch(hideDialog());
     }, [ dispatch, options ]);
 
+    const cancelVirtualBackground = useCallback(async () => {
+        await dispatch(backgroundEnabled(origin.backgroundEffectEnabled));
+        await dispatch(setVirtualBackground(origin));
+    }, [ dispatch, origin ]);
+
     return (
         <Dialog
             hideCancelButton = { false }
             okKey = { 'virtualBackground.apply' }
+            onCancel = { cancelVirtualBackground }
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
             titleKey = { 'virtualBackground.title' } >
             <VirtualBackgroundPreview options = { options } />
-            <div>
+            <div className = 'virtual-background-content'>
                 {loading ? (
                     <div className = 'virtual-background-loading'>
                         <Spinner
@@ -337,9 +343,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                         content = { t('virtualBackground.removeBackground') }
                         position = { 'top' }>
                         <div
-                            aria-checked = { _selectedThumbnail === 'none' }
+                            aria-checked = { options.selectedThumbnail === 'none' }
                             aria-label = { t('virtualBackground.removeBackground') }
-                            className = { _selectedThumbnail === 'none' ? 'background-option none-selected'
+                            className = { options.selectedThumbnail === 'none' ? 'background-option none-selected'
                                 : 'background-option virtual-background-none' }
                             onClick = { removeBackground }
                             onKeyPress = { removeBackgroundKeyPress }
@@ -352,9 +358,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                         content = { t('virtualBackground.slightBlur') }
                         position = { 'top' }>
                         <div
-                            aria-checked = { _selectedThumbnail === 'slight-blur' }
+                            aria-checked = { options.selectedThumbnail === 'slight-blur' }
                             aria-label = { t('virtualBackground.slightBlur') }
-                            className = { _selectedThumbnail === 'slight-blur'
+                            className = { options.selectedThumbnail === 'slight-blur'
                                 ? 'background-option slight-blur-selected' : 'background-option slight-blur' }
                             onClick = { enableSlideBlur }
                             onKeyPress = { enableSlideBlurKeyPress }
@@ -367,9 +373,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                         content = { t('virtualBackground.blur') }
                         position = { 'top' }>
                         <div
-                            aria-checked = { _selectedThumbnail === 'blur' }
+                            aria-checked = { options.selectedThumbnail === 'blur' }
                             aria-label = { t('virtualBackground.blur') }
-                            className = { _selectedThumbnail === 'blur' ? 'background-option blur-selected'
+                            className = { options.selectedThumbnail === 'blur' ? 'background-option blur-selected'
                                 : 'background-option blur' }
                             onClick = { enableBlur }
                             onKeyPress = { enableBlurKeyPress }
@@ -382,9 +388,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                         content = { t('virtualBackground.desktopShare') }
                         position = { 'top' }>
                         <div
-                            aria-checked = { _selectedThumbnail === 'desktop-share' }
+                            aria-checked = { options.selectedThumbnail === 'desktop-share' }
                             aria-label = { t('virtualBackground.desktopShare') }
-                            className = { _selectedThumbnail === 'desktop-share'
+                            className = { options.selectedThumbnail === 'desktop-share'
                                 ? 'background-option desktop-share-selected'
                                 : 'background-option desktop-share' }
                             onClick = { shareDesktop }
@@ -405,9 +411,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                             <img
                                 alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
                                 aria-checked = { options.selectedThumbnail === image.id
-                                    || _selectedThumbnail === image.id }
+                                    || options.selectedThumbnail === image.id }
                                 className = {
-                                    options.selectedThumbnail === image.id || _selectedThumbnail === image.id
+                                    options.selectedThumbnail === image.id
                                         ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                 data-imageid = { image.id }
                                 onClick = { setImageBackground }
@@ -424,8 +430,8 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _selectedThumbnail, _virtual
                             key = { image._id }>
                             <img
                                 alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
-                                aria-checked = { _selectedThumbnail === image.id }
-                                className = { _selectedThumbnail === image._id
+                                aria-checked = { options.selectedThumbnail === image.id }
+                                className = { options.selectedThumbnail === image._id
                                     ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                 data-imageid = { image._id }
                                 onClick = { setUploadedImageBackground }
@@ -466,7 +472,7 @@ function _mapStateToProps(state) {
     return {
         _apiBase: getAuthUrl(state),
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack,
-        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail || 'none',
+        _virtualBackground: state['features/virtual-background'],
         _virtualSource: state['features/virtual-background'].virtualSource
     };
 }

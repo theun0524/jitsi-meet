@@ -159,6 +159,7 @@ class StatelessDialog extends Component<Props> {
                 shouldCloseOnEscapePress = { true }
                 width = { width || 'medium' }>
                 <div
+                    className = 'modal-dialog-content'
                     onKeyPress = { this._onKeyPress }
                     ref = { this._setDialogElement }>
                     <form

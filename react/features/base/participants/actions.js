@@ -495,10 +495,10 @@ export function participantPresenceChanged(id, presence) {
  * }}
  */
 export function participantRoleChanged(id, role) {
-    return participantUpdated({
-        id,
-        role
-    });
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: { id, role }
+    };
 }
 
 /**
@@ -514,7 +514,14 @@ export function participantRoleChanged(id, role) {
  * }}
  */
 export function participantUpdated(participant = {}) {
-    return dispatch => {
+    if (participant.local) {
+        return {
+            type: PARTICIPANT_UPDATED,
+            participant
+        };
+    }
+
+    return (dispatch, getState) => {
         const participantToUpdate = {
             ...participant
         };

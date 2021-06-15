@@ -1,12 +1,19 @@
+.virtual-background-content {
+    height: calc(100% - 250px);
+}
+
 .virtual-background-dialog {
-    margin-left:-10px;
+    margin-left: -10px;
+    margin-right: -10px;
     position: relative;
-    max-height: 300px;
+    max-height: calc(100% - 44px);
     color: white;
     display: inline-grid;
     grid-template-columns: auto auto auto auto auto;
     column-gap: 9px;
     cursor: pointer;
+    overflow-y: auto;
+
     .desktop-share:hover,  .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
         opacity: .5;
         border: 2px solid #99bbf3;
