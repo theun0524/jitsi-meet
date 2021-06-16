@@ -15,6 +15,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
+    "@andxor/jquery-ui-touch-punch-fix": "1.0.2",
     "@atlaskit/badge": "14.0.7",
     "@atlaskit/banner": "11.0.6",
     "@atlaskit/button": "15.1.4",

@@ -2,8 +2,8 @@
 
 import 'jquery';
 import 'jquery-ui-bundle';
-
 import 'olm';
+import '@andxor/jquery-ui-touch-punch-fix';
 
 import 'focus-visible';
 
