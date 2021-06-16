@@ -6,6 +6,7 @@ import 'olm';
 import '@andxor/jquery-ui-touch-punch-fix';
 
 import 'focus-visible';
+import { polyfill } from 'seamless-scroll-polyfill';
 
 // We need to setup the jitsi-local-storage as early as possible so that we can start using it.
 // NOTE: If jitsi-local-storage is used before the initial setup is performed this will break the use case when we use
@@ -50,6 +51,8 @@ window.APP = {
     translation,
     UI
 };
+
+polyfill();
 
 // TODO The execution of the mobile app starts from react/index.native.js.
 // Similarly, the execution of the Web app should start from react/index.web.js

@@ -224,11 +224,9 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <>
-                <TouchmoveHack isModal = { this.props._isModal }>
-                    <MessageContainer
-                        messages = { this.props._messages }
-                        ref = { this._messageContainerRef } />
-                </TouchmoveHack>
+                <MessageContainer
+                    messages = { this.props._messages }
+                    ref = { this._messageContainerRef } />
                 <MessageRecipient />
                 { _showChatInput && (
                     <>
