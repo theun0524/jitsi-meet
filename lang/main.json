@@ -515,6 +515,7 @@
     "jitsiHome": "{{logo}} Logo, links to  Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
+        "focusNth": "Focus on n-th person's video",
         "focusRemote": "Focus on another person's video",
         "fullScreen": "View or exit full screen",
         "keyboardShortcuts": "Keyboard shortcuts",

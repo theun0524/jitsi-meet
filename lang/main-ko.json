@@ -485,7 +485,8 @@
     },
     "keyboardShortcuts": {
         "focusLocal": "자신의 동영상에 포커스",
-        "focusRemote": "다른 발신자의 동영상에 포커스",
+        "focusNth": "n번째 참가자 동영상에 포커스",
+        "focusRemote": "원격 참가자의 동영상에 포커스",
         "fullScreen": "전체화면 표시 또는 종료",
         "keyboardShortcuts": "키보드 단축키",
         "localRecording": "로컬 녹음 컨트롤 표시 또는 숨기기",

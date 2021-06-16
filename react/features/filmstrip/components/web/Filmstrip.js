@@ -1,6 +1,5 @@
 /* @flow */
 
-import arrayMove from 'array-move';
 import { filter, keyBy, map } from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
@@ -11,13 +10,13 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { getToolbarButtons } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
-import { getLocalParticipant, getParticipants, moveParticipant, setParticipants } from '../../../base/participants';
+import AudioTrack from '../../../base/media/components/web/AudioTrack';
+import { getLocalParticipant, getParticipants, moveParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
-import { changePageOrder, getCurrentLayout, getCurrentPage, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout, getCurrentPage, LAYOUTS } from '../../../video-layout';
 import { setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -25,7 +24,6 @@ import PagePrevButton from '../../../conference/components/web/PagePrevButton';
 import PageNextButton from '../../../conference/components/web/PageNextButton';
 
 import Thumbnail from './Thumbnail';
-import AudioTrack from '../../../base/media/components/web/AudioTrack';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -198,7 +196,7 @@ class Filmstrip extends Component <Props> {
         const filmstripStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
-        const { _audioTracks, _currentLayout, _currentPage, _localParticipant, tileViewActive } = this.props;
+        const { _audioTracks, _currentLayout, _currentPage, _localParticipantId, tileViewActive } = this.props;
 
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -240,7 +238,7 @@ class Filmstrip extends Component <Props> {
                             {
                                 !tileViewActive && <Thumbnail
                                     key = 'local'
-                                    participantID = { _localParticipant.id } />
+                                    participantID = { _localParticipantId } />
                             }
                         </div>
                     </div>
@@ -258,14 +256,9 @@ class Filmstrip extends Component <Props> {
                             id = 'filmstripRemoteVideosContainer'
                             ref={this._videosContainer}
                             style = { filmstripRemoteVideosContainerStyle }>
-                            {
-                                _currentPage.map(
-                                    p => (
-                                        <Thumbnail
-                                            key = { p.id }
-                                            participantID = { p.id } />
-                                    ))
-                            }
+                            { _currentPage.map(id =>
+                                <Thumbnail key = { id } participantID = { id } />
+                            )}
                         </div>
                     </div>
                     <div className = 'remoteAudioTracks'>
@@ -383,15 +376,10 @@ function _mapStateToProps(state) {
         hideRemoteVideos,
         startSilent,
     } = state['features/base/config'];
-    const toolbarButtons = getToolbarButtons(state);
     const { visible } = state['features/filmstrip'];
-    const reduceHeight
-        = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
-    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
-        reduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''}`.trim();
+    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${shiftRight ? 'shift-right' : ''}`.trim();
     const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
     const { filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
@@ -403,7 +391,7 @@ function _mapStateToProps(state) {
     const pageMap = keyBy(currentPage, 'id');
 
     return {
-        _audioTracks: map(filter(participants, p => !pageMap[p.id] && !p.local && p.audio), 'audio'),
+        _audioTracks: map(filter(participants, p => !pageMap[p.id] && !p.local && p.audio && !p.audio.muted), 'audio'),
         _className: className,
         _currentLayout,
         _disableSortable: disableSortable,
@@ -412,9 +400,9 @@ function _mapStateToProps(state) {
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
-        _localParticipant: localParticipant,
+        _localParticipantId: localParticipant?.id,
         _pagination: pagination,
-        _currentPage: currentPage,
+        _currentPage: map(currentPage, 'id'),
         _startSilent: Boolean(startSilent),
         _videosClassName: videosClassName,
         _visible: visible,

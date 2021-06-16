@@ -1,7 +1,8 @@
 // @flow
 
-import { pinParticipant } from '../base/participants';
+import { getLocalParticipant, pinParticipant } from '../base/participants';
 import { toState } from '../base/redux';
+import { getCurrentLayout, LAYOUTS } from '../video-layout';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { calculateThumbnailSizeForHorizontalView, calculateThumbnailSizeForTileView } from './functions';
@@ -71,10 +72,38 @@ export function setHorizontalViewDimensions(clientHeight: number = 0) {
 export function clickOnVideo(n: number) {
     return (dispatch: Function, getState: Function) => {
         const participants = getState()['features/base/participants'];
-        const nThParticipant = participants[n];
-        const { id, pinned } = nThParticipant;
+        const currentLayout = getCurrentLayout(getState());
+        let nThParticipant;
+        let index = 0;
 
-        dispatch(pinParticipant(pinned ? null : id));
+        if (currentLayout !== LAYOUTS.TILE_VIEW) {
+            index = 1;
+            if (n === 0) {
+                nThParticipant = getLocalParticipant(getState());
+            }
+        }
+
+        for (let cursor = 0; !nThParticipant && cursor < participants.length; cursor += 1) {
+            const p = participants[cursor];
+
+            if (p.isFakeParticipant) continue;
+
+            if (currentLayout !== LAYOUTS.TILE_VIEW && p.local) {
+                continue;
+            }
+
+            if (n === index) {
+                nThParticipant = p;
+            }
+            index += 1;
+        }
+
+        if (nThParticipant) {
+            const { id, pinned } = nThParticipant;
+            dispatch(pinParticipant(pinned ? null : id));
+        } else {
+            console.error('Not expected result:', n, participants);
+        }
     };
 }
 

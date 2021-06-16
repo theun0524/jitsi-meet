@@ -258,8 +258,7 @@ const KeyboardShortcut = {
          * FIXME: Currently focus keys are directly implemented below in
          * onkeyup. They should be moved to the SmallVideo instead.
          */
-        this._addShortcutToHelp('0', 'keyboardShortcuts.focusLocal');
-        this._addShortcutToHelp('1-9', 'keyboardShortcuts.focusRemote');
+        this._addShortcutToHelp('0-9', 'keyboardShortcuts.focusNth');
     }
 };
 
