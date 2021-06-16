@@ -6,7 +6,7 @@ import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
 import {
     getPinnedParticipant,
     getParticipantCount,
-    pinParticipant
+    pinParticipant,
 } from '../base/participants';
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -133,7 +133,7 @@ export function getTileViewGridDimensions(state: Object) {
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
-    const numberOfParticipants = state['features/base/participants'].length - (iAmRecorder ? 1 : 0);
+    const numberOfParticipants = getParticipantCount(state) - (iAmRecorder ? 1 : 0);
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);

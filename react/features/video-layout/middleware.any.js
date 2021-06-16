@@ -17,6 +17,7 @@ import { setTileView } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 import './subscriber';
+import { isVideoPlaying } from '../shared-video/functions';
 
 
 let previousTileViewEnabled;
@@ -68,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     // Things to update when tile view state changes
     case SET_TILE_VIEW:
-        if (action.enabled && getPinnedParticipant(store)) {
+        if (action.enabled && getPinnedParticipant(store) && !isVideoPlaying(store)) {
             store.dispatch(pinParticipant(null));
         }
     }

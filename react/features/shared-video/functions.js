@@ -1,6 +1,6 @@
 // @flow
 
-import { getParticipants } from '../base/participants';
+import { getYoutubeParticipant } from '../base/participants';
 
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from './constants';
 
@@ -41,7 +41,7 @@ export function isSharingStatus(status: string) {
  * @returns {boolean}
  */
 export function isVideoPlaying(stateful: Object | Function): boolean {
-    return Boolean(getParticipants(stateful).find(p => p.isFakeParticipant
-        && (p.name === VIDEO_PLAYER_PARTICIPANT_NAME || p.name === YOUTUBE_PLAYER_PARTICIPANT_NAME))
-    );
+    const { name } = getYoutubeParticipant(stateful) || {};
+
+    return Boolean(name === VIDEO_PLAYER_PARTICIPANT_NAME || name === YOUTUBE_PLAYER_PARTICIPANT_NAME);
 }
