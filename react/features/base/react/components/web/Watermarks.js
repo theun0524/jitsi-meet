@@ -168,7 +168,7 @@ class Watermarks extends Component<Props, State> {
         if (_showJitsiWatermark) {
 
             reactElement = (<img
-                className = {`${s.watermark} ${s.leftwatermark}`}
+                className = {`${s.watermark} ${s.leftwatermark} ${!_logoLink ? className : ''}`}
                 src = { _logoUrl } />);
 
             if (_logoLink) {

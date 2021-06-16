@@ -4,10 +4,10 @@
 @import '../../../../css/variables';
 
 .watermark {
-    display: none;
-    margin: 24px 0 0 24px;
+    display: none !important;
+    margin: 24px 0 0 24px !important;
 
     @include media-breakpoint-up(sm) {
-        display: block;
+        display: block !important;
     }
 }
