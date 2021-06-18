@@ -160,8 +160,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     // Show notification with additional information to the initiator.
                     dispatch(showRecordingLimitNotification(mode));
                 } else {
+                    const initiatorId = initiator?.getId ? initiator.getId() : initiator;
                     dispatch(showStartedRecordingNotification(
-                        mode, initiator && getParticipantDisplayName(getState, initiator.getId())));
+                        mode, initiatorId && getParticipantDisplayName(getState, initiatorId)));
                 }
 
 

@@ -37,7 +37,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
     icon = IconShareVideo;
     label = 'toolbar.sharedvideo';
-    tooltip = 'toolbar.sharedvideo';
+    // tooltip = 'toolbar.sharedvideo';
     toggledLabel = 'toolbar.stopSharedVideo';
 
     /**
