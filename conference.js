@@ -2422,7 +2422,10 @@ export default {
             }
 
             Promise.allSettled(promises)
-                .then(() => APP.UI.notifyInitiallyMuted());
+                .then(() => {
+                    audioMuted && APP.UI.notifyInitiallyMuted();
+                    videoMuted && APP.UI.notifyInitiallyVideoMuted();
+                });
         });
 
         room.on(

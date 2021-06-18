@@ -40,7 +40,7 @@
         "none": "사용 가능한 오디오 장치가 없습니다"
     },
     "audioOnly": {
-        "audioOnly": "낮은 대역폭"
+        "audioOnly": "음성전용"
     },
     "backgroundSelection": {
         "add": "배경 이미지 추가",
@@ -592,10 +592,14 @@
         "kickParticipant": "{{kicker}}님이 {{kicked}}님을 내보냈습니다",
         "me": "나",
         "moderator": "방장 권한이 부여되었습니다!",
-        "muted": "음소거로 대화가 시작되었습니다",
+        "muted": "음소거로 회의가 시작되었습니다",
         "mutedTitle": "음소거 상태입니다!",
         "mutedRemotelyTitle": "{{participantDisplayName}}님에 의해 음소거 되었습니다!",
         "mutedRemotelyDescription": "말할 준비가되면 언제든지 음소거를 해제 할 수 있습니다. 회의에서 소음을 피하기 위해 끝나면 음소거합니다.",
+        "videoMuted": "카메라 꺼짐 상태로 회의가 시작되었습니다.",
+        "videoMutedTitle": "카메라 꺼짐 상태입니다!",
+        "videoMutedRemotelyTitle": "{{participantDisplayName}}에 의해 카메라가 꺼졌습니다!",
+        "videoMutedRemotelyDescription": "언제든지 카메라를 다시 켤 수 있습니다.",
         "passwordRemovedRemotely": "다른 참여자가 $t(lockRoomPasswordUppercase)를 삭제했습니다",
         "passwordSetRemotely": "다른 참여자가 $t(lockRoomPasswordUppercase)를 설정했습니다",
         "raisedHand": "{{name}}님이 말하기를 요청합니다.",
@@ -685,6 +689,7 @@
         "or": "또는",
         "premeeting": "사전 회의",
         "showScreen": "사전 회의 화면 활성화",
+        "keyboardShortcuts" : "키보드 단축키 활성화",
         "startWithPhone": "전화 오디오로 시작",
         "screenSharingError": "화면 공유 오류:",
         "videoOnlyError": "비디오 오류:",

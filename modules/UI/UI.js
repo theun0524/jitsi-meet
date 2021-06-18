@@ -345,6 +345,18 @@ UI.notifyInitiallyMuted = function() {
         null);
 };
 
+/**
+ * Notify user that he was automatically muted when joned the conference.
+ */
+UI.notifyInitiallyVideoMuted = function() {
+    messageHandler.participantNotification(
+        null,
+        'notify.videoMutedTitle',
+        'connected',
+        'notify.videoMuted',
+        null);
+};
+
 UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };
