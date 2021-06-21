@@ -60,7 +60,9 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
     render() {
         return (
             <Dialog
-                isModal = { false }
+                // Setting the prop 'isModal' to 'true' hides the cancel button, which is our requirement for DisplayNamePrompt.
+                // We want participants to input a display name value always. Thus we hide the cancel button from the dialog using isModal = true
+                isModal = { true } 
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.displayNameRequired'
                 // currently submitDisabled prop is not required
