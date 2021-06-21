@@ -9,6 +9,8 @@ import { connect } from '../../../base/redux';
 import AbstractDisplayNamePrompt, {
     type Props
 } from '../AbstractDisplayNamePrompt';
+import { showToast } from '../../../notifications';
+import s from './DisplayNamePrompt.module.scss';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
@@ -20,6 +22,8 @@ type State = {
      */
     displayName: string
 };
+
+const NOTIFICATION_TIMEOUT = 3000;
 
 /**
  * Implements a React {@code Component} for displaying a dialog with an field
@@ -44,6 +48,7 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._isSubmitBtnDisabled = this._isSubmitBtnDisabled.bind(this);
     }
 
     /**
@@ -58,6 +63,8 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
                 isModal = { false }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.displayNameRequired'
+                // currently submitDisabled prop is not required
+                // submitDisabled = { this._isSubmitBtnDisabled() }
                 width = 'small'>
                 <TextField
                     autoFocus = { true }
@@ -69,6 +76,21 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
                     type = 'text'
                     value = { this.state.displayName } />
             </Dialog>);
+    }
+
+    /**
+     * callback function to submitDisabled prop, NOT USED CURRENTLY
+     * used to check if display name is set or not, if display name is not set, returns true
+     * which is used to hide the submit button when displayName is empty
+     */
+    _isSubmitBtnDisabled: () => void;
+
+    _isSubmitBtnDisabled() {
+        if ((this.state.displayName.length === 0) || (this.state.displayName.trim() === "")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     _onDisplayNameChange: (Object) => void;
@@ -99,6 +121,16 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
      * @returns {boolean}
      */
     _onSubmit() {
+        const { t } = this.props;
+
+        // show a toast message if display name is set to null
+        if(this.state.displayName.trim() === "" || this.state.displayName === undefined || this.state.displayName === "") {
+            showToast({
+                title: t('notify.noNameInserted'),
+                timeout: NOTIFICATION_TIMEOUT,
+                icon: 'info',
+                animation: false });
+        }
         return this._onSetDisplayName(this.state.displayName);
     }
 }
