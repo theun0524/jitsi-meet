@@ -648,6 +648,7 @@
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use",
         "noSearchResultsFound": "No results found.",
+        "noSpecialCharsInChatSearch": "Please only input alphanumeric characters in chat search.",
         "noNameInserted": "Please input your name.",
         "noNameInsertedInProfileTab": "Please input your name under profile tab.",
         "OldElectronAPPTitle": "Security vulnerability!",

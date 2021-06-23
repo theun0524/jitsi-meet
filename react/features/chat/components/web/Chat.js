@@ -50,6 +50,7 @@ declare var APP: Object;
     showChatInput: Boolean,
     searchQuery: String,
     showSearch: Boolean,
+    searchContainsSpecialChars: Boolean,
     showChatMenu: Boolean,
     searchResultIndex: Integer,
     searchResultCount: Integer,
@@ -77,6 +78,7 @@ class Chat extends AbstractChat<Props> {
         showChatInput: true,
         searchQuery: '',
         showSearch: false,
+        searchContainsSpecialChars: false, //boolean value that identifies whether or not there are special characters in input search
         showChatMenu: false,
         searchResultIndex: -1, // initial value to assign while searching a value;
         searchResultCount: 0, //how many results found for a search query
@@ -425,9 +427,35 @@ class Chat extends AbstractChat<Props> {
     }
 
     highlightTextinUserMessages = (term, hlClass, usrmsgs = document.getElementsByClassName('usermessage')) => {
+        const { t } = this.props;
+
         if(!term) {
             console.log("Search term is empty");
         }
+
+        // convert all search terms to lowerCase to faciliate, case insensitive search
+        term = term.toLowerCase();
+
+        // regular expression to store special characters set
+        const regexp = RegExp(/[`~!@#\$%\^&\*\(\)\-=_+\\\[\]{}/\?,\.\<\>\&]+/, 'g');
+
+        // check for a match of the regular expression containing special chars on the search term
+        const matchForSpecialChars = [...term.matchAll(regexp)];
+
+        // if special characters are found in the search term
+        if(matchForSpecialChars.length >= 1) {
+
+            // navigate through each character in the result array and update the term value
+            matchForSpecialChars.forEach((el) => {
+                console.log("el.input is: ", el.input);
+                console.log("el.index is: ", el.index);
+            })
+
+            // update the local state (special character flag) and return
+            this.setState({ searchContainsSpecialChars: true });
+            return; 
+        }
+
         hlClass = hlClass || "highlight-search-text";
         term = term instanceof Array ? term.join("|") : term;
         const highlighter = a => `<span class="${hlClass}">${a}</span>`;
@@ -436,7 +464,12 @@ class Chat extends AbstractChat<Props> {
         for (let i=0; i < usrmsgs.length; i += 1) {
             //loop for each individual chat message
             let node = usrmsgs[i];
-            let re = RegExp(`(${term})`, "g"); // g for global search, add i flag if you want to ignore case sensitivity
+            let iText = node.innerText;
+            if(iText.includes(term)) {
+                console.log("Search term found");
+            }
+            let re = RegExp(`(${term})`, "gi"); // g for global search, add i flag if you want to ignore case sensitivity
+            console.log("Node is: ", node.innerText);
 
             // replace the inner text with highlighted portion
             node.innerHTML = node.innerHTML.replace(re, highlighter);
@@ -444,13 +477,14 @@ class Chat extends AbstractChat<Props> {
         }
     }
 
-    countSearchOccurences = () => {
+    countSearchOccurences = async () => {
         const { t } = this.props;
         const spanTags = document.getElementsByClassName("highlight-search-text");
         let count = 0;
 
         for(let i=0; i < spanTags.length; i++) {
-            if(spanTags[i].textContent === this.state.searchQuery) {
+            // convert the textContent as well as search query to lowerCase, so that we get case insensitive search results
+            if(spanTags[i].textContent.toLowerCase() === this.state.searchQuery.toLowerCase()) {
                 count += 1;
             }
         }
@@ -458,8 +492,16 @@ class Chat extends AbstractChat<Props> {
         // set the state for result count
         this.setState({ searchResultCount: count });
 
+        if(count === 0 && this.state.searchContainsSpecialChars) {
+            await showToast({
+                title: t('notify.noSpecialCharsInChatSearch'),
+                timeout: NOTIFICATION_TIMEOUT,
+                icon: 'info',
+                animation: false });
+        }
+
         if(count === 0) {
-            showToast({
+            await showToast({
                 title: t('notify.noSearchResultsFound'),
                 timeout: NOTIFICATION_TIMEOUT,
                 icon: 'info',

@@ -619,6 +619,7 @@
         "newDeviceAudioTitle": "새로운 오디오 장치 감지",
         "newDeviceAction": "사용",
         "noSearchResultsFound": "검색 결과가 없습니다.",
+        "noSpecialCharsInChatSearch": "검색창에 영숫자만 입력하세요.",
         "noNameInserted": "이름을 입력하세요.",
         "noNameInsertedInProfileTab": "프로필 탭에서 이름을 입력하세요.",
         "OldElectronAPPTitle": "보안 취약점!",
