@@ -49,7 +49,7 @@ function getParticipantDisplayName(participant) {
  *     pagination: Object
  * }}
  */
-export function setPagination(pagination: Object) {
+export function setPagination(pagination: Object, force: Boolean) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const newState = state['features/video-layout'].pagination;
@@ -65,7 +65,9 @@ export function setPagination(pagination: Object) {
                 pagination: newState,
             });
             // console.error('SET_PAGINATION:', (new Date()).toJSON(), pagination);
-        } else {
+        }
+
+        if (!pagination || force) {
             debouncedSetPagination(dispatch, getState());
         }
     };

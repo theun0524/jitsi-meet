@@ -126,6 +126,12 @@ function _electParticipantInLargeVideo(state) {
         return remoteScreenShares[remoteScreenShares.length - 1];
     }
 
+    // 3. Next, pick the shared video
+    const videoUrl = state['features/shared-video'].videoUrl;
+    if (videoUrl) {
+        return videoUrl;
+    }
+
     // 3. Next, pick the dominant speaker (other than self).
     participant = participants.find(p => p.dominantSpeaker && !p.local);
     if (participant) {

@@ -1,9 +1,10 @@
 // @flow
 
-import { map } from 'lodash';
+import { map, throttle } from 'lodash';
 import { getCurrentConference } from '../base/conference';
 import { isHost } from '../base/jwt';
 import {
+    getLocalParticipant,
     getParticipants,
     getPinnedParticipant,
     isLocalParticipantModerator
@@ -14,6 +15,66 @@ import { shouldDisplayTileView } from '../video-layout/functions';
 
 import { FOLLOW_ME_COMMAND } from './constants';
 import { isFollowMeEnabled } from './functions';
+
+/**
+ * Sends the follow-me command, when a local property change occurs.
+ *
+ * @param {*} newSelectedValue - The changed selected value from the selector.
+ * @param {Object} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+const _sendFollowMeCommand = throttle(
+    function (newSelectedValue, store) { // eslint-disable-line no-unused-vars
+    const state = store.getState();
+    const conference = getCurrentConference(state);
+    const { chatOnlyGuestEnabled, followMeEnabled } = state['features/base/config'];
+    const isGuest = !isHost(state);
+    const localParticipantId = getLocalParticipant(state)?.id;
+    const forceSend = isRecording(state, localParticipantId) || isStreaming(state, localParticipantId);
+
+    if (!conference) {
+        return;
+    }
+
+    // Only a moderator is allowed to send commands.
+    if (!isLocalParticipantModerator(state)) {
+        return;
+    }
+
+    if (newSelectedValue === 'off') {
+        // if the change is to off, local user turned off follow me and
+        // we want to signal this
+
+        conference.sendCommandOnce(
+            FOLLOW_ME_COMMAND,
+            { attributes: { off: true } }
+        );
+
+        return;
+    } if (!forceSend && typeof followMeEnabled !== 'undefined') {
+        if (!followMeEnabled) return;
+    } else if (!forceSend && !state['features/base/conference'].followMeEnabled) {
+        return;
+    } else if (chatOnlyGuestEnabled && isGuest) {
+        return;
+    }
+
+    const { pagination = {} } = state['features/video-layout'] || {};
+    const participants = state['features/base/participants'];
+    const data = map(participants, 'id');
+
+    conference.sendCommand(
+        FOLLOW_ME_COMMAND,
+        {
+            attributes: getFollowMeState(state),
+            value: JSON.stringify({
+                ...pagination,
+                data
+            })
+        }
+    );
+}, 100);
 
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
@@ -98,69 +159,11 @@ export function getFollowMeState(state) {
     };
 
     // mark sendToRecorder, if followMe is disabled and jibri is running
-    if (!isFollowMeEnabled(state) &&
-        (isRecording(state, true) || isStreaming(state, true))) {
-        followMeState.sendToRecorder = true;
-    }
+    // if (!isFollowMeEnabled(state) &&
+    //     (isRecording(state, true) || isStreaming(state, true))) {
+    //     followMeState.sendToRecorder = true;
+    // }
 
+    console.error('getFollowMeState:', followMeState);
     return followMeState;
-}
-
-/**
- * Sends the follow-me command, when a local property change occurs.
- *
- * @param {*} newSelectedValue - The changed selected value from the selector.
- * @param {Object} store - The redux store.
- * @private
- * @returns {void}
- */
-function _sendFollowMeCommand(
-        newSelectedValue, store) { // eslint-disable-line no-unused-vars
-    const state = store.getState();
-    const conference = getCurrentConference(state);
-    const { chatOnlyGuestEnabled, followMeEnabled } = state['features/base/config'];
-    const isGuest = !isHost(state);
-    const forceSend = isRecording(state, true) || isStreaming(state, true);
-
-    if (!conference) {
-        return;
-    }
-
-    // Only a moderator is allowed to send commands.
-    if (!isLocalParticipantModerator(state)) {
-        return;
-    }
-
-    if (newSelectedValue === 'off') {
-        // if the change is to off, local user turned off follow me and
-        // we want to signal this
-
-        conference.sendCommandOnce(
-            FOLLOW_ME_COMMAND,
-            { attributes: { off: true } }
-        );
-
-        return;
-    } if (!forceSend && typeof followMeEnabled !== 'undefined') {
-        if (!followMeEnabled) return;
-    } else if (!forceSend && !state['features/base/conference'].followMeEnabled) {
-        return;
-    } else if (chatOnlyGuestEnabled && isGuest) {
-        return;
-    }
-
-    const { pagination = {} } = state['features/video-layout'] || {};
-    const participants = state['features/base/participants'];
-    const data = map(participants, 'id');
-
-    conference.sendCommand(
-        FOLLOW_ME_COMMAND,
-        {
-            attributes: getFollowMeState(state),
-            value: JSON.stringify({
-                ...pagination,
-                data
-            })
-        }
-    );
 }
