@@ -35,6 +35,8 @@ import DisableChatForAllParticipantsDialog from '../../../video-menu/components/
 import { showToast } from '../../../notifications';
 import TouchmoveHack from './TouchmoveHack';
 
+import Mark from 'mark.js';
+
 declare var APP: Object;
 
 /**
@@ -401,13 +403,13 @@ class Chat extends AbstractChat<Props> {
         this._clearHighlightText();
 
         // call the function for highlighting search text
-        this.highlightTextinUserMessages(this.state.searchQuery, "highlight-search-text");
+        this.highlightTextinUserMessages(this.state.searchQuery);
         
     }
 
     _clearHighlightText = () => {
         // logic to clear highlighted text
-        var highlightedTexts = document.querySelectorAll("[class^='highlight-search-text']")
+        var highlightedTexts = document.querySelectorAll("[class^='markjs-highlight']")
         highlightedTexts.forEach((el) => { 
             el.replaceWith(document.createTextNode(el.textContent)) 
         })
@@ -424,33 +426,43 @@ class Chat extends AbstractChat<Props> {
         
     }
 
-    highlightTextinUserMessages = (term, hlClass, usrmsgs = document.getElementsByClassName('usermessage')) => {
+    // function that highlights a search term from the chat input box
+    highlightTextinUserMessages = (term) => {
+
+        // define a context for the messages to be highlighted
+        // we are only concerned with the div tags of className=usermessage, so we only search those
+        let context = document.querySelectorAll("div.usermessage");
+
+        // create a Mark object instance for the selected context
+        let instance = new Mark(context);
+
         if(!term) {
             console.log("Search term is empty");
         }
-        hlClass = hlClass || "highlight-search-text";
-        term = term instanceof Array ? term.join("|") : term;
-        const highlighter = a => `<span class="${hlClass}">${a}</span>`;
-        // const toHtml = node => node.innerHTML = node.innerHTML.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-        
-        for (let i=0; i < usrmsgs.length; i += 1) {
-            //loop for each individual chat message
-            let node = usrmsgs[i];
-            let re = RegExp(`(${term})`, "g"); // g for global search, add i flag if you want to ignore case sensitivity
 
-            // replace the inner text with highlighted portion
-            node.innerHTML = node.innerHTML.replace(re, highlighter);
-            // toHtml(node.parentElement); // this line was replacing DOM for parent element which contained chat pop-up menu
-        }
+        // convert all search terms to lowerCase to faciliate, case insensitive search
+        term = term.toLowerCase();
+
+        // uses the mark.js library to mark 'term' for all contexts defined
+        // refer to the documentation in markjs.io for details
+        instance.mark(term, {
+            "caseSensitive": false, // whether or not to do case sensitive marking
+            "separateWordSearch": false, // whether or not to treat the search term as consisting of different words when there is a space between words
+            "className": "markjs-highlight", // the classname we would like to attach to <mark> tags for the highlighted or marked image
+        });
     }
 
-    countSearchOccurences = () => {
+    // function that counts the search query (which has been highlighted) found in the chat window
+    countSearchOccurences = async () => {
+        // we use the logic of counting html tags with the className "markjs-highlight" (created while highlighting search messages)
+        // to count the total occurences of highlights
         const { t } = this.props;
-        const spanTags = document.getElementsByClassName("highlight-search-text");
+        const markTags = document.getElementsByClassName("markjs-highlight");
         let count = 0;
 
-        for(let i=0; i < spanTags.length; i++) {
-            if(spanTags[i].textContent === this.state.searchQuery) {
+        for(let i=0; i < markTags.length; i++) {
+            // convert the textContent as well as search query to lowerCase, so that we get case insensitive search results
+            if(markTags[i].textContent.toLowerCase() === this.state.searchQuery.toLowerCase()) {
                 count += 1;
             }
         }
@@ -458,8 +470,9 @@ class Chat extends AbstractChat<Props> {
         // set the state for result count
         this.setState({ searchResultCount: count });
 
+        // if there is no search results found (i.e. no highlighted text i.e. count = 0), then notify a toast message showing no results found
         if(count === 0) {
-            showToast({
+            await showToast({
                 title: t('notify.noSearchResultsFound'),
                 timeout: NOTIFICATION_TIMEOUT,
                 icon: 'info',
@@ -478,11 +491,12 @@ class Chat extends AbstractChat<Props> {
         document.removeEventListener('keyup', this._nextResult);
     }
 
+    // function to navigate to the next result in the chat window when there are multiple occurences of search results
     _nextResult = ev => {
         const { t } = this.props;
         const { searchResultCount, searchResultIndex } = this.state;
         // get highlighted elements
-        const spanTags = document.getElementsByClassName("highlight-search-text");
+        const markTags = document.getElementsByClassName("markjs-highlight");
 
         let currentIdx = searchResultIndex + 1;
         let resultIndex = currentIdx;
@@ -504,10 +518,10 @@ class Chat extends AbstractChat<Props> {
             }
 
             // code to scroll into highlighted text area
-            spanTags[currentIdx] && spanTags[currentIdx].scrollIntoView({ behavior: 'smooth' });
+            markTags[currentIdx] && markTags[currentIdx].scrollIntoView({ behavior: 'smooth' });
             
             // add additional highlighting style to identify the current item
-            spanTags[currentIdx] && spanTags[currentIdx].style.setProperty('background','#ec9038','')
+            markTags[currentIdx] && markTags[currentIdx].style.setProperty('background','#ec9038','')
         }
 
         this.setState({ currentIdx, searchResultIndex: resultIndex });

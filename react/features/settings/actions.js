@@ -1,7 +1,7 @@
 // @flow
 
 import { setFollowMe, setStartMutedPolicy, setUserDeviceAccessDisabled } from '../base/conference';
-import { openDialog } from '../base/dialog';
+import { hideDialog, openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
 import { setPrejoinPageVisibility } from '../prejoin/actions';
@@ -12,8 +12,11 @@ import {
 } from './actionTypes';
 import { LogoutDialog, SettingsDialog } from './components';
 import { getMoreTabProps, getProfileTabProps } from './functions';
+import { showToast } from '../notifications';
 
 declare var APP: Object;
+
+const NOTIFICATION_TIMEOUT = 3000;
 
 /**
  * Opens {@code LogoutDialog}.
@@ -117,12 +120,29 @@ export function submitProfileTab(newState: Object): Function {
     return (dispatch, getState) => {
         const currentState = getProfileTabProps(getState());
 
-        if (newState.displayName !== currentState.displayName) {
-            APP.conference.changeLocalDisplayName(newState.displayName);
+        // check if there is a value for displayName i.e. participant's name
+        // if it is not set, show a toast message
+        if(newState.displayName === "" || newState.displayName === undefined || newState.displayName.trim() === "") {
+            showToast({
+                title: i18next.t('notify.noNameInsertedInProfileTab'),
+                timeout: NOTIFICATION_TIMEOUT,
+                icon: 'info',
+                animation: false });
         }
 
-        if (newState.email !== currentState.email) {
-            APP.conference.changeLocalEmail(newState.email);
+        // else, proceed to updating profile information
+        else {
+            if (newState.displayName !== currentState.displayName) {
+                APP.conference.changeLocalDisplayName(newState.displayName);
+            }
+    
+            if (newState.email !== currentState.email) {
+                APP.conference.changeLocalEmail(newState.email);
+            }
+            
+            // previously hideDialog was called on every onSubmit Button, but here we check the above condition
+            // and only dispatch hideDialog if there is a value set for profile name
+            dispatch(hideDialog());
         }
     };
 }

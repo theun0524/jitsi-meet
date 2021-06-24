@@ -66,12 +66,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
                         <div className = 'messagecontent'>
                             { this.props.showDisplayName && this._renderDisplayName() }
                             <div className = 'usermessage'>
-                                <span className = 'sr-only'>
+                                {/* Commented out the portion that was yielding "me says: ****" and "X says: ****" */}
+                                {/* <span className = 'sr-only'>
                                     { this.props.message.displayName === this.props.message.recipient
                                         ? t('chat.messageAccessibleTitleMe')
                                         : t('chat.messageAccessibleTitle',
                                         { user: this.props.message.displayName }) }
-                                </span>
+                                </span> */}
                                 { processedMessage }
                             </div>
                             { message.privateMessage && this._renderPrivateNotice() }

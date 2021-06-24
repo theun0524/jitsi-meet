@@ -74,7 +74,6 @@ class SettingsDialog extends Component<Props> {
      */
     render() {
         const { _tabs, defaultTab, dispatch } = this.props;
-        const onSubmit = this._closeDialog;
         const defaultTabIdx
             = _tabs.findIndex(({ name }) => name === defaultTab);
         const tabs = _tabs.map(tab => {
@@ -95,13 +94,25 @@ class SettingsDialog extends Component<Props> {
                 defaultTab = {
                     defaultTabIdx === -1 ? undefined : defaultTabIdx
                 }
-                onSubmit = { onSubmit }
+                /** 
+                 * onSubmit prop was previously calling _closeDialog
+                 * which always dispatched hideDialog
+                 * so now we call a dummy function _submitDialog
+                 * submission of values is handled individually in each tab of Settings dialogs
+                 */
+                onSubmit = { this._submitDialog }
                 tabs = { tabs }
                 titleKey = 'settings.title' />
         );
     }
 
     _closeDialog: () => void;
+
+    _submitDialog: () => void;
+
+    _submitDialog() {
+        console.log("Submit dialog function called");
+    }
 
     /**
      * Callback invoked to close the dialog without saving changes.
@@ -110,6 +121,7 @@ class SettingsDialog extends Component<Props> {
      * @returns {void}
      */
     _closeDialog() {
+        console.log("Close dialog function called");
         this.props.dispatch(hideDialog());
     }
 }
