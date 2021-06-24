@@ -40,6 +40,13 @@ const UIListeners = new Map([
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()
+    ], [
+        UIEvents.BECOME_MODERATOR,
+        () => {
+            if(etherpadManager && etherpadManager.isOpen){
+                etherpadManager.reloadForModerator();
+            }
+        }
     ]
 ]);
 
