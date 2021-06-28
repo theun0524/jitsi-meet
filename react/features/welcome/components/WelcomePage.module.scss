@@ -335,51 +335,38 @@ body {
             display: flex;
             align-items: center;
 
-            .tenant {
-                padding: 8px 0 8px 16px;
+            span {
+                color: #253858;
+                margin-right: 4px;
+                font-weight: bold;  
+            }
+            
+            .virtualTenant {
+                display: inline-block;
+                position: absolute;
                 font-weight: bold;
-                cursor: text;
-
-                span {
-                    margin-right: 4px;
-                }
+                visibility: hidden;
+            }
+            
+            .tenantInput {
+                margin-left: 16px;
+                font-weight: bold;
+                border: none;
+                padding: 0px;
+                border-radius: 4px;
+                background-color: transparent !important;
             }
 
-            &.editTenant {
-                .tenant {
-                    display: none;
-                }
-
-                .enterRoomInput {
-                    padding: 16px;
-                }
+            .tenantInput:focus {
+                outline: none;
             }
 
-            form {
+            .roomForm {
                 flex-grow: 1;
             }
 
-            .enterRoomTitleContainer {
-                vertical-align: bottom;
-
-                :first-child {
-                    margin-right: 10px;
-                }
-
-                .enterRoomLoginRequired {
-                    color: $chatPrivateMessageBackgroundColor;
-                }
-            }
-
-            .enterRoomTitle {
-                display: inline-block;
-                font-size: 18px;
-                font-weight: bold;
-                padding-bottom: 5px;
-            }
-
             .enterRoomInput {
-                display: inline-block;
+                display: inline;
                 width: 100%;
                 font-size: 16px;
                 padding: 16px 16px 16px 0;
@@ -406,6 +393,7 @@ body {
 
             ::placeholder {
                 color: #253858;
+                font-weight: normal;
             }
         }
 
