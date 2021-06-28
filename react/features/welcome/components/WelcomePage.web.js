@@ -32,9 +32,11 @@ import { getAvatarColor, getInitials } from '../../base/avatar';
 
 /**
  * The pattern used to validate room name.
+ * alphabet, number, korean and underscore are allowed
  * @type {string}
  */
-export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣_]+$';
+// export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[a-zA-Z0-9가-힣_]+$'; // this only allows completed korean
 
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
@@ -133,7 +135,6 @@ class WelcomePage extends AbstractWelcomePage {
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
-        this._onRoomInput = this._onRoomInput.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
@@ -143,7 +144,7 @@ class WelcomePage extends AbstractWelcomePage {
         this._onVirtualBackground = this._onVirtualBackground.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
-        this._setEditTenant = this._setEditTenant.bind(this);
+        // this._setEditTenant = this._setEditTenant.bind(this);
         this._handleKeyPress = this._handleKeyPress.bind(this);
     }
 
@@ -368,7 +369,7 @@ class WelcomePage extends AbstractWelcomePage {
                 className = { `welcome ${s.welcome} ${showAdditionalContent
                     ? 'with-content' : 'without-content'}`
                 }
-                onClick = { e => this._setEditTenant(e, false) }
+                // onClick = { e => this._setEditTenant(e, false) }
                 id = 'welcome_page'>
                 <div className = {s.header}>
                     <div className = {s.container}>
@@ -423,8 +424,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 <div className = {s.enterRoom}>
                                     <div className = {`${s.enterRoomInputContainer} ${editTenant ? s.editTenant : ''}`}>
                                         <div
-                                            className = {s.tenant}
-                                            onClick = { e => this._setEditTenant(e, true) }>
+                                            className = {s.tenant}>
                                             <span>{ inputTenant || currentTenant }</span>
                                             <span>/</span>
                                         </div>
@@ -434,8 +434,7 @@ class WelcomePage extends AbstractWelcomePage {
                                                 className = {s.enterRoomInput}
                                                 id = 'enter_room_field'
                                                 onChange = { this._onRoomChange }
-                                                onClick = { e => e.stopPropagation() }
-                                                onInput = { this._onRoomInput }
+                                                onClick = { e => e.stopPropagation() }                                                
                                                 pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
                                                 placeholder = { this.state.roomPlaceholder }
                                                 ref = { this._setRoomInputRef }
@@ -555,22 +554,18 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onRoomChange(event) {
         event.stopPropagation();
-        let [ tenant, room ] = event.target.value.split('/');
-        if (typeof room === 'undefined') {
-            room = tenant;
-            tenant = this.state.currentTenant;
-        }
-        super._onRoomChange(`${tenant}/${room}`);
-    }
+        
+        const forbiddenChars = /[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣_]/ig;
+        const replacedStr =  event.currentTarget.value.replaceAll(forbiddenChars, '');
+        this._roomInputRef.value = replacedStr; // removes forbidden characters
 
-    _onRoomInput(event) {
-        let [ tenant, room ] = this._roomInputRef.value.split('/');
-        const { currentTenant } = this.state;
-
-        console.log('_onRoomInput:', tenant, room);
-        if (typeof room !== 'undefined') {
-            this.setState({ inputTenant: tenant });
-        }
+        // let [ tenant, room ] = event.target.value.split('/');
+        // let [ tenant, room ] = replacedStr.split('/');
+        // if (typeof room === 'undefined') {
+        //     room = tenant;
+        //     tenant = this.state.currentTenant;
+        // }
+        super._onRoomChange(`${this.state.currentTenant}/${replacedStr}`);
     }
 
     /**
@@ -585,40 +580,40 @@ class WelcomePage extends AbstractWelcomePage {
         this.setState({ selectedTab: tabIndex });
     }
 
-    _setEditTenant(e, value) {
-        const { currentTenant, inputTenant, generatedRoomname } = this.state;
+    // _setEditTenant(e, value) {
+    //     const { currentTenant, inputTenant, generatedRoomname } = this.state;
 
-        e.stopPropagation();
+    //     e.stopPropagation();
 
-        if (value) {
-            document.addEventListener('keyup', this._handleKeyPress);
-        } else {
-            document.removeEventListener('keyup', this._handleKeyPress);
-        }
-        if (value) {
-            this._roomInputRef.focus();
-        }
-        this.setState({ editTenant: value });
+    //     if (value) {
+    //         document.addEventListener('keyup', this._handleKeyPress);
+    //     } else {
+    //         document.removeEventListener('keyup', this._handleKeyPress);
+    //     }
+    //     if (value) {
+    //         this._roomInputRef.focus();
+    //     }
+    //     this.setState({ editTenant: value });
 
-        let [ tenant, room ] = map(this._roomInputRef.value.split('/'), trim);
-        console.log('_setEditTenant:', value, e.type, tenant, room, generatedRoomname);
-        if (typeof room === 'undefined') {
-            room = tenant;
-        }
+    //     let [ tenant, room ] = map(this._roomInputRef.value.split('/'), trim);
+    //     console.log('_setEditTenant:', value, e.type, tenant, room, generatedRoomname);
+    //     if (typeof room === 'undefined') {
+    //         room = tenant;
+    //     }
 
-        if (value) {
-            this._roomInputRef.value = `${inputTenant || currentTenant}/${room || generatedRoomname}`;
-            this._roomInputRef.selectionStart = 0;
-            this._roomInputRef.selectionEnd = (inputTenant || currentTenant).length;
-            this._clearTimeouts();
-        } else {
-            this._roomInputRef.value = room === generatedRoomname
-                ? '' : room || '';
-            if (!this._roomInputRef.value) {
-                this._updateRoomname();
-            }
-        }
-    }
+    //     if (value) {
+    //         this._roomInputRef.value = `${inputTenant || currentTenant}/${room || generatedRoomname}`;
+    //         this._roomInputRef.selectionStart = 0;
+    //         this._roomInputRef.selectionEnd = (inputTenant || currentTenant).length;
+    //         this._clearTimeouts();
+    //     } else {
+    //         this._roomInputRef.value = room === generatedRoomname
+    //             ? '' : room || '';
+    //         if (!this._roomInputRef.value) {
+    //             this._updateRoomname();
+    //         }
+    //     }
+    // }
 
     _handleKeyPress = ev => {
         if (ev.key === 'Escape') {
