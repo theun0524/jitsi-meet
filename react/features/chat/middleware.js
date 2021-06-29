@@ -197,10 +197,11 @@ function _addChatMsgListener(conference, store) {
 
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
-        (id, message, timestamp) => {
+        (id, message, timestamp, nick) => {
             _handleReceivedMessage(store, {
                 id,
                 message,
+                nick,
                 privateMessage: false,
                 timestamp
             });
@@ -213,6 +214,7 @@ function _addChatMsgListener(conference, store) {
             _handleReceivedMessage(store, {
                 id,
                 message,
+                nick: undefined,
                 privateMessage: true,
                 timestamp
             });
@@ -249,7 +251,7 @@ function _handleChatError({ dispatch }, error) {
  * @param {Object} message - The message object.
  * @returns {void}
  */
-function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMessage, timestamp }) {
+function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, privateMessage, timestamp }) {
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
@@ -262,7 +264,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMe
     // backfilled for a participant that has left the conference.
     const participant = getParticipantById(state, id) || {};
     const localParticipant = getLocalParticipant(getState);
-    const displayName = getParticipantDisplayName(state, id);
+    const displayName = participant.name || nick || getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
