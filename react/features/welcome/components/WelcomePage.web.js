@@ -6,7 +6,6 @@ import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import axios from 'axios';
-import { map, trim } from 'lodash';
 import React from 'react';
 
 import tokenLocalStorage from '../../../api/tokenLocalStorage';
@@ -36,7 +35,8 @@ import { getAvatarColor, getInitials } from '../../base/avatar';
  * @type {string}
  */
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣_]+$';
-// export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[a-zA-Z0-9가-힣_]+$'; // this only allows completed korean
+// export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[a-zA-Z0-9가-힣_]+$'; // this allows alphabet, numbers, underscore and completed korean
+// export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[a-zA-Z0-9_]+$'; // this allows alphabet, numbers and underscore only
 
 const AUTH_PAGE_BASE = process.env.VMEETING_FRONT_BASE;
 const AUTH_API_BASE = process.env.VMEETING_API_BASE;
@@ -88,7 +88,8 @@ class WelcomePage extends AbstractWelcomePage {
         this._additionalContentRef = null;
 
         this._roomInputRef = null;
-
+        this._virtualTenantRef = null;
+        this._tenantInputRef = null;
         this._redirectRoom = false;
 
         /**
@@ -135,16 +136,19 @@ class WelcomePage extends AbstractWelcomePage {
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._onJoin = this._onJoin.bind(this);
+        this._onTenantChange = this._onTenantChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
+        this._setVirtualTenantRef = this._setVirtualTenantRef.bind(this);
+        this._setTenantInputRef = this._setTenantInputRef.bind(this);
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
         this._onVirtualBackground = this._onVirtualBackground.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
-        // this._setEditTenant = this._setEditTenant.bind(this);
         this._handleKeyPress = this._handleKeyPress.bind(this);
     }
 
@@ -264,7 +268,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { _moderatedRoomServiceUrl, _user, t } = this.props;
-        const { submitting, editTenant, currentTenant, inputTenant, room } = this.state;
+        const { submitting, currentTenant, inputTenant, room } = this.state;
         const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
@@ -364,12 +368,15 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
+        if (this._tenantInputRef && this._virtualTenantRef) { // this adjusts the width of the tenant input tag
+            this._tenantInputRef.style=`width:${window.getComputedStyle(this._virtualTenantRef).width}`;
+        }
+
         return (
             <div
                 className = { `welcome ${s.welcome} ${showAdditionalContent
                     ? 'with-content' : 'without-content'}`
                 }
-                // onClick = { e => this._setEditTenant(e, false) }
                 id = 'welcome_page'>
                 <div className = {s.header}>
                     <div className = {s.container}>
@@ -422,13 +429,26 @@ class WelcomePage extends AbstractWelcomePage {
                                     </p>
                                 </div>
                                 <div className = {s.enterRoom}>
-                                    <div className = {`${s.enterRoomInputContainer} ${editTenant ? s.editTenant : ''}`}>
-                                        <div
-                                            className = {s.tenant}>
-                                            <span>{ inputTenant || currentTenant }</span>
-                                            <span>/</span>
-                                        </div>
-                                        <form onSubmit = { this._onFormSubmit }>
+                                    <div className = {s.enterRoomInputContainer}>   
+                                        <div // virtual input tag to calculate the width of tenant input tag
+                                            ref={this._setVirtualTenantRef}
+                                            id='virtual_tenant'
+                                            className={s.virtualTenant}>
+                                            {inputTenant || currentTenant}
+                                        </div>                                    
+                                        
+                                        <form onSubmit={this._onFormSubmit}>
+                                            <input 
+                                                placeholder={currentTenant}
+                                                ref={this._setTenantInputRef}
+                                                defaultValue={currentTenant}
+                                                onChange={this._onTenantChange}
+                                                className={s.tenantInput}/>
+                                        </form>
+                                        <span>/</span>
+                                        <form 
+                                            className={s.roomForm}
+                                            onSubmit = { this._onFormSubmit }>
                                             <input
                                                 autoFocus = { true }
                                                 className = {s.enterRoomInput}
@@ -441,7 +461,7 @@ class WelcomePage extends AbstractWelcomePage {
                                                 title = { t('welcomepage.roomNameAllowedChars') }
                                                 type = 'text' />
                                             { this._renderInsecureRoomNameWarning() }
-                                        </form>
+                                        </form>    
                                     </div>
                                     { tenant && tenant !== currentTenant ? (
                                         <div
@@ -559,13 +579,44 @@ class WelcomePage extends AbstractWelcomePage {
         const replacedStr =  event.currentTarget.value.replaceAll(forbiddenChars, '');
         this._roomInputRef.value = replacedStr; // removes forbidden characters
 
-        // let [ tenant, room ] = event.target.value.split('/');
-        // let [ tenant, room ] = replacedStr.split('/');
-        // if (typeof room === 'undefined') {
-        //     room = tenant;
-        //     tenant = this.state.currentTenant;
-        // }
-        super._onRoomChange(`${this.state.currentTenant}/${replacedStr}`);
+        super._onRoomChange(`${this.state.inputTenant || this.state.currentTenant}/${replacedStr}`);
+    }
+
+    _onTenantChange(event) {
+        event.stopPropagation();
+
+        const roomname = this._roomInputRef.value || this.state.generatedRoomname; // value at the roomname input tag
+        const forbiddenChars = /[^a-zA-Z0-9_]/ig; // alphabet, numbers and underscore is allowed for tenant
+        const replacedStr =  event.currentTarget.value.replaceAll(forbiddenChars, '');
+        this._tenantInputRef.value = replacedStr; //  removes forbidden characters
+        
+        this.setState(() => ({inputTenant: replacedStr}), () => {
+            this._tenantInputRef.style=`width:${window.getComputedStyle(this._virtualTenantRef).width}`;
+            super._onRoomChange(`${replacedStr || this.state.currentTenant}/${roomname}`);
+        });
+    }
+
+    /**
+     * Overrides the super to implement the tenant(site or license) feature
+     * 
+     * Handles joining. Either by clicking on 'Join' button
+     * or by pressing 'Enter' in room name input field.
+     * @inheritdoc
+     * @override
+     * @protected
+     * @returns {void}
+     */
+    _onJoin() {
+        const roomname = this._roomInputRef.value || this.state.generatedRoomname; // value at the roomname input tag
+        
+        if(!this.state.inputTenant) {
+            this.setState(() => ({ room: `${this.state.currentTenant}/${roomname}` }), () => {
+                super._onJoin();
+            });
+        }
+        else {
+            super._onJoin();
+        }
     }
 
     /**
@@ -580,44 +631,8 @@ class WelcomePage extends AbstractWelcomePage {
         this.setState({ selectedTab: tabIndex });
     }
 
-    // _setEditTenant(e, value) {
-    //     const { currentTenant, inputTenant, generatedRoomname } = this.state;
-
-    //     e.stopPropagation();
-
-    //     if (value) {
-    //         document.addEventListener('keyup', this._handleKeyPress);
-    //     } else {
-    //         document.removeEventListener('keyup', this._handleKeyPress);
-    //     }
-    //     if (value) {
-    //         this._roomInputRef.focus();
-    //     }
-    //     this.setState({ editTenant: value });
-
-    //     let [ tenant, room ] = map(this._roomInputRef.value.split('/'), trim);
-    //     console.log('_setEditTenant:', value, e.type, tenant, room, generatedRoomname);
-    //     if (typeof room === 'undefined') {
-    //         room = tenant;
-    //     }
-
-    //     if (value) {
-    //         this._roomInputRef.value = `${inputTenant || currentTenant}/${room || generatedRoomname}`;
-    //         this._roomInputRef.selectionStart = 0;
-    //         this._roomInputRef.selectionEnd = (inputTenant || currentTenant).length;
-    //         this._clearTimeouts();
-    //     } else {
-    //         this._roomInputRef.value = room === generatedRoomname
-    //             ? '' : room || '';
-    //         if (!this._roomInputRef.value) {
-    //             this._updateRoomname();
-    //         }
-    //     }
-    // }
-
     _handleKeyPress = ev => {
         if (ev.key === 'Escape') {
-            this._setEditTenant(ev, false);
             this._roomInputRef.blur();
         }
     }
@@ -755,6 +770,14 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _setRoomInputRef(el) {
         this._roomInputRef = el;
+    }
+
+    _setVirtualTenantRef(el) {
+        this._virtualTenantRef = el;
+    }
+
+    _setTenantInputRef(el) {
+        this._tenantInputRef = el;
     }
 
     /**
