@@ -541,7 +541,7 @@
     box-sizing: border-box;
     color: white;
     margin-top: 3px;
-    max-width: 100%;
+    max-width: 90%;
     position: relative;
 
     &.localuser {
@@ -552,6 +552,7 @@
     .usermessage {
         white-space: pre-wrap;
         font-size: 14px;
+        text-align: start;
     }
 
     &.error {
@@ -670,7 +671,7 @@
 }
 
 .chat-message-group {
-    display: flex;
+    display: block;
     flex-direction: column;
 
     &.local {
@@ -691,10 +692,24 @@
 
         .timestamp {
             text-align: right;
+            margin-top: auto;
+            margin-right: 3px;
         }
 
         .chatmessage-wrapper {
             text-align: right;
+        }
+    }
+
+    &.remote {
+        flex-direction: row-reverse;
+        align-items: flex-start;
+        text-align: left;
+
+        .timestamp {
+            text-align: left;
+            margin-top: auto;
+            margin-left: 3px;
         }
     }
 
@@ -711,7 +726,18 @@
     }
 
     .chatmessage-wrapper {
+        display: flex;
         max-width: 100%;
+
+        &.local {
+            flex-direction: row-reverse;
+            align-items: flex-end;
+        }
+
+        &.remote {
+            flex-direction: row;
+            align-items: flex-start;
+        }
 
         .replywrapper {
             display: flex;
