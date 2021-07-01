@@ -7,8 +7,10 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import { showWarningNotification } from '../../../notifications/actions';
 import { defaultSharedVideoLink } from '../../constants';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
+import { validateYouTubeUrl } from '../../functions';
 
 /**
  * Component that renders the video share dialog.
@@ -108,10 +110,19 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
             return false;
         }
 
+        const valideYoutubeUrl = validateYouTubeUrl(link);
+
+        if (!valideYoutubeUrl) {
+            this.props.dispatch(showWarningNotification({
+                titleKey: 'dialog.shareVideoLinkError'
+            }));
+
+            return;
+        }
+
         const { onPostSubmit } = this.props;
 
         onPostSubmit(link);
-
         return true;
     }
 
