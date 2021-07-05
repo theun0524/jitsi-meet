@@ -333,7 +333,7 @@
         "recordingDisabledForGuestTooltip": "손님은 녹음을 시작할 수 없습니다.",
         "recordingDisabledTooltip": "녹화 시작이 비활성화되었습니다.",
         "register": "회원가입",
-        "rejoinNow": "지금 재가입",
+        "rejoinNow": "지금 다시 연결",
         "rememberMe": "로그인 상태 유지",
         "remoteControlAllowedMessage": "{{user}}이(가) 원격 제어 요청을 수락했습니다",
         "remoteControlDeniedMessage": "{{user}}이(가) 원격 제어 요청을 거부했습니다",
