@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 
+import { getParticipants } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -163,12 +164,11 @@ class Filmstrip extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const participants = state['features/base/participants'];
     const { enabled } = state['features/filmstrip'];
 
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _participants: participants.filter(p => !p.local),
+        _participants: getParticipants(state).filter(p => !p.local),
         _visible: enabled && isFilmstripVisible(state)
     };
 }

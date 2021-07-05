@@ -83,12 +83,12 @@ type Props = {
     /**
      * Type of trigger for the participant actions
      */
-    actionsTrigger: ActionTrigger,
+    actionsTrigger?: ActionTrigger,
 
     /**
      * Media state for audio
      */
-    audioMuteState: MediaState,
+    audioMuteState?: MediaState,
 
     /**
      * React children
@@ -118,7 +118,7 @@ type Props = {
     /**
      * Media state for video
      */
-    videoMuteState: MediaState
+    videoMuteState?: MediaState
 }
 
 export const ParticipantItem = ({

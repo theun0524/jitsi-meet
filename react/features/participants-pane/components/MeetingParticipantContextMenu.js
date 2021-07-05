@@ -9,12 +9,15 @@ import { openDialog } from '../../base/dialog';
 import {
     IconCloseCircle,
     IconCrown,
+    IconMeetingUnlocked,
     IconMessage,
     IconMuteEveryoneElse,
     IconVideoOff
 } from '../../base/icons';
 import { isLocalParticipantModerator, isParticipantModerator } from '../../base/participants';
 import { getIsParticipantVideoMuted } from '../../base/tracks';
+import { sendParticipantToRoom } from '../../breakout-rooms/actions';
+import { getCurrentRoomId, getRooms } from '../../breakout-rooms/functions';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -68,6 +71,9 @@ export const MeetingParticipantContextMenu = ({
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isChatButtonEnabled = useSelector(isToolbarButtonEnabled('chat'));
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
+    const rooms = Object.values(useSelector(getRooms));
+    const currentRoomId = useSelector(getCurrentRoomId);
+
     const [ isHidden, setIsHidden ] = useState(true);
     const { t } = useTranslation();
 
@@ -119,6 +125,10 @@ export const MeetingParticipantContextMenu = ({
         dispatch(openChat(participant));
     }, [ dispatch, participant ]);
 
+    const sendToRoom = useCallback((room: Object) => () => {
+        dispatch(sendParticipantToRoom(participant.id, room.id));
+    }, [ dispatch, participant ]);
+
     if (!participant) {
         return null;
     }
@@ -165,6 +175,21 @@ export const MeetingParticipantContextMenu = ({
                     </ContextMenuItem>
                 )}
             </ContextMenuItemGroup>
+            {rooms?.length > 0 && isLocalModerator && (
+                <ContextMenuItemGroup>
+                    {rooms.map((room: Object) =>
+                        room.id !== currentRoomId && <ContextMenuItem
+                            key = { room.id }
+                            onClick = { sendToRoom(room) }>
+                            <ContextMenuIcon src = { IconMeetingUnlocked } />
+                            <span>{
+                                t('breakoutRooms.actions.sendToBreakoutRoom',
+                                { name: room.name || t('breakoutRooms.mainRoom') })
+                            }</span>
+                        </ContextMenuItem>
+                    )}
+                </ContextMenuItemGroup>
+            )}
         </ContextMenu>
     );
 };

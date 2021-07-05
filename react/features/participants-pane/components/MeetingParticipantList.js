@@ -5,8 +5,10 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+
 import { getParticipants } from '../../base/participants';
 import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
+import { getCurrentRoomId, getRooms, isInBreakoutRoom } from '../../breakout-rooms/functions';
 
 import { InviteButton } from './InviteButton';
 import { MeetingParticipantContextMenu } from './MeetingParticipantContextMenu';
@@ -37,7 +39,10 @@ export const MeetingParticipantList = () => {
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getParticipants, _.isEqual);
     const showInviteButton = useSelector(shouldRenderInviteButton);
+    const currentRoomId = useSelector(getCurrentRoomId);
+    const { [currentRoomId]: currentRoom } = useSelector(getRooms);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
+    const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const { t } = useTranslation();
 
     const lowerMenu = useCallback(() => {
@@ -86,8 +91,13 @@ export const MeetingParticipantList = () => {
 
     return (
     <>
-        <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
-        {showInviteButton && <InviteButton />}
+        <Heading> {
+            currentRoom?.name
+                ? `${currentRoom.name} (${participants.length})`
+                : t('participantsPane.headings.mainRoom', { count: participants.length })
+        }
+        </Heading>
+        {!inBreakoutRoom && <InviteButton />}
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem

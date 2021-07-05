@@ -45,6 +45,18 @@
         "delete": "Delete Background Image",
         "none": "None"
     },
+    "breakoutRooms": {
+        "name": "Breakout room #{{index}}",
+        "mainRoom": "Main room",
+        "actions": {
+            "addRoom": "Add room",
+            "autoAssign": "Auto assign to breakout rooms",
+            "join": "Join",
+            "remove": "Remove",
+            "leaveBreakoutRoom": "Leave breakout room",
+            "sendToBreakoutRoom": "Send to {{name}}"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",
@@ -661,7 +673,7 @@
         "close": "Close",
         "headings": {
             "lobby": "Lobby ({{count}})",
-            "participantsList": "Meeting participants ({{count}})"
+            "mainRoom": "Main room ({{count}})"
         },
         "actions": {
             "invite": "Invite Someone",
@@ -880,6 +892,7 @@
         "accessibilityLabel": {
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
+            "breakoutRoom": "Join/leave breakout room",
             "callQuality": "Manage video quality",
             "cc": "Toggle subtitles",
             "chat": "Open / Close chat",
@@ -967,6 +980,8 @@
         "hangupAll": "End for all",
         "help": "Help",
         "invite": "Invite people",
+        "joinBreakoutRoom": "Join breakout room",
+        "leaveBreakoutRoom": "Leave breakout room",
         "lobbyButtonDisable": "Disable lobby mode",
         "lobbyButtonEnable": "Enable lobby mode",
         "login": "Login",
