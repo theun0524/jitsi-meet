@@ -14,7 +14,16 @@ import { FEATURE_KEY } from './constants';
  * @returns {string} Room id of the main room or undefined.
  */
 export const getMainRoomId = (stateful: Function | Object) => {
-    const pathname = toState(stateful)['features/base/connection']?.locationURL?.pathname;
+
+    // currently we have room id in the format `vmeeting-server/sub-domain/mainRoomName`
+    // whereas jitsi directly uses it as `jitsi-meet-server/mainRoomName`
+
+    // variable pathname here retrieves string consisting of everything after the server name
+    // i.e. for example for a meeting URL: `vmeeting.io/room/myRoom`, pathname will contain `/room/myRoom`
+
+    // modified original pathname to get the roomname only and then prepended '/' at the beginning of the pathname
+    let pathname = toState(stateful)['features/base/connection']?.locationURL?.pathname.split('/')[2];
+    pathname = pathname.replace(/^/, '/')
 
     if (pathname) {
         // Remove the leading '/' from the pathname
