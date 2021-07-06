@@ -20,6 +20,11 @@
             fill: white !important;
         }
     }
+
+    div:nth-child(2) {
+        padding: 12px;
+        background-color: $menuBG !important;
+    }
 }
 
 .hangupMenu {
@@ -30,7 +35,7 @@
     /**
      * Undo atlaskit padding by reducing margins.
      */
-    margin: -16px -10px 0px;
+    // margin: -16px -10px 0px;
     padding: 0;
 
     .menuItem {
@@ -65,8 +70,8 @@
         }
 
         &:hover {
-            background-color: $overflowMenuItemHoverBG;
-            color: $overflowMenuItemHoverColor;
+            background-color: $newToolbarButtonHoverColor;
+            color: $overflowMenuItemColor;
         }
 
         &.unclickable {
