@@ -22,6 +22,7 @@
     }
 
     div:nth-child(2) {
+        overflow-y: auto;
         padding: 12px;
         background-color: $menuBG !important;
     }
@@ -161,13 +162,12 @@
     /**
      * Undo atlaskit padding by reducing margins.
      */
-    margin: -16px -10px 0px;
+    //margin: -16px -10px 0px;
     padding: 0;
  
     .menuItem {
         //align-items: center;
-        color: $overflowMenuItemColor;
-        background-color: rgba(255,255,255,0.1);
+        color: $overflowMenuItemColor !important;
         cursor: pointer;
         display: flex;
         font-size: 14px;
@@ -181,8 +181,10 @@
         }
 
         .text {
+            background-color: rgba(255,255,255,0) !important;
             margin: 0px 5px 0px 10px;
             flex-grow: 1;
+            padding: 0 0 0 6px;
         }
 
         div {
@@ -192,8 +194,8 @@
         }
 
         &:hover {
-            background-color: $overflowMenuItemHoverBG;
-            color: $overflowMenuItemHoverColor;
+            background-color: $newToolbarButtonHoverColor !important;
+            color: $overflowMenuItemColor;
         }
 
         &.unclickable {
@@ -260,7 +262,7 @@
 
     .menuItemSelected {
         //align-items: center;
-        background-color: rgba(255,255,255,0.1);
+        background-color: rgba(255,255,255,0.1) !important;
         color: #ffffff;
         border-radius: 5px;
         cursor: pointer;
@@ -282,13 +284,16 @@
         }
 
         .text {
+            background-color: rgba(255,255,255,0) !important;
+            overflow: auto;
             margin: 0px 5px 0px 10px;
+            padding: 0 0 0 6px;
             flex-grow: 1;
         }
 
         &:hover {
-            background-color: $overflowMenuItemHoverBG;
-            color: #ffffff;
+            background-color: $newToolbarButtonHoverColor !important;
+            color: $overflowMenuItemColor;
         }
 
         &.unclickable {
