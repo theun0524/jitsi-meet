@@ -22,10 +22,21 @@
     }
 
     div:nth-child(2) {
-        overflow-y: auto;
         padding: 12px;
         background-color: $menuBG !important;
     }
+}
+
+.hangupMenuHr {
+    border-top: 1px solid #4C4D50 !important;
+    border-bottom: 0;
+    margin: 8px 0;
+}
+
+.particpantList {
+    padding-left: 0;
+    height: 200px;
+    overflow-y: auto;
 }
 
 .hangupMenu {
@@ -211,6 +222,7 @@
     }
 
     .menuItemWarning {
+        //bottom: 0;
         align-items: center;
         background-color: #b72727;
         color: #ffffff;
@@ -225,6 +237,7 @@
         margin: 10px 0 0 0;
         border-radius: 5px;
         justify-content: center;
+        position: sticky;
 
         &:first-child {
             margin: 0;
