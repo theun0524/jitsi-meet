@@ -9,6 +9,10 @@ import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdow
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconMenu, IconMenuThumb, IconSearch } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+
+import { PollsPane } from '../../../polls/components';
+
+
 import { Tooltip } from '../../../base/tooltip';
 import { toggleChat } from '../../actions.web';
 import AbstractChat, {
@@ -222,10 +226,21 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
-        const { _showChatInput } = this.props;
+        const { _showChatInput, _isPollsTabFocused } = this.props;
+
+        if(_isPollsTabFocused) {
+            return (
+                <>
+                    { this._renderTabs()}
+                    <PollsPane />
+                    <KeyboardAvoider />
+                </>
+            );
+        }
 
         return (
             <>
+                { this._renderTabs()}
                 <MessageContainer
                     messages = { this.props._messages }
                     ref = { this._messageContainerRef } />
@@ -267,6 +282,30 @@ class Chat extends AbstractChat<Props> {
                     <CrossCircleIcon size = 'small' />
                 </div>
             </div>                        
+        );
+    }
+
+        /**
+     * Returns a React Element showing the Chat and Polls tab.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderTabs() {
+
+        return (
+            <div className = { 'chat-tabs-container' } >
+                <div
+                    className = { `chat-tab ${this.props._isPollsTabFocused ? '' : 'chat-tab-focus'}` }
+                    onClick = { this._onToggleChatTab } >
+                    {this.props.t('chat.tabs.chat')}
+                </div>
+                <div
+                    className = { `chat-tab ${this.props._isPollsTabFocused ? 'chat-tab-focus' : ''}` }
+                    onClick = { this._onTogglePollsTab } >
+                    {this.props.t('chat.tabs.polls')}
+                </div>
+            </div>
         );
     }
 
@@ -600,6 +639,9 @@ class Chat extends AbstractChat<Props> {
     _onToggleChat() {
         this.props.dispatch(toggleChat());
     }
+    
+    _onTogglePollsTab: () => void;
+    _onToggleChatTab: () => void;
 
 }
 

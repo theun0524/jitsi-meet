@@ -76,12 +76,18 @@
         },
         "privateNotice": "Private message to {{recipient}}",
         "search": "Search for chat messages",
-        "title": "Chat",
+
         "you": "you",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
-        "smileysPanel": "Emoji panel"
+
+        "smileysPanel": "Emoji panel",
+        "tabs": {
+            "chat": "Chat",
+            "polls": "Polls"
+        },
+        "title": "Chat and Polls"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",

@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { connect } from '../../../base/redux';
+import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount } from '../../functions';
 
 /**
@@ -53,7 +54,7 @@ class ChatCounter extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _count: getUnreadCount(state)
+        _count: getUnreadCount(state) + getUnreadPollCount(state)
     };
 }
 

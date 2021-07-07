@@ -40,6 +40,9 @@ import '../large-video/reducer';
 import '../lobby/reducer';
 import '../notifications/reducer';
 import '../overlay/reducer';
+
+import '../polls/reducer';
+
 import '../recent-list/reducer';
 import '../recording/reducer';
 import '../settings/reducer';
