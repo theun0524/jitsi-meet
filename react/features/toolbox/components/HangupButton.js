@@ -187,8 +187,6 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             </li>
         );
 
-        console.log(List);
-
         let return_groups = [
             <List participants={_participants} />,
             <hr className = {s.hangupMenuHr} key = 'hr' />,
