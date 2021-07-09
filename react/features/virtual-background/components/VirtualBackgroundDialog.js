@@ -241,6 +241,7 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _virtualBackground, _virtual
 
         setLoading(true);
         form.append(imageFile[0].name, imageFile[0]);
+        e.target.value = '';
 
         try {
             const resp = await axios.post(`${_apiBase}/backgrounds`, form);
