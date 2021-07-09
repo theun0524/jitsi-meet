@@ -12,7 +12,11 @@ import { Avatar } from '../../base/avatar';
 import { disconnect } from '../../base/connection';
 import { translate } from '../../base/i18n';
 import { Icon, IconCheck, IconOpenInNew, IconPresentation } from '../../base/icons';
-import { grantModerator } from '../../base/participants';
+import {
+    grantModerator,
+    getLocalParticipant,
+    PARTICIPANT_ROLE
+ } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton, HangupMenuItem } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
@@ -301,7 +305,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
  function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
     const { roomInfo } = state['features/base/conference'];
-    const isModerator = isHost(state);
+    const isModerator = getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         _apiBase: getAuthUrl(state),
