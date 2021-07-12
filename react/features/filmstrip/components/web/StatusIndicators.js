@@ -84,8 +84,12 @@ class StatusIndicators extends Component<Props> {
             tooltipPosition = 'top';
         }
 
+        const INDICATOR_LAYOUT = _currentLayout === LAYOUTS.TILE_VIEW ? null : {
+            float: 'right'
+        };
+
         return (
-            <div>
+            <div style = { INDICATOR_LAYOUT }>
                 { _showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showScreenShareIndicator ? <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }

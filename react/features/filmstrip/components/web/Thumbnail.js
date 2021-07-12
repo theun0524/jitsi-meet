@@ -626,6 +626,8 @@ class Thumbnail extends Component<Props, State> {
                         iconSize = { iconSize }
                         tooltipPosition = { tooltipPosition } />
                 }
+                { _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW ?
+                    <StatusIndicators participantID = { id } /> : null }
             </div>);
     }
 
@@ -699,7 +701,8 @@ class Thumbnail extends Component<Props, State> {
             _localFlipX,
             _disableProfile,
             _participant,
-            _videoTrack
+            _videoTrack,
+            _currentLayout
         } = this.props;
         const { id } = _participant || {};
         const { audioLevel } = this.state;
@@ -724,12 +727,13 @@ class Thumbnail extends Component<Props, State> {
                         id = 'localVideo_container'
                         videoTrack = { _videoTrack } />
                 </span>
-                <div className = 'videocontainer__toolbar'>
-                    <StatusIndicators participantID = { id } />
-                </div>
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
                 </div>
+                { _currentLayout === LAYOUTS.TILE_VIEW ?
+                    <div className = 'videocontainer__toolbar'>
+                        <StatusIndicators participantID = { id } />
+                    </div> : null }
                 <div className = 'videocontainer__hoverOverlay' />
                 <div
                     className = 'displayNameContainer'
@@ -801,7 +805,8 @@ class Thumbnail extends Component<Props, State> {
             _isTestModeEnabled,
             _participant,
             _startSilent,
-            _videoTrack
+            _videoTrack,
+            _currentLayout
         } = this.props;
         const { id } = _participant;
         const { audioLevel, canPlayEventReceived, volume } = this.state;
@@ -856,9 +861,10 @@ class Thumbnail extends Component<Props, State> {
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
                 </div>
-                <div className = 'videocontainer__toolbar'>
-                    <StatusIndicators participantID = { id } />
-                </div>
+                { _currentLayout === LAYOUTS.TILE_VIEW ?
+                    <div className = 'videocontainer__toolbar'>
+                        <StatusIndicators participantID = { id } />
+                    </div>: null }
                 <div className = 'videocontainer__hoverOverlay' />
                 <div className = 'displayNameContainer'>
                     <DisplayName
