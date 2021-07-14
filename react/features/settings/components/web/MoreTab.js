@@ -11,7 +11,10 @@ import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
+import LANGUAGES_RESOURCES from '../../../../../lang/languages-original.json';
 
+
+const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
@@ -270,12 +273,12 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         } = this.props;
 
         const languageItems
-            = languages.map(language => (
+            = LANGUAGES.map(language => (
                 <DropdownItem
                     data-language = { language }
                     key = { language }
                     onClick = { this._onLanguageItemSelect }>
-                    { t(`languages:${language}`) }
+                    { LANGUAGES_RESOURCES[language] }
                 </DropdownItem>));
 
         return (
