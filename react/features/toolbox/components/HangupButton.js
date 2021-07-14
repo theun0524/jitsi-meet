@@ -12,7 +12,11 @@ import { Avatar } from '../../base/avatar';
 import { disconnect } from '../../base/connection';
 import { translate } from '../../base/i18n';
 import { Icon, IconCheck, IconOpenInNew, IconPresentation } from '../../base/icons';
-import { grantModerator } from '../../base/participants';
+import {
+    grantModerator,
+    getLocalParticipant,
+    PARTICIPANT_ROLE
+ } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton, HangupMenuItem } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
@@ -160,23 +164,22 @@ class HangupButton extends AbstractHangupButton<Props, *> {
         if (_participants.length <= 1)
             return [];
 
-        let items = [];
+        const List = ({participants}) => (
+            <ul className={s.particpantList}>
+                {
+                    participants.map((item, i) => !item.local && this._renderModeratorSelectionItem({
+                        key: item.id,
+                        accessibilityLabel: t('toolbar.accessibilityLabel.moderatorSelectionList'),
+                        text: item.name,
+                        ...item
+                    }))
+                }
+            </ul>    
+        );
 
-        for (let i = 0; i < _participants.length; i++){
-            if (_participants[i].local)
-                continue;
+        let last_item = [];
 
-            items.push(
-                this._renderModeratorSelectionItem({
-                    key: _participants[i].id,
-                    accessibilityLabel: t('toolbar.accessibilityLabel.moderatorSelectionList'),
-                    text: _participants[i].name,
-                    ..._participants[i]
-                })
-            );
-        }
-
-        items.push(
+        last_item.push(
             <li
                 aria-label = { t('toolbar.accessibilityLabel.grantModerator') }
                 className = { s.menuItemWarning }
@@ -188,7 +191,13 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             </li>
         );
 
-        return items;
+        let return_groups = [
+            <List participants={_participants} />,
+            <hr className = {s.hangupMenuHr} key = 'hr' />,
+            ...last_item
+        ];
+
+        return return_groups;
     }
 
     _onHangupMe: () => void;
@@ -296,7 +305,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
  function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
     const { roomInfo } = state['features/base/conference'];
-    const isModerator = isHost(state);
+    const isModerator = getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         _apiBase: getAuthUrl(state),
