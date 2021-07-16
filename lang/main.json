@@ -441,7 +441,9 @@
         "image6" : "Forest ",
         "image7" : "Sunrise",
         "desktopShareError": "Could not create desktop share",
-        "desktopShare":"Desktop share"
+        "desktopShare":"Desktop share",
+        "desktopShareAudioWarning": "Audio is not shared!",
+        "desktopShareAudioWarningDesc": "Audio is not shared in Desktop-share background mode."
     },
     "feedback": {
         "average": "Average",

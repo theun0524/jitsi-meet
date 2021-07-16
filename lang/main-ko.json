@@ -415,7 +415,10 @@
         "removeBackground": "배경 삭제",
         "addBackground": "배경 추가",
         "none": "없음",
-        "desktopShareError": "화면 공유 생성 오류"
+        "desktopShareError": "화면 공유 생성 오류",
+        "desktopShare":"화면 공유",
+        "desktopShareAudioWarning": "오디오가 공유되지 않습니다!",
+        "desktopShareAudioWarningDesc": "배경으로 화면을 공유하는 경우 오디오가 공유되지 않습니다."
     },
     "feedback": {
         "average": "보통",

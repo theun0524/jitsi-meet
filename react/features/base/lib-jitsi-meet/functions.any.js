@@ -33,7 +33,7 @@ export function createLocalTrack(type: string, deviceId: string, timeout: ?numbe
         })
             .then((jitsiLocalTrack) => {
                 if (type === 'desktop' && jitsiLocalTrack[0].type === 'audio')
-                    return jitsiLocalTrack[1];
+                    return jitsiLocalTrack;
                 else
                     return jitsiLocalTrack[0];
             }));
