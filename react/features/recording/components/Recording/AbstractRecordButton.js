@@ -143,9 +143,14 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
             enableFeaturesBasedOnToken,
             fileRecordingsEnabled
         } = state['features/base/config'];
+        const record_user = state['features/base/jwt'].user;
+        const isLogined = record_user? true : false;
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator && fileRecordingsEnabled;
+        console.log(`User: ${record_user}`);
+        console.log(`Logined?: ${isLogined}`);
+
+        visible = isModerator && isLogined && fileRecordingsEnabled;
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.recording) === 'true';

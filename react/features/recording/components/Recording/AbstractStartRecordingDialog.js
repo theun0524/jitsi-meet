@@ -266,9 +266,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             attributes.type = RECORDING_TYPES.DROPBOX;
         } else {
             let recorder_user = APP.store.getState()['features/base/jwt'].user;
+            const meetingId = _conference.room.meetingId;
             appData = JSON.stringify({
                 'file_recording_metadata': {
                     'share': this.state.sharingEnabled,
+                    'meetingId': meetingId,
                     'recorder_identity': {
                         'email': recorder_user.email,
                         'name': recorder_user.name,
