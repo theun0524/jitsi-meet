@@ -13,7 +13,7 @@ import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { showWarningNotification } from '../../notifications';
+import { showErrorNotification, showWarningNotification } from '../../notifications';
 import { backgroundEnabled, setVirtualBackground, toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { getRemoteImageUrl, toDataURL } from '../functions';
@@ -166,6 +166,9 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _virtualBackground, _virtual
         }
 
         if (!url) {
+            dispatch(showErrorNotification({
+                titleKey: 'virtualBackground.desktopShareError'
+            }));
             logger.error('Could not create desktop share as a virtual background!');
 
             return;
