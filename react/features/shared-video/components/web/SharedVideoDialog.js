@@ -9,6 +9,7 @@ import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { showWarningNotification } from '../../../notifications/actions';
 import { defaultSharedVideoLink } from '../../constants';
+import { getYoutubeId } from '../../functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 import { validateYouTubeUrl } from '../../functions';
 
@@ -110,19 +111,11 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
             return false;
         }
 
-        const valideYoutubeUrl = validateYouTubeUrl(link);
-
-        if (!valideYoutubeUrl) {
-            this.props.dispatch(showWarningNotification({
-                titleKey: 'dialog.shareVideoLinkError'
-            }));
-
-            return;
-        }
-
+        const youtubeId = getYoutubeId(link);
         const { onPostSubmit } = this.props;
 
-        onPostSubmit(link);
+        onPostSubmit(youtubeId || link);
+
         return true;
     }
 

@@ -14,6 +14,7 @@ import { LICENSE_ERROR_INVALID_LICENSE, LICENSE_ERROR_MAXED_LICENSE } from '../.
 import { translate, translateToHTML } from '../../../base/i18n';
 import { setJWT } from '../../../base/jwt';
 import { connect } from '../../../base/redux';
+import { safeDecodeURIComponent } from '../../../base/util';
 import { cancelWaitForOwner } from '../../actions.web';
 
 /**
@@ -171,7 +172,7 @@ function mapStateToProps(state) {
         okKey,
         submitDisabled,
         titleKey,
-        _room: authRequired && authRequired.getName()
+        _room: authRequired && safeDecodeURIComponent(authRequired.getName())
     };
 }
 
