@@ -13,7 +13,7 @@ import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { showErrorNotification } from '../../notifications';
+import { showErrorNotification, showWarningNotification } from '../../notifications';
 import { backgroundEnabled, setVirtualBackground, toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { getRemoteImageUrl, toDataURL } from '../functions';
@@ -156,7 +156,14 @@ function VirtualBackground({ _apiBase, _jitsiTrack, _virtualBackground, _virtual
 
 
     const shareDesktop = useCallback(async () => {
-        const url = await createLocalTrack('desktop', '');
+        var url = await createLocalTrack('desktop', '');
+        if (Array.isArray(url)){ //if createLocalTrack returns both audio and video track
+            url = url[1]; //url[0] is audio track
+            dispatch(showWarningNotification({
+                titleKey: 'virtualBackground.desktopShareAudioWarning',
+                descriptionKey: 'virtualBackground.desktopShareAudioWarningDesc'
+            }));
+        }
 
         if (!url) {
             dispatch(showErrorNotification({
