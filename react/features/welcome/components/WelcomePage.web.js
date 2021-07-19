@@ -320,6 +320,14 @@ class WelcomePage extends AbstractWelcomePage {
                             href = { `${AUTH_PAGE_BASE}/features` }>
                             {t('toolbar.features')}
                         </DropdownItem>
+                        {
+                            _user.isAdmin && 
+                            <DropdownItem 
+                                className = {`${s.menuItem} ${s.mobile}`}
+                                href = { `${AUTH_PAGE_BASE}/admin/rooms` }>
+                                {t('welcomepage.adminConsole')}
+                            </DropdownItem>
+                        }
                         <DropdownItem
                             className = {s.menuItem}
                             href = { `${AUTH_PAGE_BASE}/account` }>
@@ -387,14 +395,14 @@ class WelcomePage extends AbstractWelcomePage {
                             <ButtonGroup>
                                 <Button
                                     appearance = 'subtle'
-                                    className = {`${s.button} ${s.desktop}`}
+                                    className = {_user ? `${s.button} ${s.desktop}` : `${s.button}`}
                                     href = { `${AUTH_PAGE_BASE}/features` }>
                                     {t('toolbar.features')}
                                 </Button>
                                 { buttons }
                                 <Button
                                     appearance = 'subtle'
-                                    className = {`${s.button} ${s.desktop}`}
+                                    className = {_user ? `${s.button} ${s.desktop}` : `${s.button}`}
                                     onClick = { this._onOpenSettings }>
                                     { t('toolbar.Settings') }
                                 </Button>
