@@ -29,7 +29,7 @@
     right: 0;
     transition: bottom .3s ease-in;
     width: 100%;
-
+    z-index: 300;
 
     &.visible {
         bottom: 0;
